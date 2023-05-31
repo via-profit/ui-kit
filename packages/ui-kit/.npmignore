@@ -1,0 +1,9 @@
+.*
+/assets
+/build
+/src
+/webpack
+/sandbox.js
+/tsconfig.*
+/jest.config.js
+/node_modules/

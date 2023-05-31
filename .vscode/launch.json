@@ -1,0 +1,17 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Website Launch and Debug",
+      "type": "chrome",
+      "request": "launch",
+      "port": 9228,
+      "webRoot": "${workspaceFolder}",
+      "sourceMaps": true,
+      "url": "http://localhost:8080",
+      "sourceMapPathOverrides": {
+        "webpack://@via-profit/ui-kit-website/*": "${webRoot}/packages/ui-kit-website/*",
+      }
+    }
+  ]
+}
