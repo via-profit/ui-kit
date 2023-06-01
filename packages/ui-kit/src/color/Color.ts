@@ -70,20 +70,11 @@ class Color implements ColorInterface {
    * lum - 0-25
    */
   shade(lum: number) {
-    let r = this.#color.r + lum;
-    let g = this.#color.g + lum;
-    let b = this.#color.b + lum;
+    this.#color.r = parseInt('0' + Math.min(255, Math.max(0, this.#color.r + lum)), 10);
 
-    r = Math.max(Math.min(255, r), 0);
-    g = Math.max(Math.min(255, g), 0);
-    b = Math.max(Math.min(255, b), 0);
-    r = r < 255 ? r : 255;
-    g = g < 255 ? g : 255;
-    b = b < 255 ? b : 255;
+    this.#color.g = parseInt('0' + Math.min(255, Math.max(0, this.#color.g + lum)), 10);
 
-    this.#color.r = parseInt(r.toFixed(0), 10);
-    this.#color.g = parseInt(g.toFixed(0), 10);
-    this.#color.b = parseInt(b.toFixed(0), 10);
+    this.#color.b = parseInt('0' + Math.min(255, Math.max(0, this.#color.b + lum)), 10);
 
     return this;
   }

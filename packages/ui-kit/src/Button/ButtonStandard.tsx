@@ -18,10 +18,10 @@ const Button = styled(ButtonBase)`
   color: ${({ theme }) => theme.colors.textPrimary.toString()};
   background-color: ${({ theme }) =>
     theme.isDark
-      ? theme.colors.backgroundPrimary.lighten(0.2).toString()
+      ? theme.colors.backgroundPrimary.lighten(20).toString()
       : theme.colors.backgroundPrimary.toString()};
   box-shadow: 0 2px 12px
-    ${({ theme }) => theme.colors.backgroundPrimary.darken(0.1).alpha(0.6).toString()};
+    ${({ theme }) => theme.colors.backgroundPrimary.darken(40).alpha(0.6).toString()};
   &:hover {
     background-color: ${({ theme }) => theme.colors.backgroundPrimary.darken(0.05).toString()};
   }

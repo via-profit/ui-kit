@@ -1,6 +1,6 @@
-import { Theme } from '@emotion/react';
+import { UIThemeOverrides } from '@via-profit/ui-kit/src/ThemeProvider/createTheme';
 
-const light: Theme = {
+const light: UIThemeOverrides = {
   isDark: false,
   fontSize: {
     small: 14,
@@ -12,10 +12,6 @@ const light: Theme = {
     header: 8,
     mainDrawer: 9,
     modal: 10,
-  },
-  grid: {
-    frameGutter: 30,
-    safeFrame: '80rem',
   },
   colors: {
     backgroundPrimary: '#fff',

@@ -3,6 +3,7 @@ import { createRoot, hydrateRoot } from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { loadableReady } from '@loadable/component';
 
+import ThemeProvider from '~/providers/ThemeProvider';
 import routes from '~/routes';
 
 const bootstrap = async () => {
@@ -14,7 +15,11 @@ const bootstrap = async () => {
   await loadableReady();
 
   const router = createBrowserRouter(routes);
-  const AppData = <RouterProvider router={router} />;
+  const AppData = (
+    <ThemeProvider>
+      <RouterProvider router={router} />
+    </ThemeProvider>
+  );
 
   if (process.env.NODE_ENV !== 'development') {
     hydrateRoot(rootElement, AppData);

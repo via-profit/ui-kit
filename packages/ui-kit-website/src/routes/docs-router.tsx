@@ -1,15 +1,26 @@
 import React from 'react';
-import { RouteObject, Outlet } from 'react-router-dom';
+import { RouteObject } from 'react-router-dom';
 import loadable from '@loadable/component';
 
+const TemplateDocs = loadable(() => import('~/templates/TemplateDocs/index'));
 const NotFound = loadable(() => import('~/pages/NotFound/index'));
+const Introduction = loadable(() => import('~/pages/Introduction/index'));
 const Buttons = loadable(() => import('~/pages/Docs/Buttons'));
 
 const docsRouter: RouteObject = {
   path: 'docs',
   caseSensitive: true,
-  element: <Outlet />,
+  element: <TemplateDocs />,
   children: [
+    {
+      path: '',
+      caseSensitive: true,
+      element: (
+        <React.Suspense fallback={<>Loading...</>}>
+          <Introduction />
+        </React.Suspense>
+      ),
+    },
     {
       path: 'buttons',
       caseSensitive: true,

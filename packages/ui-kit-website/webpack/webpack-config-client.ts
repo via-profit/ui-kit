@@ -107,7 +107,6 @@ const webpackProdConfig: Configuration = {
     extensions: ['.js', '.jsx', '.ts', '.tsx', '.css'],
     alias: {
       '~': path.resolve(__dirname, '../src'),
-      '@via-profit/ui-kit': path.resolve(__dirname, '../../ui-kit/src'),
     },
   },
 };

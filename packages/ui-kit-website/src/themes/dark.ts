@@ -1,8 +1,8 @@
-import { Theme } from '@emotion/react';
+import { UIThemeOverrides } from '@via-profit/ui-kit/src/ThemeProvider/createTheme';
 
 import light from './light';
 
-const dark: Theme = {
+const dark: UIThemeOverrides = {
   ...light,
   isDark: true,
   colors: {

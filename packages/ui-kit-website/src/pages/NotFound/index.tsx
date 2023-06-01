@@ -1,5 +1,5 @@
 import * as React from 'react';
-import H1 from '@via-profit/ui-kit/Typography/H1';
+import H1 from '@via-profit/ui-kit/src/Typography/H1';
 
 const NotFound: React.FC = () => (
   <>
