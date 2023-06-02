@@ -4,6 +4,8 @@
 использована в формах или в любом другом месте документа, который требует простой,
 стандартной кнопки.
 
+<ExampleOverview />
+
 Компонент исполнен в различных стилях: `standard`;.
 
 ## Кнопка стиля «standard»
@@ -24,4 +26,4 @@ const ButtonStandard: React.FC = () => (
 export default ButtonStandard;
 ```
 
-<ButtonStandard />
+<ExampleButtonStandard />

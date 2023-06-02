@@ -125,7 +125,7 @@ const ModalConfirmBox: React.ForwardRefRenderFunction<ReactModal, ModalConfirmBo
             overflow: auto;
             -webkit-overflow-scrolling: touch;
             outline: none;
-            background: ${theme.colors.backgroundPrimary.toString()};
+            background: ${theme.colors.backgroundPrimary().toString()};
             border-radius: 1em;
             transform: translate(-50%, -40%);
             transition: transform 100ms ease-in-out, opacity 100ms ease-in-out;

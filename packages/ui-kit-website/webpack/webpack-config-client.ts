@@ -6,6 +6,7 @@ import { Configuration, HotModuleReplacementPlugin } from 'webpack';
 import TerserPlugin from 'terser-webpack-plugin';
 import LoadablePlugin from '@loadable/webpack-plugin';
 import ReactRefreshWebpackPlugin from '@pmmmwh/react-refresh-webpack-plugin';
+import Mustache from 'mustache';
 import 'webpack-dev-server';
 
 dotenv.config();
@@ -68,18 +69,55 @@ const webpackProdConfig: Configuration = {
     }) as any,
     ...(isDev
       ? [
+          /**
+           * Development plugins
+           */
           new HotModuleReplacementPlugin(),
           new ReactRefreshWebpackPlugin({
             overlay: false,
           }),
           new HtmlWebpackPlugin({
-            templateContent: fs.readFileSync(path.resolve(__dirname, '../assets/index.html'), {
-              encoding: 'utf8',
-            }),
+            templateContent: Mustache.render(
+              fs.readFileSync(path.resolve(__dirname, '../src/assets/index.mustache'), {
+                encoding: 'utf8',
+              }),
+              {
+                /**
+                 * Compile preloadedState data as Base64 string
+                 */
+                preloadedStatesBase64: Buffer.from(
+                  JSON.stringify({
+                    REDUX: {},
+                  }),
+                ).toString('base64'),
+              },
+            ),
           }),
         ]
       : [
-          // prod
+          /**
+           * Production plugins
+           */
+          new HtmlWebpackPlugin({
+            excludeChunks: ['app'], // exclude main entypoint
+            templateContent: fs.readFileSync(
+              path.resolve(__dirname, '../src/assets/index.mustache'),
+              {
+                encoding: 'utf8',
+              },
+            ),
+            filename: path.resolve(__dirname, '../dist/server/index.mustache'),
+            minify: {
+              caseSensitive: true,
+              collapseWhitespace: true,
+              keepClosingSlash: true,
+              removeComments: true,
+              removeRedundantAttributes: true,
+              removeScriptTypeAttributes: true,
+              removeStyleLinkTypeAttributes: true,
+              useShortDoctype: true,
+            },
+          }),
         ]),
   ],
   devtool: isDev ? 'inline-source-map' : false,

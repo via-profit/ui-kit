@@ -1,13 +1,15 @@
 import React from 'react';
 
 import RenderMarkdown from '~/components/RenderMarkdown';
-import ButtonStandard from '~/examples/buttons/ButtonStandard';
 import content from '~/docs/buttons/Intruduction.md';
+import ExampleButtonStandard from '~/examples/buttons/ButtonStandard';
+import ExampleOverview from '~/examples/buttons/ExampleOverview';
 
 const Buttons: React.FC = () => (
   <RenderMarkdown
     overrides={{
-      ButtonStandard,
+      ExampleButtonStandard,
+      ExampleOverview,
     }}
   >
     {content}

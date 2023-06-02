@@ -18,7 +18,7 @@ const ErrorTextContainer = styled.div<{ $maxHeight: 'auto' | number; $focused?: 
 `;
 
 const ErrorTextInner = styled.div<{ $error: boolean }>`
-  color: ${({ theme }) => theme.colors.error.toString()};
+  color: ${({ theme }) => theme.colors.error().toString()};
   font-size: 0.8em;
   transform: translateY(${({ $error }) => ($error ? 0 : '0.2em')});
   opacity: ${({ $error }) => ($error ? 1 : 0)};
@@ -36,7 +36,7 @@ const TextFieldErrorText: React.ForwardRefRenderFunction<
 
   React.useEffect(() => {
     const updateMaxHeight = () => {
-      if (innerRef.current) {
+      if (innerRef.current && innerRef.current.getBoundingClientRect().height > 0) {
         setMaxHeight(innerRef.current.getBoundingClientRect().height);
       }
     };
@@ -47,7 +47,7 @@ const TextFieldErrorText: React.ForwardRefRenderFunction<
     return () => {
       window.removeEventListener('resize', updateMaxHeight);
     };
-  }, []);
+  }, [children]);
 
   return (
     <ErrorTextContainer

@@ -22,7 +22,7 @@ const CountryFlagContainer = styled.span`
   overflow: hidden;
   margin-left: 0.5em;
   margin-right: 0.5em;
-  border: 1px solid ${({ theme }) => theme.colors.textPrimary.alpha(0.8).toString()};
+  border: 1px solid ${({ theme }) => theme.colors.textPrimary().alpha(0.8).toString()};
 `;
 
 const CountryFlag: React.FC<CountryFlagProps> = props => {

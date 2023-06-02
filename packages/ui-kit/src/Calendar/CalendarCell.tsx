@@ -25,31 +25,31 @@ const Btn = styled.button<{
   border: 1px solid transparent;
   background-color: ${({ theme, $isSelected }) =>
     $isSelected
-      ? theme.colors.accentPrimary.toString()
-      : theme.colors.backgroundPrimary.toString()};
+      ? theme.colors.accentPrimary().toString()
+      : theme.colors.backgroundPrimary().toString()};
   border-radius: ${({ theme }) => theme.shape.radiusFactor * 3}em;
   color: ${({ $isToday, theme, $isSelected, $isDisabled }) => {
     if ($isDisabled) {
-      return theme.colors.textSecondary.toString();
+      return theme.colors.textSecondary().toString();
     }
     if ($isSelected) {
-      return theme.colors.accentPrimaryContrast.toString();
+      return theme.colors.accentPrimaryContrast().toString();
     }
     if ($isToday) {
-      return theme.colors.accentPrimary.toString();
+      return theme.colors.accentPrimary().toString();
     }
 
-    return theme.colors.textPrimary.toString();
+    return theme.colors.textPrimary().toString();
   }};
   &:hover {
     background-color: ${({ theme, $isSelected }) =>
       $isSelected
-        ? theme.colors.accentPrimary.darken(0.1).toString()
-        : theme.colors.backgroundPrimary.darken(0.1).toString()};
+        ? theme.colors.accentPrimary().darken(0.1).toString()
+        : theme.colors.backgroundPrimary().darken(0.1).toString()};
   }
   &:focus-visible {
     border-color: ${({ theme, $isDisabled }) =>
-      $isDisabled ? 'transparent' : theme.colors.accentPrimary.toString()};
+      $isDisabled ? 'transparent' : theme.colors.accentPrimary().toString()};
   }
   opacity: ${({ $isDisabled }) => ($isDisabled ? 0.4 : 1)};
 `;

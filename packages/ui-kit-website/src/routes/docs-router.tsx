@@ -6,6 +6,7 @@ const TemplateDocs = loadable(() => import('~/templates/TemplateDocs/index'));
 const NotFound = loadable(() => import('~/pages/NotFound/index'));
 const Introduction = loadable(() => import('~/pages/Introduction/index'));
 const Buttons = loadable(() => import('~/pages/Docs/Buttons'));
+const TextFields = loadable(() => import('~/pages/Docs/TextFields'));
 
 const docsRouter: RouteObject = {
   path: 'docs',
@@ -27,6 +28,15 @@ const docsRouter: RouteObject = {
       element: (
         <React.Suspense fallback={<>Loading...</>}>
           <Buttons />
+        </React.Suspense>
+      ),
+    },
+    {
+      path: 'text-fields',
+      caseSensitive: true,
+      element: (
+        <React.Suspense fallback={<>Loading...</>}>
+          <TextFields />
         </React.Suspense>
       ),
     },

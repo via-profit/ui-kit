@@ -1,5 +1,5 @@
 import Button from './Button';
-import { UITheme } from './ThemeProvider';
+import { UITheme } from './ThemeProvider/createTheme';
 
 export * from './Button';
 

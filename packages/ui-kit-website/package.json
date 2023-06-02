@@ -43,9 +43,11 @@
     "@loadable/babel-plugin": "^5.15.3",
     "@loadable/webpack-plugin": "^5.15.2",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.10",
+    "@types/js-cookie": "^3.0.3",
     "@types/loadable__component": "^5.13.4",
     "@types/loadable__server": "^5.12.6",
     "@types/loadable__webpack-plugin": "^5.7.3",
+    "@types/mustache": "^4.2.2",
     "@types/node": "^20.2.5",
     "@types/nodemon": "^1.19.2",
     "@types/react": "^18.2.7",
@@ -107,7 +109,12 @@
   "dependencies": {
     "@loadable/component": "^5.15.3",
     "@loadable/server": "^5.15.3",
+    "@reduxjs/toolkit": "^1.9.5",
+    "js-cookie": "^3.0.5",
     "markdown-to-jsx": "^7.2.0",
-    "react-syntax-highlighter": "^15.5.0"
+    "mustache": "^4.2.0",
+    "react-redux": "^8.0.7",
+    "react-syntax-highlighter": "^15.5.0",
+    "reselect": "^4.1.8"
   }
 }

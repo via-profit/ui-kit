@@ -28,16 +28,16 @@ const StyledButton = styled.button<{ $fullWidth?: boolean }>`
   border-radius: ${({ theme }) => theme.shape.radiusFactor * 2}em;
   border-color: ${({ theme }) =>
     theme.isDark
-      ? theme.colors.backgroundPrimary.lighten(1.4).toString()
-      : theme.colors.backgroundPrimary.darken(0.4).toString()};
+      ? theme.colors.backgroundPrimary().lighten(1.4).toString()
+      : theme.colors.backgroundPrimary().darken(0.4).toString()};
   &:hover {
-    background-color: ${({ theme }) => theme.colors.backgroundPrimary.darken(0.05).toString()};
+    background-color: ${({ theme }) => theme.colors.backgroundPrimary().darken(0.05).toString()};
   }
   &:active {
-    background-color: ${({ theme }) => theme.colors.backgroundPrimary.darken(0.1).toString()};
+    background-color: ${({ theme }) => theme.colors.backgroundPrimary().darken(0.1).toString()};
   }
   &:focus-visible {
-    outline: 2px solid ${({ theme }) => theme.colors.accentPrimary.toString()};
+    outline: 2px solid ${({ theme }) => theme.colors.accentPrimary().toString()};
   }
 `;
 

@@ -40,7 +40,10 @@ const MarkdownEm = styled(Em)`
 `;
 
 const CodeInline = styled.code`
-  color: red;
+  color: ${({ theme }) =>
+    theme.isDark
+      ? theme.colors.accentPrimary().toString()
+      : theme.colors.accentPrimary().darken(30).toString()};
   padding: 0em 0.4em;
   border-radius: 4px;
   font-size: 0.8em;
