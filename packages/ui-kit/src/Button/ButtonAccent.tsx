@@ -9,18 +9,18 @@ export type ButtonAccentProps = React.ButtonHTMLAttributes<HTMLButtonElement> & 
 };
 
 const Button = styled(ButtonBase)`
-  color: ${({ theme }) => theme.colors.accentPrimaryContrast().toString()};
-  background-color: ${({ theme }) => theme.colors.accentPrimary().toString()};
+  color: ${({ theme }) => theme.colors.accentPrimaryContrast.toString()};
+  background-color: ${({ theme }) => theme.colors.accentPrimary.toString()};
   box-shadow: 0 2px 12px
-    ${({ theme }) => theme.colors.accentPrimary().darken(0.6).alpha(0.3).toString()};
+    ${({ theme }) => theme.colors.accentPrimary.darken(0.6).alpha(0.3).toString()};
   &:hover {
-    background-color: ${({ theme }) => theme.colors.accentPrimary().darken(0.1).toString()};
+    background-color: ${({ theme }) => theme.colors.accentPrimary.darken(0.1).toString()};
   }
   &:active {
-    background-color: ${({ theme }) => theme.colors.accentPrimary().darken(0.2).toString()};
+    background-color: ${({ theme }) => theme.colors.accentPrimary.darken(0.2).toString()};
   }
   &:focus-visible {
-    outline: 2px solid ${({ theme }) => theme.colors.accentPrimary().darken(0.3).toString()};
+    outline: 2px solid ${({ theme }) => theme.colors.accentPrimary.darken(0.3).toString()};
   }
 `;
 

@@ -5,8 +5,8 @@ import { Link } from 'react-router-dom';
 const Container = styled.div`
   width: 20%;
   min-width: 16em;
-  background-color: ${({ theme }) => theme.colors.backgroundPrimary().darken(10).toString()};
-  color: ${({ theme }) => theme.colors.textPrimary().toString()};
+  background-color: ${({ theme }) => theme.colors.backgroundPrimary.darken(10).toString()};
+  color: ${({ theme }) => theme.colors.textPrimary.toString()};
 `;
 
 const ItemsList = styled.nav`
@@ -21,15 +21,16 @@ const Item = styled(Link)`
   text-decoration: none;
   padding: 1em 1.2em;
   &:hover {
-    background-color: ${({ theme }) => theme.colors.backgroundPrimary().darken(20).toString()};
+    background-color: ${({ theme }) => theme.colors.backgroundPrimary.darken(20).toString()};
   }
 `;
 
 const Sidebar: React.FC = () => (
   <Container>
     <ItemsList>
-      <Item to="/docs/buttons">Button</Item>
-      <Item to="/docs/text-fields">TextField</Item>
+      <Item to="/docs/button">Button</Item>
+      <Item to="/docs/text-field">TextField</Item>
+      <Item to="/docs/theme">Themes</Item>
     </ItemsList>
   </Container>
 );

@@ -1,10 +1,11 @@
 export interface ColorInterface {
-  parseColor(value: string): ParsedColor;
+  parseColor(value: string | Color): ParsedColor;
   shade(decimal: number): this;
   alpha(decimal: number): this;
   lighten(decimal: number): this;
   darken(decimal: number): this;
   getHextByWebColor(value: string): string;
+  rgb(): ParsedColor;
   rgbString(): string;
   hexString(): string;
   toString(): string;
@@ -21,8 +22,18 @@ export type ParsedColor = {
 
 class Color implements ColorInterface {
   #color: ParsedColor;
-  constructor(value: string) {
-    this.#color = this.parseColor(value);
+  #cache: ParsedColor;
+
+  constructor(value: string | Color) {
+    if (value instanceof Color) {
+      this.#color = {
+        ...value.rgb(),
+      };
+    } else {
+      this.#color = this.parseColor(value);
+    }
+
+    this.#cache = { ...this.#color };
 
     return this;
   }
@@ -80,13 +91,22 @@ class Color implements ColorInterface {
   }
 
   rgb() {
-    return this.#color;
+    const result = { ...this.#color };
+    this.#color = { ...this.#cache };
+
+    return result;
   }
   toString() {
-    return this.rgbString();
+    const result = this.rgbString();
+    this.#color = { ...this.#cache };
+
+    return result;
   }
   rgbString() {
-    return `rgba(${this.#color.r}, ${this.#color.g}, ${this.#color.b}, ${this.#color.a})`;
+    const result = `rgba(${this.#color.r}, ${this.#color.g}, ${this.#color.b}, ${this.#color.a})`;
+    this.#color = { ...this.#cache };
+
+    return result;
   }
   hexString(): string {
     const colorToHex = (color: number) => {
@@ -95,7 +115,11 @@ class Color implements ColorInterface {
       return hexadecimal.length === 1 ? `0${hexadecimal}` : hexadecimal;
     };
 
-    return '#' + colorToHex(this.#color.r) + colorToHex(this.#color.g) + colorToHex(this.#color.b);
+    const result =
+      '#' + colorToHex(this.#color.r) + colorToHex(this.#color.g) + colorToHex(this.#color.b);
+    this.#color = { ...this.#cache };
+
+    return result;
   }
 
   parseColor(value: string): ParsedColor {
@@ -163,7 +187,7 @@ class Color implements ColorInterface {
       return this.parseColor(webHex);
     }
 
-    throw new Error('Failed to parse color');
+    throw new Error(`Failed to parse color value «${value}»`);
   }
   hslToRgb(value: string): ParsedColor {
     const hsl = value.match(/(\d+(\.\d+)?)/g);
@@ -375,5 +399,37 @@ class Color implements ColorInterface {
     return webColors[v];
   }
 }
+
+// class Color {
+//   #c: _Color;
+//   #cache: _Color;
+//   constructor(value: string) {
+//     this.#c = new _Color(value);
+//     this.#cache = new _Color(value);
+
+//     return this;
+//   }
+//   lighten(decimal: number): this {
+//     this.#c.lighten(decimal);
+
+//     return this;
+//   }
+//   darken(decimal: number): this {
+//     this.#c.darken(decimal);
+
+//     return this;
+//   }
+//   alpha(decimal: number): this {
+//     this.#c.alpha(decimal);
+
+//     return this;
+//   }
+//   toString() {
+//     const s = this.#c.toString();
+//     this.#c = new _Color(this.#cache.toString());
+
+//     return s;
+//   }
+// }
 
 export default Color;

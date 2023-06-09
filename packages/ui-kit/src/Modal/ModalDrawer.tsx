@@ -2,8 +2,8 @@ import * as React from 'react';
 import styled from '@emotion/styled';
 import { Global, css, useTheme } from '@emotion/react';
 import ReactModal from 'react-modal';
-import Button from '@via-profit/ui-kit/src/Button';
 
+import Button from '../Button';
 import CloseOutlineIcon from './CloseIcon';
 
 export interface ModalDrawerProps extends ReactModal.Props {
@@ -53,7 +53,7 @@ const Inner = styled.div`
 
 const CloseButton = styled(Button)<{ $withToolbar: boolean }>`
   margin-left: ${props => (props.$withToolbar ? '1em' : 0)};
-  color: ${props => props.theme.colors.textPrimary().toString()};
+  color: ${props => props.theme.colors.textPrimary.toString()};
   background: none;
   width: auto;
   height: auto;
@@ -130,7 +130,7 @@ const ModalDrawer: React.ForwardRefRenderFunction<ReactModal, ModalDrawerProps> 
             overflow: auto;
             -webkit-overflow-scrolling: touch;
             outline: none;
-            background: ${theme.colors.backgroundPrimary().toString()};
+            background: ${theme.colors.backgroundPrimary.toString()};
             border-radius: 1em 1em 0 0;
             transform: translate(0, 100%);
             transition: transform 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;

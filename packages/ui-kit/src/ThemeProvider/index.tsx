@@ -1,5 +1,5 @@
 import React from 'react';
-import { UITheme } from './createTheme';
+import type { UITheme } from './createTheme';
 import { ThemeProvider as EmotionProvider } from '@emotion/react';
 
 export interface ThemeProviderProps {

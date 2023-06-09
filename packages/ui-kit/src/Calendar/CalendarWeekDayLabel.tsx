@@ -8,7 +8,7 @@ const CalendarWeekDayLabel = styled.div`
   user-select: none;
   width: 3em;
   height: 3em;
-  color: ${({ theme }) => theme.colors.textSecondary().toString()};
+  color: ${({ theme }) => theme.colors.textSecondary.toString()};
 `;
 
 export default React.memo(CalendarWeekDayLabel);

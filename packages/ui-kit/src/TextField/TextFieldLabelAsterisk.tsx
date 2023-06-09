@@ -9,7 +9,7 @@ export interface TextFieldLabelAsteriskProps extends React.HTMLAttributes<HTMLSp
 const Asterisk = styled.span<{ $error?: boolean; $focused?: boolean }>`
   font-size: 0.8em;
   margin-left: 0.2em;
-  color: ${({ theme }) => theme.colors.error().toString()};
+  color: ${({ theme }) => theme.colors.error.toString()};
 `;
 
 const TextFieldLabelAsterisk: React.ForwardRefRenderFunction<

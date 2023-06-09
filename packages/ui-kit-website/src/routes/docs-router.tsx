@@ -7,6 +7,7 @@ const NotFound = loadable(() => import('~/pages/NotFound/index'));
 const Introduction = loadable(() => import('~/pages/Introduction/index'));
 const Buttons = loadable(() => import('~/pages/Docs/Buttons'));
 const TextFields = loadable(() => import('~/pages/Docs/TextFields'));
+const Theming = loadable(() => import('~/pages/Docs/Theming'));
 
 const docsRouter: RouteObject = {
   path: 'docs',
@@ -23,7 +24,7 @@ const docsRouter: RouteObject = {
       ),
     },
     {
-      path: 'buttons',
+      path: 'button',
       caseSensitive: true,
       element: (
         <React.Suspense fallback={<>Loading...</>}>
@@ -32,11 +33,20 @@ const docsRouter: RouteObject = {
       ),
     },
     {
-      path: 'text-fields',
+      path: 'text-field',
       caseSensitive: true,
       element: (
         <React.Suspense fallback={<>Loading...</>}>
           <TextFields />
+        </React.Suspense>
+      ),
+    },
+    {
+      path: 'theme',
+      caseSensitive: true,
+      element: (
+        <React.Suspense fallback={<>Loading...</>}>
+          <Theming />
         </React.Suspense>
       ),
     },

@@ -14,20 +14,20 @@ const InnerContainer = styled.div<{ selected?: boolean; hovered?: boolean }>`
   border-radius: ${({ theme }) => theme.shape.radiusFactor * 1}em;
   background-color: ${({ theme, selected, hovered }) => {
     if (selected && hovered) {
-      return theme.colors.accentPrimary().darken(0.1).toString();
+      return theme.colors.accentPrimary.darken(0.1).toString();
     }
     if (selected) {
-      return theme.colors.accentPrimary().toString();
+      return theme.colors.accentPrimary.toString();
     }
     if (hovered) {
-      return theme.colors.backgroundGrey().darken(0.04).toString();
+      return theme.colors.backgroundGrey.darken(0.04).toString();
     }
 
     return 'inherit';
   }};
   color: ${({ theme, selected }) => {
     if (selected) {
-      return theme.colors.accentPrimaryContrast().toString();
+      return theme.colors.accentPrimaryContrast.toString();
     }
 
     return 'inherit';

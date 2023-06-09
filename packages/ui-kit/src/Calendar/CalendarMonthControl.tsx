@@ -21,14 +21,14 @@ const Btn = styled.button`
   outline: none;
   cursor: pointer;
   border: 1px solid transparent;
-  background-color: ${({ theme }) => theme.colors.backgroundPrimary().toString()};
+  background-color: ${({ theme }) => theme.colors.backgroundPrimary.toString()};
   border-radius: ${({ theme }) => theme.shape.radiusFactor * 3}em;
-  color: ${({ theme }) => theme.colors.textPrimary().toString()};
+  color: ${({ theme }) => theme.colors.textPrimary.toString()};
   &:hover {
-    background-color: ${({ theme }) => theme.colors.backgroundPrimary().darken(0.1).toString()};
+    background-color: ${({ theme }) => theme.colors.backgroundPrimary.darken(0.1).toString()};
   }
   &:focus-visible {
-    border-color: ${({ theme }) => theme.colors.accentPrimary().toString()};
+    border-color: ${({ theme }) => theme.colors.accentPrimary.toString()};
   }
   opacity: ${({ disabled }) => (disabled ? 0.4 : 1)};
 `;

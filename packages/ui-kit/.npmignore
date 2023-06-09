@@ -3,7 +3,9 @@
 /build
 /src
 /webpack
-/sandbox.js
-/tsconfig.*
-/jest.config.js
 /node_modules/
+/@types
+
+jest.config.*
+babel.config.*
+tsconfig.*
