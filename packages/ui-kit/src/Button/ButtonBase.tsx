@@ -6,6 +6,7 @@ export type ButtonBaseProps = React.ButtonHTMLAttributes<HTMLButtonElement>;
 const Button = styled.button`
   border-radius: ${({ theme }) => theme.shape.radiusFactor * 2}em;
   padding: 0.8em 1em;
+  font-size: 0.8rem;
   cursor: pointer;
   font-size: 1em;
   border: 0;
