@@ -2,9 +2,8 @@ import React from 'react';
 import styled from '@emotion/styled';
 import { css } from '@emotion/react';
 
-import ButtonBase, { ButtonBaseProps } from './ButtonBase';
-
-export type ButtonAccentProps = ButtonBaseProps;
+import ButtonBase from './ButtonBase';
+import type { ButtonAccentProps } from '@via-profit/ui-kit/Button/ButtonAccent';
 
 const Button = styled(ButtonBase)`
   color: ${({ theme, disabled }) =>

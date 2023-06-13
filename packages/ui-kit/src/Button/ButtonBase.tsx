@@ -5,10 +5,7 @@ import StartIconWrapper from './components/StartIconWrapper';
 import EndIconWrapper from './components/EndIconWrapper';
 import TextWrapper from './components/TextWrapper';
 
-export interface ButtonBaseProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  readonly startIcon?: JSX.Element;
-  readonly endIcon?: JSX.Element;
-}
+import type { ButtonBaseProps } from '@via-profit/ui-kit/Button/ButtonBase';
 
 const Button = styled.button`
   border-radius: ${({ theme }) => theme.shape.radiusFactor * 2}em;

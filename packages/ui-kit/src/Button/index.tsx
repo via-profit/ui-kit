@@ -1,13 +1,9 @@
 import React from 'react';
 
-import ButtonStandard, { ButtonStandardProps } from './ButtonStandard';
-import ButtonAccent, { ButtonAccentProps } from './ButtonAccent';
+import type { ButtonProps } from '@via-profit/ui-kit/Button';
 
-interface BaseProps {
-  readonly variant?: 'standard' | 'accent';
-}
-
-export type ButtonProps = (ButtonStandardProps | ButtonAccentProps) & BaseProps;
+import ButtonStandard from './ButtonStandard';
+import ButtonAccent from './ButtonAccent';
 
 const Button: React.ForwardRefRenderFunction<HTMLButtonElement, ButtonProps> = (props, ref) => {
   const { variant, ...buttonProps } = props;

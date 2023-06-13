@@ -1,24 +1,4 @@
-export interface ColorInterface {
-  parseColor(value: string | Color): ParsedColor;
-  shade(decimal: number): this;
-  alpha(decimal: number): this;
-  lighten(decimal: number): this;
-  darken(decimal: number): this;
-  getHextByWebColor(value: string): string;
-  rgb(): ParsedColor;
-  rgbString(): string;
-  hexString(): string;
-  toString(): string;
-  luminance(): number;
-  contrast(rgb2: string | Color): number;
-}
-
-export type ParsedColor = {
-  r: number;
-  g: number;
-  b: number;
-  a: number;
-};
+import type { ColorInterface, ParsedColor } from '@via-profit/ui-kit/color';
 
 class Color implements ColorInterface {
   #color: ParsedColor;
@@ -399,37 +379,5 @@ class Color implements ColorInterface {
     return webColors[v];
   }
 }
-
-// class Color {
-//   #c: _Color;
-//   #cache: _Color;
-//   constructor(value: string) {
-//     this.#c = new _Color(value);
-//     this.#cache = new _Color(value);
-
-//     return this;
-//   }
-//   lighten(decimal: number): this {
-//     this.#c.lighten(decimal);
-
-//     return this;
-//   }
-//   darken(decimal: number): this {
-//     this.#c.darken(decimal);
-
-//     return this;
-//   }
-//   alpha(decimal: number): this {
-//     this.#c.alpha(decimal);
-
-//     return this;
-//   }
-//   toString() {
-//     const s = this.#c.toString();
-//     this.#c = new _Color(this.#cache.toString());
-
-//     return s;
-//   }
-// }
 
 export default Color;

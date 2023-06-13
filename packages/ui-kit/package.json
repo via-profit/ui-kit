@@ -1,8 +1,7 @@
 {
   "name": "@via-profit/ui-kit",
-  "version": "0.1.0-rc.8",
+  "version": "0.1.0-rc.9",
   "description": "UI Kit",
-  "main": "index.js",
   "repository": {
     "type": "git",
     "url": "git@github.com:via-profit/ui-kit.git"

@@ -1,44 +1,14 @@
-import Color, { ColorInterface } from '../color';
+import Color from '../color';
+import type { ColorInterface } from '@via-profit/ui-kit/color';
+import type { UIThemeOverrides } from '@via-profit/ui-kit';
+import type { CreateTheme } from '@via-profit/ui-kit/ThemeProvider';
 
-export type CreateTheme = (overrides?: UIThemeOverrides) => UITheme;
-
-export interface UITheme {
-  readonly isDark: boolean;
-  readonly fontSize: Record<'small' | 'normal' | 'medium' | 'large', number>;
-  readonly zIndex: {
-    readonly header: number;
-    readonly mainDrawer: number;
-    readonly modal: number;
-  };
-  readonly colors: {
-    readonly backgroundPrimary: ColorInterface;
-    readonly backgroundSecondary: ColorInterface;
-    readonly backgroundGrey: ColorInterface;
-    readonly textPrimary: ColorInterface;
-    readonly textSecondary: ColorInterface;
-    readonly accentPrimary: ColorInterface;
-    readonly accentPrimaryContrast: ColorInterface;
-    readonly accentSecondary: ColorInterface;
-    readonly accentSecondaryContrast: ColorInterface;
-    readonly error: ColorInterface;
-  };
-  readonly shape: {
-    readonly radiusFactor: 0 | 0.1 | 0.2 | 0.3 | 0.4 | 0.5 | 0.6 | 0.7 | 0.8 | 0.9 | 1;
-  };
-}
-
-export interface UIThemeOverrides {
-  readonly isDark?: UITheme['isDark'];
-  readonly fontSize?: UITheme['fontSize'];
-  readonly zIndex?: UITheme['zIndex'];
-  readonly colors?: Partial<Record<keyof UITheme['colors'], string>>;
-  readonly shape?: UITheme['shape'];
-}
-
-const createTheme = (overrides?: UIThemeOverrides): UITheme => {
+const createTheme: CreateTheme = overrides => {
   const { isDark, fontSize, zIndex, colors, shape, ...rest } = overrides || {};
 
-  const theme: Omit<UITheme, 'colors'> & { colors: Record<string, ColorInterface> } = {
+  const theme: Omit<ReturnType<CreateTheme>, 'colors'> & {
+    colors: Record<string, ColorInterface>;
+  } = {
     ...rest,
     isDark: typeof isDark === 'boolean' ? isDark : false,
     fontSize: {
@@ -80,7 +50,7 @@ const createTheme = (overrides?: UIThemeOverrides): UITheme => {
 
   theme.colors.test = new Color('red');
 
-  return theme as UITheme;
+  return theme as ReturnType<CreateTheme>;
 };
 
 export default createTheme;

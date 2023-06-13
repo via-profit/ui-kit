@@ -1,4 +1,4 @@
-import { UIThemeOverrides } from '@via-profit/ui-kit/src/ThemeProvider/createTheme';
+import { UIThemeOverrides } from '@via-profit/ui-kit/src/ThemeProvider';
 
 const light: UIThemeOverrides = {
   isDark: false,

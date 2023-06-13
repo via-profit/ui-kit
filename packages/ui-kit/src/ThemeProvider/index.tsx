@@ -1,6 +1,8 @@
 import React from 'react';
-import type { UITheme } from './createTheme';
 import { ThemeProvider as EmotionProvider } from '@emotion/react';
+import type { UITheme, UIThemeOverrides } from '@via-profit/ui-kit';
+
+export { UITheme, UIThemeOverrides };
 
 export interface ThemeProviderProps {
   readonly children: React.ReactNode | readonly React.ReactNode[];
