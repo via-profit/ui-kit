@@ -1,5 +1,6 @@
 import React from 'react';
 import Button from '@via-profit/ui-kit/src/Button';
+import ButtonBase from '@via-profit/ui-kit/src/Button/ButtonBase';
 import styled from '@emotion/styled';
 
 import IconBell from '~/components/Icons/IconBell';
@@ -20,6 +21,7 @@ const Container = styled.div`
 
 const ExampleOverview: React.FC = () => (
   <Container>
+    <ButtonBase startIcon={<IconBell />}>Base button with Start Icon</ButtonBase>
     <Button variant="standard">Standard</Button>
     <Button variant="standard" disabled>
       Standard disabled

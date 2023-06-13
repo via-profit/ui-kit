@@ -1,52 +1,46 @@
 import React from 'react';
 import styled from '@emotion/styled';
+import { css } from '@emotion/react';
 
-import ButtonBase from './ButtonBase';
+import ButtonBase, { ButtonBaseProps } from './ButtonBase';
 
-export type ButtonAccentProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
-  readonly startIcon?: JSX.Element;
-  readonly endIcon?: JSX.Element;
-};
+export type ButtonAccentProps = ButtonBaseProps;
 
 const Button = styled(ButtonBase)`
-  color: ${({ theme }) => theme.colors.accentPrimaryContrast.toString()};
-  background-color: ${({ theme }) => theme.colors.accentPrimary.toString()};
-  box-shadow: 0 2px 12px
-    ${({ theme }) => theme.colors.accentPrimary.darken(0.6).alpha(0.3).toString()};
-  &:hover {
-    background-color: ${({ theme }) => theme.colors.accentPrimary.darken(0.1).toString()};
-  }
-  &:active {
-    background-color: ${({ theme }) => theme.colors.accentPrimary.darken(0.2).toString()};
-  }
-  &:focus-visible {
-    outline: 2px solid ${({ theme }) => theme.colors.accentPrimary.darken(0.3).toString()};
-  }
-`;
+  color: ${({ theme, disabled }) =>
+    disabled
+      ? theme.colors.textPrimary.alpha(0.4).toString()
+      : theme.colors.accentPrimaryContrast.toString()};
+  background-color: ${({ theme, disabled }) =>
+    disabled
+      ? theme.colors.backgroundGrey.darken(30).toString()
+      : theme.colors.accentPrimary.toString()};
 
-const StartIconWrapper = styled.span`
-  margin-right: 0.8em;
-`;
-
-const EndIconWrapper = styled.span`
-  margin-left: 0.8em;
+  ${({ disabled, theme }) =>
+    !disabled &&
+    css`
+      box-shadow: 0 2px 12px ${theme.colors.accentPrimary.darken(60).alpha(0.3).toString()};
+      &:hover {
+        background-color: ${theme.colors.accentPrimary.darken(20).toString()};
+      }
+      &:active {
+        background-color: ${theme.colors.accentPrimary.darken(30).toString()};
+      }
+      &:focus-visible {
+        outline: 2px solid ${theme.colors.accentPrimary.darken(20).toString()};
+      }
+    `};
 `;
 
 const ButtonAccent: React.ForwardRefRenderFunction<HTMLButtonElement, ButtonAccentProps> = (
   props,
   ref,
 ) => {
-  const { children, startIcon, endIcon, ...otherProps } = props;
+  const { children, ...restProps } = props;
 
   return (
-    <Button {...otherProps} ref={ref}>
-      {typeof startIcon !== 'undefined' && startIcon !== null && (
-        <StartIconWrapper>{startIcon}</StartIconWrapper>
-      )}
+    <Button {...restProps} ref={ref}>
       {children}
-      {typeof endIcon !== 'undefined' && endIcon !== null && (
-        <EndIconWrapper>{endIcon}</EndIconWrapper>
-      )}
     </Button>
   );
 };

@@ -1,62 +1,52 @@
 import React from 'react';
 import styled from '@emotion/styled';
+import { css } from '@emotion/react';
 
-import ButtonBase from './ButtonBase';
+import ButtonBase, { ButtonBaseProps } from './ButtonBase';
 
 /**
  * Standard
  */
-export type ButtonStandardProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
-  /**
-   * Starticon
-   */
-  readonly startIcon?: JSX.Element;
-  readonly endIcon?: JSX.Element;
-};
+export type ButtonStandardProps = ButtonBaseProps;
 
-const Button = styled(ButtonBase)`
-  color: ${({ theme }) => theme.colors.textPrimary.toString()};
-  background-color: ${({ theme }) =>
-    theme.isDark
+const StyledButtonBase = styled(ButtonBase)`
+  color: ${({ theme, disabled }) =>
+    disabled
+      ? theme.colors.textPrimary.alpha(0.4).toString()
+      : theme.colors.textPrimary.toString()};
+  background-color: ${({ theme, disabled }) =>
+    disabled
+      ? theme.colors.backgroundGrey.darken(10).toString()
+      : theme.isDark
       ? theme.colors.backgroundPrimary.lighten(20).toString()
       : theme.colors.backgroundPrimary.toString()};
-  box-shadow: 0 2px 12px
-    ${({ theme }) => theme.colors.backgroundPrimary.darken(40).alpha(0.6).toString()};
-  &:hover {
-    background-color: ${({ theme }) => theme.colors.backgroundPrimary.darken(20).toString()};
-  }
-  &:active {
-    background-color: ${({ theme }) => theme.colors.backgroundPrimary.darken(40).toString()};
-  }
-  &:focus-visible {
-    outline: 2px solid ${({ theme }) => theme.colors.accentPrimary.toString()};
-  }
-`;
 
-const StartIconWrapper = styled.span`
-  margin-right: 0.8em;
-`;
-
-const EndIconWrapper = styled.span`
-  margin-left: 0.8em;
+  ${({ disabled, theme }) =>
+    !disabled &&
+    css`
+      box-shadow: 0 2px 12px ${theme.colors.backgroundPrimary.darken(40).alpha(0.6).toString()};
+      &:hover {
+        background-color: ${theme.colors.backgroundPrimary.darken(20).toString()};
+      }
+      &:active {
+        background-color: ${theme.colors.backgroundPrimary.darken(40).toString()};
+      }
+      &:focus-visible {
+        outline: 2px solid ${theme.colors.accentPrimary.toString()};
+      }
+    `}
 `;
 
 const ButtonStandard: React.ForwardRefRenderFunction<HTMLButtonElement, ButtonStandardProps> = (
   props,
   ref,
 ) => {
-  const { children, startIcon, endIcon, ...otherProps } = props;
+  const { children, disabled, ...restProps } = props;
 
   return (
-    <Button {...otherProps} ref={ref}>
-      {typeof startIcon !== 'undefined' && startIcon !== null && (
-        <StartIconWrapper>{startIcon}</StartIconWrapper>
-      )}
+    <StyledButtonBase disabled={disabled} {...restProps} ref={ref}>
       {children}
-      {typeof endIcon !== 'undefined' && endIcon !== null && (
-        <EndIconWrapper>{endIcon}</EndIconWrapper>
-      )}
-    </Button>
+    </StyledButtonBase>
   );
 };
 
