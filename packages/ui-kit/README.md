@@ -1,11 +1,24 @@
 
+## Установка.
+
+для работы требуются следующие модули:
+
+ - react
+ - react-dom
+ - @emotion/styled - CSS In JS
+ - @emotion/react - CSS In JS React
+ - react-modal - Мобальные окна и дроверы
+ - react-popper - Выпадающие меню
+ - react-window - Виртуализированный список
 
 ```bash
 $ npm install @emotion/react @emotion/styled react react-dom react-modal react-popper react-window
 
 ```
 
-_@types/emotion.d.ts_
+## Темы
+
+Для переопределения темы оформления создайте, например в директории `@types`, файл `emotion.d.ts` со следующим содержимым:
 
 ```ts
 import { UITheme } from '@via-profit/ui-kit';
@@ -14,4 +27,19 @@ declare module '@emotion/react' {
   export interface Theme extends UITheme {}
 }
 
+```
+
+Tckb Для переопределения темы оформления создайте, например в директории `@types`, файл `emotion.d.ts` со следующим содержимым:
+
+_@types/emotion.d.ts_
+
+```ts
+declare module '@via-profit/ui-kit' {
+  import { UIThemeOverrideColor as Colors } from '@via-profit/ui-kit';
+
+  export interface UIThemeOverrideColor extends Colors {
+    readonly drawer: string;
+    readonly drawerContrast: string;
+  }
+}
 ```

@@ -30,12 +30,6 @@ const buildPackage = () =>
     });
   });
 
-// const copyTypings = async () => {
-//   const packagePath = path.resolve(__dirname, '..');
-//   const typesPath = path.resolve(packagePath, './@types');
-//   const buildPath = path.resolve(packagePath, './dist');
-// }
-
 const build = async () => {
   const packagePath = path.resolve(__dirname, '..');
   const buildPath = path.resolve(packagePath, './dist');
@@ -48,30 +42,11 @@ const build = async () => {
   });
 
   fs.copySync(typesPath, buildPath, {
-    overwrite: false,
+    overwrite: true,
     filter: src => {
       return path.basename(src) !== 'emotion.d.ts';
     },
   });
-
-  // const f = [];
-  // console.log(typesPath);
-  // const typesFiles = fs.readdirSync(typesPath);
-  // typesFiles.forEach(filename => {
-  //   const sourceDirOrFile = path.resolve(typesPath, filename);
-  //   if (fs.lstatSync(sourceDirOrFile).isDirectory()) {
-  //     // read dir
-  //     console.log(`read directory ${sourceDirOrFile}`);
-  //     const fList = fs.readdirSync(sourceDirOrFile);
-  //     fList.forEach(f => {
-  //       console.log(path.join(typesPath, filename, f));
-  //     })
-
-  //   } else {
-  //     // is file
-  //   }
-  // });
-  // console.log(typesFiles);
 };
 
 build();
