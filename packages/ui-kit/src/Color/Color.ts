@@ -1,4 +1,4 @@
-import type { ColorInterface, ParsedColor } from '@via-profit/ui-kit/color';
+import type { ColorInterface, ParsedColor } from '@via-profit/ui-kit/Color';
 
 class Color implements ColorInterface {
   #color: ParsedColor;

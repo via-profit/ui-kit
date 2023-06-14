@@ -16,20 +16,20 @@ const StyledButtonBase = styled(ButtonBase)`
       : theme.colors.textPrimary.toString()};
   background-color: ${({ theme, disabled }) =>
     disabled
-      ? theme.colors.backgroundGrey.darken(10).toString()
+      ? theme.colors.surface.darken(10).toString()
       : theme.isDark
-      ? theme.colors.backgroundPrimary.lighten(20).toString()
-      : theme.colors.backgroundPrimary.toString()};
+      ? theme.colors.surface.toString()
+      : theme.colors.surface.toString()};
 
   ${({ disabled, theme }) =>
     !disabled &&
     css`
-      box-shadow: 0 2px 12px ${theme.colors.backgroundPrimary.darken(40).alpha(0.6).toString()};
+      box-shadow: 0 2px 12px ${theme.colors.surface.darken(40).alpha(0.6).toString()};
       &:hover {
-        background-color: ${theme.colors.backgroundPrimary.darken(20).toString()};
+        background-color: ${theme.colors.surface.darken(20).toString()};
       }
       &:active {
-        background-color: ${theme.colors.backgroundPrimary.darken(40).toString()};
+        background-color: ${theme.colors.surface.darken(40).toString()};
       }
       &:focus-visible {
         outline: 2px solid ${theme.colors.accentPrimary.toString()};

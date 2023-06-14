@@ -1,4 +1,4 @@
-import { UIThemeOverrides } from '@via-profit/ui-kit/src/ThemeProvider/createTheme';
+import { UIThemeOverrides } from '@via-profit/ui-kit/src/ThemeProvider';
 
 import light from './light';
 
@@ -11,7 +11,6 @@ const dark: UIThemeOverrides = {
     backgroundSecondary: '#28293c',
     accentPrimary: '#b97a00',
     accentPrimaryContrast: '#231700',
-    backgroundGrey: '#2c2d3a',
     textPrimary: '#c4c4d8',
     textSecondary: '#9e9e9e',
   },

@@ -11,9 +11,7 @@ const Button = styled(ButtonBase)`
       ? theme.colors.textPrimary.alpha(0.4).toString()
       : theme.colors.accentPrimaryContrast.toString()};
   background-color: ${({ theme, disabled }) =>
-    disabled
-      ? theme.colors.backgroundGrey.darken(30).toString()
-      : theme.colors.accentPrimary.toString()};
+    disabled ? theme.colors.surface.darken(30).toString() : theme.colors.accentPrimary.toString()};
 
   ${({ disabled, theme }) =>
     !disabled &&

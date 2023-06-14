@@ -1,6 +1,6 @@
-import Color from '../color';
-import type { ColorInterface } from '@via-profit/ui-kit/color';
+import Color from '../Color';
 import type { UIThemeOverrides } from '@via-profit/ui-kit';
+import type { ColorInterface } from '@via-profit/ui-kit/Color';
 import type { CreateTheme } from '@via-profit/ui-kit/ThemeProvider';
 
 const createTheme: CreateTheme = overrides => {
@@ -34,8 +34,8 @@ const createTheme: CreateTheme = overrides => {
   const defaultColors: Required<UIThemeOverrides['colors']> = {
     backgroundPrimary: '#FFFFFF',
     backgroundSecondary: '#F9F9F9',
-    backgroundGrey: '#F4F6FA',
     textPrimary: '#212121',
+    surface: '#FFFFFF',
     textSecondary: '#343434',
     accentPrimary: '#FFA800',
     accentPrimaryContrast: '#FFFFFF',

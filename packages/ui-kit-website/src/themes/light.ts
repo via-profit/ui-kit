@@ -16,7 +16,6 @@ const light: UIThemeOverrides = {
   colors: {
     backgroundPrimary: '#fff',
     backgroundSecondary: '#F9F9F9',
-    backgroundGrey: '#F4F6FA',
     textPrimary: '#212121',
     textSecondary: '#343434',
     accentPrimary: '#FFA800',
@@ -24,6 +23,9 @@ const light: UIThemeOverrides = {
     accentSecondary: '#bd00ff',
     accentSecondaryContrast: '#FFFFFF',
     error: '#ff2b2b',
+    surface: '#fff',
+    drawer: '#fff',
+    drawerContrast: '#000',
   },
   shape: {
     radiusFactor: 0.5,

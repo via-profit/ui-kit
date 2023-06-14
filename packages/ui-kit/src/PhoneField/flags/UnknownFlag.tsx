@@ -19,7 +19,7 @@ const UnknownFlag: React.ForwardRefRenderFunction<SVGSVGElement, React.SVGProps<
       <path
         transform="translate(78.682 31.951)"
         d="m-78.682-31.951h512v512h-512z"
-        fill={colors.backgroundPrimary.toString()}
+        fill={colors.surface.toString()}
         strokeLinejoin="round"
         strokeWidth="2.176"
       />

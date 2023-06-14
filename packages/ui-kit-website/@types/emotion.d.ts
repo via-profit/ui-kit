@@ -1,6 +1,24 @@
-import '@emotion/react';
-import { UITheme } from '@via-profit/ui-kit/src/ThemeProvider/createTheme';
-
 declare module '@emotion/react' {
-  export interface Theme extends UITheme {}
+  import { ColorInterface } from '@via-profit/ui-kit/color';
+
+  export interface UIThemeOverrideColor {
+    readonly backgroundPrimary: string;
+    readonly backgroundSecondary: string;
+    readonly surface: string;
+    readonly textPrimary: string;
+    readonly textSecondary: string;
+    readonly accentPrimary: string;
+    readonly accentPrimaryContrast: string;
+    readonly accentSecondary: string;
+    readonly accentSecondaryContrast: string;
+    readonly error: string;
+  }
+
+  export interface Theme {
+    readonly isDark: boolean;
+    readonly colors: Record<keyof UIThemeOverrideColor, ColorInterface>;
+    // readonly fontSize: Record<keyof UIThemeOverrideFontSize, number>;
+    // readonly zIndex: UIThemeOverrideZIndex;
+    // readonly shape: UIThemeOverrideShape;
+  }
 }

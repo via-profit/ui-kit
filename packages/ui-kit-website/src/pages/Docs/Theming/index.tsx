@@ -2,7 +2,7 @@ import React from 'react';
 import styled from '@emotion/styled';
 
 import createTheme from '@via-profit/ui-kit/src/ThemeProvider/createTheme';
-import Color from '@via-profit/ui-kit/src/color/Color';
+import Color from '@via-profit/ui-kit/src/Color';
 import ThemeProvider from '@via-profit/ui-kit/src/ThemeProvider';
 import Button from '@via-profit/ui-kit/src/Button';
 import H2 from '@via-profit/ui-kit/src/Typography/H2';

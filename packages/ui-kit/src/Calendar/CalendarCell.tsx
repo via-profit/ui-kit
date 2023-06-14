@@ -24,9 +24,7 @@ const Btn = styled.button<{
   cursor: ${({ $isDisabled }) => ($isDisabled ? 'default' : 'pointer')};
   border: 1px solid transparent;
   background-color: ${({ theme, $isSelected }) =>
-    $isSelected
-      ? theme.colors.accentPrimary.toString()
-      : theme.colors.backgroundPrimary.toString()};
+    $isSelected ? theme.colors.accentPrimary.toString() : theme.colors.surface.toString()};
   border-radius: ${({ theme }) => theme.shape.radiusFactor * 3}em;
   color: ${({ $isToday, theme, $isSelected, $isDisabled }) => {
     if ($isDisabled) {
@@ -44,8 +42,8 @@ const Btn = styled.button<{
   &:hover {
     background-color: ${({ theme, $isSelected }) =>
       $isSelected
-        ? theme.colors.accentPrimary.darken(0.1).toString()
-        : theme.colors.backgroundPrimary.darken(0.1).toString()};
+        ? theme.colors.accentPrimary.darken(10).toString()
+        : theme.colors.surface.darken(10).toString()};
   }
   &:focus-visible {
     border-color: ${({ theme, $isDisabled }) =>

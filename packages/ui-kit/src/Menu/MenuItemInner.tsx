@@ -20,7 +20,7 @@ const InnerContainer = styled.div<{ selected?: boolean; hovered?: boolean }>`
       return theme.colors.accentPrimary.toString();
     }
     if (hovered) {
-      return theme.colors.backgroundGrey.darken(0.04).toString();
+      return theme.colors.surface.darken(40).toString();
     }
 
     return 'inherit';

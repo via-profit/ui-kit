@@ -1,4 +1,4 @@
-declare module '@via-profit/ui-kit/color' {
+declare module '@via-profit/ui-kit/Color' {
   export type ParsedColor = {
     r: number;
     g: number;

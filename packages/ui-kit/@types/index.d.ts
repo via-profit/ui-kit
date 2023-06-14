@@ -1,5 +1,5 @@
 declare module '@via-profit/ui-kit' {
-  import type { ColorInterface } from '@via-profit/ui-kit/color';
+  import { ColorInterface } from '@via-profit/ui-kit/color';
 
   export interface UITheme {
     readonly isDark: boolean;
@@ -12,7 +12,7 @@ declare module '@via-profit/ui-kit' {
   export interface UIThemeOverrideColor {
     readonly backgroundPrimary: string;
     readonly backgroundSecondary: string;
-    readonly backgroundGrey: string;
+    readonly surface: string;
     readonly textPrimary: string;
     readonly textSecondary: string;
     readonly accentPrimary: string;

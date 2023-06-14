@@ -18,10 +18,9 @@ const StyledMenuWrapper = styled.div<{ $isOpen: boolean }>`
   transition: visibility 120ms ease-out, opacity 120ms ease-out;
   opacity: ${props => (props.$isOpen ? 1 : 0)};
   visibility: ${props => (props.$isOpen ? 'visible' : 'hidden')};
-  background-color: ${({ theme }) => theme.colors.backgroundPrimary.toString()};
+  background-color: ${({ theme }) => theme.colors.surface.toString()};
   border-radius: ${({ theme }) => theme.shape.radiusFactor * 2}em;
-  box-shadow: 0 4px 24px
-    ${({ theme }) => theme.colors.backgroundPrimary.darken(0.5).alpha(0.6).toString()};
+  box-shadow: 0 4px 24px ${({ theme }) => theme.colors.surface.darken(50).alpha(0.6).toString()};
   &:focus {
     outline: none;
   }
@@ -37,15 +36,15 @@ const StyledMenuWrapper = styled.div<{ $isOpen: boolean }>`
   & ::-webkit-scrollbar-track {
     background: ${({ theme }) =>
       theme.isDark
-        ? theme.colors.backgroundPrimary.darken(0.1).toString()
-        : theme.colors.backgroundPrimary.darken(0.05).toString()};
+        ? theme.colors.backgroundPrimary.darken(10).toString()
+        : theme.colors.backgroundPrimary.darken(5).toString()};
   }
 
   & ::-webkit-scrollbar-thumb {
     background: ${({ theme }) =>
       theme.isDark
-        ? theme.colors.backgroundSecondary.lighten(0.3).toString()
-        : theme.colors.backgroundSecondary.darken(0.3).toString()};
+        ? theme.colors.backgroundSecondary.lighten(30).toString()
+        : theme.colors.backgroundSecondary.darken(30).toString()};
     border-radius: 0.3rem;
   }
 

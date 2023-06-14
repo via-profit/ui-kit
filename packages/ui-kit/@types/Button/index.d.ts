@@ -7,4 +7,8 @@ declare module '@via-profit/ui-kit/Button' {
   }
 
   export type ButtonProps = (ButtonStandardProps | ButtonAccentProps) & BaseProps;
+
+  const Button: React.FC<ButtonProps>;
+
+  export default Button;
 }

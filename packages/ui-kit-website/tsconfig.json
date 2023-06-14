@@ -92,7 +92,7 @@
     "skipLibCheck": true /* Skip type checking all .d.ts files. */,
     "paths": {
       "~/*": ["./*"],
-      "@via-profit/ui-kit/*": ["../../ui-kit/src/*"]
+
     }
   },
   "exclude": ["node_modules", "./node_modules", "./node_modules/*", "dist/**/*", "build/**/*"]

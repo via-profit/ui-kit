@@ -26,15 +26,15 @@ const Wrapper = styled.div<{
       : theme.colors.textPrimary.lighten(150).toString()};
   width: ${({ $fullWidth }) => ($fullWidth ? '100%' : 'auto')};
   font-size: 0.9em;
-  background-color: ${({ theme }) => theme.colors.backgroundPrimary.darken(0.02).toString()};
+  background-color: ${({ theme }) => theme.colors.surface.darken(20).toString()};
   color: ${({ theme }) => theme.colors.textPrimary.toString()};
   transition: all 180ms ease-out 0s;
 
   ${props =>
     props.$focused &&
     css`
-      border-color: ${props.theme.colors.accentPrimary.lighten(0.5).toString()};
-      outline-color: ${props.theme.colors.accentPrimary.lighten(0.5).toString()};
+      border-color: ${props.theme.colors.accentPrimary.lighten(10).toString()};
+      outline-color: ${props.theme.colors.accentPrimary.lighten(10).toString()};
     `};
   ${props =>
     props.$error &&

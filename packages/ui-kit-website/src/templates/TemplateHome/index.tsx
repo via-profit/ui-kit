@@ -10,6 +10,7 @@ const Wrapper = styled.div`
   flex: 1;
   display: flex;
   flex-flow: row nowrap;
+  color: ${({ theme }) => theme.colors.primary.toString()};
 `;
 
 const Content = styled.div`
