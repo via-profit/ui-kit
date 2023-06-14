@@ -1,5 +1,5 @@
 declare module '@via-profit/ui-kit' {
-  import { ColorInterface } from '@via-profit/ui-kit/color';
+  import { ColorInterface } from '@via-profit/ui-kit/Color';
 
   export interface UITheme {
     readonly isDark: boolean;
