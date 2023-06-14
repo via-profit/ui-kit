@@ -17,8 +17,5 @@ declare module '@emotion/react' {
   export interface Theme {
     readonly isDark: boolean;
     readonly colors: Record<keyof UIThemeOverrideColor, ColorInterface>;
-    // readonly fontSize: Record<keyof UIThemeOverrideFontSize, number>;
-    // readonly zIndex: UIThemeOverrideZIndex;
-    // readonly shape: UIThemeOverrideShape;
   }
 }

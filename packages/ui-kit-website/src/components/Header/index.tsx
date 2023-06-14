@@ -9,8 +9,8 @@ const Container = styled.header`
   position: sticky;
   top: 0;
   background-color: ${({ theme }) => theme.colors.backgroundPrimary.toString()};
-  box-shadow: ${({ theme }) => theme.colors.backgroundPrimary.darken(30).alpha(0.5).toString()}
-    0px 6px 10px;
+  box-shadow: ${({ theme }) => theme.colors.backgroundPrimary.darken(30).alpha(0.5).toString()} 0px
+    6px 10px;
   padding: 0 2em;
   height: 4.8rem;
   display: flex;

@@ -20,11 +20,14 @@ $ npm install @emotion/react @emotion/styled react react-dom react-modal react-p
 Для переопределения темы оформления в пакете `@emotion/styled` создайте, например в директории `@types`, файл `emotion.d.ts` со следующим содержимым:
 
 ```ts
+import '@emotion/react';
+
 declare module '@emotion/react' {
   import { UITheme } from '@via-profit/ui-kit';
 
   export interface Theme extends UITheme {}
 }
+
 ```
 
 Для переопределения темы оформления в пакете `@via-profit/ui-kit` создайте, например в директории `@types`, файл `ui-kit.d.ts` со следующим содержимым:
