@@ -1,6 +1,6 @@
 import React from 'react';
-import UIThemeProvider from '@via-profit/ui-kit/src/ThemeProvider';
-import createTheme, { UIThemeOverrides } from '@via-profit/ui-kit/src/ThemeProvider/createTheme';
+import UIThemeProvider, { UIThemeOverrides } from '@via-profit/ui-kit/src/ThemeProvider';
+import createTheme from '@via-profit/ui-kit/src/ThemeProvider/createTheme';
 import { useSelector } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 

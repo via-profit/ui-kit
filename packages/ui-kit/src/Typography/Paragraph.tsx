@@ -1,10 +1,30 @@
 import styled from '@emotion/styled';
+import React from 'react';
 
-const Paragraph = styled.p`
+import type { ParagraphProps } from '@via-profit/ui-kit/Typography/Paragraph';
+
+type StyledProps = {
+  readonly $noMargin?: boolean;
+};
+
+const StyledParagraph = styled.p<StyledProps>`
   font-size: 1rem;
   font-weight: 300;
-  margin: 0 0 0.8em 0;
+  margin: ${({ $noMargin }) => ($noMargin ? 0 : '0 0 0.8em 0')};
   color: ${({ theme }) => theme.colors.textPrimary.toString()};
 `;
 
-export default Paragraph;
+const Paragraph: React.ForwardRefRenderFunction<HTMLParagraphElement, ParagraphProps> = (
+  props,
+  ref,
+) => {
+  const { noMargin, children, ...restProps } = props;
+
+  return (
+    <StyledParagraph {...restProps} ref={ref}>
+      {children}
+    </StyledParagraph>
+  );
+};
+
+export default React.forwardRef(Paragraph);

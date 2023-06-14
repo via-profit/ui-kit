@@ -9,7 +9,7 @@ const Container = styled.div`
   display: flex;
   flex-wrap: wrap;
   & > button {
-    margin: 01em;
+    margin: 0 1em 1em 0;
   }
   & > button:first-of-type {
     margin-left: 0;
@@ -31,6 +31,13 @@ const ExampleOverview: React.FC = () => (
       Accent disabled
     </Button>
     <Button startIcon={<IconBell />}>With Start Icon</Button>
+    <Button variant="outlined" startIcon={<IconBell />}>
+      Outlined with Icon
+    </Button>
+    <Button variant="outlined">Outlined</Button>
+    <Button variant="outlined" disabled>
+      Outlined disabled
+    </Button>
   </Container>
 );
 

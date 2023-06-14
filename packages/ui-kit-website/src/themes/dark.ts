@@ -8,11 +8,12 @@ const dark: UIThemeOverrides = {
   colors: {
     ...light.colors,
     backgroundPrimary: '#1e1e2e',
-    backgroundSecondary: '#28293c',
-    accentPrimary: '#b97a00',
-    accentPrimaryContrast: '#231700',
+    backgroundSecondary: '#262739',
+    accentPrimary: '#e77b00',
+    accentPrimaryContrast: '#f1f1f1',
     textPrimary: '#c4c4d8',
-    textSecondary: '#9e9e9e',
+    textSecondary: '#717275',
+    surface: '#262739',
   },
 };
 

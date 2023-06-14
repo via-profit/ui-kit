@@ -35,12 +35,13 @@ declare module '@emotion/react' {
 _@types/emotion.d.ts_
 
 ```ts
-declare module '@via-profit/ui-kit' {
   import {
     UIThemeOverrideColor as Colors,
     UIThemeOverrideZIndex as ZIndexes,
   } from '@via-profit/ui-kit';
 
+
+declare module '@via-profit/ui-kit' {
   export interface UIThemeOverrideColor extends Colors {
     readonly drawer: string;
     readonly drawerContrast: string;

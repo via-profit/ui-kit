@@ -13,8 +13,10 @@ const Button = styled.button`
   font-size: 0.8rem;
   cursor: ${({ disabled }) => (disabled ? 'default' : 'pointer')};
   font-size: 1em;
-  border: 0;
-  outline: transparent;
+  border-width: 0;
+  outline-style: solid;
+  outline-color: transparent;
+  outline-width: 0.14em;
   transition: all 180ms ease-out 0s;
   background: none;
   color: currentColor;

@@ -9,7 +9,7 @@ import type { ButtonStandardProps } from '@via-profit/ui-kit/Button/ButtonStanda
  * Standard
  */
 
-const StyledButtonBase = styled(ButtonBase)`
+const StyledStandardButton = styled(ButtonBase)`
   color: ${({ theme, disabled }) =>
     disabled
       ? theme.colors.textPrimary.alpha(0.4).toString()
@@ -24,15 +24,16 @@ const StyledButtonBase = styled(ButtonBase)`
   ${({ disabled, theme }) =>
     !disabled &&
     css`
-      box-shadow: 0 2px 12px ${theme.colors.surface.darken(40).alpha(0.6).toString()};
+      box-shadow: 0 0.3em 0.3em -0.1em ${theme.colors.surface.darken(70).alpha(0.5).toString()},
+        0 0 0.1em ${theme.colors.surface.darken(70).alpha(0.5).toString()};
       &:hover {
-        background-color: ${theme.colors.surface.darken(20).toString()};
+        background-color: ${theme.colors.surface.darken(10).toString()};
       }
       &:active {
         background-color: ${theme.colors.surface.darken(40).toString()};
       }
       &:focus-visible {
-        outline: 2px solid ${theme.colors.accentPrimary.toString()};
+        outline-color: ${theme.colors.accentPrimary.toString()};
       }
     `}
 `;
@@ -44,9 +45,9 @@ const ButtonStandard: React.ForwardRefRenderFunction<HTMLButtonElement, ButtonSt
   const { children, disabled, ...restProps } = props;
 
   return (
-    <StyledButtonBase disabled={disabled} {...restProps} ref={ref}>
+    <StyledStandardButton disabled={disabled} {...restProps} ref={ref}>
       {children}
-    </StyledButtonBase>
+    </StyledStandardButton>
   );
 };
 
