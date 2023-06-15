@@ -73,8 +73,22 @@ const ButtonStandard: React.ForwardRefRenderFunction<HTMLButtonElement, ButtonSt
           $color: theme.colors.accentSecondaryContrast,
           $background: theme.colors.accentSecondary,
         };
+      case typeof color === 'undefined':
+      case color === 'default':
+        return {
+          $background: theme.colors.surface,
+          $color: theme.colors.textPrimary,
+        };
+
       case typeof color === 'string': {
-        const $background = new Color(color || theme.colors.surface.rgbString());
+        let $background = theme.colors.surface;
+        try {
+          if (color) {
+            $background = new Color(color);
+          }
+        } catch (err) {
+          console.error(`invalid color value «${color}»`);
+        }
 
         return {
           $background,
@@ -84,7 +98,7 @@ const ButtonStandard: React.ForwardRefRenderFunction<HTMLButtonElement, ButtonSt
               : theme.colors.surface,
         };
       }
-      case typeof color === 'undefined':
+
       default:
         return {
           $background: theme.colors.surface,

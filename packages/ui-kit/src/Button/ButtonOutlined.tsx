@@ -60,9 +60,22 @@ const ButtonOutlined: React.ForwardRefRenderFunction<HTMLButtonElement, ButtonOu
         return theme.colors.accentPrimary;
       case color === 'secondary':
         return theme.colors.accentSecondary;
-      case typeof color === 'string':
-        return new Color(color || theme.colors.textPrimary.rgbString());
       case typeof color === 'undefined':
+      case color === 'default':
+        return theme.colors.textPrimary;
+      case typeof color === 'string': {
+        let c = theme.colors.textPrimary;
+
+        try {
+          if (color) {
+            c = new Color(color);
+          }
+        } catch (err) {
+          console.error(`invalid color value «${color}»`);
+        }
+
+        return c;
+      }
       default:
         return theme.colors.textPrimary;
     }
