@@ -1,39 +1,56 @@
 import React from 'react';
 import styled from '@emotion/styled';
-import { css } from '@emotion/react';
-
-import ButtonBase from './ButtonBase';
+import { useTheme, css } from '@emotion/react';
 import type { ButtonStandardProps } from '@via-profit/ui-kit/Button/ButtonStandard';
+import type { ColorInterface } from '@via-profit/ui-kit/Color';
 
-/**
- * Standard
- */
+import Color from '../Color';
+import ButtonBase from './ButtonBase';
 
-const StyledStandardButton = styled(ButtonBase)`
-  color: ${({ theme, disabled }) =>
-    disabled
-      ? theme.colors.textPrimary.alpha(0.4).toString()
-      : theme.colors.textPrimary.toString()};
-  background-color: ${({ theme, disabled }) =>
-    disabled
-      ? theme.colors.surface.darken(10).toString()
-      : theme.isDark
-      ? theme.colors.surface.toString()
-      : theme.colors.surface.toString()};
+type StyledProps = {
+  readonly $background: ColorInterface;
+  readonly $color: ColorInterface;
+};
 
-  ${({ disabled, theme }) =>
+const StyledStandardButton = styled(ButtonBase)<StyledProps>`
+  color: ${({ $color, disabled }) => {
+    switch (true) {
+      case disabled:
+        return $color.alpha(0.4).toString();
+      default:
+        return $color.toString();
+    }
+  }};
+  background-color: ${({ $background, disabled }) => {
+    switch (true) {
+      case disabled:
+        return $background.darken(10).toString();
+      default:
+        return $background.toString();
+    }
+  }};
+  box-shadow: 0 0.125em 0.75em
+    ${({ $background }) => {
+      switch (true) {
+        case $background.luminance() > 0.49:
+          return $background.darken(40).alpha(0.8).toString();
+        default:
+          return $background.darken(20).alpha(0.5).toString();
+      }
+    }};
+  ${({ disabled, $background, theme }) =>
     !disabled &&
     css`
-      box-shadow: 0 0.3em 0.3em -0.1em ${theme.colors.surface.darken(70).alpha(0.5).toString()},
-        0 0 0.1em ${theme.colors.surface.darken(70).alpha(0.5).toString()};
       &:hover {
-        background-color: ${theme.colors.surface.darken(10).toString()};
+        background-color: ${$background.darken(30).toString()};
       }
       &:active {
-        background-color: ${theme.colors.surface.darken(40).toString()};
+        background-color: ${$background.darken(80).toString()};
       }
       &:focus-visible {
-        outline-color: ${theme.colors.accentPrimary.toString()};
+        outline-color: ${$background.rgbString() === theme.colors.accentPrimary.rgbString()
+          ? theme.colors.textPrimary.toString()
+          : theme.colors.accentPrimary.toString()};
       }
     `}
 `;
@@ -42,10 +59,48 @@ const ButtonStandard: React.ForwardRefRenderFunction<HTMLButtonElement, ButtonSt
   props,
   ref,
 ) => {
-  const { children, disabled, ...restProps } = props;
+  const { children, disabled, color, ...restProps } = props;
+  const theme = useTheme();
+  const { $background, $color } = React.useMemo(() => {
+    switch (true) {
+      case color === 'primary':
+        return {
+          $color: theme.colors.accentPrimaryContrast,
+          $background: theme.colors.accentPrimary,
+        };
+      case color === 'secondary':
+        return {
+          $color: theme.colors.accentSecondaryContrast,
+          $background: theme.colors.accentSecondary,
+        };
+      case typeof color === 'string': {
+        const $background = new Color(color || theme.colors.surface.rgbString());
+
+        return {
+          $background,
+          $color:
+            $background.contrast(theme.colors.textPrimary.rgbString()) > 5
+              ? theme.colors.textPrimary
+              : theme.colors.surface,
+        };
+      }
+      case typeof color === 'undefined':
+      default:
+        return {
+          $background: theme.colors.surface,
+          $color: theme.colors.textPrimary,
+        };
+    }
+  }, [color, theme.colors]);
 
   return (
-    <StyledStandardButton disabled={disabled} {...restProps} ref={ref}>
+    <StyledStandardButton
+      $color={$color}
+      $background={$background}
+      disabled={disabled}
+      {...restProps}
+      ref={ref}
+    >
       {children}
     </StyledStandardButton>
   );

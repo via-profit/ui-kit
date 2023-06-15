@@ -1,5 +1,7 @@
 declare module '@via-profit/ui-kit/Button/ButtonBase' {
-  export interface ButtonBaseProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  type ButtonNativeProps = React.ButtonHTMLAttributes<HTMLButtonElement>;
+
+  export interface ButtonBaseProps extends Omit<ButtonNativeProps, 'color'> {
     /**
      * Icon or another JSX element placed before button label\
      * Example:
@@ -21,6 +23,11 @@ declare module '@via-profit/ui-kit/Button/ButtonBase' {
      * ```
      */
     readonly endIcon?: JSX.Element;
+
+    /**
+     * You can pass the primary, default, secondary name of the colors or your specified color value
+     */
+    readonly color?: 'default' | 'primary' | 'secondary' | string;
   }
 
   const ButtonBase: React.FC<ButtonBaseProps>;

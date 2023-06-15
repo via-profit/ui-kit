@@ -6,11 +6,11 @@ declare module '@via-profit/ui-kit/Button' {
   export interface BaseProps {
     /**
      * Button style variant\
-     * Allowed variants: `standard`, `accent` or `outlined`\
+     * Allowed variants: `standard` or `outlined`\
      * \
      * **Default**: `standard`
      */
-    readonly variant?: 'standard' | 'accent' | 'outlined';
+    readonly variant?: 'standard' | 'outlined';
   }
 
   export type ButtonProps = (ButtonStandardProps | ButtonAccentProps | ButtonOutlinedProps) &

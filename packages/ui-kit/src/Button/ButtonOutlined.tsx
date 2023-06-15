@@ -1,49 +1,75 @@
 import React from 'react';
 import styled from '@emotion/styled';
-import { css } from '@emotion/react';
-
-import ButtonBase from './ButtonBase';
+import { useTheme, css } from '@emotion/react';
 import type { ButtonOutlinedProps } from '@via-profit/ui-kit/Button/ButtonOutlined';
+import type { ColorInterface } from '@via-profit/ui-kit/Color';
 
-/**
- * Outlined
- */
+import Color from '../Color';
+import ButtonBase from './ButtonBase';
 
-const StyledOutlinedButton = styled(ButtonBase)`
-  color: ${({ theme, disabled }) =>
-    disabled
-      ? theme.colors.textPrimary.alpha(0.4).toString()
-      : theme.colors.textPrimary.toString()};
-  border-color: ${({ theme, disabled }) =>
-    disabled
-      ? theme.colors.surface.darken(80).alpha(0.4).toString()
-      : theme.colors.accentPrimary.toString()};
-  background-color: none;
+type StyledProps = {
+  readonly $color: ColorInterface;
+};
+
+const StyledOutlinedButton = styled(ButtonBase)<StyledProps>`
+  color: ${({ theme, disabled, $color }) => {
+    switch (true) {
+      case disabled:
+        return theme.colors.textPrimary.alpha(0.4).toString();
+      default:
+        return $color.darken(30).toString();
+    }
+  }};
+  border-color: ${({ theme, disabled, $color }) => {
+    switch (true) {
+      case disabled:
+        return theme.colors.surface.darken(80).alpha(0.4).toString();
+      default:
+        return $color.toString();
+    }
+  }};
+  background-color: transparent;
   border-style: solid;
   border-width: 0.14em;
-  ${({ disabled, theme }) =>
+  ${({ disabled, $color, theme }) =>
     !disabled &&
     css`
       &:hover {
-        background-color: ${theme.colors.accentPrimary.lighten(20).alpha(0.1).toString()};
+        background-color: ${$color.darken(20).alpha(0.1).toString()};
       }
       &:active {
-        background-color: ${theme.colors.accentPrimary.lighten(20).alpha(0.5).toString()};
+        background-color: ${$color.darken(50).alpha(0.3).toString()};
       }
       &:focus-visible {
-        outline-color: ${theme.colors.accentSecondary.toString()};
+        outline-color: ${$color.rgbString() === theme.colors.accentPrimary.rgbString()
+          ? theme.colors.textPrimary.toString()
+          : theme.colors.accentPrimary.toString()};
       }
-    `}
+    `};
 `;
 
 const ButtonOutlined: React.ForwardRefRenderFunction<HTMLButtonElement, ButtonOutlinedProps> = (
   props,
   ref,
 ) => {
-  const { children, disabled, ...restProps } = props;
+  const { children, disabled, color, ...restProps } = props;
+  const theme = useTheme();
+  const $color = React.useMemo(() => {
+    switch (true) {
+      case color === 'primary':
+        return theme.colors.accentPrimary;
+      case color === 'secondary':
+        return theme.colors.accentSecondary;
+      case typeof color === 'string':
+        return new Color(color || theme.colors.textPrimary.rgbString());
+      case typeof color === 'undefined':
+      default:
+        return theme.colors.textPrimary;
+    }
+  }, [color, theme.colors]);
 
   return (
-    <StyledOutlinedButton disabled={disabled} {...restProps} ref={ref}>
+    <StyledOutlinedButton disabled={disabled} $color={$color} {...restProps} ref={ref}>
       {children}
     </StyledOutlinedButton>
   );

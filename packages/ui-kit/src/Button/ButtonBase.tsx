@@ -1,13 +1,17 @@
 import React from 'react';
 import styled from '@emotion/styled';
 
-import StartIconWrapper from './components/StartIconWrapper';
-import EndIconWrapper from './components/EndIconWrapper';
-import TextWrapper from './components/TextWrapper';
+import ButtonStartIconWrapper from './ButtonStartIconWrapper';
+import ButtonEndIconWrapper from './ButtonEndIconWrapper';
+import ButtonTextWrapper from './ButtonTextWrapper';
 
 import type { ButtonBaseProps } from '@via-profit/ui-kit/Button/ButtonBase';
 
-const Button = styled.button`
+type StyledProps = {
+  readonly color?: ButtonBaseProps['color'];
+};
+
+const Button = styled.button<StyledProps>`
   border-radius: ${({ theme }) => theme.shape.radiusFactor * 2}em;
   padding: 0.8em 1em;
   font-size: 0.8rem;
@@ -19,26 +23,34 @@ const Button = styled.button`
   outline-width: 0.14em;
   transition: all 180ms ease-out 0s;
   background: none;
-  color: currentColor;
   display: inline-flex;
   align-items: center;
+  color: ${({ color, disabled, theme }) => {
+    switch (true) {
+      case disabled:
+        return theme.colors.textSecondary.alpha(0.8).toString();
+      case !disabled && typeof color === 'undefined':
+      default:
+        return theme.colors.textPrimary.toString();
+    }
+  }};
 `;
 
 const ButtonBase: React.ForwardRefRenderFunction<HTMLButtonElement, ButtonBaseProps> = (
   props,
   ref,
 ) => {
-  const { children, startIcon, endIcon, ...otherProps } = props;
+  const { children, startIcon, endIcon, color, ...otherProps } = props;
 
   return (
     <Button {...otherProps} ref={ref}>
       {typeof startIcon !== 'undefined' && startIcon !== null && (
-        <StartIconWrapper>{startIcon}</StartIconWrapper>
+        <ButtonStartIconWrapper>{startIcon}</ButtonStartIconWrapper>
       )}
 
-      <TextWrapper>{children}</TextWrapper>
+      <ButtonTextWrapper>{children}</ButtonTextWrapper>
       {typeof endIcon !== 'undefined' && endIcon !== null && (
-        <EndIconWrapper>{endIcon}</EndIconWrapper>
+        <ButtonEndIconWrapper>{endIcon}</ButtonEndIconWrapper>
       )}
     </Button>
   );

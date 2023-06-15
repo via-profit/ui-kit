@@ -1,11 +1,12 @@
 import React from 'react';
 import Button from '@via-profit/ui-kit/src/Button';
 import ButtonBase from '@via-profit/ui-kit/src/Button/ButtonBase';
+import Surface from '@via-profit/ui-kit/src/Surface';
 import styled from '@emotion/styled';
 
 import IconBell from '~/components/Icons/IconBell';
 
-const Container = styled.div`
+const ButtonsGroup = styled.div`
   display: flex;
   flex-wrap: wrap;
   & > button {
@@ -20,25 +21,49 @@ const Container = styled.div`
 `;
 
 const ExampleOverview: React.FC = () => (
-  <Container>
-    <ButtonBase startIcon={<IconBell />}>Base button with Start Icon</ButtonBase>
-    <Button variant="standard">Standard</Button>
-    <Button variant="standard" disabled>
-      Standard disabled
-    </Button>
-    <Button variant="accent">Accent</Button>
-    <Button variant="accent" disabled>
-      Accent disabled
-    </Button>
-    <Button startIcon={<IconBell />}>With Start Icon</Button>
-    <Button variant="outlined" startIcon={<IconBell />}>
-      Outlined with Icon
-    </Button>
-    <Button variant="outlined">Outlined</Button>
-    <Button variant="outlined" disabled>
-      Outlined disabled
-    </Button>
-  </Container>
+  <>
+    <Surface header="Base button">
+      <ButtonsGroup>
+        <ButtonBase startIcon={<IconBell />}>Base button with Start Icon</ButtonBase>
+      </ButtonsGroup>
+    </Surface>
+
+    <Surface header="Standard buttons" subheader="Lorem ipsum">
+      <ButtonsGroup>
+        <Button startIcon={<IconBell />}>Standard with Icon</Button>
+        <Button>Standard</Button>
+        <Button disabled>Standard disabled</Button>
+        <Button color="primary">Standard primary</Button>
+        <Button color="secondary">Standard primary</Button>
+        <Button color="lime">Standard lime</Button>
+        <Button color="blue">Standard blue</Button>
+      </ButtonsGroup>
+    </Surface>
+
+    <Surface header="Outlined buttons" subheader="Lorem ipsum">
+      <ButtonsGroup>
+        <Button variant="outlined" startIcon={<IconBell />}>
+          Outlined with Icon
+        </Button>
+        <Button variant="outlined">Outlined</Button>
+        <Button variant="outlined" disabled>
+          Outlined disabled
+        </Button>
+        <Button variant="outlined" color="primary">
+          Outlined primary
+        </Button>
+        <Button variant="outlined" color="secondary">
+          Outlined primary
+        </Button>
+        <Button variant="outlined" color="lime">
+          Outlined lime
+        </Button>
+        <Button variant="outlined" color="blue">
+          Outlined blue
+        </Button>
+      </ButtonsGroup>
+    </Surface>
+  </>
 );
 
 export default ExampleOverview;

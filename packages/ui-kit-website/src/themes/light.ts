@@ -14,7 +14,7 @@ const light: UIThemeOverrides = {
     modal: 10,
   },
   colors: {
-    backgroundPrimary: '#fff',
+    backgroundPrimary: '#f9f9f9',
     backgroundSecondary: '#F9F9F9',
     textPrimary: '#212121',
     textSecondary: '#343434',
