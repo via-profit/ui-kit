@@ -2,6 +2,7 @@ declare module '@via-profit/ui-kit/Button/ButtonBase' {
   type ButtonNativeProps = React.ButtonHTMLAttributes<HTMLButtonElement>;
 
   export interface ButtonBaseProps extends Omit<ButtonNativeProps, 'color'> {
+    readonly ref?: React.ForwardedRef<HTMLButtonElement>;
     /**
      * Icon or another JSX element placed before button label\
      * Example:
@@ -30,7 +31,7 @@ declare module '@via-profit/ui-kit/Button/ButtonBase' {
     readonly color?: 'default' | 'primary' | 'secondary' | string;
   }
 
-  const ButtonBase: React.FC<ButtonBaseProps>;
+  const ButtonBase: React.ForwardRefRenderFunction<HTMLButtonElement, ButtonBaseProps>;
 
   export default ButtonBase;
 }
