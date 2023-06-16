@@ -41,12 +41,12 @@ const build = async () => {
     fs.copyFileSync(path.resolve(packagePath, filename), path.resolve(buildPath, filename));
   });
 
-  fs.copySync(typesPath, buildPath, {
-    overwrite: true,
-    filter: src => {
-      return path.basename(src) !== 'emotion.d.ts';
-    },
-  });
+  // fs.copySync(typesPath, buildPath, {
+  //   overwrite: true,
+  //   filter: src => {
+  //     return path.basename(src) !== 'emotion.d.ts';
+  //   },
+  // });
 };
 
 build();

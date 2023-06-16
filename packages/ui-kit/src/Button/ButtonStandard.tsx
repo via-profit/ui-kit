@@ -1,15 +1,15 @@
 import React from 'react';
 import styled from '@emotion/styled';
 import { useTheme, css } from '@emotion/react';
-import type { ButtonStandardProps } from '@via-profit/ui-kit/Button/ButtonStandard';
-import type { ColorInterface } from '@via-profit/ui-kit/Color';
 
 import Color from '../Color';
-import ButtonBase from './ButtonBase';
+import ButtonBase, { ButtonBaseProps } from './ButtonBase';
+
+export type ButtonStandardProps = ButtonBaseProps;
 
 type StyledProps = {
-  readonly $background: ColorInterface;
-  readonly $color: ColorInterface;
+  readonly $background: Color;
+  readonly $color: Color;
 };
 
 const StyledStandardButton = styled(ButtonBase)<StyledProps>`

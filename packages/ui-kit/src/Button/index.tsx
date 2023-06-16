@@ -1,9 +1,17 @@
 import React from 'react';
 
-import type { ButtonProps } from '@via-profit/ui-kit/Button';
+import ButtonStandard, { ButtonStandardProps } from './ButtonStandard';
+import ButtonOutlined, { ButtonOutlinedProps } from './ButtonOutlined';
 
-import ButtonStandard from './ButtonStandard';
-import ButtonOutlined from './ButtonOutlined';
+export type ButtonProps = (ButtonStandardProps | ButtonOutlinedProps) & {
+  /**
+   * Button style variant\
+   * Allowed variants: `standard` or `outlined`\
+   * \
+   * **Default**: `standard`
+   */
+  readonly variant?: 'standard' | 'outlined';
+};
 
 const Button: React.ForwardRefRenderFunction<HTMLButtonElement, ButtonProps> = (props, ref) => {
   const { variant, ...buttonProps } = props;

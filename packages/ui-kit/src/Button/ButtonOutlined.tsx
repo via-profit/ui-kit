@@ -1,14 +1,14 @@
 import React from 'react';
 import styled from '@emotion/styled';
 import { useTheme, css } from '@emotion/react';
-import type { ButtonOutlinedProps } from '@via-profit/ui-kit/Button/ButtonOutlined';
-import type { ColorInterface } from '@via-profit/ui-kit/Color';
 
 import Color from '../Color';
-import ButtonBase from './ButtonBase';
+import ButtonBase, { ButtonBaseProps } from './ButtonBase';
+
+export type ButtonOutlinedProps = ButtonBaseProps;
 
 type StyledProps = {
-  readonly $color: ColorInterface;
+  readonly $color: Color;
 };
 
 const StyledOutlinedButton = styled(ButtonBase)<StyledProps>`

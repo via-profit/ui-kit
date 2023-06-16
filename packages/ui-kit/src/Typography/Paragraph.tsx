@@ -1,7 +1,12 @@
+import * as React from 'react';
 import styled from '@emotion/styled';
-import React from 'react';
 
-import type { ParagraphProps } from '@via-profit/ui-kit/Typography/Paragraph';
+export type ParagraphProps = React.HTMLAttributes<HTMLParagraphElement> & {
+  /**
+   * if `true` is passed, the margins will be removed
+   */
+  readonly noMargin?: boolean;
+};
 
 type StyledProps = {
   readonly $noMargin?: boolean;

@@ -9,9 +9,26 @@ import TextFieldErrorText from './TextFieldErrorText';
 import TextFieldIconWrapper from './TextFieldIconWrapper';
 
 export interface TextFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
+  /**
+   * If true then `errorText` value will be displayed under the TextField element
+   */
   readonly error?: boolean;
+
+  /**
+   * If is true then the asterisk will be displayed in label\
+   * If is ReactNode then ReactNode will be displayed in label
+   */
   readonly requiredAsterisk?: boolean | React.ReactNode;
+
+  /**
+   * Text or ReactNode to show in error element\
+   * Will be displaed only if `error` property is tru
+   */
   readonly errorText?: React.ReactNode;
+
+  /**
+   * If true then TextField will be filled in full width on horizontal
+   */
   readonly fullWidth?: boolean;
   readonly showEmptyIfNoError?: boolean;
   readonly inputRef?: React.Ref<HTMLInputElement>;

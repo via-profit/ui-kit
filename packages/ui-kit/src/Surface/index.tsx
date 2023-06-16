@@ -1,10 +1,23 @@
 import * as React from 'react';
-import type { SurfaceProps } from '@via-profit/ui-kit/Surface';
 
 import SurfaceContainer from './SurfaceContainer';
 import SurfaceHeader from './SurfaceHeader';
 import SurfaceSubheader from './SurfaceSubheader';
 import SurfaceContent from './SurfaceContent';
+
+export type SurfaceProps = React.HTMLAttributes<HTMLDivElement> & {
+  readonly children: React.ReactNode | React.ReactNode[];
+
+  /**
+   * Header content
+   */
+  readonly header?: React.ReactNode;
+
+  /**
+   * Subheader content
+   */
+  readonly subheader?: React.ReactNode;
+};
 
 const Surface: React.ForwardRefRenderFunction<HTMLDivElement, SurfaceProps> = (props, ref) => {
   const { children, header, subheader, ...restProps } = props;

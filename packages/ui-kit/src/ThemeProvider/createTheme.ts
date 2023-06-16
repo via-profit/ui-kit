@@ -1,13 +1,11 @@
 import Color from '../Color';
-import type { UIThemeOverrides } from '@via-profit/ui-kit';
-import type { ColorInterface } from '@via-profit/ui-kit/Color';
-import type { CreateTheme } from '@via-profit/ui-kit/ThemeProvider';
+import { CreateTheme, UIThemeOverrides } from './index';
 
-const createTheme: CreateTheme = overrides => {
+export const createTheme: CreateTheme = overrides => {
   const { isDark, fontSize, zIndex, colors, shape, ...rest } = overrides || {};
 
   const theme: Omit<ReturnType<CreateTheme>, 'colors'> & {
-    colors: Record<string, ColorInterface>;
+    colors: Record<string, Color>;
   } = {
     ...rest,
     isDark: typeof isDark === 'boolean' ? isDark : false,

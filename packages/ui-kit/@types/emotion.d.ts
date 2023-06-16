@@ -1,7 +1,6 @@
 import '@emotion/react';
+import { UITheme } from '../src/ThemeProvider';
 
 declare module '@emotion/react' {
-  import { UITheme } from '@via-profit/ui-kit';
-
   export interface Theme extends UITheme {}
 }
