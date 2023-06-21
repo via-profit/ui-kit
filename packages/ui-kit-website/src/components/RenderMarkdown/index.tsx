@@ -27,12 +27,16 @@ const Img = styled.img`
 
 const Anchor = styled.a``;
 
-const ExternalLink = styled.a``;
+const ExternalLink = styled.a`
+  font-weight: 400;
+  color: ${({ theme }) => theme.colors.accentPrimary.darken(30).toString()};
+`;
 
 const ExternalLinkIcon = styled(OpenInNewIcon)`
   color: currentColor;
-  font-size: 0.9em;
+  font-size: 1em;
   margin-left: 0.1em;
+  vertical-align: middle;
 `;
 
 const MarkdownEm = styled(Em)`

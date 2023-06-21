@@ -6,6 +6,8 @@
 
 ## Свойства
 
+Помимо перечисленных свойств, компонент принимает [стандартные аттрибуты](https://developer.mozilla.org/ru/docs/Web/HTML/Element/input#атрибуты) HTML элемента `<input>`
+
 - foo
 - bar
 - bar
@@ -19,6 +21,36 @@
 - `.text-field-input-wrapper`
 - `.text-field-label`
 - `.text-field-asterisk`
+
+CSS классы можно использовать для стиллизации компонента, например, при помощи [styled components](https://emotion.sh/docs/styled)
+
+```ts
+import React from 'react';
+import styled from '@emotion/styled';
+import TextField from '@via-profit/ui-kit/src/TextField';
+
+const StyledTextField = styled(TextField)`
+  & .text-field-input {
+    color: green;
+  }
+  & .text-field-label {
+    font-weight: 800;
+  }
+  & .text-field-input-wrapper {
+    background-color: transparent;
+  }
+`;
+
+const CSSClasses: React.FC = () => (
+  <StyledTextField label="Имя:" placeholder="Севастьян" defaultValue="Севастьян" />
+);
+
+export default CSSClasses;
+```
+
+Результат:
+
+<ExampleCSSClasses>
 
 ## Переопределение компонентов
 
@@ -34,52 +66,38 @@
 | `<Label>`           |    -     |
 | `<Asterisk>`        |    -     |
 
-
 Используйте свойство `components` чтобы переопределить компонетны:
 
 ```tsx
 import React from 'react';
-import styled from '@emotion/styled';
 import TextField from '@via-profit/ui-kit/src/TextField';
-import type { TextFieldInputWrapperProps } from '@via-profit/ui-kit/src/TextField/TextFieldInputWrapper';
 
-// Стиллизованный DIV, которым мы
-// хотим заместить стандартный
-const StyledInputWrapper = styled.div`
-  background-color: #c5d4fd;
-  color: #6305ce;
-  border-radius: 0.3em;
-`;
-
-// Ваш компонент-обертка
-const InputWrapper: React.ForwardRefRenderFunction<HTMLDivElement, TextFieldInputWrapperProps> = (
-  props,
-  ref,
-) => {
-  // Не забудьте извлечь перечисленные ниже компоненты прежде чем спредить `nativeProps` в свой DIV.
-  // Если вы будете спредить все пропсы безоговорочно, что получите ошибку типа:
-  // «If you want to write it to the DOM, pass a string instead: fullWidth="true" or fullWidth={value.toString()}»
-  const { focused, fullWidth, readOnly, children, error, ...nativeProps } = props;
-
-  return (
-    <StyledInputWrapper {...nativeProps} ref={ref}>
-      {children}
-    </StyledInputWrapper>
-  );
-};
-
-// Рендерим TextField
 const MyPage: React.FC = () => (
   <TextField
     label="Имя:"
+    placeholder="Алевтина"
+    defaultValue="Алевтина"
     components={{
       // Перезаписываем InputWrapper.
       // Обратите внимание, что здесь прокидывается ref, однако
-      // прокинуть ref можно и при объявлении компонента, главное не забыть  
-      InputWrapper: React.forwardRef(InputWrapper),
+      // прокинуть ref можно и при объявлении компонента, главное не забыть
+      InputWrapper: React.forwardRef(function InputWrapper(props, ref) {
+        const { children } = props;
+
+        return (
+          <div
+            style={{ backgroundColor: '#c5d4fd', color: '#6305ce', borderRadius: '0.3em' }}
+            ref={ref}
+          >
+            {children}
+          </div>
+        );
+      }),
     }}
   />
 );
+
+export default MyPage;
 ```
 
 Результат:

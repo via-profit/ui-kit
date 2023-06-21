@@ -28,7 +28,7 @@ const Wrapper = styled.div<{
       : theme.colors.textPrimary.lighten(150).toString()};
   width: ${({ $fullWidth }) => ($fullWidth ? '100%' : 'auto')};
   font-size: 0.9em;
-  background-color: ${({ theme }) => theme.colors.surface.darken(20).toString()};
+  background-color: ${({ theme }) => theme.colors.surface.toString()};
   color: ${({ theme }) => theme.colors.textPrimary.toString()};
   transition: all 180ms ease-out 0s;
 

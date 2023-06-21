@@ -9,9 +9,18 @@ export type TextFieldIconWrapperProps = React.InputHTMLAttributes<HTMLDivElement
    * Icon position
    */
   readonly position: 'start' | 'end';
+
+  readonly error?: boolean;
+  readonly focused?: boolean;
 };
 
-const IconWrapper = styled.div<{ $position: TextFieldIconWrapperProps['position'] }>`
+type StyleProps = {
+  readonly $position: TextFieldIconWrapperProps['position'];
+  readonly $error?: boolean;
+  readonly $focused?: boolean;
+};
+
+const IconWrapper = styled.div<StyleProps>`
   height: auto;
   display: flex;
   align-items: center;
@@ -44,13 +53,17 @@ const TextFieldIconWrapper: React.ForwardRefRenderFunction<
   HTMLDivElement,
   TextFieldIconWrapperProps
 > = (props, ref) => {
-  const { children, position, ...nativeProps } = props;
+  const { children, position, focused, error, ...nativeProps } = props;
 
   return (
     <IconWrapper
       {...nativeProps}
-      className={`${CLASSNAME_PREFIX} text-field-icon-wrapper ${nativeProps.className || ''}`.trim()}
+      className={`${CLASSNAME_PREFIX} text-field-icon-wrapper ${
+        nativeProps.className || ''
+      }`.trim()}
       $position={position}
+      $error={error}
+      $focused={focused}
       ref={ref}
     >
       {children}
