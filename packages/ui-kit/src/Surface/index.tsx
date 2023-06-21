@@ -17,10 +17,15 @@ export type SurfaceProps = React.HTMLAttributes<HTMLDivElement> & {
    * Subheader content
    */
   readonly subheader?: React.ReactNode;
+
+  /**
+   * Disable bottom margin
+   */
+  readonly noMargin?: boolean;
 };
 
 const Surface: React.ForwardRefRenderFunction<HTMLDivElement, SurfaceProps> = (props, ref) => {
-  const { children, header, subheader, ...restProps } = props;
+  const { children, header, subheader, noMargin, ...nativeProps } = props;
 
   const hasHeader = typeof header !== 'undefined' && header !== null;
   const hasSubheader = typeof subheader !== 'undefined' && subheader !== null;
@@ -32,7 +37,7 @@ const Surface: React.ForwardRefRenderFunction<HTMLDivElement, SurfaceProps> = (p
   }
 
   return (
-    <SurfaceContainer {...restProps} ref={ref}>
+    <SurfaceContainer {...nativeProps} noMargin={noMargin} ref={ref}>
       {hasHeader && <SurfaceHeader>{header}</SurfaceHeader>}
       {hasSubheader && <SurfaceSubheader>{subheader}</SurfaceSubheader>}
       <SurfaceContent>{children}</SurfaceContent>

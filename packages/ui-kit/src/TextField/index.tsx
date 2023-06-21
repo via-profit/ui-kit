@@ -1,12 +1,12 @@
 import * as React from 'react';
 
-import TextFieldContainer from './TextFieldContainer';
-import TextFieldLabel from './TextFieldLabel';
-import TextFieldLabelAsterisk from './TextFieldLabelAsterisk';
-import TextFieldWrapper from './TextFieldWrapper';
-import TextFieldInput from './TextFieldInput';
-import TextFieldErrorText from './TextFieldErrorText';
-import TextFieldIconWrapper from './TextFieldIconWrapper';
+import Container, { TextFieldContainerProps } from './TextFieldContainer';
+import Label, { TextFieldLabelProps } from './TextFieldLabel';
+import Asterisk, { TextFieldLabelAsteriskProps } from './TextFieldLabelAsterisk';
+import InputWrapper, { TextFieldInputWrapperProps } from './TextFieldInputWrapper';
+import Input, { TextFieldInputProps } from './TextFieldInput';
+import ErrorText, { TextFieldErrorTextProps } from './TextFieldErrorText';
+import IconWrapper, { TextFieldIconWrapperProps } from './TextFieldIconWrapper';
 
 export interface TextFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
   /**
@@ -30,11 +30,82 @@ export interface TextFieldProps extends React.InputHTMLAttributes<HTMLInputEleme
    * If true then TextField will be filled in full width on horizontal
    */
   readonly fullWidth?: boolean;
-  readonly showEmptyIfNoError?: boolean;
+
+  /**
+   * Native <input> element reference
+   */
   readonly inputRef?: React.Ref<HTMLInputElement>;
+
+  /**
+   * Field label text or element
+   */
   readonly label?: React.ReactNode;
+
+  /**
+   * End icon component
+   */
   readonly endIcon?: React.ReactElement;
+
+  /**
+   * Start icon component
+   */
   readonly startIcon?: React.ReactElement;
+
+  /**
+   * Overridable components map
+   */
+  readonly components?: TextFieldOverrideComponents;
+}
+
+export interface TextFieldOverrideComponents {
+  /**
+   * Native `input` component
+   */
+  readonly Input?: React.ForwardRefExoticComponent<
+    TextFieldInputProps & React.RefAttributes<HTMLInputElement>
+  >;
+
+  /**
+   * Component for display error text
+   */
+  readonly ErrorText?: React.ForwardRefExoticComponent<
+    TextFieldErrorTextProps & React.RefAttributes<HTMLDivElement>
+  >;
+
+  /**
+   * Icons wrapper component
+   */
+  readonly IconWrapper?: React.ForwardRefExoticComponent<
+    TextFieldIconWrapperProps & React.RefAttributes<HTMLDivElement>
+  >;
+
+  /**
+   * input field wrapper component
+   */
+  readonly InputWrapper?: React.ForwardRefExoticComponent<
+    TextFieldInputWrapperProps & React.RefAttributes<HTMLDivElement>
+  >;
+
+  /**
+   * label component
+   */
+  readonly Label?: React.ForwardRefExoticComponent<
+    TextFieldLabelProps & React.RefAttributes<HTMLLabelElement>
+  >;
+
+  /**
+   * label asterisk component
+   */
+  readonly Asterisk?: React.ForwardRefExoticComponent<
+    TextFieldLabelAsteriskProps & React.RefAttributes<HTMLSpanElement>
+  >;
+
+  /**
+   * label component
+   */
+  readonly Container?: React.ForwardRefExoticComponent<
+    TextFieldContainerProps & React.RefAttributes<HTMLDivElement>
+  >;
 }
 
 const TextField: React.ForwardRefRenderFunction<HTMLDivElement, TextFieldProps> = (props, ref) => {
@@ -49,12 +120,12 @@ const TextField: React.ForwardRefRenderFunction<HTMLDivElement, TextFieldProps> 
     style,
     endIcon,
     startIcon,
-    showEmptyIfNoError,
-    onChange,
     requiredAsterisk,
+    components,
+    onChange,
     onFocus,
     onBlur,
-    ...inputProps
+    ...nativeInputProps
   } = props;
 
   const [focused, setFocused] = React.useState(false);
@@ -112,8 +183,22 @@ const TextField: React.ForwardRefRenderFunction<HTMLDivElement, TextFieldProps> 
     [endIcon],
   );
 
+  const overrides = React.useMemo(
+    () => ({
+      Label,
+      Input,
+      Asterisk,
+      Container,
+      ErrorText,
+      IconWrapper,
+      InputWrapper,
+      ...components,
+    }),
+    [components],
+  );
+
   return (
-    <TextFieldContainer
+    <overrides.Container
       ref={ref}
       fullWidth={fullWidth}
       className={className}
@@ -121,21 +206,23 @@ const TextField: React.ForwardRefRenderFunction<HTMLDivElement, TextFieldProps> 
       focused={focused}
     >
       {typeof label !== 'undefined' && label !== null && (
-        <TextFieldLabel htmlFor={inputID} error={error}>
+        <overrides.Label htmlFor={inputID} error={error}>
           {label}
           {typeof requiredAsterisk !== 'undefined' && requiredAsterisk !== null && (
-            <TextFieldLabelAsterisk>
+            <overrides.Asterisk>
               {typeof requiredAsterisk === 'boolean' ? '*' : requiredAsterisk}
-            </TextFieldLabelAsterisk>
+            </overrides.Asterisk>
           )}
-        </TextFieldLabel>
+        </overrides.Label>
       )}
 
-      <TextFieldWrapper error={error} focused={focused} fullWidth={fullWidth}>
-        {hasStartIcon && <TextFieldIconWrapper position="start">{startIcon}</TextFieldIconWrapper>}
+      <overrides.InputWrapper error={error} focused={focused} fullWidth={fullWidth}>
+        {hasStartIcon && (
+          <overrides.IconWrapper position="start">{startIcon}</overrides.IconWrapper>
+        )}
 
-        <TextFieldInput
-          {...inputProps}
+        <overrides.Input
+          {...nativeInputProps}
           hasStartIcon={hasStartIcon}
           hasEndIcon={hasEndIcon}
           ref={inputRef}
@@ -144,12 +231,12 @@ const TextField: React.ForwardRefRenderFunction<HTMLDivElement, TextFieldProps> 
           onFocus={inputFocus}
           onBlur={inputBlur}
         />
-        {hasEndIcon && <TextFieldIconWrapper position="end">{endIcon}</TextFieldIconWrapper>}
-      </TextFieldWrapper>
-      <TextFieldErrorText error={error} showEmptyIfNoError={showEmptyIfNoError} focused={focused}>
+        {hasEndIcon && <overrides.IconWrapper position="end">{endIcon}</overrides.IconWrapper>}
+      </overrides.InputWrapper>
+      <overrides.ErrorText error={error} focused={focused}>
         {errorText}
-      </TextFieldErrorText>
-    </TextFieldContainer>
+      </overrides.ErrorText>
+    </overrides.Container>
   );
 };
 

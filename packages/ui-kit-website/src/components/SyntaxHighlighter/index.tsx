@@ -48,7 +48,10 @@ const SyntaxHighlighter: React.FC<SyntaxHighlighterProps> = props => {
   }
 
   return (
-    <ReactSyntaxHighlighter language={language} style={styles as any}>
+    <ReactSyntaxHighlighter
+      language={language}
+      style={styles as Record<string, React.CSSProperties>}
+    >
       {codeStr}
     </ReactSyntaxHighlighter>
   );

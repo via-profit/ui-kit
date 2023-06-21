@@ -2,9 +2,9 @@ import * as React from 'react';
 import styled from '@emotion/styled';
 
 import NoSSR from '../NoSSR';
+import { CLASSNAME_PREFIX } from '../constants';
 
 export interface TextFieldErrorTextProps extends React.HTMLAttributes<HTMLDivElement> {
-  readonly showEmptyIfNoError?: boolean;
   readonly error?: boolean;
   readonly focused?: boolean;
 }
@@ -29,7 +29,7 @@ const TextFieldErrorText: React.ForwardRefRenderFunction<
   HTMLDivElement,
   TextFieldErrorTextProps
 > = (props, ref) => {
-  const { children, error, focused, showEmptyIfNoError, ...otherProps } = props;
+  const { children, error, focused, ...nativeProps } = props;
 
   const innerRef = React.useRef<HTMLDivElement | null>(null);
   const [maxHeight, setMaxHeight] = React.useState<'auto' | number>('auto');
@@ -51,10 +51,11 @@ const TextFieldErrorText: React.ForwardRefRenderFunction<
 
   return (
     <ErrorTextContainer
-      {...otherProps}
-      ref={ref}
+      {...nativeProps}
+      className={`${CLASSNAME_PREFIX} text-field-error-text ${nativeProps.className || ''}`.trim()}
       $maxHeight={error ? maxHeight : 0}
       $focused={focused}
+      ref={ref}
     >
       <ErrorTextInner ref={innerRef} $error={Boolean(error)}>
         {children ? <NoSSR>{children}</NoSSR> : <>&nbsp;</>}

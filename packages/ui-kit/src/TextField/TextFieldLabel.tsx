@@ -1,6 +1,8 @@
 import * as React from 'react';
 import styled from '@emotion/styled';
 
+import { CLASSNAME_PREFIX } from '../constants';
+
 export interface TextFieldLabelProps extends React.LabelHTMLAttributes<HTMLLabelElement> {
   readonly error?: boolean;
   readonly focused?: boolean;
@@ -15,10 +17,16 @@ const TextFieldLabel: React.ForwardRefRenderFunction<HTMLLabelElement, TextField
   props,
   ref,
 ) => {
-  const { children, error, focused, ...otherProps } = props;
+  const { children, error, focused, ...nativeProps } = props;
 
   return (
-    <Label {...otherProps} ref={ref} $error={error} $focused={focused}>
+    <Label
+      {...nativeProps}
+      className={`${CLASSNAME_PREFIX} text-field-label ${nativeProps.className || ''}`.trim()}
+      $error={error}
+      $focused={focused}
+      ref={ref}
+    >
       {children}
     </Label>
   );

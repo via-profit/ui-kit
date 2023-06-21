@@ -1,6 +1,8 @@
 import * as React from 'react';
 import styled from '@emotion/styled';
 
+import { CLASSNAME_PREFIX } from '../constants';
+
 export interface TextFieldContainerProps extends React.InputHTMLAttributes<HTMLDivElement> {
   readonly fullWidth?: boolean;
   readonly focused: boolean;
@@ -17,10 +19,16 @@ const TextFieldContainer: React.ForwardRefRenderFunction<
   HTMLDivElement,
   TextFieldContainerProps
 > = (props, ref) => {
-  const { children, fullWidth, focused, ...otherProps } = props;
+  const { children, fullWidth, focused, ...nativeProps } = props;
 
   return (
-    <StyledTextFieldContainer {...otherProps} ref={ref} $fullWidth={fullWidth} $focused={focused}>
+    <StyledTextFieldContainer
+      {...nativeProps}
+      className={`${CLASSNAME_PREFIX} text-field-container ${nativeProps.className || ''}`.trim()}
+      $fullWidth={fullWidth}
+      $focused={focused}
+      ref={ref}
+    >
       {children}
     </StyledTextFieldContainer>
   );

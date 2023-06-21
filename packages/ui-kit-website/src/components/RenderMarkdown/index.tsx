@@ -43,10 +43,11 @@ const CodeInline = styled.code`
   color: ${({ theme }) =>
     theme.isDark
       ? theme.colors.accentPrimary.toString()
-      : theme.colors.accentPrimary.darken(30).toString()};
+      : theme.colors.accentPrimary.darken(60).toString()};
   padding: 0em 0.4em;
   border-radius: 4px;
-  font-size: 0.8em;
+  font-size: 0.9em;
+  font-weight: 500;
 `;
 
 const relativeToAbsolute = (base: string, rel: string): string => {

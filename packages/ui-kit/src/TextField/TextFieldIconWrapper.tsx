@@ -2,7 +2,12 @@ import * as React from 'react';
 import styled from '@emotion/styled';
 import { css } from '@emotion/react';
 
+import { CLASSNAME_PREFIX } from '../constants';
+
 export type TextFieldIconWrapperProps = React.InputHTMLAttributes<HTMLDivElement> & {
+  /**
+   * Icon position
+   */
   readonly position: 'start' | 'end';
 };
 
@@ -39,10 +44,15 @@ const TextFieldIconWrapper: React.ForwardRefRenderFunction<
   HTMLDivElement,
   TextFieldIconWrapperProps
 > = (props, ref) => {
-  const { children, position, ...otherProps } = props;
+  const { children, position, ...nativeProps } = props;
 
   return (
-    <IconWrapper $position={position} {...otherProps} ref={ref}>
+    <IconWrapper
+      {...nativeProps}
+      className={`${CLASSNAME_PREFIX} text-field-icon-wrapper ${nativeProps.className || ''}`.trim()}
+      $position={position}
+      ref={ref}
+    >
       {children}
     </IconWrapper>
   );

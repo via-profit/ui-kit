@@ -20,7 +20,7 @@ const syntaxTheme = {
     padding: '1em',
     borderRadius: '8px',
     hyphens: 'none',
-    position: 'relative',
+    // position: 'relative',
     whiteSpace: 'pre',
     wordSpacing: 'normal',
     wordBreak: 'normal',

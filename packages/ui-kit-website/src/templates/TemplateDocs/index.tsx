@@ -15,7 +15,7 @@ const Wrapper = styled.div`
 
 const Content = styled.div`
   flex: 1;
-  padding: 0 1em 2em;
+  padding: 0 1em 1em;
 `;
 
 const TemplateDocs: React.FC = () => (

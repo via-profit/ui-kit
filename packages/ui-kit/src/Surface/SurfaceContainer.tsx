@@ -1,13 +1,37 @@
+import React from 'react';
 import styled from '@emotion/styled';
+import { css } from '@emotion/react';
 
-const SurfaceContainer = styled.div`
+export type SurfaceContainerProps = React.HTMLAttributes<HTMLDivElement> & {
+  readonly noMargin?: boolean;
+};
+
+type StyledProps = {
+  readonly $noMargin?: boolean;
+};
+
+const StyledSurfaceContainer = styled.div<StyledProps>`
   background: ${({ theme }) => theme.colors.surface.toString()};
   color: ${({ theme }) => theme.colors.textPrimary.toString()};
   box-shadow: ${({ theme }) =>
     `0 0.5em 2em -0.8em ${theme.colors.surface.darken(100).alpha(0.4).toString()}`};
   border-radius: ${({ theme }) => theme.shape.radiusFactor}em;
-  margin-bottom: 1em;
   font-size: 1em;
+  ${({ $noMargin }) =>
+    typeof $noMargin === 'undefined' &&
+    $noMargin === false &&
+    css`
+      margin-bottom: 1em;
+    `}
 `;
 
-export default SurfaceContainer;
+const SurfaceContainer: React.ForwardRefRenderFunction<
+  HTMLDivElement,
+  SurfaceContainerProps
+> = props => {
+  const { noMargin, children } = props;
+
+  return <StyledSurfaceContainer $noMargin={noMargin}>{children}</StyledSurfaceContainer>;
+};
+
+export default React.forwardRef(SurfaceContainer);

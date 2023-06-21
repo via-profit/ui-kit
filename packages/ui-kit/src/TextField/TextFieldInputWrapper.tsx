@@ -2,7 +2,9 @@ import * as React from 'react';
 import styled from '@emotion/styled';
 import { css } from '@emotion/react';
 
-export type TextFieldWrapperProps = React.HTMLAttributes<HTMLDivElement> & {
+import { CLASSNAME_PREFIX } from '../constants';
+
+export type TextFieldInputWrapperProps = React.HTMLAttributes<HTMLDivElement> & {
   readonly error?: boolean;
   readonly fullWidth?: boolean;
   readonly readOnly?: boolean;
@@ -47,19 +49,20 @@ const Wrapper = styled.div<{
     `}
 `;
 
-const TextFieldWrapper: React.ForwardRefRenderFunction<HTMLDivElement, TextFieldWrapperProps> = (
-  props,
-  ref,
-) => {
-  const { focused, error, readOnly, fullWidth, children, ...otherProps } = props;
+const TextFieldInputWrapper: React.ForwardRefRenderFunction<
+  HTMLDivElement,
+  TextFieldInputWrapperProps
+> = (props, ref) => {
+  const { focused, error, readOnly, fullWidth, children, ...nativeProps } = props;
 
   return (
     <Wrapper
+      {...nativeProps}
       $error={error}
       $focused={focused}
       $readOnly={readOnly}
       $fullWidth={Boolean(fullWidth)}
-      {...otherProps}
+      className={`${CLASSNAME_PREFIX} text-field-input-wrapper ${nativeProps.className || ''}`.trim()}
       ref={ref}
     >
       {children}
@@ -67,4 +70,4 @@ const TextFieldWrapper: React.ForwardRefRenderFunction<HTMLDivElement, TextField
   );
 };
 
-export default React.forwardRef(TextFieldWrapper);
+export default React.forwardRef(TextFieldInputWrapper);

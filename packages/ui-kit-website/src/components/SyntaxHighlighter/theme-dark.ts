@@ -23,7 +23,7 @@ const syntaxTheme = {
     padding: '1em',
     borderRadius: '8px',
     hyphens: 'none',
-    position: 'relative',
+    // position: 'relative',
     whiteSpace: 'pre',
     wordSpacing: 'normal',
     wordBreak: 'normal',
@@ -97,10 +97,10 @@ const syntaxTheme = {
     color: '#f1a769',
   },
   'attr-name': {
-    color: '#135c00',
+    color: '#83bf74',
   },
   'class-name': {
-    color: '#8f128d',
+    color: '#cf41cd',
   },
   variable: {
     color: '#f1a769',

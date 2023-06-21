@@ -10,17 +10,19 @@ const TextFieldsOverview: React.FC = () => {
   const [isValid, setValidate] = React.useState(validate(value));
 
   return (
-    <TextField
-      label="label"
-      errorText="Error text"
-      error={!isValid}
-      value={value}
-      onChange={event => {
-        const newValue = event.currentTarget.value;
-        setValue(newValue);
-        setValidate(validate(newValue));
-      }}
-    />
+    <>
+      <TextField
+        label="label"
+        errorText="Error text"
+        error={!isValid}
+        value={value}
+        onChange={event => {
+          const newValue = event.currentTarget.value;
+          setValue(newValue);
+          setValidate(validate(newValue));
+        }}
+      />
+    </>
   );
 };
 

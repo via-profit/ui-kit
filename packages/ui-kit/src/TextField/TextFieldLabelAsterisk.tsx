@@ -1,8 +1,17 @@
 import * as React from 'react';
 import styled from '@emotion/styled';
 
+import { CLASSNAME_PREFIX } from '../constants';
+
 export interface TextFieldLabelAsteriskProps extends React.HTMLAttributes<HTMLSpanElement> {
+  /**
+   * If true, the asterisk will be set the error color
+   */
   readonly error?: boolean;
+
+  /**
+   * Not used
+   */
   readonly focused?: boolean;
 }
 
@@ -13,13 +22,19 @@ const Asterisk = styled.span<{ $error?: boolean; $focused?: boolean }>`
 `;
 
 const TextFieldLabelAsterisk: React.ForwardRefRenderFunction<
-  HTMLLabelElement,
+  HTMLSpanElement,
   TextFieldLabelAsteriskProps
 > = (props, ref) => {
-  const { children, error, focused, ...otherProps } = props;
+  const { children, error, focused, ...nativeProps } = props;
 
   return (
-    <Asterisk {...otherProps} ref={ref} $error={error} $focused={focused}>
+    <Asterisk
+      {...nativeProps}
+      className={`${CLASSNAME_PREFIX} text-field-asterisk ${nativeProps.className || ''}`.trim()}
+      $error={error}
+      $focused={focused}
+      ref={ref}
+    >
       {children}
     </Asterisk>
   );

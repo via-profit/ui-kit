@@ -24,8 +24,8 @@ const light: UIThemeOverrides = {
     accentSecondaryContrast: '#FFFFFF',
     error: '#ff2b2b',
     surface: '#fff',
-    drawer: '#fff',
-    drawerContrast: '#000',
+    // drawer: '#fff',
+    // drawerContrast: '#000',
   },
   shape: {
     radiusFactor: 0.5,
