@@ -1,8 +1,8 @@
 import React from 'react';
-import styled from '@emotion/styled';
 
 import IconWrapper, { ButtonIconWrapperProps } from './ButtonIconWrapper';
 import TextWrapper, { ButtonTextWrapperProps } from './ButtonTextWrapper';
+import Container, { ButtonContainerProps } from './ButtonContainer';
 
 type ButtonNativeProps = React.ButtonHTMLAttributes<HTMLButtonElement>;
 
@@ -32,7 +32,7 @@ export interface ButtonBaseProps extends Omit<ButtonNativeProps, 'color'> {
   /**
    * You can pass the primary, default, secondary name of the colors or your specified color value
    */
-  readonly color?: 'default' | 'primary' | 'secondary' | string;
+  readonly color?: ButtonContainerProps['color'];
 
   /**
    * Overridable components map
@@ -41,6 +41,12 @@ export interface ButtonBaseProps extends Omit<ButtonNativeProps, 'color'> {
 }
 
 export interface ButtonBaseOverrides {
+  /**
+   * Start icon wrapper
+   */
+  readonly Container?: React.ForwardRefExoticComponent<
+    ButtonContainerProps & React.RefAttributes<HTMLButtonElement>
+  >;
   /**
    * Start icon wrapper
    */
@@ -56,35 +62,6 @@ export interface ButtonBaseOverrides {
   >;
 }
 
-type StyledProps = {
-  readonly color?: ButtonBaseProps['color'];
-};
-
-const Button = styled.button<StyledProps>`
-  border-radius: ${({ theme }) => theme.shape.radiusFactor * 2}em;
-  padding: 0.8em 1em;
-  font-size: 0.8rem;
-  cursor: ${({ disabled }) => (disabled ? 'default' : 'pointer')};
-  font-size: 1em;
-  border-width: 0;
-  outline-style: solid;
-  outline-color: transparent;
-  outline-width: 0.14em;
-  transition: all 180ms ease-out 0s;
-  background: none;
-  display: inline-flex;
-  align-items: center;
-  color: ${({ color, disabled, theme }) => {
-    switch (true) {
-      case disabled:
-        return theme.colors.textSecondary.alpha(0.8).toString();
-      case !disabled && typeof color === 'undefined':
-      default:
-        return theme.colors.textPrimary.toString();
-    }
-  }};
-`;
-
 const ButtonBase: React.ForwardRefRenderFunction<HTMLButtonElement, ButtonBaseProps> = (
   props,
   ref,
@@ -94,13 +71,14 @@ const ButtonBase: React.ForwardRefRenderFunction<HTMLButtonElement, ButtonBasePr
     () => ({
       TextWrapper,
       IconWrapper,
+      Container,
       ...overrides,
     }),
     [overrides],
   );
 
   return (
-    <Button {...nativeProps} ref={ref}>
+    <overridesMap.Container {...nativeProps} ref={ref}>
       {typeof startIcon !== 'undefined' && startIcon !== null && (
         <overridesMap.IconWrapper position="start">{startIcon}</overridesMap.IconWrapper>
       )}
@@ -109,7 +87,7 @@ const ButtonBase: React.ForwardRefRenderFunction<HTMLButtonElement, ButtonBasePr
       {typeof endIcon !== 'undefined' && endIcon !== null && (
         <overridesMap.IconWrapper position="end">{endIcon}</overridesMap.IconWrapper>
       )}
-    </Button>
+    </overridesMap.Container>
   );
 };
 

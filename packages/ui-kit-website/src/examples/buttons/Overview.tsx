@@ -22,12 +22,6 @@ const ButtonsGroup = styled.div`
 
 const ExampleOverview: React.FC = () => (
   <>
-    <Surface header="Base button">
-      <ButtonsGroup>
-        <ButtonBase startIcon={<IconBell />}>Base button with Start Icon</ButtonBase>
-      </ButtonsGroup>
-    </Surface>
-
     <Surface header="Standard buttons" subheader="Lorem ipsum">
       <ButtonsGroup>
         <Button startIcon={<IconBell />}>Standard with Icon</Button>
@@ -61,6 +55,12 @@ const ExampleOverview: React.FC = () => (
         <Button variant="outlined" color="blue">
           Outlined blue
         </Button>
+      </ButtonsGroup>
+    </Surface>
+
+    <Surface header="Base button">
+      <ButtonsGroup>
+        <ButtonBase startIcon={<IconBell />}>Base button with Start Icon</ButtonBase>
       </ButtonsGroup>
     </Surface>
   </>

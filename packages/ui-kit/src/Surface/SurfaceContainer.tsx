@@ -11,6 +11,9 @@ type StyledProps = {
 };
 
 const StyledSurfaceContainer = styled.div<StyledProps>`
+  display: flex;
+  box-sizing: border-box;
+  flex-direction: column;
   background: ${({ theme }) => theme.colors.surface.toString()};
   color: ${({ theme }) => theme.colors.textPrimary.toString()};
   box-shadow: ${({ theme }) =>

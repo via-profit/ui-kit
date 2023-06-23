@@ -1,24 +1,172 @@
 # Кнопки
 
+## Содержание
+
+- [Описание](#описание)
+- [Варианты](#варианты)
+- [Цвета](#цвета)
+- [Переопределение](#переопределение)
+- [Свойства](#свойства)
+
+## Описание
+
 Компонент `<Button>` создаёт кликабельную кнопку, которая может быть
 использована в формах или в любом другом месте документа, который требует простой,
 стандартной кнопки.
 
-<ExampleOverview />
-
-
 _Пример использования:_
-
 
 ```tsx
 import React from 'react';
 import Button from '@via-profit/ui-kit/Button';
 
-const ButtonStandard: React.FC = () => (
-  <Button variant="standard">Кнопка стиль «standard»</Button>
-);
+const Example: React.FC = () => {
+  return <Button type="button">Button</Button>;
+};
 
-export default ButtonStandard;
+export default Example;
 ```
 
-<ExampleButtonStandard />
+_Результат:_
+
+<ExampleButtonBasic />
+
+&nbsp;
+&nbsp;
+
+## Варианты
+
+Кнопки выполнены в двух вариациях: `standard` и `outlined`. По умолчанию, используется стиль `standard`.
+
+- **standard** — отображает обычную кнопку в привычном для всех виде
+- **outlined** — отображает кнопку с окантовкой
+
+_Пример использования:_
+
+```tsx
+import React from 'react';
+import Button from '@via-profit/ui-kit/src/Button';
+
+const Example: React.FC = () => (
+  <>
+    <Button type="button" variant="standard">
+      Standard
+    </Button>
+    <Button type="button" variant="outlined">
+      Outlined
+    </Button>
+  </>
+);
+
+export default Example;
+```
+
+_Результат:_
+
+<ExampleButtonVariants />
+&nbsp;
+&nbsp;
+
+## Цвета
+
+Вы можете указать одно из трёх зарезервированных значений `default` `primary` `secondary`, или **rgb(a)**/**hex** код произвольного цвета. По умолчанию, используется цвет стиля `default`.
+
+В качестве цвета вы можете передать и псевдоним цвета, например, **lightpink** что будет соответствовать коду цвета `#ffb6c1`,
+
+- **default** — Цвет кнопки совпадает с цветом заднего плана
+- **primary** — Используется основной цвет акцента
+- **secondary** — Используется второстепенный цвет акцента
+
+_Пример использования:_
+
+```tsx
+import React from 'react';
+import Button from '@via-profit/ui-kit/src/Button';
+
+const Example: React.FC = () => (
+  <>
+    <>
+      <Button type="button" variant="standard" color="default">
+        Standard default
+      </Button>
+      <Button type="button" variant="standard" color="primary">
+        Standard primary
+      </Button>
+      <Button type="button" variant="standard" color="secondary">
+        Standard secondary
+      </Button>
+      <Button type="button" variant="standard" color="#308dfc">
+        Standard #308dfc
+      </Button>
+      <Button type="button" variant="standard" color="lightpink">
+        Standard lightpink
+      </Button>
+    </>
+  </>
+);
+
+export default Example;
+```
+
+_Результат:_
+
+<ExampleButtonColors />
+&nbsp;
+&nbsp;
+
+## Переопределение
+
+Компонент `<Button>` является составным и реализован при помощи следующих компонентов:
+
+- `<Container>` — Компонент нативного элемента кнопки `<button>`
+- `<TextWrapper>` — Обёртка для текста кнопки
+- `<IconWrapper>` — Обёртка иконки кнопки в случае её отображения
+
+Используйте свойство `overrides` чтобы переопределить один или несколько компонентов:
+
+_Пример использования:_
+
+```tsx
+import React from 'react';
+import Button from '@via-profit/ui-kit/src/Button';
+
+const Example: React.FC = () => (
+  <Button
+    type="button"
+    overrides={{
+      // Перезаписываем TextWrapper.
+      // Обратите внимание, что здесь прокидывается ref, однако
+      // прокинуть ref можно и при объявлении компонента, главное не забыть
+      TextWrapper: React.forwardRef(function Wrapper(props, ref) {
+        const { children } = props;
+
+        return <span style={{...}} ref={ref}>{children}</span>;
+      }),
+    }}
+  >
+    Overrided
+  </Button>
+);
+
+export default Example;
+```
+
+_Результат:_
+
+<ExampleButtonOverrides />
+&nbsp;
+&nbsp;
+
+## Свойства
+
+Помимо перечисленных свойств, компонент принимает [стандартные аттрибуты](https://developer.mozilla.org/ru/docs/Web/HTML/Element/button#атрибуты) HTML элемента `<button>`
+
+| Свойство                  | Тип                                      | По умолчанию          | Описание                                                                                             |
+| ------------------------- | :--------------------------------------- | :-------------------- | ---------------------------------------------------------------------------------------------------- |
+| **variant**               | `standard` `outlined`                    | `standard`            | Вариант отображения.                                                                                 |
+| **color**                 | `default` `secondary` `primary` `String` | `default`             | Цвет кнопки. В качестве пользовательского цвета принимается строка в формате **hex** или **rgb(a)**. |
+| **startIcon**             | `<JSX.Element>`                          | `undefined`           | Элемент иконки, отображаемой слева от текста кнопки                                                  |
+| **endIcon**               | `<JSX.Element>`                          | `undefined`           | Элемент иконки, отображаемой справа от текста кнопки                                                 |
+| **overrides**             | `Object`                                 | `undefined`           | Объект элементов для переопределения составных компонентов кнопки                                    |
+| **overrides.IconWrapper** | `<React.Component>`                      | `<ButtonIconWrapper>` | Компонент обёртка для иконки, отображаемой слева и/или справа от текста кнопки                       |
+| **overrides.TextWrapper** | `<React.Component>`                      | `<ButtonTextWrapper>` | Компонент обёртка текста кнопки                                                                      |

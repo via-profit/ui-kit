@@ -1,27 +1,37 @@
 import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { createStructuredSelector } from 'reselect';
+import { useDispatch } from 'react-redux';
+import styled from '@emotion/styled';
 
 import Button from '@via-profit/ui-kit/src/Button';
 import { uiActions } from '~/redux/ui';
 
-const selector = createStructuredSelector({
-  currentTheme: (store: ReduxStore) => store.ui.theme,
-});
+const Container = styled.div`
+  & > button {
+    margin-right: 0.2em;
+  }
+  & > button:last-of-type {
+    margin-right: 0;
+  }
+`;
 
 const ThemeSwitcher: React.FC = () => {
-  const { currentTheme } = useSelector(selector);
   const dispatch = useDispatch();
-  const nextTheme = React.useMemo(
-    () => (currentTheme === 'light' ? 'dark' : 'light'),
-    [currentTheme],
-  );
 
   return (
-    <Button
-      variant="standard"
-      onClick={() => dispatch(uiActions.theme(nextTheme))}
-    >{`Switch to ${nextTheme}`}</Button>
+    <Container>
+      <Button type="button" onClick={() => dispatch(uiActions.theme('light'))}>
+        Light
+      </Button>
+      <Button type="button" onClick={() => dispatch(uiActions.theme('dark'))}>
+        Dark
+      </Button>
+      <Button type="button" onClick={() => dispatch(uiActions.theme('green'))}>
+        Green
+      </Button>
+      <Button type="button" onClick={() => dispatch(uiActions.theme('greenDark'))}>
+        Green Dark
+      </Button>
+    </Container>
   );
 };
 

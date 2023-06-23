@@ -12,6 +12,15 @@ import Em from '@via-profit/ui-kit/src/Typography/Em';
 import Paragraph from '@via-profit/ui-kit/src/Typography/Paragraph';
 import { Ul, Ol } from '@via-profit/ui-kit/src/Typography/List';
 import Blockquote from '@via-profit/ui-kit/src/Typography/Blockquote';
+import {
+  Table,
+  TableHeader,
+  TableRow,
+  TableCell,
+  TableHeaderCell,
+  TableCaption,
+  TableBody,
+} from '@via-profit/ui-kit/src/Table';
 
 import OpenInNewIcon from '~/components/Icons/OpenOutline';
 import SyntaxHighlighter from '~/components/SyntaxHighlighter';
@@ -25,7 +34,15 @@ const Img = styled.img`
   max-width: 100%;
 `;
 
-const Anchor = styled.a``;
+const Anchor = styled.a`
+  font-weight: 400;
+  color: ${({ theme }) => theme.colors.accentPrimary.darken(30).toString()};
+`;
+
+const AnchorLink = styled(Link)`
+  font-weight: 400;
+  color: ${({ theme }) => theme.colors.accentPrimary.darken(30).toString()};
+`;
 
 const ExternalLink = styled.a`
   font-weight: 400;
@@ -81,7 +98,7 @@ const titleToAnchor = (headername: string | React.ReactNode): string => {
   const anchorName = String(headername)
     .toLowerCase()
     .replace(/[\s,/]/g, '-')
-    .replace(/[^0-9a-z-]/gi, '');
+    .replace(/[^0-9a-z-А-Яа-яёЁйЙ]/gi, '');
 
   return anchorName;
 };
@@ -94,6 +111,7 @@ const MarkdownRender: React.FC<Props> = props => {
   return (
     <Markdown
       options={{
+        forceInline: false,
         overrides: {
           h1: p => (
             <H1>
@@ -132,6 +150,13 @@ const MarkdownRender: React.FC<Props> = props => {
           p: Paragraph,
           ul: Ul,
           ol: Ol,
+          table: Table,
+          thead: TableHeader,
+          tbody: TableBody,
+          tr: TableRow,
+          td: TableCell,
+          th: TableHeaderCell,
+          caption: TableCaption,
           a: ({ href, title, children }) => {
             if (String(href || '').match(/^(http|https):\/\//)) {
               return (
@@ -149,28 +174,28 @@ const MarkdownRender: React.FC<Props> = props => {
               );
             }
 
-            if (String(href || '').match(/\.md(#[a-z0-9-]+){0,1}$/i)) {
+            if (String(href || '').match(/\.md(#[a-z0-9а-яёй-]+){0,1}$/i)) {
               const url = relativeToAbsolute(pathname, String(href || '').replace(/\.md/, ''));
 
               return (
-                <Link to={url} title={title}>
+                <AnchorLink to={url} title={title}>
                   {children}
-                </Link>
+                </AnchorLink>
               );
             }
 
-            if (String(href || '').match(/#[a-z0-9-]+$/i)) {
-              const anchorName = String(href || '').match(/#([a-z0-9-]+)$/)?.[1] || '';
+            if (String(href || '').match(/#[a-z0-9а-яёй-]+$/i)) {
+              const anchorName = String(href || '').match(/#([a-z0-9а-яёй-]+)$/)?.[1] || '';
 
               return (
-                <a
+                <Anchor
                   onClick={event => {
                     event.preventDefault();
                     const element = document.querySelector(`a[id="${anchorName}"]`);
 
                     if (element) {
-                      const yOffset = -61; // app header height
-                      const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+                      const yOffset = -80; // app header height
+                      const y = element.getBoundingClientRect().top + window.scrollY + yOffset;
 
                       navigate(`${pathname}#${anchorName}`);
                       window.scrollTo({ top: y, behavior: 'smooth' });
@@ -180,7 +205,7 @@ const MarkdownRender: React.FC<Props> = props => {
                   href={href}
                 >
                   {children}
-                </a>
+                </Anchor>
               );
             }
 

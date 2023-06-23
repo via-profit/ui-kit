@@ -1,0 +1,3 @@
+# Таблицы
+
+<ExampleTableBasic>

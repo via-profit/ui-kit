@@ -7,6 +7,8 @@ import { createStructuredSelector } from 'reselect';
 import GloalStyles from './GlobalStyles';
 import themeDark from '~/themes/dark';
 import themeLight from '~/themes/light';
+import themeGreen from '~/themes/green';
+import themeGreenDark from '~/themes/greenDark';
 
 export interface ThemeProviderProps {
   readonly children: React.ReactNode | readonly React.ReactNode[];
@@ -23,6 +25,8 @@ const ThemeProvider: React.FC<ThemeProviderProps> = props => {
     const themesMap: Record<ReduxStore['ui']['theme'], UIThemeOverrides> = {
       light: themeLight,
       dark: themeDark,
+      green: themeGreen,
+      greenDark: themeGreenDark,
     };
 
     return createTheme(themesMap[themeName]);
