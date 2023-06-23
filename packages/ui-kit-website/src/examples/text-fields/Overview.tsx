@@ -14,7 +14,7 @@ const IconWrapper = styled(TextFieldIconWrapper)`
 const InputWrapper = styled(TextFieldInputWrapper)<{ focused?: boolean }>`
   border-radius: ${({ theme }) => theme.shape.radiusFactor * 3}em;
   background-color: ${({ theme }) => theme.colors.surface.darken(10).toString()};
-  & .text-field-input {
+  & > input {
     box-shadow: inset 0.2em 0.2em 0.2em
       ${({ theme }) => theme.colors.surface.darken(300).alpha(0.15).toString()};
     border: 0.2em solid
@@ -53,7 +53,7 @@ const TextFieldsOverview: React.FC = () => {
         defaultValue="Some text"
         startIcon={<>www.</>}
         inputRef={inputRef}
-        components={{
+        overrides={{
           IconWrapper: React.forwardRef(function Wrapper(props, ref) {
             const { children, position, focused, error, ...restProps } = props;
 

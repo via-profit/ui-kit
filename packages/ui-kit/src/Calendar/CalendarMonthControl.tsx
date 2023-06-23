@@ -46,4 +46,4 @@ const CalendarMonthControl: React.ForwardRefRenderFunction<
   );
 };
 
-export default React.memo(React.forwardRef(CalendarMonthControl));
+export default React.forwardRef(CalendarMonthControl);

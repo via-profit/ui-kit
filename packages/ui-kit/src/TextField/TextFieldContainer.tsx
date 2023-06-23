@@ -1,8 +1,6 @@
 import * as React from 'react';
 import styled from '@emotion/styled';
 
-import { CLASSNAME_PREFIX } from '../constants';
-
 export interface TextFieldContainerProps extends React.InputHTMLAttributes<HTMLDivElement> {
   readonly fullWidth?: boolean;
   readonly focused?: boolean;
@@ -31,7 +29,6 @@ const TextFieldContainer: React.ForwardRefRenderFunction<
   return (
     <StyledTextFieldContainer
       {...nativeProps}
-      className={`${CLASSNAME_PREFIX} text-field-container ${nativeProps.className || ''}`.trim()}
       $fullWidth={fullWidth}
       $focused={focused}
       $error={error}

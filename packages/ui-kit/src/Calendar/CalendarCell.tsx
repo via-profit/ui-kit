@@ -73,4 +73,4 @@ const CalendarCell: React.ForwardRefRenderFunction<HTMLButtonElement, CalendarCe
   );
 };
 
-export default React.memo(React.forwardRef(CalendarCell));
+export default React.forwardRef(CalendarCell);

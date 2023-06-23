@@ -23,4 +23,4 @@ const CalendarTopBar: React.ForwardRefRenderFunction<HTMLDivElement, CalendarTop
   );
 };
 
-export default React.memo(React.forwardRef(CalendarTopBar));
+export default React.forwardRef(CalendarTopBar);

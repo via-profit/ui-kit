@@ -25,13 +25,17 @@ const StyledSurfaceContainer = styled.div<StyledProps>`
     `}
 `;
 
-const SurfaceContainer: React.ForwardRefRenderFunction<
-  HTMLDivElement,
-  SurfaceContainerProps
-> = props => {
-  const { noMargin, children } = props;
+const SurfaceContainer: React.ForwardRefRenderFunction<HTMLDivElement, SurfaceContainerProps> = (
+  props,
+  ref,
+) => {
+  const { noMargin, children, ...nativeProps } = props;
 
-  return <StyledSurfaceContainer $noMargin={noMargin}>{children}</StyledSurfaceContainer>;
+  return (
+    <StyledSurfaceContainer $noMargin={noMargin} {...nativeProps} ref={ref}>
+      {children}
+    </StyledSurfaceContainer>
+  );
 };
 
 export default React.forwardRef(SurfaceContainer);

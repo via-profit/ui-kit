@@ -2,8 +2,6 @@ import * as React from 'react';
 import styled from '@emotion/styled';
 import { css } from '@emotion/react';
 
-import { CLASSNAME_PREFIX } from '../constants';
-
 export interface TextFieldInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   readonly hasStartIcon: boolean;
   readonly hasEndIcon: boolean;
@@ -45,15 +43,7 @@ const TextFieldInput: React.ForwardRefRenderFunction<HTMLInputElement, TextField
 ) => {
   const { hasEndIcon, hasStartIcon, ...nativeProps } = props;
 
-  return (
-    <Input
-      {...nativeProps}
-      $hasEndIcon={hasEndIcon}
-      $hasStartIcon={hasStartIcon}
-      className={`${CLASSNAME_PREFIX} text-field-input ${nativeProps.className || ''}`.trim()}
-      ref={ref}
-    />
-  );
+  return <Input {...nativeProps} $hasEndIcon={hasEndIcon} $hasStartIcon={hasStartIcon} ref={ref} />;
 };
 
 export default React.forwardRef(TextFieldInput);

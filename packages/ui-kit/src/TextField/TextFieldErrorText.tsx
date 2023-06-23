@@ -2,7 +2,6 @@ import * as React from 'react';
 import styled from '@emotion/styled';
 
 import NoSSR from '../NoSSR';
-import { CLASSNAME_PREFIX } from '../constants';
 
 export interface TextFieldErrorTextProps extends React.HTMLAttributes<HTMLDivElement> {
   readonly error?: boolean;
@@ -52,7 +51,6 @@ const TextFieldErrorText: React.ForwardRefRenderFunction<
   return (
     <ErrorTextContainer
       {...nativeProps}
-      className={`${CLASSNAME_PREFIX} text-field-error-text ${nativeProps.className || ''}`.trim()}
       $maxHeight={error ? maxHeight : 0}
       $focused={focused}
       ref={ref}

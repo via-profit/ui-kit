@@ -12,46 +12,6 @@
 - bar
 - bar
 
-## CSS классы
-
-- `.text-field-container`
-- `.text-field-error-text`
-- `.text-field-icon-wrapper`
-- `.text-field-input`
-- `.text-field-input-wrapper`
-- `.text-field-label`
-- `.text-field-asterisk`
-
-CSS классы можно использовать для стиллизации компонента, например, при помощи [styled components](https://emotion.sh/docs/styled)
-
-```ts
-import React from 'react';
-import styled from '@emotion/styled';
-import TextField from '@via-profit/ui-kit/src/TextField';
-
-const StyledTextField = styled(TextField)`
-  & .text-field-input {
-    color: green;
-  }
-  & .text-field-label {
-    font-weight: 800;
-  }
-  & .text-field-input-wrapper {
-    background-color: transparent;
-  }
-`;
-
-const CSSClasses: React.FC = () => (
-  <StyledTextField label="Имя:" placeholder="Севастьян" defaultValue="Севастьян" />
-);
-
-export default CSSClasses;
-```
-
-Результат:
-
-<ExampleCSSClasses>
-
 ## Переопределение компонентов
 
 Компонент `<TextField>` состоит из нескольких компонентов:
@@ -66,7 +26,7 @@ export default CSSClasses;
 | `<Label>`           |    -     |
 | `<Asterisk>`        |    -     |
 
-Используйте свойство `components` чтобы переопределить компонетны:
+Используйте свойство `overrides` чтобы переопределить компонетны:
 
 ```tsx
 import React from 'react';
@@ -77,7 +37,7 @@ const MyPage: React.FC = () => (
     label="Имя:"
     placeholder="Алевтина"
     defaultValue="Алевтина"
-    components={{
+    overrides={{
       // Перезаписываем InputWrapper.
       // Обратите внимание, что здесь прокидывается ref, однако
       // прокинуть ref можно и при объявлении компонента, главное не забыть

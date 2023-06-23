@@ -42,4 +42,4 @@ const CalendarWeekDaysBar: React.ForwardRefRenderFunction<HTMLDivElement, Calend
   );
 };
 
-export default React.memo(React.forwardRef(CalendarWeekDaysBar));
+export default React.forwardRef(CalendarWeekDaysBar);

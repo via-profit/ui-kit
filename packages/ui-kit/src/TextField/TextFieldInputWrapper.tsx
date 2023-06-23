@@ -2,8 +2,6 @@ import * as React from 'react';
 import styled from '@emotion/styled';
 import { css } from '@emotion/react';
 
-import { CLASSNAME_PREFIX } from '../constants';
-
 export type TextFieldInputWrapperProps = React.HTMLAttributes<HTMLDivElement> & {
   readonly error?: boolean;
   readonly fullWidth?: boolean;
@@ -62,7 +60,6 @@ const TextFieldInputWrapper: React.ForwardRefRenderFunction<
       $focused={focused}
       $readOnly={readOnly}
       $fullWidth={Boolean(fullWidth)}
-      className={`${CLASSNAME_PREFIX} text-field-input-wrapper ${nativeProps.className || ''}`.trim()}
       ref={ref}
     >
       {children}

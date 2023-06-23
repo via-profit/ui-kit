@@ -54,10 +54,10 @@ export interface TextFieldProps extends React.InputHTMLAttributes<HTMLInputEleme
   /**
    * Overridable components map
    */
-  readonly components?: TextFieldOverrideComponents;
+  readonly overrides?: TextFieldOverrides;
 }
 
-export interface TextFieldOverrideComponents {
+export interface TextFieldOverrides {
   /**
    * Native `input` component
    */
@@ -121,7 +121,7 @@ const TextField: React.ForwardRefRenderFunction<HTMLDivElement, TextFieldProps> 
     endIcon,
     startIcon,
     requiredAsterisk,
-    components,
+    overrides,
     onChange,
     onFocus,
     onBlur,
@@ -183,7 +183,7 @@ const TextField: React.ForwardRefRenderFunction<HTMLDivElement, TextFieldProps> 
     [endIcon],
   );
 
-  const overrides = React.useMemo(
+  const overridesMap = React.useMemo(
     () => ({
       Label,
       Input,
@@ -192,13 +192,13 @@ const TextField: React.ForwardRefRenderFunction<HTMLDivElement, TextFieldProps> 
       ErrorText,
       IconWrapper,
       InputWrapper,
-      ...components,
+      ...overrides,
     }),
-    [components],
+    [overrides],
   );
 
   return (
-    <overrides.Container
+    <overridesMap.Container
       ref={ref}
       fullWidth={fullWidth}
       className={className}
@@ -206,22 +206,22 @@ const TextField: React.ForwardRefRenderFunction<HTMLDivElement, TextFieldProps> 
       focused={focused}
     >
       {typeof label !== 'undefined' && label !== null && (
-        <overrides.Label htmlFor={inputID} error={error}>
+        <overridesMap.Label htmlFor={inputID} error={error}>
           {label}
           {typeof requiredAsterisk !== 'undefined' && requiredAsterisk !== null && (
-            <overrides.Asterisk>
+            <overridesMap.Asterisk>
               {typeof requiredAsterisk === 'boolean' ? '*' : requiredAsterisk}
-            </overrides.Asterisk>
+            </overridesMap.Asterisk>
           )}
-        </overrides.Label>
+        </overridesMap.Label>
       )}
 
-      <overrides.InputWrapper error={error} focused={focused} fullWidth={fullWidth}>
+      <overridesMap.InputWrapper error={error} focused={focused} fullWidth={fullWidth}>
         {hasStartIcon && (
-          <overrides.IconWrapper position="start">{startIcon}</overrides.IconWrapper>
+          <overridesMap.IconWrapper position="start">{startIcon}</overridesMap.IconWrapper>
         )}
 
-        <overrides.Input
+        <overridesMap.Input
           {...nativeInputProps}
           hasStartIcon={hasStartIcon}
           hasEndIcon={hasEndIcon}
@@ -231,12 +231,14 @@ const TextField: React.ForwardRefRenderFunction<HTMLDivElement, TextFieldProps> 
           onFocus={inputFocus}
           onBlur={inputBlur}
         />
-        {hasEndIcon && <overrides.IconWrapper position="end">{endIcon}</overrides.IconWrapper>}
-      </overrides.InputWrapper>
-      <overrides.ErrorText error={error} focused={focused}>
+        {hasEndIcon && (
+          <overridesMap.IconWrapper position="end">{endIcon}</overridesMap.IconWrapper>
+        )}
+      </overridesMap.InputWrapper>
+      <overridesMap.ErrorText error={error} focused={focused}>
         {errorText}
-      </overrides.ErrorText>
-    </overrides.Container>
+      </overridesMap.ErrorText>
+    </overridesMap.Container>
   );
 };
 

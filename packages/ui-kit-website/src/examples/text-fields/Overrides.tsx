@@ -6,7 +6,7 @@ const TextFieldsOverrides: React.FC = () => (
     label="Имя:"
     placeholder="Алевтина"
     defaultValue="Алевтина"
-    components={{
+    overrides={{
       InputWrapper: React.forwardRef(function InputWrapper(props, ref) {
         const { children } = props;
 

@@ -1,9 +1,8 @@
 import React from 'react';
 import styled from '@emotion/styled';
 
-import ButtonStartIconWrapper from './ButtonStartIconWrapper';
-import ButtonEndIconWrapper from './ButtonEndIconWrapper';
-import ButtonTextWrapper from './ButtonTextWrapper';
+import IconWrapper, { ButtonIconWrapperProps } from './ButtonIconWrapper';
+import TextWrapper, { ButtonTextWrapperProps } from './ButtonTextWrapper';
 
 type ButtonNativeProps = React.ButtonHTMLAttributes<HTMLButtonElement>;
 
@@ -34,6 +33,27 @@ export interface ButtonBaseProps extends Omit<ButtonNativeProps, 'color'> {
    * You can pass the primary, default, secondary name of the colors or your specified color value
    */
   readonly color?: 'default' | 'primary' | 'secondary' | string;
+
+  /**
+   * Overridable components map
+   */
+  readonly overrides?: ButtonBaseOverrides;
+}
+
+export interface ButtonBaseOverrides {
+  /**
+   * Start icon wrapper
+   */
+  readonly IconWrapper?: React.ForwardRefExoticComponent<
+    ButtonIconWrapperProps & React.RefAttributes<HTMLSpanElement>
+  >;
+
+  /**
+   * text wrapper
+   */
+  readonly TextWrapper?: React.ForwardRefExoticComponent<
+    ButtonTextWrapperProps & React.RefAttributes<HTMLSpanElement>
+  >;
 }
 
 type StyledProps = {
@@ -69,17 +89,25 @@ const ButtonBase: React.ForwardRefRenderFunction<HTMLButtonElement, ButtonBasePr
   props,
   ref,
 ) => {
-  const { children, startIcon, endIcon, color, ...otherProps } = props;
+  const { children, startIcon, endIcon, color, overrides, ...nativeProps } = props;
+  const overridesMap = React.useMemo(
+    () => ({
+      TextWrapper,
+      IconWrapper,
+      ...overrides,
+    }),
+    [overrides],
+  );
 
   return (
-    <Button {...otherProps} ref={ref}>
+    <Button {...nativeProps} ref={ref}>
       {typeof startIcon !== 'undefined' && startIcon !== null && (
-        <ButtonStartIconWrapper>{startIcon}</ButtonStartIconWrapper>
+        <overridesMap.IconWrapper position="start">{startIcon}</overridesMap.IconWrapper>
       )}
 
-      <ButtonTextWrapper>{children}</ButtonTextWrapper>
+      <overridesMap.TextWrapper>{children}</overridesMap.TextWrapper>
       {typeof endIcon !== 'undefined' && endIcon !== null && (
-        <ButtonEndIconWrapper>{endIcon}</ButtonEndIconWrapper>
+        <overridesMap.IconWrapper position="end">{endIcon}</overridesMap.IconWrapper>
       )}
     </Button>
   );
