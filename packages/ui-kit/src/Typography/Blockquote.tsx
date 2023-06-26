@@ -6,7 +6,7 @@ const Blockquote = styled.blockquote`
   font-style: italic;
   position: relative;
   border-left: 4px solid ${({ theme }) => theme.colors.textSecondary.toString()};
-  color: ${({ theme }) => theme.colors.textSecondary.toString()};
+  color: currentColor;
   margin: 0;
   padding: 1em 0 1em 2em;
   & > p:first-of-type {

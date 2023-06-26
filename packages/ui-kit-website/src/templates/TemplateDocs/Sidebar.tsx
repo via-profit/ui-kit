@@ -1,14 +1,16 @@
 import React from 'react';
 import styled from '@emotion/styled';
-import { Link } from 'react-router-dom';
+import { css } from '@emotion/react';
+import { Link, matchPath, useLocation } from 'react-router-dom';
 
-import Surface from '@via-profit/ui-kit/src/Surface';
+import SurfaceContainer from '@via-profit/ui-kit/src/Surface/SurfaceContainer';
 
-const Container = styled(Surface)`
+const Container = styled(SurfaceContainer)`
   width: 20%;
   min-width: 16em;
-  background-color: ${({ theme }) => theme.colors.surface.toString()};
-  color: ${({ theme }) => theme.colors.textPrimary.toString()};
+  border-radius: 0;
+  background-color: ${({ theme }) => theme.colors.backgroundSecondary.toString()};
+  color: ${({ theme }) => theme.colors.accentPrimaryContrast.toString()};
 `;
 
 const ItemsList = styled.nav`
@@ -18,24 +20,45 @@ const ItemsList = styled.nav`
   top: 5rem;
 `;
 
-const Item = styled(Link)`
+type ItemStyle = {
+  readonly $isActive: boolean;
+};
+
+const Item = styled(Link, { shouldForwardProp: p => p.match(/^\$/) === null })<ItemStyle>`
   color: currentColor;
   text-decoration: none;
   padding: 1em 1.2em;
   &:hover {
-    background-color: ${({ theme }) => theme.colors.surface.darken(20).toString()};
+    background-color: ${({ theme }) => theme.colors.backgroundSecondary.lighten(15).toString()};
   }
+  ${({ $isActive, theme }) =>
+    $isActive &&
+    css`
+      color: ${theme.colors.accentPrimary.toString()};
+    `};
 `;
 
-const Sidebar: React.FC = () => (
-  <Container noMargin>
-    <ItemsList>
-      <Item to="/docs/button">Button</Item>
-      <Item to="/docs/text-field">TextField</Item>
-      <Item to="/docs/table">Tables</Item>
-      <Item to="/docs/theme">Themes</Item>
-    </ItemsList>
-  </Container>
-);
+const Sidebar: React.FC = () => {
+  const { pathname } = useLocation();
+
+  return (
+    <Container noMargin>
+      <ItemsList>
+        <Item $isActive={matchPath('/docs/button', pathname) !== null} to="/docs/button">
+          Button
+        </Item>
+        <Item $isActive={matchPath('/docs/text-field', pathname) !== null} to="/docs/text-field">
+          TextField
+        </Item>
+        <Item $isActive={matchPath('/docs/table', pathname) !== null} to="/docs/table">
+          Tables
+        </Item>
+        <Item $isActive={matchPath('/docs/theme', pathname) !== null} to="/docs/theme">
+          Themes
+        </Item>
+      </ItemsList>
+    </Container>
+  );
+};
 
 export default Sidebar;

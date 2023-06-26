@@ -15,7 +15,7 @@ const green: UIThemeOverrides = {
   },
   colors: {
     backgroundPrimary: '#f1f1f1',
-    backgroundSecondary: '#ffffff',
+    backgroundSecondary: '#0e1200',
     textPrimary: '#212121',
     textSecondary: '#343434',
     accentPrimary: '#66b13d',

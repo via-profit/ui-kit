@@ -16,7 +16,7 @@ const StyledParagraph = styled.p<StyledProps>`
   font-size: 1rem;
   font-weight: 300;
   margin: ${({ $noMargin }) => ($noMargin ? 0 : '0 0 0.8em 0')};
-  color: ${({ theme }) => theme.colors.textPrimary.toString()};
+  color: currentColor;
 `;
 
 const Paragraph: React.ForwardRefRenderFunction<HTMLParagraphElement, ParagraphProps> = (

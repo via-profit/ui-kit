@@ -10,45 +10,45 @@ export interface UITheme {
   readonly fontSize: Record<keyof UIThemeOverrideFontSize, number>;
   readonly zIndex: UIThemeOverrideZIndex;
   readonly colors: Record<keyof UIThemeOverrideColor, Color>;
-  readonly shape: UIThemeOverrideShape;
+  readonly shape: Required<UIThemeOverrideShape>;
 }
 
 export interface UIThemeOverrideColor {
-  readonly backgroundPrimary: string;
-  readonly backgroundSecondary: string;
-  readonly surface: string;
-  readonly textPrimary: string;
-  readonly textSecondary: string;
-  readonly accentPrimary: string;
-  readonly accentPrimaryContrast: string;
-  readonly accentSecondary: string;
-  readonly accentSecondaryContrast: string;
-  readonly error: string;
+  readonly backgroundPrimary?: string;
+  readonly backgroundSecondary?: string;
+  readonly surface?: string;
+  readonly textPrimary?: string;
+  readonly textSecondary?: string;
+  readonly accentPrimary?: string;
+  readonly accentPrimaryContrast?: string;
+  readonly accentSecondary?: string;
+  readonly accentSecondaryContrast?: string;
+  readonly error?: string;
 }
 
 export interface UIThemeOverrideZIndex {
-  readonly header: number;
-  readonly mainDrawer: number;
-  readonly modal: number;
+  readonly header?: number;
+  readonly mainDrawer?: number;
+  readonly modal?: number;
 }
 
 export interface UIThemeOverrideShape {
-  readonly radiusFactor: 0 | 0.1 | 0.2 | 0.3 | 0.4 | 0.5 | 0.6 | 0.7 | 0.8 | 0.9 | 1;
+  readonly radiusFactor?: 0 | 0.1 | 0.2 | 0.3 | 0.4 | 0.5 | 0.6 | 0.7 | 0.8 | 0.9 | 1;
 }
 
 export interface UIThemeOverrideFontSize {
-  readonly small: number;
-  readonly normal: number;
-  readonly medium: number;
-  readonly large: number;
+  readonly small?: number;
+  readonly normal?: number;
+  readonly medium?: number;
+  readonly large?: number;
 }
 
 export interface UIThemeOverrides {
   readonly isDark: boolean;
-  readonly fontSize: UIThemeOverrideFontSize;
-  readonly zIndex: UIThemeOverrideZIndex;
-  readonly shape: UIThemeOverrideShape;
-  readonly colors: UIThemeOverrideColor;
+  readonly fontSize?: UIThemeOverrideFontSize;
+  readonly zIndex?: UIThemeOverrideZIndex;
+  readonly shape?: UIThemeOverrideShape;
+  readonly colors?: UIThemeOverrideColor;
 }
 
 const ThemeProvider: React.FC<ThemeProviderProps> = props => {

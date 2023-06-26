@@ -29,7 +29,7 @@ const ExampleTableBasic: React.FC = () => {
   ];
 
   return (
-    <Table>
+    <Table fullWidth>
       <TableHeader>
         <TableRow>
           <TableHeaderCell>Имя</TableHeaderCell>

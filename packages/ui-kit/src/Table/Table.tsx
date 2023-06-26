@@ -1,9 +1,16 @@
 import React from 'react';
 import styled from '@emotion/styled';
+import { css } from '@emotion/react';
 
-export type TableProps = React.TableHTMLAttributes<HTMLTableElement>;
+export type TableProps = React.TableHTMLAttributes<HTMLTableElement> & {
+  readonly fullWidth?: boolean;
+};
 
-const StyledTable = styled.table`
+type StyleProps = {
+  readonly $fullWidth?: boolean;
+};
+
+const StyledTable = styled.table<StyleProps>`
   display: table;
   box-sizing: border-box;
   text-indent: initial;
@@ -20,13 +27,18 @@ const StyledTable = styled.table`
     `0 0.5em 2em -0.8em ${theme.colors.surface.darken(100).alpha(0.4).toString()}`};
   border-radius: ${({ theme }) => theme.shape.radiusFactor}em;
   font-size: 1em;
+  ${({ $fullWidth }) =>
+    $fullWidth &&
+    css`
+      width: 100%;
+    `};
 `;
 
 const Table: React.ForwardRefRenderFunction<HTMLTableElement, TableProps> = (props, ref) => {
-  const { children, ...nativeProps } = props;
+  const { children, fullWidth, ...nativeProps } = props;
 
   return (
-    <StyledTable role="table" {...nativeProps} ref={ref}>
+    <StyledTable role="table" $fullWidth={fullWidth} {...nativeProps} ref={ref}>
       {children}
     </StyledTable>
   );

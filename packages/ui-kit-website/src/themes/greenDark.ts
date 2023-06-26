@@ -6,7 +6,7 @@ const greenDark: typeof green = {
   colors: {
     ...green.colors,
     backgroundPrimary: '#262629',
-    backgroundSecondary: '#262739',
+    backgroundSecondary: '#1b1b1b',
     accentPrimary: '#66b13d',
     accentPrimaryContrast: '#f1f1f1',
     accentSecondary: '#fce240',

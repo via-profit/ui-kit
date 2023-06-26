@@ -14,8 +14,8 @@ const light: UIThemeOverrides = {
     modal: 10,
   },
   colors: {
-    backgroundPrimary: '#f9f9f9',
-    backgroundSecondary: '#F9F9F9',
+    backgroundPrimary: '#F9F9F9',
+    backgroundSecondary: '#0e1200',
     textPrimary: '#212121',
     textSecondary: '#343434',
     accentPrimary: '#FFA800',
@@ -24,8 +24,6 @@ const light: UIThemeOverrides = {
     accentSecondaryContrast: '#FFFFFF',
     error: '#ff2b2b',
     surface: '#fff',
-    // drawer: '#fff',
-    // drawerContrast: '#000',
   },
   shape: {
     radiusFactor: 0.5,
