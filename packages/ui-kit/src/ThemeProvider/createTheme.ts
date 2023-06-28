@@ -40,6 +40,11 @@ export const createTheme: CreateTheme = overrides => {
     accentSecondary: '#bd00ff',
     accentSecondaryContrast: '#FFFFFF',
     error: '#ff2b2b',
+    errorContrast: '#ffffff',
+    warning: '#fcbf03',
+    warningContrast: '#ffffff',
+    success: '#0ca400',
+    successContrast: '#ffffff',
   };
 
   Object.entries({ ...defaultColors, ...colors }).forEach(([colorName, colorValue]) => {

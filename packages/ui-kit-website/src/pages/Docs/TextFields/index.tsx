@@ -2,16 +2,18 @@ import React from 'react';
 
 import Surface from '@via-profit/ui-kit/src/Surface';
 import RenderMarkdown from '~/components/RenderMarkdown';
-import ExampleOverview from '~/examples/text-fields/Overview';
-import ExampleOverrides from '~/examples/text-fields/Overrides';
+import ExampleTextFieldOverview from '~/examples/text-fields/ExampleTextFieldOverview';
+import ExampleTextFieldOverrides from '~/examples/text-fields/ExampleTextFieldOverrides';
+import ExampleTextFieldIcons from '~/examples/text-fields/ExampleTextFieldIcons';
 import content from '~/docs/text-fields/introduction.md';
 
 const TextFields: React.FC = () => (
   <Surface>
     <RenderMarkdown
       overrides={{
-        ExampleOverview,
-        ExampleOverrides,
+        ExampleTextFieldOverview,
+        ExampleTextFieldOverrides,
+        ExampleTextFieldIcons,
       }}
     >
       {content}

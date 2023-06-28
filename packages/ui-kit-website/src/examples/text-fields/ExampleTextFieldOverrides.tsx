@@ -1,7 +1,7 @@
 import React from 'react';
 import TextField from '@via-profit/ui-kit/src/TextField';
 
-const TextFieldsOverrides: React.FC = () => (
+const ExampleTextFieldOverrides: React.FC = () => (
   <TextField
     label="Имя:"
     placeholder="Алевтина"
@@ -23,4 +23,4 @@ const TextFieldsOverrides: React.FC = () => (
   />
 );
 
-export default TextFieldsOverrides;
+export default ExampleTextFieldOverrides;

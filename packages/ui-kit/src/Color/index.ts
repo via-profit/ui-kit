@@ -172,7 +172,14 @@ class Color {
       return this.parseColor(webHex);
     }
 
-    throw new Error(`Failed to parse color value «${value}»`);
+    console.error(`Failed to parse color value «${value}»`);
+
+    return {
+      r: 0,
+      g: 0,
+      b: 0,
+      a: 1,
+    };
   }
   private hslToRgb(value: string): ParsedColor {
     const hsl = value.match(/(\d+(\.\d+)?)/g);

@@ -6,6 +6,7 @@
 - [Варианты](#варианты)
 - [Цвета](#цвета)
 - [Переопределение](#переопределение)
+- [Иконки](#иконки)
 - [Свойства](#свойства)
 
 ## Описание
@@ -45,7 +46,7 @@ _Пример использования:_
 
 ```tsx
 import React from 'react';
-import Button from '@via-profit/ui-kit/src/Button';
+import Button from '@via-profit/ui-kit/Button';
 
 const Example: React.FC = () => (
   <>
@@ -81,7 +82,7 @@ _Пример использования:_
 
 ```tsx
 import React from 'react';
-import Button from '@via-profit/ui-kit/src/Button';
+import Button from '@via-profit/ui-kit/Button';
 
 const Example: React.FC = () => (
   <>
@@ -114,6 +115,26 @@ _Результат:_
 &nbsp;
 &nbsp;
 
+## Иконки
+
+Кнопка может отображать иконку, переданную в свойстве `startIcon` или `endIcon`.
+**Важно:** Передавать следует не React компонент, а JSX выражение:
+
+```tsx
+import Button from '@via-profit/ui-kit/Button';
+import MyIcon from './MyIcon';
+
+const Example: React.FC = () => (
+  <Button startIcon={<MyIcon />}>Button with icon</Button>
+)
+
+```
+_Результат:_
+
+<ExampleButtonIcons />
+&nbsp;
+&nbsp;
+
 ## Переопределение
 
 Компонент `<Button>` является составным и реализован при помощи следующих компонентов:
@@ -128,7 +149,7 @@ _Пример использования:_
 
 ```tsx
 import React from 'react';
-import Button from '@via-profit/ui-kit/src/Button';
+import Button from '@via-profit/ui-kit/Button';
 
 const Example: React.FC = () => (
   <Button

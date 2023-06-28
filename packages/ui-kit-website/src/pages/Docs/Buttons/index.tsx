@@ -6,6 +6,7 @@ import ExampleButtonBasic from '~/examples/buttons/ExampleButtonBasic';
 import ExampleButtonVariants from '~/examples/buttons/ExampleButtonVariants';
 import ExampleButtonColors from '~/examples/buttons/ExampleButtonColors';
 import ExampleButtonOverrides from '~/examples/buttons/ExampleButtonOverrides';
+import ExampleButtonIcons from '~/examples/buttons/ExampleButtonIcons';
 import content from '~/docs/buttons/intruduction.md';
 
 const Buttons: React.FC = () => (
@@ -16,6 +17,7 @@ const Buttons: React.FC = () => (
         ExampleButtonVariants,
         ExampleButtonColors,
         ExampleButtonOverrides,
+        ExampleButtonIcons,
       }}
     >
       {content}

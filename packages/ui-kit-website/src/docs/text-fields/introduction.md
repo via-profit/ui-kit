@@ -1,8 +1,20 @@
 # Текстовое поле
 
-Компонент `<TextField>`
+## Содержание
 
-<ExampleOverview>
+- [Описание](#описание)
+- [Варианты](#варианты)
+- [Цвета](#цвета)
+- [Переопределение](#переопределение)
+- [Иконки](#иконки)
+- [Свойства](#свойства)
+
+
+## Описание
+
+Компонент `<TextField>` создаёт текстовое поле на основе нативного `<input>` элемента.
+
+<ExampleTextFieldOverview>
 
 ## Переопределение компонентов
 
@@ -52,7 +64,27 @@ export default MyPage;
 
 Результат:
 
-<ExampleOverrides />
+<ExampleTextFieldOverrides />
+&nbsp;
+&nbsp;
+
+## Иконки
+
+Компонент может отображать иконку, переданную в свойстве `startIcon` или `endIcon`.
+**Важно:** Передавать следует не React компонент, а JSX выражение:
+
+```tsx
+import TextField from '@via-profit/ui-kit/TextField';
+import MyIcon from './MyIcon';
+
+const Example: React.FC = () => (
+  <TextField startIcon={<MyIcon />} label="Name" />
+)
+
+```
+_Результат:_
+
+<ExampleTextFieldIcons />
 &nbsp;
 &nbsp;
 

@@ -1,7 +1,9 @@
 import React from 'react';
-import { ThemeProvider as EmotionProvider } from '@emotion/react';
+import { ThemeProvider as EmotionProvider, useTheme } from '@emotion/react';
 
 import type Color from '../Color';
+
+export { useTheme };
 
 export * from './createTheme';
 
@@ -24,6 +26,11 @@ export interface UIThemeOverrideColor {
   readonly accentSecondary?: string;
   readonly accentSecondaryContrast?: string;
   readonly error?: string;
+  readonly errorContrast?: string;
+  readonly warning?: string;
+  readonly warningContrast?: string;
+  readonly success?: string;
+  readonly successContrast?: string;
 }
 
 export interface UIThemeOverrideZIndex {
