@@ -11,6 +11,9 @@ const StyledTableHeaderCell = styled.th`
   color: ${({ theme }) => theme.colors.accentPrimaryContrast.toString()};
   word-break: break-all;
   font-weight: 500;
+  @media all and (max-width: 1200px) {
+    padding: 0.4em;
+  }
 `;
 
 const TableHeaderCell: React.ForwardRefRenderFunction<

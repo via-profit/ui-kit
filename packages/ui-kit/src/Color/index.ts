@@ -22,12 +22,52 @@ class Color {
 
     return this;
   }
+
+  /**
+   * Lightens the current color by the \
+   * transmitted number of conventional units.\
+   * \
+   * Example:
+   * ```tsx
+   * const color = theme.colors
+   *   .accentPrimary
+   *   .lighten(60)
+   *   .toString();
+   * ```
+   *
+   */
   public lighten(decimal: number): this {
     return this.shade(decimal);
   }
+
+  /**
+   * Darkens the current color by\
+   * the transmitted number of conventional units.
+   * \
+   * Example:
+   * ```tsx
+   * const color = theme.colors
+   *   .accentPrimary
+   *   .darken(60)
+   *   .toString();
+   * ```
+   */
   public darken(decimal: number): this {
     return this.shade(-decimal);
   }
+
+  /**
+   * Applies transparency (alpha channel) to the current color\
+   * Takes as an argument a number from 0 to 1
+   * \
+   * Example:
+   * ```tsx
+   * const color = theme.colors
+   *   .accentPrimary
+   *   .alpha(0.5)
+   *   .toString();
+   * ```
+   */
   public alpha(decimal: number): this {
     this.#color.a = decimal;
 
@@ -35,7 +75,7 @@ class Color {
   }
 
   /**
-   * Get color luminance value
+   * Returns color luminance value
    */
   public luminance(): number {
     const RED = 0.2126;
@@ -52,6 +92,25 @@ class Color {
 
     return a[0] * RED + a[1] * GREEN + a[2] * BLUE;
   }
+
+  /**
+   * Returns the contrast level between the\
+   * current and transmitted colors
+   * \
+   * Example:
+   * ```tsx
+   * const { colors } = themes;
+   * const contrast = colors
+   *   .accentPrimary
+   *   .contrast(colors.textPrimary.rgbString());
+   *
+   * if (contrast > 5) {
+   *   return colors.textPrimary.toString();
+   * } else {
+   *   return colors.textSecondary.toString()
+   * }
+   * ```
+   */
   public contrast(rgb2: string | Color) {
     const color2 = rgb2 instanceof Color ? rgb2 : new Color(rgb2);
     const lum1 = this.luminance();
@@ -75,24 +134,39 @@ class Color {
     return this;
   }
 
+  /**
+   * Returns the current color as separate rgb channels
+   */
   public rgb() {
     const result = { ...this.#color };
     this.#color = { ...this.#cache };
 
     return result;
   }
+
+  /**
+   * Returns the current color as an rgba string
+   */
   public toString() {
     const result = this.rgbString();
     this.#color = { ...this.#cache };
 
     return result;
   }
+
+  /**
+   * Returns the current color as an rgba string
+   */
   public rgbString() {
     const result = `rgba(${this.#color.r}, ${this.#color.g}, ${this.#color.b}, ${this.#color.a})`;
     this.#color = { ...this.#cache };
 
     return result;
   }
+
+  /**
+   * Returns the current color as an hex string
+   */
   public hexString(): string {
     const colorToHex = (color: number) => {
       const hexadecimal = color.toString(16);
@@ -107,6 +181,10 @@ class Color {
     return result;
   }
 
+  /**
+   * Parse the transmitted color and returns its\
+   * representation as separate rgba channels
+   */
   private parseColor(value: string): ParsedColor {
     const inputColor = value.trim().toLowerCase();
     const hsl = inputColor.indexOf('hsl') === 0;
@@ -181,6 +259,10 @@ class Color {
       a: 1,
     };
   }
+
+  /**
+   * Recodes the transmitted color value in hsl format to rgba
+   */
   private hslToRgb(value: string): ParsedColor {
     const hsl = value.match(/(\d+(\.\d+)?)/g);
     if (!hsl || hsl.length < 3) {
@@ -234,6 +316,10 @@ class Color {
       a: typeof rgb[3] === 'undefined' ? 1 : Number(rgb[3]),
     };
   }
+
+  /**
+   * Returns color code by web color name
+   */
   private getHextByWebColor(value: string) {
     const webColors = {
       aliceblue: '#F0F8FF',

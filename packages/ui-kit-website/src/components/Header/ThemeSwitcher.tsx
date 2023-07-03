@@ -31,6 +31,12 @@ const ThemeSwitcher: React.FC = () => {
       <Button type="button" onClick={() => dispatch(uiActions.theme('greenDark'))}>
         Green Dark
       </Button>
+      <Button type="button" onClick={() => dispatch(uiActions.theme('blue'))}>
+        Blue
+      </Button>
+      <Button type="button" onClick={() => dispatch(uiActions.theme('blueDark'))}>
+        Blue Dark
+      </Button>
     </Container>
   );
 };

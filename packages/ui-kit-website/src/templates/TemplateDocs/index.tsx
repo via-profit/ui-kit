@@ -16,13 +16,19 @@ const Wrapper = styled.div`
 const Content = styled.div`
   flex: 1;
   padding: 0 1em 1em;
+  width: 70%;
+  box-sizing: border-box;
+`;
+
+const StyledSidebar = styled(Sidebar)`
+  flex-basis: 16rem;
 `;
 
 const TemplateDocs: React.FC = () => (
   <PageWrapper>
     <Header />
     <Wrapper>
-      <Sidebar />
+      <StyledSidebar />
       <Content>
         <Outlet />
       </Content>

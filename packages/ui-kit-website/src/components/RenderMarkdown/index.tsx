@@ -53,11 +53,16 @@ const ExternalLinkIcon = styled(OpenInNewIcon)`
   color: currentColor;
   font-size: 1em;
   margin-left: 0.1em;
+  margin-top: -0.11em;
   vertical-align: middle;
 `;
 
+const MarkdownStrong = styled(Strong)`
+  font-weight: 600;
+`;
+
 const MarkdownEm = styled(Em)`
-  color: grey;
+  color: ${({ theme }) => theme.colors.textSecondary.toString()};
 `;
 
 const CodeInline = styled.code`
@@ -67,7 +72,7 @@ const CodeInline = styled.code`
       : theme.colors.accentPrimary.darken(60).toString()};
   padding: 0em 0.4em;
   border-radius: 4px;
-  font-size: 0.9em;
+  font-size: 1em;
   font-weight: 500;
 `;
 
@@ -145,7 +150,8 @@ const MarkdownRender: React.FC<Props> = props => {
           ),
           img: Img,
           blockquote: Blockquote,
-          b: Strong,
+          b: MarkdownStrong,
+          strong: MarkdownStrong,
           em: MarkdownEm,
           p: Paragraph,
           ul: Ul,
@@ -157,6 +163,7 @@ const MarkdownRender: React.FC<Props> = props => {
           td: TableCell,
           th: TableHeaderCell,
           caption: TableCaption,
+          pre: ({ children, ...otherProps }) => <div {...otherProps}>{children}</div>,
           a: ({ href, title, children }) => {
             if (String(href || '').match(/^(http|https):\/\//)) {
               return (
@@ -210,9 +217,9 @@ const MarkdownRender: React.FC<Props> = props => {
             }
 
             return (
-              <Link title={typeof title === 'string' ? title : undefined} to={href || ''}>
+              <AnchorLink title={typeof title === 'string' ? title : undefined} to={href || ''}>
                 {children}
-              </Link>
+              </AnchorLink>
             );
           },
           code: p => {
@@ -224,7 +231,9 @@ const MarkdownRender: React.FC<Props> = props => {
 
             const language = className.replace(/^lang-/, '');
 
-            return <SyntaxHighlighter language={language as any} code={String(children)} />;
+            return (
+              <SyntaxHighlighter wrapLongLines language={language as any} code={String(children)} />
+            );
           },
           ...overrides,
         },

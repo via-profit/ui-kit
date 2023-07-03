@@ -189,5 +189,5 @@ _Результат:_
 | **startIcon**             | `<JSX.Element>`                          | `undefined`           | Элемент иконки, отображаемой слева от текста кнопки                                                  |
 | **endIcon**               | `<JSX.Element>`                          | `undefined`           | Элемент иконки, отображаемой справа от текста кнопки                                                 |
 | **overrides**             | `Object`                                 | `undefined`           | Объект элементов для переопределения составных компонентов кнопки                                    |
-| **overrides.IconWrapper** | `<React.Component>`                      | `<ButtonIconWrapper>` | Компонент обёртка для иконки, отображаемой слева и/или справа от текста кнопки                       |
-| **overrides.TextWrapper** | `<React.Component>`                      | `<ButtonTextWrapper>` | Компонент обёртка текста кнопки                                                                      |
+| **overrides .IconWrapper** | `<React.Component>`                      | `<ButtonIconWrapper>` | Компонент обёртка для иконки, отображаемой слева и/или справа от текста кнопки                       |
+| **overrides .TextWrapper** | `<React.Component>`                      | `<ButtonTextWrapper>` | Компонент обёртка текста кнопки                                                                      |

@@ -70,7 +70,10 @@ const ExampleTextFieldOverview: React.FC = () => {
                 strokeLinejoin="round"
                 strokeWidth="32"
               />
-              <path d="M256 367.91a20 20 0 1120-20 20 20 0 01-20 20z" />
+              <path
+                d="M256 367.91a20 20 0 1120-20 20 20 0 01-20 20z"
+                fill={theme.colors.error.toString()}
+              />
             </svg>
           )
         }

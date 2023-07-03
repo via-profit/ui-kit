@@ -3,11 +3,11 @@ import styled from '@emotion/styled';
 import { css } from '@emotion/react';
 import { Link, matchPath, useLocation } from 'react-router-dom';
 
-import SurfaceContainer from '@via-profit/ui-kit/src/Surface/SurfaceContainer';
+import SurfaceContainer, {
+  SurfaceContainerProps,
+} from '@via-profit/ui-kit/src/Surface/SurfaceContainer';
 
 const Container = styled(SurfaceContainer)`
-  width: 20%;
-  min-width: 16em;
   border-radius: 0;
   background-color: ${({ theme }) => theme.colors.backgroundSecondary.toString()};
   color: ${({ theme }) => theme.colors.accentPrimaryContrast.toString()};
@@ -38,11 +38,14 @@ const Item = styled(Link, { shouldForwardProp: p => p.match(/^\$/) === null })<I
     `};
 `;
 
-const Sidebar: React.FC = () => {
+const Sidebar: React.ForwardRefRenderFunction<HTMLDivElement, SurfaceContainerProps> = (
+  props,
+  ref,
+) => {
   const { pathname } = useLocation();
 
   return (
-    <Container noMargin>
+    <Container noMargin {...props} ref={ref}>
       <ItemsList>
         <Item $isActive={matchPath('/docs/button', pathname) !== null} to="/docs/button">
           Button
@@ -61,4 +64,4 @@ const Sidebar: React.FC = () => {
   );
 };
 
-export default Sidebar;
+export default React.forwardRef(Sidebar);

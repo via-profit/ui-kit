@@ -1,12 +1,12 @@
 import { UIThemeOverrides } from '@via-profit/ui-kit/src/ThemeProvider';
 
-const light: UIThemeOverrides = {
+const blue: UIThemeOverrides = {
   isDark: false,
   fontSize: {
     small: 14,
     normal: 16,
     medium: 18,
-    large: 20,
+    large: 21,
   },
   zIndex: {
     header: 8,
@@ -14,13 +14,13 @@ const light: UIThemeOverrides = {
     modal: 10,
   },
   colors: {
-    backgroundPrimary: '#F9F9F9',
+    backgroundPrimary: '#f1f1f1',
     backgroundSecondary: '#0e1200',
     textPrimary: '#212121',
-    textSecondary: '#474747',
-    accentPrimary: '#FFA800',
+    textSecondary: '#343434',
+    accentPrimary: '#597cff',
     accentPrimaryContrast: '#FFFFFF',
-    accentSecondary: '#bd00ff',
+    accentSecondary: '#c059ff',
     accentSecondaryContrast: '#FFFFFF',
     error: '#ff2b2b',
     surface: '#fff',
@@ -30,4 +30,4 @@ const light: UIThemeOverrides = {
   },
 };
 
-export default light;
+export default blue;

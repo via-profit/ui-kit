@@ -17,6 +17,9 @@ const GloalStyles: React.FC = () => {
           background-color: ${theme.colors.backgroundPrimary.toString()};
           color: ${theme.colors.textPrimary.toString()};
         }
+        * {
+          box-sizing: border-box;
+        }
       `}
     />
   );

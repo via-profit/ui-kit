@@ -12,6 +12,7 @@ type StyleProps = {
 
 const StyledTable = styled.table<StyleProps>`
   display: table;
+  width: 100%;
   box-sizing: border-box;
   text-indent: initial;
   border-spacing: 0;
