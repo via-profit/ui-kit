@@ -208,7 +208,6 @@ const MyComponent = styled.div`
 `;
 ```
 
-
 ## Использование размера шрифта
 
 Предполагается, что размер шрифта будет использоваться как настраиваемая величина, например, для того чтобы пользователь мог выбрать размер шрифта вашего приложения. Для простоты мы именуем 4 различных варианта как: `small` `normal` `medium` и `large`. Для каждого названия в теме оформления отводится соответствующий параметр с его реальным значением в пикселях.
@@ -228,13 +227,13 @@ const selector = createStructuredSelector({
 });
 
 const GlobalStyles: React.FC = () => {
-  const {fontSize} = useTheme();
+  const { fontSize } = useTheme();
   const { currentFontSize } = useSelector(selector);
 
   return (
     <Global
       styles={css`
-         :root {
+        :root {
           --font-size-small: ${fontSize.small}px;
           --font-size-normal: ${fontSize.normal}px;
           --font-size-medium: ${fontSize.medium}px;
@@ -248,7 +247,7 @@ const GlobalStyles: React.FC = () => {
         }
       `}
     />
-  )
+  );
 };
 
 export default GlobalStyles;
@@ -311,9 +310,17 @@ _Результат:_
 &nbsp;
 &nbsp;
 
-
 ## Класс Color
 
+Класс используется как инструмент манипуляции с цветами темы, но его возможно использовать и вне темы оформления, например:
+
+```ts
+import Color from '@via-profit/ui-kit/Color';
+
+const lightRed = new Color('red').lighten(50).hexString();
+
+console.log(lightRed);
+```
 
 _Интерфейс класса Color:_
 
@@ -427,13 +434,14 @@ declare class Color {
 
 **Методы класса Color:**
 
-- Конструктор soon
-- **lighten** soon
-- **darken** soon
-- **alpha** soon
-- **luminance** soon
-- **contrast** soon
-- **rgb** soon
-- **toString** soon
-- **rgbString** soon
-- **hexString** soon
+Конструктор Принимает код цвета в форматах `rgb` `hex` или `hsl`, а так же экземпляр собственного класса
+
+- **lighten** Осветляет текущий цвет на переданное количество условных единиц.
+- **darken** Затемняет текущий цвет на переданное количество условных единиц.
+- **alpha** Применяет к цвету альфа канал
+- **luminance** Возвращает значение яркости цвета
+- **contrast** Возвращает уровень контрастности между текущим и передаваемым цветами
+- **rgb** Возвращает текущий цвет в виде отдельных каналов rgb
+- **toString** Возвращает текущий цвет в виде строки rgba
+- **rgbString** Возвращает текущий цвет в виде строки rgba
+- **hexString** Возвращает текущий цвет в виде hex строки
