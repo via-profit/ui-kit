@@ -1,5 +1,5 @@
 import React from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, ScrollRestoration } from 'react-router-dom';
 import styled from '@emotion/styled';
 
 import Header from '~/components/Header';
@@ -24,6 +24,7 @@ const HomeTemplate: React.FC = () => (
     <Wrapper>
       <Content>
         <Outlet />
+        <ScrollRestoration />
       </Content>
     </Wrapper>
     <Footer />

@@ -47,17 +47,26 @@ const Sidebar: React.ForwardRefRenderFunction<HTMLDivElement, SurfaceContainerPr
   return (
     <Container noMargin {...props} ref={ref}>
       <ItemsList>
-        <Item $isActive={matchPath('/docs/button', pathname) !== null} to="/docs/button">
+        <Item $isActive={matchPath('/docs/button/*', pathname) !== null} to="/docs/button">
           Button
         </Item>
-        <Item $isActive={matchPath('/docs/text-field', pathname) !== null} to="/docs/text-field">
+        <Item $isActive={matchPath('/docs/text-field/*', pathname) !== null} to="/docs/text-field">
           TextField
         </Item>
-        <Item $isActive={matchPath('/docs/table', pathname) !== null} to="/docs/table">
+        <Item $isActive={matchPath('/docs/table/*', pathname) !== null} to="/docs/table">
           Tables
         </Item>
-        <Item $isActive={matchPath('/docs/theme', pathname) !== null} to="/docs/theme">
+        <Item
+          $isActive={matchPath('/docs/theming/*', pathname) !== null}
+          to="/docs/theming/overview"
+        >
           Themes
+        </Item>
+        <Item
+          $isActive={matchPath('/docs/theming/color', pathname) !== null}
+          to="/docs/theming/color"
+        >
+          &nbsp;&nbsp;&nbsp;Color
         </Item>
       </ItemsList>
     </Container>

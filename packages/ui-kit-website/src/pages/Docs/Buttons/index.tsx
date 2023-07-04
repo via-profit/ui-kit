@@ -7,7 +7,7 @@ import ExampleButtonVariants from '~/examples/buttons/ExampleButtonVariants';
 import ExampleButtonColors from '~/examples/buttons/ExampleButtonColors';
 import ExampleButtonOverrides from '~/examples/buttons/ExampleButtonOverrides';
 import ExampleButtonIcons from '~/examples/buttons/ExampleButtonIcons';
-import content from '~/docs/buttons/intruduction.md';
+import content from '@via-profit/ui-kit/docs/buttons/overview.md';
 
 const Buttons: React.FC = () => (
   <Surface>

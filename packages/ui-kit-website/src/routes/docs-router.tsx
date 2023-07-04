@@ -8,7 +8,8 @@ const Introduction = loadable(() => import('~/pages/Introduction/index'));
 const Buttons = loadable(() => import('~/pages/Docs/Buttons'));
 const Tables = loadable(() => import('~/pages/Docs/Tables'));
 const TextFields = loadable(() => import('~/pages/Docs/TextFields'));
-const Theming = loadable(() => import('~/pages/Docs/Theming'));
+const ThemingOverview = loadable(() => import('~/pages/Docs/Theming/ThemingOverview'));
+const ThemingColor = loadable(() => import('~/pages/Docs/Theming/ThemingColor'));
 
 const docsRouter: RouteObject = {
   path: 'docs',
@@ -52,11 +53,20 @@ const docsRouter: RouteObject = {
       ),
     },
     {
-      path: 'theme',
+      path: 'theming/overview',
       caseSensitive: true,
       element: (
         <React.Suspense fallback={<>Loading...</>}>
-          <Theming />
+          <ThemingOverview />
+        </React.Suspense>
+      ),
+    },
+    {
+      path: 'theming/color',
+      caseSensitive: true,
+      element: (
+        <React.Suspense fallback={<>Loading...</>}>
+          <ThemingColor />
         </React.Suspense>
       ),
     },

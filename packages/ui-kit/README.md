@@ -10,45 +10,10 @@
 - react-popper - Выпадающие меню
 - react-window - Виртуализированный список
 
+
 ```bash
 $ npm install @emotion/react @emotion/styled react react-dom react-modal react-popper react-window
 
 ```
 
-## Темы
-
-Для переопределения темы оформления в пакете `@emotion/styled` создайте, например в директории `@types`, файл `emotion.d.ts` со следующим содержимым:
-
-```ts
-import '@emotion/react';
-
-declare module '@emotion/react' {
-  import { UITheme } from '@via-profit/ui-kit';
-
-  export interface Theme extends UITheme {}
-}
-
-```
-
-Для переопределения темы оформления в пакете `@via-profit/ui-kit` создайте, например в директории `@types`, файл `ui-kit.d.ts` со следующим содержимым:
-
-_@types/emotion.d.ts_
-
-```ts
-  import {
-    UIThemeOverrideColor as Colors,
-    UIThemeOverrideZIndex as ZIndexes,
-  } from '@via-profit/ui-kit';
-
-
-declare module '@via-profit/ui-kit' {
-  export interface UIThemeOverrideColor extends Colors {
-    readonly drawer: string;
-    readonly drawerContrast: string;
-  }
-
-  export interface UIThemeOverrideZIndex extends ZIndexes {
-    readonly notifications: number;
-  }
-}
-```
+## Документация [здесь](./docs/introduction.md)

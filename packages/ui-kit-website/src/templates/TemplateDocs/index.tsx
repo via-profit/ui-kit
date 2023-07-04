@@ -1,5 +1,5 @@
 import React from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, ScrollRestoration } from 'react-router-dom';
 import styled from '@emotion/styled';
 
 import Header from '~/components/Header';
@@ -31,6 +31,7 @@ const TemplateDocs: React.FC = () => (
       <StyledSidebar />
       <Content>
         <Outlet />
+        <ScrollRestoration />
       </Content>
     </Wrapper>
     <Footer />

@@ -195,7 +195,8 @@ const MarkdownRender: React.FC<Props> = props => {
               const anchorName = String(href || '').match(/#([a-z0-9а-яёй-]+)$/)?.[1] || '';
 
               return (
-                <Anchor
+                <AnchorLink
+                  // preventScrollReset={true}
                   onClick={event => {
                     event.preventDefault();
                     const element = document.querySelector(`a[id="${anchorName}"]`);
@@ -204,15 +205,15 @@ const MarkdownRender: React.FC<Props> = props => {
                       const yOffset = -80; // app header height
                       const y = element.getBoundingClientRect().top + window.scrollY + yOffset;
 
-                      navigate(`${pathname}#${anchorName}`);
+                      navigate(`${pathname}#${anchorName}`, { preventScrollReset: true });
                       window.scrollTo({ top: y, behavior: 'smooth' });
                     }
                   }}
                   title={typeof title === 'string' ? title : undefined}
-                  href={href}
+                  to={href}
                 >
                   {children}
-                </Anchor>
+                </AnchorLink>
               );
             }
 
