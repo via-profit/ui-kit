@@ -2,10 +2,10 @@ import React from 'react';
 
 import Surface from '@via-profit/ui-kit/src/Surface';
 import RenderMarkdown from '~/components/RenderMarkdown';
-import ExampleTextFieldOverview from '~/examples/text-fields/ExampleTextFieldOverview';
-import ExampleTextFieldOverrides from '~/examples/text-fields/ExampleTextFieldOverrides';
-import ExampleTextFieldIcons from '~/examples/text-fields/ExampleTextFieldIcons';
-import content from '@via-profit/ui-kit/docs/text-fields/overview.md';
+import ExampleTextFieldOverview from '~/examples/text-field/ExampleTextFieldOverview';
+import ExampleTextFieldOverrides from '~/examples/text-field/ExampleTextFieldOverrides';
+import ExampleTextFieldIcons from '~/examples/text-field/ExampleTextFieldIcons';
+import content from '@via-profit/ui-kit/docs/text-field/overview.md';
 
 const TextFields: React.FC = () => (
   <Surface>

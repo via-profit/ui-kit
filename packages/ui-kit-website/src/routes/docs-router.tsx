@@ -4,12 +4,21 @@ import loadable from '@loadable/component';
 
 const TemplateDocs = loadable(() => import('~/templates/TemplateDocs/index'));
 const NotFound = loadable(() => import('~/pages/NotFound/index'));
-const Introduction = loadable(() => import('~/pages/Introduction/index'));
-const Buttons = loadable(() => import('~/pages/Docs/Buttons'));
-const Tables = loadable(() => import('~/pages/Docs/Tables'));
-const TextFields = loadable(() => import('~/pages/Docs/TextFields'));
+const Introduction = loadable(() => import('~/pages/Docs/Introduction'));
+const Buttons = loadable(() => import('~/pages/Docs/Button'));
+const Tables = loadable(() => import('~/pages/Docs/Table'));
+const TextFields = loadable(() => import('~/pages/Docs/TextField'));
 const ThemingOverview = loadable(() => import('~/pages/Docs/Theming/ThemingOverview'));
 const ThemingColor = loadable(() => import('~/pages/Docs/Theming/ThemingColor'));
+const SurfaceOverview = loadable(() => import('~/pages/Docs/Surface/SurfaceOverview'));
+const MaskedFieldOverview = loadable(() => import('~/pages/Docs/MaskedField/MaskedFieldOverview'));
+const TypographyOverview = loadable(() => import('~/pages/Docs/Typography/TypographyOverview'));
+const PhoneFieldOverview = loadable(() => import('~/pages/Docs/PhoneField/PhoneFieldOverview'));
+const MenuOverview = loadable(() => import('~/pages/Docs/Menu/MenuOverview'));
+const AutocompleteOverview = loadable(
+  () => import('~/pages/Docs/Autocomplete/AutocompleteOverview'),
+  );
+  const SelectBoxOverview = loadable(() => import('~/pages/Docs/SelectBox/SelectBoxOverview'));
 
 const docsRouter: RouteObject = {
   path: 'docs',
@@ -53,7 +62,7 @@ const docsRouter: RouteObject = {
       ),
     },
     {
-      path: 'theming/overview',
+      path: 'theming',
       caseSensitive: true,
       element: (
         <React.Suspense fallback={<>Loading...</>}>
@@ -67,6 +76,69 @@ const docsRouter: RouteObject = {
       element: (
         <React.Suspense fallback={<>Loading...</>}>
           <ThemingColor />
+        </React.Suspense>
+      ),
+    },
+    {
+      path: 'surface',
+      caseSensitive: true,
+      element: (
+        <React.Suspense fallback={<>Loading...</>}>
+          <SurfaceOverview />
+        </React.Suspense>
+      ),
+    },
+    {
+      path: 'masked-field',
+      caseSensitive: true,
+      element: (
+        <React.Suspense fallback={<>Loading...</>}>
+          <MaskedFieldOverview />
+        </React.Suspense>
+      ),
+    },
+    {
+      path: 'typography',
+      caseSensitive: true,
+      element: (
+        <React.Suspense fallback={<>Loading...</>}>
+          <TypographyOverview />
+        </React.Suspense>
+      ),
+    },
+    {
+      path: 'phone-field',
+      caseSensitive: true,
+      element: (
+        <React.Suspense fallback={<>Loading...</>}>
+          <PhoneFieldOverview />
+        </React.Suspense>
+      ),
+    },
+    {
+      path: 'menu',
+      caseSensitive: true,
+      element: (
+        <React.Suspense fallback={<>Loading...</>}>
+          <MenuOverview />
+        </React.Suspense>
+      ),
+    },
+    {
+      path: 'autocomplete',
+      caseSensitive: true,
+      element: (
+        <React.Suspense fallback={<>Loading...</>}>
+          <AutocompleteOverview />
+        </React.Suspense>
+      ),
+    },
+    {
+      path: 'selectbox',
+      caseSensitive: true,
+      element: (
+        <React.Suspense fallback={<>Loading...</>}>
+          <SelectBoxOverview />
         </React.Suspense>
       ),
     },

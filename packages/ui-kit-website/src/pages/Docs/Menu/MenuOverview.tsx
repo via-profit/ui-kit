@@ -1,15 +1,15 @@
 import React from 'react';
-
 import Surface from '@via-profit/ui-kit/src/Surface';
-import RenderMarkdown from '~/components/RenderMarkdown';
-import content from '@via-profit/ui-kit/docs/tables/overview.md';
-import ExampleTableBasic from '~/examples/tables/ExampleTableBasic';
 
-const Tables: React.FC = () => (
+import RenderMarkdown from '~/components/RenderMarkdown';
+import content from '@via-profit/ui-kit/docs/menu/overview.md';
+import ExampleMenuOverview from '~/examples/menu/ExampleMenuOverview';
+
+const MenuOverview: React.FC = () => (
   <Surface>
     <RenderMarkdown
       overrides={{
-        ExampleTableBasic,
+        ExampleMenuOverview,
       }}
     >
       {content}
@@ -17,4 +17,4 @@ const Tables: React.FC = () => (
   </Surface>
 );
 
-export default Tables;
+export default MenuOverview;

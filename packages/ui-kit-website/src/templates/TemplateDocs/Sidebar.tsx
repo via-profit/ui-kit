@@ -53,20 +53,47 @@ const Sidebar: React.ForwardRefRenderFunction<HTMLDivElement, SurfaceContainerPr
         <Item $isActive={matchPath('/docs/text-field/*', pathname) !== null} to="/docs/text-field">
           TextField
         </Item>
-        <Item $isActive={matchPath('/docs/table/*', pathname) !== null} to="/docs/table">
+        {/* <Item $isActive={matchPath('/docs/table/*', pathname) !== null} to="/docs/table">
           Tables
-        </Item>
-        <Item
-          $isActive={matchPath('/docs/theming/*', pathname) !== null}
-          to="/docs/theming/overview"
-        >
-          Themes
+        </Item> */}
+        <Item $isActive={matchPath('/docs/theming/*', pathname) !== null} to="/docs/theming">
+          Theming
         </Item>
         <Item
           $isActive={matchPath('/docs/theming/color', pathname) !== null}
           to="/docs/theming/color"
         >
           &nbsp;&nbsp;&nbsp;Color
+        </Item>
+        <Item $isActive={matchPath('/docs/surface/*', pathname) !== null} to="/docs/surface">
+          Surface
+        </Item>
+        <Item
+          $isActive={matchPath('/docs/masked-field/*', pathname) !== null}
+          to="/docs/masked-field"
+        >
+          MaskedField
+        </Item>
+        <Item $isActive={matchPath('/docs/typography/*', pathname) !== null} to="/docs/typography">
+          Typography
+        </Item>
+        <Item
+          $isActive={matchPath('/docs/phone-field/*', pathname) !== null}
+          to="/docs/phone-field"
+        >
+          PhoneFieldOverview
+        </Item>
+        <Item $isActive={matchPath('/docs/menu/*', pathname) !== null} to="/docs/menu">
+          Menu
+        </Item>
+        <Item
+          $isActive={matchPath('/docs/autocomplete/*', pathname) !== null}
+          to="/docs/autocomplete"
+        >
+          Autocomplete
+        </Item>
+        <Item $isActive={matchPath('/docs/selectbox/*', pathname) !== null} to="/docs/selectbox">
+          SelectBox
         </Item>
       </ItemsList>
     </Container>

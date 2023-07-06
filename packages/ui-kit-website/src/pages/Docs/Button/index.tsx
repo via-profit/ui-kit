@@ -2,12 +2,12 @@ import React from 'react';
 
 import Surface from '@via-profit/ui-kit/src/Surface';
 import RenderMarkdown from '~/components/RenderMarkdown';
-import ExampleButtonBasic from '~/examples/buttons/ExampleButtonBasic';
-import ExampleButtonVariants from '~/examples/buttons/ExampleButtonVariants';
-import ExampleButtonColors from '~/examples/buttons/ExampleButtonColors';
-import ExampleButtonOverrides from '~/examples/buttons/ExampleButtonOverrides';
-import ExampleButtonIcons from '~/examples/buttons/ExampleButtonIcons';
-import content from '@via-profit/ui-kit/docs/buttons/overview.md';
+import ExampleButtonBasic from '~/examples/button/ExampleButtonBasic';
+import ExampleButtonVariants from '~/examples/button/ExampleButtonVariants';
+import ExampleButtonColors from '~/examples/button/ExampleButtonColors';
+import ExampleButtonOverrides from '~/examples/button/ExampleButtonOverrides';
+import ExampleButtonIcons from '~/examples/button/ExampleButtonIcons';
+import content from '@via-profit/ui-kit/docs/button/overview.md';
 
 const Buttons: React.FC = () => (
   <Surface>
