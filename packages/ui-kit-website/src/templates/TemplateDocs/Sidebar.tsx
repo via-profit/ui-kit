@@ -95,6 +95,12 @@ const Sidebar: React.ForwardRefRenderFunction<HTMLDivElement, SurfaceContainerPr
         <Item $isActive={matchPath('/docs/selectbox/*', pathname) !== null} to="/docs/selectbox">
           SelectBox
         </Item>
+        <Item
+          $isActive={matchPath('/docs/country-flags/*', pathname) !== null}
+          to="/docs/country-flags"
+        >
+          CountryFlagsOverview
+        </Item>
       </ItemsList>
     </Container>
   );

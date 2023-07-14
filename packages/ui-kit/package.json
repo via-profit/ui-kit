@@ -14,7 +14,8 @@
   "scripts": {
     "lint": "eslint --fix .",
     "build": "node ./scripts/build.js",
-    "publish:package": "bash ./scripts/pub.sh"
+    "publish:package": "bash ./scripts/pub.sh",
+    "build:flags": "node ./scripts/compile-country-flags.js"
   },
   "publishConfig": {
     "access": "public"

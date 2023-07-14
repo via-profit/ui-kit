@@ -2,8 +2,8 @@ import React from 'react';
 
 import TextField, { TextFieldProps } from '../TextField';
 import { usePhoneUtils } from './usePhoneUtils';
-import templates, { CountryCode } from './templates';
-import CountryFlag from './CountryFlag';
+import CountryFlagComponent from './CountryFlagComponent';
+import type { CountryCode, CountryFlag, PhoneTemplate } from './templates';
 
 export interface PhoneFieldProps extends Omit<TextFieldProps, 'value' | 'onChange'> {
   /**
@@ -12,6 +12,7 @@ export interface PhoneFieldProps extends Omit<TextFieldProps, 'value' | 'onChang
   readonly value: string;
   readonly defaultCountry?: CountryCode | null;
   readonly onChange: (payload: PhonePayload) => void;
+  readonly templates: readonly PhoneTemplate[];
 }
 
 export interface PhonePayload {
@@ -23,6 +24,10 @@ export interface PhonePayload {
    * Country code (ISO 3166-1 alpha-2), e.g.: RU
    */
   readonly countryCode: string | null;
+  /**
+   * JSX Element of Country Flag
+   */
+  readonly CountryFlag: CountryFlag | null;
   /**
    * Phone template, e.g.: +7 (xxx) xxx-xx-xx. The symbol «x» - is a digit
    */
@@ -49,28 +54,29 @@ export interface PhonePayload {
   readonly isValid: boolean;
 }
 
-export { usePhoneUtils, templates };
-
 const PhoneField: React.ForwardRefRenderFunction<HTMLDivElement, PhoneFieldProps> = (
   props,
   ref,
 ) => {
-  const { value, defaultCountry, onChange, inputRef, ...textFieldProps } = props;
-  const { formatParsedInput, parseInput, parseAndFormat } = usePhoneUtils();
+  const { value, defaultCountry, templates, inputRef, onChange, ...textFieldProps } = props;
+  const { formatParsedInput, parseInput, parseAndFormat } = usePhoneUtils({ templates });
   const textInputRef = React.useRef<HTMLInputElement | null>(null);
   const initialValue = React.useRef(value);
 
   const [state, setState] = React.useState(() => {
-    const { text, countryCode, placeholder, number } = parseAndFormat(String(initialValue.current));
+    const { text, countryCode, placeholder, number, CountryFlag } = parseAndFormat(
+      String(initialValue.current),
+    );
 
     return {
       currentValue: text,
       number,
       countryCode,
       placeholder,
+      CountryFlag,
     };
   });
-  const { countryCode, currentValue, placeholder } = state;
+  const { countryCode, currentValue, placeholder, CountryFlag } = state;
 
   React.useEffect(() => {
     if (initialValue.current !== value) {
@@ -84,6 +90,7 @@ const PhoneField: React.ForwardRefRenderFunction<HTMLDivElement, PhoneFieldProps
           currentValue: formatted.text,
           countryCode: formatted.countryCode,
           placeholder: formatted.placeholder,
+          CountryFlag: formatted.CountryFlag,
         }));
       }
     }
@@ -95,12 +102,22 @@ const PhoneField: React.ForwardRefRenderFunction<HTMLDivElement, PhoneFieldProps
       textInputRef.current?.selectionStart || 0,
     );
 
-    const { caret, text, template, placeholder, countryCode, callingCode, number, isValid } =
-      formatParsedInput(parsed.text, parsed.caret);
+    const {
+      caret,
+      text,
+      template,
+      placeholder,
+      countryCode,
+      callingCode,
+      CountryFlag,
+      number,
+      isValid,
+    } = formatParsedInput(parsed.text, parsed.caret);
 
     onChange({
       value: text,
       placeholder,
+      CountryFlag,
       template,
       countryCode,
       callingCode,
@@ -114,6 +131,7 @@ const PhoneField: React.ForwardRefRenderFunction<HTMLDivElement, PhoneFieldProps
       currentValue: text,
       countryCode,
       placeholder,
+      CountryFlag,
     }));
     setTimeout(() => {
       textInputRef.current?.setSelectionRange(caret, caret);
@@ -125,8 +143,8 @@ const PhoneField: React.ForwardRefRenderFunction<HTMLDivElement, PhoneFieldProps
       ref={ref}
       {...textFieldProps}
       startIcon={
-        <CountryFlag
-          countryCode={countryCode}
+        <CountryFlagComponent
+          flag={CountryFlag}
           onClick={() => {
             if (textInputRef.current) {
               textInputRef.current.select();
@@ -149,3 +167,5 @@ const PhoneField: React.ForwardRefRenderFunction<HTMLDivElement, PhoneFieldProps
 };
 
 export default React.forwardRef(PhoneField);
+export * from './usePhoneUtils';
+export * from './templates';

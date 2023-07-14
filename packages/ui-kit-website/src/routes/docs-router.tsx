@@ -17,8 +17,11 @@ const PhoneFieldOverview = loadable(() => import('~/pages/Docs/PhoneField/PhoneF
 const MenuOverview = loadable(() => import('~/pages/Docs/Menu/MenuOverview'));
 const AutocompleteOverview = loadable(
   () => import('~/pages/Docs/Autocomplete/AutocompleteOverview'),
-  );
-  const SelectBoxOverview = loadable(() => import('~/pages/Docs/SelectBox/SelectBoxOverview'));
+);
+const SelectBoxOverview = loadable(() => import('~/pages/Docs/SelectBox/SelectBoxOverview'));
+const CountryFlagsOverview = loadable(
+  () => import('~/pages/Docs/CountryFlags/CountryFlagsOverview'),
+);
 
 const docsRouter: RouteObject = {
   path: 'docs',
@@ -139,6 +142,15 @@ const docsRouter: RouteObject = {
       element: (
         <React.Suspense fallback={<>Loading...</>}>
           <SelectBoxOverview />
+        </React.Suspense>
+      ),
+    },
+    {
+      path: 'country-flags',
+      caseSensitive: true,
+      element: (
+        <React.Suspense fallback={<>Loading...</>}>
+          <CountryFlagsOverview />
         </React.Suspense>
       ),
     },
