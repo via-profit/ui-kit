@@ -15,7 +15,7 @@ const ExampleThemeProvider: React.FC = () => {
     () =>
       createTheme({
         isDark: false,
-        colors: {
+        color: {
           accentPrimary: '#66b13d',
           accentPrimaryContrast: '#FFFFFF',
         },

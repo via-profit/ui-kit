@@ -53,7 +53,7 @@ const Inner = styled.div`
 
 const CloseButton = styled(Button)<{ $withToolbar: boolean }>`
   margin-left: ${props => (props.$withToolbar ? '1em' : 0)};
-  color: ${props => props.theme.colors.textPrimary.toString()};
+  color: ${props => props.theme.color.textPrimary.toString()};
   background: none;
   width: auto;
   height: auto;
@@ -130,7 +130,7 @@ const ModalDrawer: React.ForwardRefRenderFunction<ReactModal, ModalDrawerProps> 
             overflow: auto;
             -webkit-overflow-scrolling: touch;
             outline: none;
-            background: ${theme.colors.surface.toString()};
+            background: ${theme.color.surface.toString()};
             border-radius: 1em 1em 0 0;
             transform: translate(0, 100%);
             transition: transform 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;

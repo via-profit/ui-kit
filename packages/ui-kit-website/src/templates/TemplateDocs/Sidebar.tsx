@@ -9,8 +9,8 @@ import SurfaceContainer, {
 
 const Container = styled(SurfaceContainer)`
   border-radius: 0;
-  background-color: ${({ theme }) => theme.colors.backgroundSecondary.toString()};
-  color: ${({ theme }) => theme.colors.accentPrimaryContrast.toString()};
+  background-color: ${({ theme }) => theme.color.backgroundSecondary.toString()};
+  color: ${({ theme }) => theme.color.accentPrimaryContrast.toString()};
 `;
 
 const ItemsList = styled.nav`
@@ -29,12 +29,12 @@ const Item = styled(Link, { shouldForwardProp: p => p.match(/^\$/) === null })<I
   text-decoration: none;
   padding: 1em 1.2em;
   &:hover {
-    background-color: ${({ theme }) => theme.colors.backgroundSecondary.lighten(15).toString()};
+    background-color: ${({ theme }) => theme.color.backgroundSecondary.lighten(15).toString()};
   }
   ${({ $isActive, theme }) =>
     $isActive &&
     css`
-      color: ${theme.colors.accentPrimary.toString()};
+      color: ${theme.color.accentPrimary.toString()};
     `};
 `;
 

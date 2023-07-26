@@ -8,7 +8,7 @@ const StyledTableRow = styled.tr`
   vertical-align: inherit;
   border-bottom-width: 0.1em;
   border-bottom-style: solid;
-  border-bottom-color: ${({ theme }) => theme.colors.surface.darken(20).toString()};
+  border-bottom-color: ${({ theme }) => theme.color.surface.darken(20).toString()};
 `;
 
 const TableRow: React.ForwardRefRenderFunction<HTMLTableRowElement, TableRowProps> = (

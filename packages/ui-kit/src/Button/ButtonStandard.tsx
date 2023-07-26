@@ -48,9 +48,9 @@ const StyledStandardButton = styled(ButtonBase)<StyledProps>`
         background-color: ${$background.darken(80).toString()};
       }
       &:focus-visible {
-        outline-color: ${$background.rgbString() === theme.colors.accentPrimary.rgbString()
-          ? theme.colors.textPrimary.toString()
-          : theme.colors.accentPrimary.toString()};
+        outline-color: ${$background.rgbString() === theme.color.accentPrimary.rgbString()
+          ? theme.color.textPrimary.toString()
+          : theme.color.accentPrimary.toString()};
       }
     `}
 `;
@@ -65,23 +65,23 @@ const ButtonStandard: React.ForwardRefRenderFunction<HTMLButtonElement, ButtonSt
     switch (true) {
       case color === 'primary':
         return {
-          $color: theme.colors.accentPrimaryContrast,
-          $background: theme.colors.accentPrimary,
+          $color: theme.color.accentPrimaryContrast,
+          $background: theme.color.accentPrimary,
         };
       case color === 'secondary':
         return {
-          $color: theme.colors.accentSecondaryContrast,
-          $background: theme.colors.accentSecondary,
+          $color: theme.color.accentSecondaryContrast,
+          $background: theme.color.accentSecondary,
         };
       case typeof color === 'undefined':
       case color === 'default':
         return {
-          $background: theme.colors.surface,
-          $color: theme.colors.textPrimary,
+          $background: theme.color.surface,
+          $color: theme.color.textPrimary,
         };
 
       case typeof color === 'string': {
-        let $background = theme.colors.surface;
+        let $background = theme.color.surface;
         try {
           if (color) {
             $background = new Color(color);
@@ -93,19 +93,19 @@ const ButtonStandard: React.ForwardRefRenderFunction<HTMLButtonElement, ButtonSt
         return {
           $background,
           $color:
-            $background.contrast(theme.colors.textPrimary.rgbString()) > 5
-              ? theme.colors.textPrimary
-              : theme.colors.surface,
+            $background.contrast(theme.color.textPrimary.rgbString()) > 5
+              ? theme.color.textPrimary
+              : theme.color.surface,
         };
       }
 
       default:
         return {
-          $background: theme.colors.surface,
-          $color: theme.colors.textPrimary,
+          $background: theme.color.surface,
+          $color: theme.color.textPrimary,
         };
     }
-  }, [color, theme.colors]);
+  }, [color, theme.color]);
 
   return (
     <StyledStandardButton

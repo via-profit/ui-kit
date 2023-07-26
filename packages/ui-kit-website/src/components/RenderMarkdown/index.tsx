@@ -36,17 +36,17 @@ const Img = styled.img`
 
 const Anchor = styled.a`
   font-weight: 400;
-  color: ${({ theme }) => theme.colors.accentPrimary.darken(30).toString()};
+  color: ${({ theme }) => theme.color.accentPrimary.darken(30).toString()};
 `;
 
 const AnchorLink = styled(Link)`
   font-weight: 400;
-  color: ${({ theme }) => theme.colors.accentPrimary.darken(30).toString()};
+  color: ${({ theme }) => theme.color.accentPrimary.darken(30).toString()};
 `;
 
 const ExternalLink = styled.a`
   font-weight: 400;
-  color: ${({ theme }) => theme.colors.accentPrimary.darken(30).toString()};
+  color: ${({ theme }) => theme.color.accentPrimary.darken(30).toString()};
 `;
 
 const ExternalLinkIcon = styled(OpenInNewIcon)`
@@ -62,14 +62,14 @@ const MarkdownStrong = styled(Strong)`
 `;
 
 const MarkdownEm = styled(Em)`
-  color: ${({ theme }) => theme.colors.textSecondary.toString()};
+  color: ${({ theme }) => theme.color.textSecondary.toString()};
 `;
 
 const CodeInline = styled.code`
   color: ${({ theme }) =>
     theme.isDark
-      ? theme.colors.accentPrimary.toString()
-      : theme.colors.accentPrimary.darken(60).toString()};
+      ? theme.color.accentPrimary.toString()
+      : theme.color.accentPrimary.darken(60).toString()};
   padding: 0em 0.4em;
   border-radius: 4px;
   font-size: 1em;
@@ -103,7 +103,7 @@ const titleToAnchor = (headername: string | React.ReactNode): string => {
   const anchorName = String(headername)
     .toLowerCase()
     .replace(/[\s,/]/g, '-')
-    .replace(/[^0-9a-z-А-Яа-яёЁйЙ]/gi, '');
+    .replace(/[^0-9a-zA-Z-А-Яа-яёЁйЙ]/gi, '');
 
   return anchorName;
 };
@@ -181,7 +181,7 @@ const MarkdownRender: React.FC<Props> = props => {
               );
             }
 
-            if (String(href || '').match(/\.md(#[a-z0-9а-яёй-]+){0,1}$/i)) {
+            if (String(href || '').match(/\.md(#[a-zA-Z0-9а-яёй-]+){0,1}$/i)) {
               const url = relativeToAbsolute(pathname, String(href || '').replace(/\.md/, ''));
 
               return (
@@ -191,12 +191,11 @@ const MarkdownRender: React.FC<Props> = props => {
               );
             }
 
-            if (String(href || '').match(/#[a-z0-9а-яёй-]+$/i)) {
+            if (String(href || '').match(/#[a-zA-Z0-9а-яёй-]+$/i)) {
               const anchorName = String(href || '').match(/#([a-z0-9а-яёй-]+)$/)?.[1] || '';
 
               return (
                 <AnchorLink
-                  // preventScrollReset={true}
                   onClick={event => {
                     event.preventDefault();
                     const element = document.querySelector(`a[id="${anchorName}"]`);
@@ -205,8 +204,8 @@ const MarkdownRender: React.FC<Props> = props => {
                       const yOffset = -80; // app header height
                       const y = element.getBoundingClientRect().top + window.scrollY + yOffset;
 
-                      navigate(`${pathname}#${anchorName}`, { preventScrollReset: true });
                       window.scrollTo({ top: y, behavior: 'smooth' });
+                      navigate(`${pathname}#${anchorName}`, { preventScrollReset: true });
                     }
                   }}
                   title={typeof title === 'string' ? title : undefined}

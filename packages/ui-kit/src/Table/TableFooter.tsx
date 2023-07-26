@@ -8,7 +8,7 @@ const StyledTableFooter = styled.tfoot`
   vertical-align: middle;
   border-top-width: 0.1em;
   border-top-style: solid;
-  border-top-color: ${({ theme }) => theme.colors.surface.darken(30).toString()};
+  border-top-color: ${({ theme }) => theme.color.surface.darken(30).toString()};
   & [role='cell'] {
     font-weight: 600;
   }

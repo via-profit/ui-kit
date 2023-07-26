@@ -5,6 +5,7 @@
 - [Описание](#описание)
 - [Создание темы оформления](#создание-темы-оформления)
 - [Подключение темы оформления](#подключение-темы-оформления)
+- [TypeScript](#typescript)
 - [Использование темы оформления](#использование-темы-оформления)
 - [Использование цветов](#использование-цветов)
 - [Использование размера шрифта](#использование-размера-шрифта)
@@ -125,6 +126,74 @@ export default Example;
 ```
 
 **Замечание**. Обратите внимание, что если попытаться получить доступ к теме в том же компоненте, в котором определён `ThemeProvider`, то это не приведёт к желаемому результату.
+
+## TypeScript
+
+Для того, чтобы тема оформления должным образом определялась в модуле `@emotion` требуется расширить модуль `@emotion/react` [см. расширение модулей при помощи файла деклараций d.ts](https://www.typescriptlang.org/docs/handbook/modules.html#working-with-other-javascript-libraries) согласно его документации подмешав в него типы из `@via-profit/ui-kit`. Один из способов - создать в корне проекта директорию `@types`, а в неё разместить файл `emotion.d.ts` _(название файла может быть любым)_ со следующим содержимым:
+
+_@types/emotion.d.ts_
+```ts
+import '@emotion/react';
+import { UITheme } from '@via-profit/ui-kit/ThemeProvider';
+
+declare module '@emotion/react' {
+  export interface Theme extends UITheme {}
+}
+```
+
+Для того, чтобы расширить возможности самой темы, например, добавить цвета, следует расширить модуль `@via-profit/ui-kit` тем же способом, что и в предыдущем примере расширения `@emotion/react`.
+
+В модуле `@via-profit/ui-kit` имеются интерфейсы специально созданные для данных целей:
+
+ - **UIThemeOverrideColor** - Интерфейс содержит перечисление всех цветов, которые будут доступны в теме по чключу `colors`
+ - **UIThemeOverrideZIndex** - Интерфейс содержит перечисление свойств `z-index` для различных элементов пользовательского интерфейса, которые будут доступны по ключу `zIndex`
+ - **UIThemeOverrideShape** - Интерфейс содержит перечисление свойств, определяющих формы объектов, например значения для `border-radius`, которые будут доступны по ключу `shape`
+ - **UIThemeOverrideFontSize** - Интерфейс содержит перечисление вариантов для размера шрифта, которые будут доступны по ключу `fontSize`
+ - **UIThemeOverrides** - Общий интерфейс темы, который содержит в себе все перечисленные выше интерфейсы, доступные по их ключам
+
+_Примечание: Более детально ознакомиться с данными типами можно ознакомиться в файле <Your-Project>/node_modules/@via-profit/ui-kit/ThemeProvider/index.d.ts_
+
+В данном примере будет использоваться файл `ui-kit.d.ts` размещённый в директории `@types`:
+
+```ts
+import '@via-profit/ui-kit';
+
+declare module '@via-profit/ui-kit/ThemeProvider' {
+  export interface UIThemeOverrideColor {
+    myColorPrimary: string; // <-- Your color value
+    myColorSecondary: string;// <-- Your another color value
+  }
+
+  export interface UIThemeOverrideZIndex {
+    myModalDialog: number; // <-- Your z-index value
+  }
+}
+```
+
+После расширения темы через типы, не забудьте добавить объявленные свойства в саму тему оформления:
+
+```ts
+import { createTheme } from '@via-profit/ui-kit/ThemeProvider';
+
+const myTheme = createTheme({
+  isDark: false,
+  colors: {
+    accentPrimary: '#66b13d',  // <-- Color definition in the base theme
+    accentPrimaryContrast: '#FFFFFF', // <-- Color definition in the base theme
+    myColorPrimary: 'red',  // <-- Color definition for the extended theme
+    myColorSecondary: 'blue', // <-- Color definition for the extended theme
+  },
+  zIndex: {
+    myModalDialog: 9, // <-- Z-index definition for the extended theme
+  }
+});
+```
+
+
+
+
+
+
 
 ## Использование темы оформления
 

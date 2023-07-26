@@ -29,10 +29,10 @@ const StyledButton = styled.button<StyledProps>`
   color: ${({ color, disabled, theme }) => {
     switch (true) {
       case disabled:
-        return theme.colors.textSecondary.alpha(0.8).toString();
+        return theme.color.textSecondary.alpha(0.8).toString();
       case !disabled && typeof color === 'undefined':
       default:
-        return theme.colors.textPrimary.toString();
+        return theme.color.textPrimary.toString();
     }
   }};
 `;

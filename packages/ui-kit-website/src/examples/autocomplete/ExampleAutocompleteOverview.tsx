@@ -24,8 +24,8 @@ const Chip = styled.div`
   margin: 0.43em;
   padding: 0.3em 0.6em;
   font-size: 0.8em;
-  border: 2px solid ${({ theme }) => theme.colors.accentPrimary.toString()};
-  background-color: ${({ theme }) => theme.colors.surface.toString()};
+  border: 2px solid ${({ theme }) => theme.color.accentPrimary.toString()};
+  background-color: ${({ theme }) => theme.color.surface.toString()};
   border-radius: ${({ theme }) => theme.shape.radiusFactor * 2}em;
   display: flex;
   justify-content: space-between;
@@ -41,7 +41,7 @@ const Chip = styled.div`
 const ExampleAutocompleteOverview: React.FC = () => {
   const anchorElementRef = React.useRef<HTMLDivElement | null>(null);
   const [selectedItems, setSelectedItems] = React.useState<readonly Item[]>([]);
-  const [isMultiple, setMultiple] = React.useState(false);
+  const [isMultiple] = React.useState(false);
   const [isOpen, setOpen] = React.useState(false);
   const autocompleteRef = React.useRef<AutocompleteRef<Item> | null>(null);
   const items = countries;
@@ -71,7 +71,7 @@ const ExampleAutocompleteOverview: React.FC = () => {
 
         if (!Array.isArray(item)) {
           anchorElementRef.current?.focus();
-          setSelectedItems([item as Item]);
+          setSelectedItems([item as unknown as Item]);
           setOpen(false);
         }
       }}

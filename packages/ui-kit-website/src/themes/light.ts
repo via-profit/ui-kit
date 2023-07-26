@@ -13,7 +13,7 @@ const light: UIThemeOverrides = {
     mainDrawer: 9,
     modal: 10,
   },
-  colors: {
+  color: {
     backgroundPrimary: '#F9F9F9',
     backgroundSecondary: '#0e1200',
     textPrimary: '#212121',

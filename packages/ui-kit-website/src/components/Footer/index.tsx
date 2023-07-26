@@ -2,8 +2,8 @@ import React from 'react';
 import styled from '@emotion/styled';
 
 const Container = styled.footer`
-  background-color: ${({ theme }) => theme.colors.backgroundPrimary.toString()};
-  color: ${({ theme }) => theme.colors.textPrimary.toString()};
+  background-color: ${({ theme }) => theme.color.backgroundPrimary.toString()};
+  color: ${({ theme }) => theme.color.textPrimary.toString()};
   padding: 1rem 2rem;
 `;
 

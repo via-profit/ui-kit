@@ -9,10 +9,8 @@ type Item = {
 
 const ExampleSelectBoxOverview: React.FC = () => {
   const [selectedItems, setSelectedItems] = React.useState<readonly Item[]>([]);
-  const [multiple, setMultiple] = React.useState(false);
-  const [anchorElem, setAnchorElem] = React.useState<HTMLButtonElement | null>(null);
-  // const anchorElem = React.useRef<HTMLButtonElement | null>(null);
-  const [itemsLength, setItemsLength] = React.useState(1200);
+  const [multiple] = React.useState(false);
+  const [itemsLength] = React.useState(1200);
   const [isOpen, setOpen] = React.useState(false);
 
   const items = React.useMemo(() => {
@@ -36,14 +34,13 @@ const ExampleSelectBoxOverview: React.FC = () => {
       getOptionSelected={({ item, value }) => item.id === value.id}
       onRequestOpen={() => setOpen(true)}
       onSelectItem={item => {
-        console.log('onSelectItem', { item });
         if (multiple && Array.isArray(item)) {
           setSelectedItems(item);
         }
 
         if (!multiple && !Array.isArray(item)) {
           setOpen(false);
-          setSelectedItems([item as Item]);
+          setSelectedItems([item as unknown as Item]);
         }
       }}
       onRequestClose={() => {

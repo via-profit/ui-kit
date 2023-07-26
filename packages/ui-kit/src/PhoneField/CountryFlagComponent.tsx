@@ -19,7 +19,7 @@ const CountryFlagContainer = styled.span`
   position: relative;
   width: 1em;
   height: 1em;
-  border: 1px solid ${({ theme }) => theme.colors.textPrimary.alpha(0.5).toString()};
+  border: 1px solid ${({ theme }) => theme.color.textPrimary.alpha(0.5).toString()};
   & > svg {
     position: absolute;
     left: 50%;

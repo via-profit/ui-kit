@@ -5,8 +5,8 @@ import light from './light';
 const dark: UIThemeOverrides = {
   ...light,
   isDark: true,
-  colors: {
-    ...light.colors,
+  color: {
+    ...light.color,
     backgroundPrimary: '#1e1e2e',
     backgroundSecondary: '#262739',
     accentPrimary: '#e77b00',

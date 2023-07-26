@@ -10,8 +10,8 @@ type Item = {
 const ExampleMenuOverview: React.FC = () => {
   const [anchorElement, setAnchorElement] = React.useState<HTMLButtonElement | null>(null);
   const [selectedItems, setSelectedItems] = React.useState<readonly Item[]>([]);
-  const [isMultiple, setMultiple] = React.useState(false);
-  const [itemsLength, setItemsLength] = React.useState(1200);
+  const [isMultiple] = React.useState(false);
+  const [itemsLength] = React.useState(1200);
   const menuRef = React.useRef<MenuRef<(typeof selectedItems)[0]> | null>(null);
 
   const items = React.useMemo(() => {
@@ -52,7 +52,7 @@ const ExampleMenuOverview: React.FC = () => {
           if (!isMultiple && !Array.isArray(item)) {
             setAnchorElement(null);
             anchorElement?.focus();
-            setSelectedItems([item as Item]);
+            setSelectedItems([item as unknown as Item]);
           }
         }}
         onRequestClose={() => {

@@ -14,10 +14,10 @@ const StyledSurfaceContainer = styled.div<StyledProps>`
   display: flex;
   box-sizing: border-box;
   flex-direction: column;
-  background: ${({ theme }) => theme.colors.surface.toString()};
-  color: ${({ theme }) => theme.colors.textPrimary.toString()};
+  background: ${({ theme }) => theme.color.surface.toString()};
+  color: ${({ theme }) => theme.color.textPrimary.toString()};
   box-shadow: ${({ theme }) =>
-    `0 0.5em 2em -0.8em ${theme.colors.surface.darken(100).alpha(0.4).toString()}`};
+    `0 0.5em 2em -0.8em ${theme.color.surface.darken(100).alpha(0.4).toString()}`};
   border-radius: ${({ theme }) => theme.shape.radiusFactor}em;
   font-size: 1em;
   ${({ $noMargin }) =>

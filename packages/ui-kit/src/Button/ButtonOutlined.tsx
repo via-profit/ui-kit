@@ -15,7 +15,7 @@ const StyledOutlinedButton = styled(ButtonBase)<StyledProps>`
   color: ${({ theme, disabled, $color }) => {
     switch (true) {
       case disabled:
-        return theme.colors.textPrimary.alpha(0.4).toString();
+        return theme.color.textPrimary.alpha(0.4).toString();
       default:
         return $color.darken(30).toString();
     }
@@ -23,7 +23,7 @@ const StyledOutlinedButton = styled(ButtonBase)<StyledProps>`
   border-color: ${({ theme, disabled, $color }) => {
     switch (true) {
       case disabled:
-        return theme.colors.surface.darken(80).alpha(0.4).toString();
+        return theme.color.surface.darken(80).alpha(0.4).toString();
       default:
         return $color.toString();
     }
@@ -41,9 +41,9 @@ const StyledOutlinedButton = styled(ButtonBase)<StyledProps>`
         background-color: ${$color.darken(50).alpha(0.3).toString()};
       }
       &:focus-visible {
-        outline-color: ${$color.rgbString() === theme.colors.accentPrimary.rgbString()
-          ? theme.colors.textPrimary.toString()
-          : theme.colors.accentPrimary.toString()};
+        outline-color: ${$color.rgbString() === theme.color.accentPrimary.rgbString()
+          ? theme.color.textPrimary.toString()
+          : theme.color.accentPrimary.toString()};
       }
     `};
 `;
@@ -57,14 +57,14 @@ const ButtonOutlined: React.ForwardRefRenderFunction<HTMLButtonElement, ButtonOu
   const $color = React.useMemo(() => {
     switch (true) {
       case color === 'primary':
-        return theme.colors.accentPrimary;
+        return theme.color.accentPrimary;
       case color === 'secondary':
-        return theme.colors.accentSecondary;
+        return theme.color.accentSecondary;
       case typeof color === 'undefined':
       case color === 'default':
-        return theme.colors.textPrimary;
+        return theme.color.textPrimary;
       case typeof color === 'string': {
-        let c = theme.colors.textPrimary;
+        let c = theme.color.textPrimary;
 
         try {
           if (color) {
@@ -77,9 +77,9 @@ const ButtonOutlined: React.ForwardRefRenderFunction<HTMLButtonElement, ButtonOu
         return c;
       }
       default:
-        return theme.colors.textPrimary;
+        return theme.color.textPrimary;
     }
-  }, [color, theme.colors]);
+  }, [color, theme.color]);
 
   return (
     <StyledOutlinedButton disabled={disabled} $color={$color} {...restProps} ref={ref}>

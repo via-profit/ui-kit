@@ -14,7 +14,7 @@ const ExampleMultiThemming: React.FC = () => {
     () =>
       createTheme({
         isDark: false,
-        colors: {
+        color: {
           accentPrimary: '#2a78fd',
         },
       }),
@@ -24,7 +24,7 @@ const ExampleMultiThemming: React.FC = () => {
     () =>
       createTheme({
         isDark: false,
-        colors: {
+        color: {
           accentPrimary: '#ff5671',
         },
       }),

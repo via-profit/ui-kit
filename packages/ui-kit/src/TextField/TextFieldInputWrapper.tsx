@@ -22,27 +22,27 @@ const Wrapper = styled.div<{
   outline: 1px solid transparent;
   border-color: ${({ theme }) =>
     theme.isDark
-      ? theme.colors.textPrimary.darken(100).toString()
-      : theme.colors.textPrimary.lighten(150).toString()};
+      ? theme.color.textPrimary.darken(100).toString()
+      : theme.color.textPrimary.lighten(150).toString()};
   width: ${({ $fullWidth }) => ($fullWidth ? '100%' : 'auto')};
   font-size: 0.9em;
-  background-color: ${({ theme }) => theme.colors.surface.toString()};
-  color: ${({ theme }) => theme.colors.textPrimary.toString()};
+  background-color: ${({ theme }) => theme.color.surface.toString()};
+  color: ${({ theme }) => theme.color.textPrimary.toString()};
   transition: all 180ms ease-out 0s;
 
   ${props =>
     props.$focused &&
     css`
-      border-color: ${props.theme.colors.accentPrimary.lighten(10).toString()};
-      outline-color: ${props.theme.colors.accentPrimary.lighten(10).toString()};
+      border-color: ${props.theme.color.accentPrimary.lighten(10).toString()};
+      outline-color: ${props.theme.color.accentPrimary.lighten(10).toString()};
     `};
   ${props =>
     props.$error &&
     css`
-      border-color: ${props.theme.colors.error.toString()};
-      color: ${props.theme.colors.error.toString()};
+      border-color: ${props.theme.color.error.toString()};
+      color: ${props.theme.color.error.toString()};
       &:focus {
-        border-color: ${props.theme.colors.error.lighten(0.6).toString()};
+        border-color: ${props.theme.color.error.lighten(0.6).toString()};
       }
     `}
 `;

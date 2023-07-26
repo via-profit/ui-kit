@@ -7,8 +7,8 @@ const StyledTableHeaderCell = styled.th`
   display: table-cell;
   vertical-align: inherit;
   padding: 0.8em;
-  background-color: ${({ theme }) => theme.colors.accentPrimary.darken(10).toString()};
-  color: ${({ theme }) => theme.colors.accentPrimaryContrast.toString()};
+  background-color: ${({ theme }) => theme.color.accentPrimary.darken(10).toString()};
+  color: ${({ theme }) => theme.color.accentPrimaryContrast.toString()};
   word-break: break-all;
   font-weight: 500;
   @media all and (max-width: 1200px) {

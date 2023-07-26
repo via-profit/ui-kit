@@ -3,8 +3,8 @@ import blue from './blue';
 const blueDark: typeof blue = {
   ...blue,
   isDark: true,
-  colors: {
-    ...blue.colors,
+  color: {
+    ...blue.color,
     backgroundPrimary: '#262629',
     backgroundSecondary: '#1b1b1b',
     accentPrimary: '#6a88f9',

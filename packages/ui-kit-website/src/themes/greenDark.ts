@@ -3,8 +3,8 @@ import green from './green';
 const greenDark: typeof green = {
   ...green,
   isDark: true,
-  colors: {
-    ...green.colors,
+  color: {
+    ...green.color,
     backgroundPrimary: '#262629',
     backgroundSecondary: '#1b1b1b',
     accentPrimary: '#66b13d',

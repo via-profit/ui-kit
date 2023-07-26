@@ -102,12 +102,12 @@ class Color {
    * const { colors } = themes;
    * const contrast = colors
    *   .accentPrimary
-   *   .contrast(colors.textPrimary.rgbString());
+   *   .contrast(color.textPrimary.rgbString());
    *
    * if (contrast > 5) {
-   *   return colors.textPrimary.toString();
+   *   return color.textPrimary.toString();
    * } else {
-   *   return colors.textSecondary.toString()
+   *   return color.textSecondary.toString()
    * }
    * ```
    */

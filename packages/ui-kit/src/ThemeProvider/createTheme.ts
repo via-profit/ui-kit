@@ -2,10 +2,10 @@ import Color from '../Color';
 import { CreateTheme, UIThemeOverrides } from './index';
 
 export const createTheme: CreateTheme = overrides => {
-  const { isDark, fontSize, zIndex, colors, shape, ...rest } = overrides || {};
+  const { isDark, fontSize, zIndex, color, shape, ...rest } = overrides || {};
 
-  const theme: Omit<ReturnType<CreateTheme>, 'colors'> & {
-    colors: Record<string, Color>;
+  const theme: Omit<ReturnType<CreateTheme>, 'color'> & {
+    color: Record<string, Color>;
   } = {
     ...rest,
     isDark: typeof isDark === 'boolean' ? isDark : false,
@@ -22,14 +22,14 @@ export const createTheme: CreateTheme = overrides => {
       modal: 10,
       ...zIndex,
     },
-    colors: {},
+    color: {},
     shape: {
       radiusFactor: 0.5,
       ...shape,
     },
   };
 
-  const defaultColors: Required<UIThemeOverrides['colors']> = {
+  const defaultColors: Required<UIThemeOverrides['color']> = {
     backgroundPrimary: '#FFFFFF',
     backgroundSecondary: '#F9F9F9',
     textPrimary: '#212121',
@@ -47,11 +47,11 @@ export const createTheme: CreateTheme = overrides => {
     successContrast: '#ffffff',
   };
 
-  Object.entries({ ...defaultColors, ...colors }).forEach(([colorName, colorValue]) => {
-    theme.colors[colorName] = new Color(colorValue);
+  Object.entries({ ...defaultColors, ...color }).forEach(([colorName, colorValue]) => {
+    theme.color[colorName] = new Color(colorValue);
   });
 
-  theme.colors.test = new Color('red');
+  theme.color.test = new Color('red');
 
   return theme as ReturnType<CreateTheme>;
 };

@@ -31,24 +31,24 @@ const Highlighter = styled(ReactSyntaxHighlighter)`
   ::-webkit-scrollbar-track {
     background: ${({ theme }) =>
       theme.isDark
-        ? theme.colors.surface.lighten(30).toString()
-        : theme.colors.surface.darken(30).toString()};
+        ? theme.color.surface.lighten(30).toString()
+        : theme.color.surface.darken(30).toString()};
     border-radius: 1em;
   }
 
   ::-webkit-scrollbar-thumb {
     background: ${({ theme }) =>
       theme.isDark
-        ? theme.colors.surface.lighten(90).toString()
-        : theme.colors.surface.darken(90).toString()};
+        ? theme.color.surface.lighten(90).toString()
+        : theme.color.surface.darken(90).toString()};
     border-radius: 1em;
   }
 
   ::-webkit-scrollbar-thumb:hover {
     background: ${({ theme }) =>
       theme.isDark
-        ? theme.colors.surface.lighten(120).toString()
-        : theme.colors.surface.darken(120).toString()};
+        ? theme.color.surface.lighten(120).toString()
+        : theme.color.surface.darken(120).toString()};
   }
 `;
 

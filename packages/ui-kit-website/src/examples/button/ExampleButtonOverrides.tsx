@@ -6,8 +6,8 @@ const TextWrapper = styled.span`
   padding: 0.2em;
   font-weight: 600;
   border-radius: 0.4em;
-  background-color: ${({ theme }) => theme.colors.surface.toString()};
-  color: ${({ theme }) => theme.colors.accentPrimary.darken(50).toString()};
+  background-color: ${({ theme }) => theme.color.surface.toString()};
+  color: ${({ theme }) => theme.color.accentPrimary.darken(50).toString()};
 `;
 
 const ExampleButtonOverrides: React.FC = () => (

@@ -14,8 +14,8 @@ const GloalStyles: React.FC = () => {
           padding: 0;
           min-height: 100%;
           font-family: Open Sans, system-ui;
-          background-color: ${theme.colors.backgroundPrimary.toString()};
-          color: ${theme.colors.textPrimary.toString()};
+          background-color: ${theme.color.backgroundPrimary.toString()};
+          color: ${theme.color.textPrimary.toString()};
         }
         * {
           box-sizing: border-box;

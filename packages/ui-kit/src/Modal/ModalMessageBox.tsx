@@ -125,7 +125,7 @@ const ModalMessageBox: React.ForwardRefRenderFunction<ReactModal, ModalMessageBo
             overflow: auto;
             -webkit-overflow-scrolling: touch;
             outline: none;
-            background: ${theme.colors.surface.toString()};
+            background: ${theme.color.surface.toString()};
             border-radius: 1em;
             transform: translate(-50%, -40%);
             transition: transform 100ms ease-in-out, opacity 100ms ease-in-out;

@@ -13,7 +13,7 @@ const green: UIThemeOverrides = {
     mainDrawer: 9,
     modal: 10,
   },
-  colors: {
+  color: {
     backgroundPrimary: '#f1f1f1',
     backgroundSecondary: '#0e1200',
     textPrimary: '#212121',

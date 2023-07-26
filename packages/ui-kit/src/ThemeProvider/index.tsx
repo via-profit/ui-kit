@@ -11,7 +11,7 @@ export interface UITheme {
   readonly isDark: boolean;
   readonly fontSize: Record<keyof UIThemeOverrideFontSize, number>;
   readonly zIndex: UIThemeOverrideZIndex;
-  readonly colors: Record<keyof UIThemeOverrideColor, Color>;
+  readonly color: Record<keyof UIThemeOverrideColor, Color>;
   readonly shape: Required<UIThemeOverrideShape>;
 }
 
@@ -55,7 +55,7 @@ export interface UIThemeOverrides {
   readonly fontSize?: UIThemeOverrideFontSize;
   readonly zIndex?: UIThemeOverrideZIndex;
   readonly shape?: UIThemeOverrideShape;
-  readonly colors?: UIThemeOverrideColor;
+  readonly color?: UIThemeOverrideColor;
 }
 
 const ThemeProvider: React.FC<ThemeProviderProps> = props => {

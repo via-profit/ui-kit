@@ -23,8 +23,8 @@ export const Li = styled.li`
     font-weight: 600;
     color: ${({ theme }) =>
       theme.isDark
-        ? theme.colors.accentPrimary.lighten(20).toString()
-        : theme.colors.accentPrimary.darken(20).toString()};
+        ? theme.color.accentPrimary.lighten(20).toString()
+        : theme.color.accentPrimary.darken(20).toString()};
   }
 `;
 
