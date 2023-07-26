@@ -10,7 +10,7 @@ export * from './createTheme';
 export interface UITheme {
   readonly isDark: boolean;
   readonly fontSize: Record<keyof UIThemeOverrideFontSize, number>;
-  readonly zIndex: UIThemeOverrideZIndex;
+  readonly zIndex: Required<UIThemeOverrideZIndex>;
   readonly color: Record<keyof UIThemeOverrideColor, Color>;
   readonly shape: Required<UIThemeOverrideShape>;
 }
