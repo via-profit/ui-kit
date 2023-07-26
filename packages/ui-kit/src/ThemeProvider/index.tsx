@@ -7,13 +7,15 @@ export { useTheme };
 
 export * from './createTheme';
 
-export interface UITheme {
+export type UITheme = Required<
+  Omit<UIThemeOverrides, 'isDark' | 'fontSize' | 'zIndex' | 'shape' | 'color'>
+> & {
   readonly isDark: boolean;
   readonly fontSize: Record<keyof UIThemeOverrideFontSize, number>;
   readonly zIndex: Required<UIThemeOverrideZIndex>;
   readonly color: Record<keyof UIThemeOverrideColor, Color>;
   readonly shape: Required<UIThemeOverrideShape>;
-}
+};
 
 export interface UIThemeOverrideColor {
   readonly backgroundPrimary?: string;
