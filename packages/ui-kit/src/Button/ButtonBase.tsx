@@ -42,13 +42,13 @@ export interface ButtonBaseProps extends Omit<ButtonNativeProps, 'color'> {
 
 export interface ButtonBaseOverrides {
   /**
-   * Start icon wrapper
+   * Element container
    */
   readonly Container?: React.ForwardRefExoticComponent<
     ButtonContainerProps & React.RefAttributes<HTMLButtonElement>
   >;
   /**
-   * Start icon wrapper
+   * icon wrapper
    */
   readonly IconWrapper?: React.ForwardRefExoticComponent<
     ButtonIconWrapperProps & React.RefAttributes<HTMLSpanElement>
