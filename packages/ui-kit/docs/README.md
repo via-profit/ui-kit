@@ -9,6 +9,5 @@
  - [Меню](./menu/overview.md)
  - [Поле для ввода телефона](./phone-field/overview.md)
  - [Комбобокс](./selectbox/overview.md)
- - [Поверхность](./surface/overview.md)
  - [Таблица](./table/overview.md)
  - [Типографика](./typography/overview.md)
