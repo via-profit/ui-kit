@@ -1,6 +1,6 @@
 ## Установка.
 
-для работы требуются следующие модули:
+Для работы требуются следующие модули:
 
 - react
 - react-dom
@@ -16,4 +16,4 @@ $ npm install @emotion/react @emotion/styled react react-dom react-modal react-p
 
 ```
 
-## Документация [здесь](./docs/introduction.md)
+## Документация [здесь](./docs/README.md)
