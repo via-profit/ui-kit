@@ -30,6 +30,18 @@ export interface ButtonBaseProps extends Omit<ButtonNativeProps, 'color'> {
   readonly endIcon?: JSX.Element;
 
   /**
+   * If true, then expect SVG icon as children. The button will be rendered as icon button
+   * Example:
+   * ```tsx
+   * <Button iconOnly>
+   *   <MyIconSVG />
+   * </Button>
+   * ```
+   `
+   */
+  readonly iconOnly?: ButtonContainerProps['iconOnly'];
+
+  /**
    * You can pass the primary, default, secondary name of the colors or your specified color value
    */
   readonly color?: ButtonContainerProps['color'];
@@ -66,7 +78,7 @@ const ButtonBase: React.ForwardRefRenderFunction<HTMLButtonElement, ButtonBasePr
   props,
   ref,
 ) => {
-  const { children, startIcon, endIcon, color, overrides, ...nativeProps } = props;
+  const { children, startIcon, endIcon, color, overrides, iconOnly, ...nativeProps } = props;
   const overridesMap = React.useMemo(
     () => ({
       TextWrapper,
@@ -78,7 +90,7 @@ const ButtonBase: React.ForwardRefRenderFunction<HTMLButtonElement, ButtonBasePr
   );
 
   return (
-    <overridesMap.Container {...nativeProps} ref={ref}>
+    <overridesMap.Container {...nativeProps} color={color} iconOnly={iconOnly} ref={ref}>
       {typeof startIcon !== 'undefined' && startIcon !== null && (
         <overridesMap.IconWrapper position="start">{startIcon}</overridesMap.IconWrapper>
       )}
