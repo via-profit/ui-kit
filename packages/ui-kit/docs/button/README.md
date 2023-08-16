@@ -117,7 +117,7 @@ _Результат:_
 
 ## Иконки
 
-Кнопка может отображать иконку, переданную в свойстве `startIcon` или `endIcon`.
+Кнопка может отображать иконку, переданную в свойстве `startIcon` или `endIcon`. Если передать аргумент `onlyIcon`, то кнопка примет вид кнопки-иконки. Данное свойство не следует использовать одновременно с `startIcon` и/или `endIcon`
 **Важно:** Передавать следует не React компонент, а JSX выражение:
 
 ```tsx
@@ -125,10 +125,18 @@ import Button from '@via-profit/ui-kit/Button';
 import MyIcon from './MyIcon';
 
 const Example: React.FC = () => (
-  <Button startIcon={<MyIcon />}>Button with icon</Button>
-)
-
+  <>
+    <Button startIcon={<MyIcon />}>Button with icon</Button>
+    <Button iconOnly>
+      <MyIcon />
+    </Button>
+    <Button iconOnly>
+      <MyIcon />
+    </Button>
+  </>
+);
 ```
+
 _Результат:_
 
 <ExampleButtonIcons />
@@ -182,12 +190,13 @@ _Результат:_
 
 Помимо перечисленных свойств, компонент принимает [стандартные аттрибуты](https://developer.mozilla.org/ru/docs/Web/HTML/Element/button#атрибуты) HTML элемента `<button>`
 
-| Свойство                  | Тип                                      | По умолчанию          | Описание                                                                                             |
-| ------------------------- | :--------------------------------------- | :-------------------- | ---------------------------------------------------------------------------------------------------- |
-| **variant**               | `standard` `outlined`                    | `standard`            | Вариант отображения.                                                                                 |
-| **color**                 | `default` `secondary` `primary` `String` | `default`             | Цвет кнопки. В качестве пользовательского цвета принимается строка в формате **hex** или **rgb(a)**. |
-| **startIcon**             | `<JSX.Element>`                          | `undefined`           | Элемент иконки, отображаемой слева от текста кнопки                                                  |
-| **endIcon**               | `<JSX.Element>`                          | `undefined`           | Элемент иконки, отображаемой справа от текста кнопки                                                 |
-| **overrides**             | `Object`                                 | `undefined`           | Объект элементов для переопределения составных компонентов кнопки                                    |
-| **overrides .IconWrapper** | `<React.Component>`                      | `<ButtonIconWrapper>` | Компонент обёртка для иконки, отображаемой слева и/или справа от текста кнопки                       |
-| **overrides .TextWrapper** | `<React.Component>`                      | `<ButtonTextWrapper>` | Компонент обёртка текста кнопки                                                                      |
+| Свойство                   | Тип                                      | По умолчанию          | Описание                                                                                                                                        |
+| -------------------------- | :--------------------------------------- | :-------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| **variant**                | `standard` `outlined`                    | `standard`            | Вариант отображения.                                                                                                                            |
+| **color**                  | `default` `secondary` `primary` `String` | `default`             | Цвет кнопки. В качестве пользовательского цвета принимается строка в формате **hex** или **rgb(a)**.                                            |
+| **iconOnly**               | `boolean`                                | `undefined`           | Если `true`, то кнопка будет представлена как кнопка-иконка. Данное свойство не следует использовать одновременно с `startIcon` и/или `endIcon` |
+| **startIcon**              | `<JSX.Element>`                          | `undefined`           | Элемент иконки, отображаемой слева от текста кнопки                                                                                             |
+| **endIcon**                | `<JSX.Element>`                          | `undefined`           | Элемент иконки, отображаемой справа от текста кнопки                                                                                            |
+| **overrides**              | `Object`                                 | `undefined`           | Объект элементов для переопределения составных компонентов кнопки                                                                               |
+| **overrides .IconWrapper** | `<React.Component>`                      | `<ButtonIconWrapper>` | Компонент обёртка для иконки, отображаемой слева и/или справа от текста кнопки                                                                  |
+| **overrides .TextWrapper** | `<React.Component>`                      | `<ButtonTextWrapper>` | Компонент обёртка текста кнопки                                                                                                                 |

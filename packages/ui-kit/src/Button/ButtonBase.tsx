@@ -89,6 +89,16 @@ const ButtonBase: React.ForwardRefRenderFunction<HTMLButtonElement, ButtonBasePr
     [overrides],
   );
 
+  if (
+    iconOnly &&
+    ((typeof startIcon !== 'undefined' && startIcon !== null) ||
+      (typeof endIcon !== 'undefined' && endIcon !== null))
+  ) {
+    console.warn(
+      'The «iconOnly» property should not be used simultaneously with «startIcon» and/or «endIcon»',
+    );
+  }
+
   return (
     <overridesMap.Container {...nativeProps} color={color} iconOnly={iconOnly} ref={ref}>
       {typeof startIcon !== 'undefined' && startIcon !== null && (
