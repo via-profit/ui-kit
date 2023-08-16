@@ -8,7 +8,6 @@ import ButtonBase, { ButtonBaseProps } from './ButtonBase';
 export type ButtonPlainProps = ButtonBaseProps;
 
 type StyledProps = {
-  readonly $background: Color;
   readonly $color: Color;
 };
 
@@ -22,25 +21,20 @@ const StyledPlainButton = styled(ButtonBase)<StyledProps>`
         return $color.toString();
     }
   }};
-  background-color: ${({ $background, disabled }) => {
-    switch (true) {
-      case disabled:
-        return $background.darken(10).toString();
-      default:
-        return $background.toString();
-    }
-  }};
-  ${({ disabled, $background, theme }) =>
+  background: none;
+  ${({ disabled, theme, $color }) =>
     !disabled &&
     css`
       &:hover {
-        background-color: ${$background.darken(30).toString()};
+        color: ${$color.darken(30).toString()};
+        background-color: ${$color.alpha(0.1).toString()};
       }
       &:active {
-        background-color: ${$background.darken(80).toString()};
+        color: ${$color.darken(80).toString()};
+        background-color: ${$color.alpha(0.3).toString()};
       }
       &:focus-visible {
-        outline-color: ${$background.rgbString() === theme.color.accentPrimary.rgbString()
+        outline-color: ${$color.rgbString() === theme.color.accentPrimary.rgbString()
           ? theme.color.textPrimary.toString()
           : theme.color.accentPrimary.toString()};
       }
@@ -53,60 +47,46 @@ const ButtonPlain: React.ForwardRefRenderFunction<HTMLButtonElement, ButtonPlain
 ) => {
   const { children, disabled, color, ...restProps } = props;
   const theme = useTheme();
-  const { $background, $color } = React.useMemo(() => {
+  const { $color } = React.useMemo(() => {
     switch (true) {
       case color === 'primary':
         return {
-          $color: theme.color.accentPrimaryContrast,
-          $background: theme.color.accentPrimary,
+          $color: theme.color.accentPrimary,
         };
       case color === 'secondary':
         return {
-          $color: theme.color.accentSecondaryContrast,
-          $background: theme.color.accentSecondary,
+          $color: theme.color.accentSecondary,
         };
       case typeof color === 'undefined':
       case color === 'default':
         return {
-          $background: theme.color.surface,
           $color: theme.color.textPrimary,
         };
 
       case typeof color === 'string': {
-        let $background = theme.color.surface;
+        let $color = theme.color.textPrimary;
         try {
           if (color) {
-            $background = new Color(color);
+            $color = new Color(color);
           }
         } catch (err) {
           console.error(`invalid color value «${color}»`);
         }
 
         return {
-          $background,
-          $color:
-            $background.contrast(theme.color.textPrimary.rgbString()) > 5
-              ? theme.color.textPrimary
-              : theme.color.surface,
+          $color,
         };
       }
 
       default:
         return {
-          $background: theme.color.surface,
           $color: theme.color.textPrimary,
         };
     }
   }, [color, theme.color]);
 
   return (
-    <StyledPlainButton
-      $color={$color}
-      $background={$background}
-      disabled={disabled}
-      {...restProps}
-      ref={ref}
-    >
+    <StyledPlainButton $color={$color} disabled={disabled} {...restProps} ref={ref}>
       {children}
     </StyledPlainButton>
   );
