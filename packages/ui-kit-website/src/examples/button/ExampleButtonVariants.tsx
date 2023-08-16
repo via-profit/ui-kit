@@ -20,6 +20,9 @@ const ExampleButtonVariants: React.FC = () => (
     <Button type="button" variant="outlined">
       Outlined
     </Button>
+    <Button type="button" variant="plain">
+      plain
+    </Button>
   </ButtonGroup>
 );
 

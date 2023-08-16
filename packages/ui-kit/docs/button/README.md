@@ -37,7 +37,7 @@ _Результат:_
 
 ## Варианты
 
-Кнопки выполнены в двух вариациях: `standard` и `outlined`. По умолчанию, используется стиль `standard`.
+Кнопки выполнены в двух вариациях: `standard`, `outlined` и `plain`. По умолчанию, используется стиль `standard`.
 
 - **standard** — отображает обычную кнопку в привычном для всех виде
 - **outlined** — отображает кнопку с окантовкой
@@ -55,6 +55,9 @@ const Example: React.FC = () => (
     </Button>
     <Button type="button" variant="outlined">
       Outlined
+    </Button>
+    <Button type="button" variant="plain">
+      Plain
     </Button>
   </>
 );

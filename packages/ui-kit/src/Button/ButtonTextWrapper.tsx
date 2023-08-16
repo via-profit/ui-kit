@@ -1,13 +1,38 @@
 import React from 'react';
 import styled from '@emotion/styled';
+import { css } from '@emotion/react';
 
-export type ButtonTextWrapperProps = React.HTMLAttributes<HTMLSpanElement>;
+import type { ButtonContainerProps } from './ButtonContainer';
 
-const TextWrapper = styled.span`
+export type ButtonTextWrapperProps = React.HTMLAttributes<HTMLSpanElement> & {
+  /**
+   * If true, then expect SVG icon as children. The button will be rendered as icon button
+   * Example:
+   * ```tsx
+   * <Button iconOnly>
+   *   <MyIconSVG />
+   * </Button>
+   * ```
+   `
+   */
+  readonly iconOnly?: ButtonContainerProps['iconOnly'];
+};
+
+type StyleProps = {
+  readonly iconOnly?: ButtonTextWrapperProps['iconOnly'];
+};
+
+const TextWrapper = styled.span<StyleProps>`
   font-size: 0.86em;
   display: flex;
   align-items: center;
   user-select: none;
+  ${({ iconOnly }) =>
+    iconOnly &&
+    css`
+      font-size: 1em;
+      justify-content: center;
+    `}
 `;
 
 const ButtonTextWrapper: React.ForwardRefRenderFunction<HTMLSpanElement, ButtonTextWrapperProps> = (

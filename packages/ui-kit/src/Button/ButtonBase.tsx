@@ -105,7 +105,7 @@ const ButtonBase: React.ForwardRefRenderFunction<HTMLButtonElement, ButtonBasePr
         <overridesMap.IconWrapper position="start">{startIcon}</overridesMap.IconWrapper>
       )}
 
-      <overridesMap.TextWrapper>{children}</overridesMap.TextWrapper>
+      <overridesMap.TextWrapper iconOnly={iconOnly}>{children}</overridesMap.TextWrapper>
       {typeof endIcon !== 'undefined' && endIcon !== null && (
         <overridesMap.IconWrapper position="end">{endIcon}</overridesMap.IconWrapper>
       )}
