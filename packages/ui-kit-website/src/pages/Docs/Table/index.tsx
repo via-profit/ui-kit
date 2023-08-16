@@ -2,7 +2,7 @@ import React from 'react';
 
 import Surface from '@via-profit/ui-kit/src/Surface';
 import RenderMarkdown from '~/components/RenderMarkdown';
-import content from '@via-profit/ui-kit/docs/table/overview.md';
+import content from '@via-profit/ui-kit/docs/table/README.md';
 import ExampleTableBasic from '~/examples/table/ExampleTableBasic';
 
 const Tables: React.FC = () => (

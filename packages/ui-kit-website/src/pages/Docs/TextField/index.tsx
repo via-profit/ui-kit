@@ -5,7 +5,7 @@ import RenderMarkdown from '~/components/RenderMarkdown';
 import ExampleTextFieldOverview from '~/examples/text-field/ExampleTextFieldOverview';
 import ExampleTextFieldOverrides from '~/examples/text-field/ExampleTextFieldOverrides';
 import ExampleTextFieldIcons from '~/examples/text-field/ExampleTextFieldIcons';
-import content from '@via-profit/ui-kit/docs/text-field/overview.md';
+import content from '@via-profit/ui-kit/docs/text-field/README.md';
 
 const TextFields: React.FC = () => (
   <Surface>

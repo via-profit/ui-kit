@@ -182,7 +182,10 @@ const MarkdownRender: React.FC<Props> = props => {
             }
 
             if (String(href || '').match(/\.md(#[a-zA-Z0-9а-яёй-]+){0,1}$/i)) {
-              const url = relativeToAbsolute(pathname, String(href || '').replace(/\.md/, ''));
+              const url = relativeToAbsolute(
+                pathname,
+                String(href || '').replace(/(\/README){0,1}\.md/, ''),
+              );
 
               return (
                 <AnchorLink to={url} title={title}>

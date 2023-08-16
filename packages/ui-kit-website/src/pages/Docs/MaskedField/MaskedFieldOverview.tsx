@@ -2,7 +2,7 @@ import React from 'react';
 
 import Surface from '@via-profit/ui-kit/src/Surface';
 import RenderMarkdown from '~/components/RenderMarkdown';
-import content from '@via-profit/ui-kit/docs/masked-field/overview.md';
+import content from '@via-profit/ui-kit/docs/masked-field/README.md';
 import ExampleMaskedFieldBasic from '~/examples/masked-field/ExampleMaskedFieldBasic';
 
 const MaskedFieldOverview: React.FC = () => (

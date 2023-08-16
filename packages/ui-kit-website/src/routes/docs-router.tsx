@@ -5,7 +5,7 @@ import loadable from '@loadable/component';
 const TemplateDocs = loadable(() => import('~/templates/TemplateDocs/index'));
 const NotFound = loadable(() => import('~/pages/NotFound/index'));
 const Introduction = loadable(() => import('~/pages/Docs/Introduction'));
-const Buttons = loadable(() => import('~/pages/Docs/Button'));
+const ButtonOverview = loadable(() => import('~/pages/Docs/Button/ButtonOverview'));
 const Tables = loadable(() => import('~/pages/Docs/Table'));
 const TextFields = loadable(() => import('~/pages/Docs/TextField'));
 const ThemingOverview = loadable(() => import('~/pages/Docs/Theming/ThemingOverview'));
@@ -42,7 +42,7 @@ const docsRouter: RouteObject = {
       caseSensitive: true,
       element: (
         <React.Suspense fallback={<>Loading...</>}>
-          <Buttons />
+          <ButtonOverview />
         </React.Suspense>
       ),
     },

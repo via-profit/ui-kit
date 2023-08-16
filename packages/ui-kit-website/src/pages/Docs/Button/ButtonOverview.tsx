@@ -7,9 +7,9 @@ import ExampleButtonVariants from '~/examples/button/ExampleButtonVariants';
 import ExampleButtonColors from '~/examples/button/ExampleButtonColors';
 import ExampleButtonOverrides from '~/examples/button/ExampleButtonOverrides';
 import ExampleButtonIcons from '~/examples/button/ExampleButtonIcons';
-import content from '@via-profit/ui-kit/docs/button/overview.md';
+import content from '@via-profit/ui-kit/docs/button/README.md';
 
-const Buttons: React.FC = () => (
+const ButtonOverview: React.FC = () => (
   <Surface>
     <RenderMarkdown
       overrides={{
@@ -25,4 +25,4 @@ const Buttons: React.FC = () => (
   </Surface>
 );
 
-export default Buttons;
+export default ButtonOverview;
