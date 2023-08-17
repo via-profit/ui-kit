@@ -23,47 +23,47 @@ const ModalDialog: React.ForwardRefRenderFunction<ReactModal, ModalDialogProps> 
       <Global
         styles={css`
           .modal-dialog .ReactModal__Overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            z-index: ${theme.zIndex.modal};
-            transition: background-color 120ms ease-in-out;
-            background-color: rgba(0, 0, 0, 0);
+            position: fixed !important;
+            inset: 0 !important;
+            z-index: ${theme.zIndex.modal} !important;
+            transition: background-color 120ms ease-in-out !important;
+            background-color: ${theme.color.textPrimary.alpha(0).toString()}!important;
           }
 
           .modal-dialog .ReactModal__Overlay--after-open {
-            background-color: rgba(0, 0, 0, 0.6);
+            background-color: ${theme.color.textPrimary.alpha(0.5).toString()}!important;
           }
 
           .modal-dialog .ReactModal__Overlay--before-close {
-            background-color: rgba(0, 0, 0, 0);
+            background-color: ${theme.color.textPrimary.alpha(0).toString()}!important;
           }
 
           .modal-dialog .ReactModal__Content {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            opacity: 0;
-            overflow: auto;
-            -webkit-overflow-scrolling: touch;
-            outline: none;
-            background: ${theme.color.surface.toString()};
-            border-radius: 1em;
-            transform: translate(-50%, -40%);
-            transition: transform 100ms ease-in-out, opacity 100ms ease-in-out;
+            inset: initial !important;
+            position: absolute !important;
+            top: 50% !important;
+            left: 50% !important;
+            opacity: 0 !important;
+            padding: 0 !important;
+            overflow: auto !important;
+            -webkit-overflow-scrolling: touch !important;
+            outline: none !important;
+            padding: 1em !important;
+            background: ${theme.color.surface.toString()} !important;
+            border-radius: 1em !important;
+            transform: translate(-50%, -40%) !important;
+            transition: transform 100ms ease-in-out, opacity 100ms ease-in-out !important;
           }
 
           .modal-dialog .ReactModal__Content--after-open {
-            opacity: 1;
-            transform: translate(-50%, -50%);
-            transition-duration: 160ms;
+            opacity: 1 !important;
+            transform: translate(-50%, -50%) !important;
+            transition-duration: 160ms !important;
           }
 
           .modal-dialog .ReactModal__Content--before-close {
-            opacity: 0;
-            transform: translate(-50%, 300px);
+            opacity: 0 !important;
+            transform: translate(-50%, 300px) !important;
           }
         `}
       />

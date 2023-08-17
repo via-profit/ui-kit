@@ -26,7 +26,7 @@ const Paragraph: React.ForwardRefRenderFunction<HTMLParagraphElement, ParagraphP
   const { noMargin, children, ...restProps } = props;
 
   return (
-    <StyledParagraph {...restProps} ref={ref}>
+    <StyledParagraph {...restProps} $noMargin={noMargin} ref={ref}>
       {children}
     </StyledParagraph>
   );

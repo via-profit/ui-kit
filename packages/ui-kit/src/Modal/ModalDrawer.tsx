@@ -105,44 +105,42 @@ const ModalDrawer: React.ForwardRefRenderFunction<ReactModal, ModalDrawerProps> 
         styles={css`
           .modal-drawer .ReactModal__Overlay {
             position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            z-index: ${theme.zIndex.modal};
-            background-color: rgba(0, 0, 0, 0);
+            inset: 0;
+            z-index: ${theme.zIndex.modal}!important;
+            background-color: ${theme.color.textPrimary.alpha(0).toString()}!important;
             transition: background-color 240ms ease-out;
           }
 
           .modal-drawer .ReactModal__Overlay--after-open {
-            background-color: rgba(0, 0, 0, 0.4);
+            background-color: ${theme.color.textPrimary.alpha(0.5).toString()}!important;
           }
 
           .modal-drawer .ReactModal__Overlay--before-close {
-            background-color: rgba(0, 0, 0, 0);
+            background-color: ${theme.color.textPrimary.alpha(0).toString()}!important;
           }
 
           .modal-drawer .ReactModal__Content {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            overflow: auto;
-            -webkit-overflow-scrolling: touch;
-            outline: none;
-            background: ${theme.color.surface.toString()};
-            border-radius: 1em 1em 0 0;
-            transform: translate(0, 100%);
-            transition: transform 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+            position: absolute !important;
+            bottom: 0 !important;
+            padding: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            overflow: auto !important;
+            -webkit-overflow-scrolling: touch !important;
+            outline: none !important;
+            background: ${theme.color.surface.toString()}!important;
+            border-radius: 1em 1em 0 0 !important;
+            transform: translate(0, 100%) !important;
+            transition: transform 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms !important;
           }
 
           .modal-drawer .ReactModal__Content--after-open {
-            transform: translate(0, 0);
+            transform: translate(0, 0) !important;
           }
 
           .modal-drawer .ReactModal__Content--before-close {
-            transform: translate(0, 100%);
-            transition-duration: 160ms;
+            transform: translate(0, 100%) !important;
+            transition-duration: 160ms !important;
           }
         `}
       />

@@ -15,6 +15,7 @@ const MaskedFieldOverview = loadable(() => import('~/pages/Docs/MaskedField/Mask
 const TypographyOverview = loadable(() => import('~/pages/Docs/Typography/TypographyOverview'));
 const PhoneFieldOverview = loadable(() => import('~/pages/Docs/PhoneField/PhoneFieldOverview'));
 const MenuOverview = loadable(() => import('~/pages/Docs/Menu/MenuOverview'));
+const ModalOverview = loadable(() => import('~/pages/Docs/Modal/ModalOverview'));
 const AutocompleteOverview = loadable(
   () => import('~/pages/Docs/Autocomplete/AutocompleteOverview'),
 );
@@ -151,6 +152,15 @@ const docsRouter: RouteObject = {
       element: (
         <React.Suspense fallback={<>Loading...</>}>
           <CountryFlagsOverview />
+        </React.Suspense>
+      ),
+    },
+    {
+      path: 'modal',
+      caseSensitive: true,
+      element: (
+        <React.Suspense fallback={<>Loading...</>}>
+          <ModalOverview />
         </React.Suspense>
       ),
     },

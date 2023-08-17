@@ -101,6 +101,9 @@ const Sidebar: React.ForwardRefRenderFunction<HTMLDivElement, SurfaceContainerPr
         >
           CountryFlagsOverview
         </Item>
+        <Item $isActive={matchPath('/docs/modal/*', pathname) !== null} to="/docs/modal">
+          Modal
+        </Item>
       </ItemsList>
     </Container>
   );
