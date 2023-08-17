@@ -16,7 +16,7 @@ export interface ModalDrawerProps extends ReactModal.Props {
 
 const Container = styled.div`
   min-height: 2rem;
-  max-height: calc(100vh - 3rem);
+  height: 100%;
   display: flex;
   flex-flow: column;
 `;
@@ -41,14 +41,12 @@ const Title = styled.div`
   margin-right: 1em;
 `;
 
-const Footer = styled.div`
-  padding: 1em;
-`;
+const Footer = styled.div``;
 
 const Inner = styled.div`
-  padding: 1em;
   overflow-y: auto;
   flex: 1;
+  display: flex;
 `;
 
 const CloseButton = styled(Button)<{ $withToolbar: boolean }>`
@@ -120,6 +118,7 @@ const ModalDrawer: React.ForwardRefRenderFunction<ReactModal, ModalDrawerProps> 
           }
 
           .modal-drawer .ReactModal__Content {
+            border: none !important;
             position: absolute !important;
             bottom: 0 !important;
             padding: 0 !important;

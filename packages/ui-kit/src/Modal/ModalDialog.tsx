@@ -7,9 +7,7 @@ export interface ModalDialogProps extends ReactModal.Props {
   readonly children: React.ReactNode | React.ReactNode[];
 }
 
-const Container = styled.div`
-  padding: 1em;
-`;
+const Container = styled.div``;
 
 const ModalDialog: React.ForwardRefRenderFunction<ReactModal, ModalDialogProps> = (props, ref) => {
   const { children, ...otherProps } = props;
@@ -40,6 +38,7 @@ const ModalDialog: React.ForwardRefRenderFunction<ReactModal, ModalDialogProps> 
 
           .modal-dialog .ReactModal__Content {
             inset: initial !important;
+            border: none !important;
             position: absolute !important;
             top: 50% !important;
             left: 50% !important;

@@ -118,6 +118,7 @@ const ModalConfirmBox: React.ForwardRefRenderFunction<ReactModal, ModalConfirmBo
 
           .modal-confirmbox .ReactModal__Content {
             inset: initial !important;
+            border: none !important;
             position: absolute !important;
             top: 50% !important;
             padding: 0 !important;
