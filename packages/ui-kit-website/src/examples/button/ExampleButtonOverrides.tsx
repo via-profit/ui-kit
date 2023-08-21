@@ -2,7 +2,7 @@ import React from 'react';
 import Button from '@via-profit/ui-kit/src/Button';
 import styled from '@emotion/styled';
 
-const TextWrapper = styled.span`
+const TextWrapper = styled.span<{iconOnly?: boolean}>`
   padding: 0.2em;
   font-weight: 600;
   border-radius: 0.4em;
@@ -17,9 +17,9 @@ const ExampleButtonOverrides: React.FC = () => (
       color="primary"
       overrides={{
         TextWrapper: React.forwardRef(function Wrapper(props, ref) {
-          const { children } = props;
+          const {iconOnly, children } = props;
 
-          return <TextWrapper ref={ref}>{children}</TextWrapper>;
+          return <TextWrapper iconOnly={iconOnly} ref={ref}>{children}</TextWrapper>;
         }),
       }}
     >

@@ -14,6 +14,9 @@ type StyleProps = {
 };
 
 const Wrapper = styled.span<StyleProps>`
+  display: flex;
+  align-items: center;
+  justify-content: center;
   ${({ $position }) =>
     $position === 'start' &&
     css`

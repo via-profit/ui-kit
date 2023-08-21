@@ -64,10 +64,10 @@ const ButtonContainer: React.ForwardRefRenderFunction<HTMLButtonElement, ButtonC
   props,
   ref,
 ) => {
-  const { children, ...nativeProps } = props;
+  const { children, iconOnly, ...nativeProps } = props;
 
   return (
-    <StyledButton {...nativeProps} ref={ref}>
+    <StyledButton iconOnly={iconOnly} {...nativeProps} ref={ref}>
       {children}
     </StyledButton>
   );

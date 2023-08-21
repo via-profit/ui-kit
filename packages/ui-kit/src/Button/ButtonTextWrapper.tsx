@@ -39,10 +39,10 @@ const ButtonTextWrapper: React.ForwardRefRenderFunction<HTMLSpanElement, ButtonT
   props,
   ref,
 ) => {
-  const { children, ...nativeProps } = props;
+  const { children, iconOnly, ...nativeProps } = props;
 
   return (
-    <TextWrapper {...nativeProps} ref={ref}>
+    <TextWrapper iconOnly={iconOnly} {...nativeProps} ref={ref}>
       {children}
     </TextWrapper>
   );
