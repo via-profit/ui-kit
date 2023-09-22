@@ -2,8 +2,8 @@ import * as React from 'react';
 import type ReactModal from 'react-modal';
 
 import ModalDialog, { ModalDialogProps } from './ModalDialog';
-import ModalConfirmBox, { ModalConfirmBoxProps } from './ModalConfirmBox';
-import ModalMessageBox, { ModalMessageBoxProps } from './ModalMessageBox';
+import ConfirmBox, { ConfirmBoxProps } from './ConfirmBox';
+import MessageBox, { MessageBoxProps } from './MessageBox';
 import ModalDrawer, { ModalDrawerProps } from './ModalDrawer';
 
 interface BaseProps {
@@ -12,17 +12,17 @@ interface BaseProps {
 
 export type ModalProps =
   | (ModalDialogProps & BaseProps)
-  | (ModalConfirmBoxProps & BaseProps)
-  | (ModalMessageBoxProps & BaseProps)
+  | (ConfirmBoxProps & BaseProps)
+  | (MessageBoxProps & BaseProps)
   | (ModalDrawerProps & BaseProps);
 
 const isDialog = (props: ModalProps): props is ModalDialogProps =>
   ('variant' in props && props.variant === 'dialog') || typeof props.variant === 'undefined';
 
-const isConfirmBox = (props: ModalProps): props is ModalConfirmBoxProps =>
+const isConfirmBox = (props: ModalProps): props is ConfirmBoxProps =>
   'variant' in props && props.variant === 'confirm-box';
 
-const isMessageBox = (props: ModalProps): props is ModalMessageBoxProps =>
+const isMessageBox = (props: ModalProps): props is MessageBoxProps =>
   'variant' in props && props.variant === 'message-box';
 
 const isDrawer = (props: ModalProps): props is ModalDrawerProps =>
@@ -33,10 +33,10 @@ const Modal: React.ForwardRefRenderFunction<ReactModal, ModalProps> = (props, re
     return <ModalDialog {...props} ref={ref} />;
   }
   if (isConfirmBox(props)) {
-    return <ModalConfirmBox {...props} ref={ref} />;
+    return <ConfirmBox {...props} ref={ref} />;
   }
   if (isMessageBox(props)) {
-    return <ModalMessageBox {...props} ref={ref} />;
+    return <MessageBox {...props} ref={ref} />;
   }
   if (isDrawer(props)) {
     return <ModalDrawer {...(props as any)} ref={ref} />;

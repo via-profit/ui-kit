@@ -1,5 +1,4 @@
 import React from 'react';
-// import styled from '@emotion/styled';
 import Modal from '@via-profit/ui-kit/src/Modal';
 import Button from '@via-profit/ui-kit/src/Button';
 import Typography from '@via-profit/ui-kit/src/Typography';
@@ -29,13 +28,14 @@ const ExampleModalDrawerOverview: React.FC = () => {
         isOpen={dialogIsOpen}
         onRequestClose={() => setDialogOpen(false)}
       >
-        <Typography noMargin>Dialog contentdfssfds</Typography>
+        <Typography noMargin>Dialog content</Typography>
       </Modal>
 
       <Modal
         variant="message-box"
         title="Title"
         message="Message"
+        okButtonLabel="OK"
         isOpen={messageboxIsOpen}
         onRequestClose={() => setMessageboxOpen(false)}
       />
@@ -44,7 +44,6 @@ const ExampleModalDrawerOverview: React.FC = () => {
         variant="confirm-box"
         title="Title"
         message="Message"
-        closeButton
         isOpen={confirmboxIsOpen}
         onRequestYes={() => setConfirmboxOpen(false)}
         onRequestClose={() => setConfirmboxOpen(false)}

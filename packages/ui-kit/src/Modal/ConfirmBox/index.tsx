@@ -1,65 +1,108 @@
-import * as React from 'react';
-import styled from '@emotion/styled';
+import React from 'react';
 import { Global, css, useTheme } from '@emotion/react';
 import ReactModal from 'react-modal';
 
-import Button from '../Button';
+import Container, { ConfirmBoxContainerProps } from './ConfirmBoxContainer';
+import Content, { ConfirmBoxContentProps } from './ConfirmBoxContent';
+import Footer, { ConfirmBoxFooterProps } from './ConfirmBoxFooter';
+import Header, { ConfirmBoxHeaderProps } from './ConfirmBoxHeader';
 
-export interface ModalConfirmBoxProps extends ReactModal.Props {
+export interface ConfirmBoxProps extends ReactModal.Props {
+  /**
+   * Dialog title
+   */
   readonly title: string;
+
+  /**
+   * Dialog message
+   */
   readonly message: React.ReactNode;
+
+  /**
+   * On confirmation event
+   */
   readonly onRequestYes: React.MouseEventHandler<HTMLButtonElement>;
+
+  /**
+   * On close request
+   */
+  readonly onRequestClose: (
+    event: React.MouseEvent<Element, MouseEvent> | React.KeyboardEvent<Element>,
+  ) => void;
+
+  /**
+   * Label of Dissmiss button
+   * **Default**: `"Dismiss"`
+   */
+  readonly dismissButtonLabel?: React.ReactNode;
+
+  /**
+   * Label of Confirmation button
+   * **Default**: `"Confirm"`
+   */
+  readonly confirmButtonLabel?: React.ReactNode;
+
+  /**
+   * Overridable components map
+   */
+  readonly overrides?: ConfirmBoxOverrides;
 }
 
-const Container = styled.div`
-  display: flex;
-  flex-flow: column;
-  min-width: 20em;
-`;
+export interface ConfirmBoxOverrides {
+  /**
+   * Element container
+   */
+  readonly Container?: React.ForwardRefExoticComponent<
+    ConfirmBoxContainerProps & React.RefAttributes<HTMLDivElement>
+  >;
+  /**
+   * Element ontent
+   */
+  readonly Content?: React.ForwardRefExoticComponent<
+    ConfirmBoxContentProps & React.RefAttributes<HTMLDivElement>
+  >;
 
-const Header = styled.div`
-  padding: 1em 1em 0 1em;
-`;
+  /**
+   * Element footer
+   */
+  readonly Footer?: React.ForwardRefExoticComponent<
+    ConfirmBoxFooterProps & React.RefAttributes<HTMLDivElement>
+  >;
 
-const HeaderTitle = styled.div`
-  font-size: 1.4rem;
-  font-weight: 600;
-`;
+  /**
+   * Element header
+   */
+  readonly Header?: React.ForwardRefExoticComponent<
+    ConfirmBoxHeaderProps & React.RefAttributes<HTMLDivElement>
+  >;
+}
 
-const Content = styled.div`
-  flex: 1;
-  padding: 1em 1em;
-`;
-
-const Footer = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  padding: 1em 1em 1em 1em;
-
-  & > button {
-    border-radius: 0;
-  }
-
-  & > button:first-of-type {
-    border-top-left-radius: 1em;
-    border-bottom-left-radius: 1em;
-  }
-
-  & > button:last-child {
-    border-top-right-radius: 1em;
-    border-bottom-right-radius: 1em;
-  }
-`;
-
-const ModalConfirmBox: React.ForwardRefRenderFunction<ReactModal, ModalConfirmBoxProps> = (
-  props,
-  ref,
-) => {
-  const { title, message, onRequestYes, onRequestClose, isOpen, ...otherProps } = props;
+const ConfirmBox: React.ForwardRefRenderFunction<ReactModal, ConfirmBoxProps> = (props, ref) => {
+  const {
+    title,
+    message,
+    onRequestYes,
+    onRequestClose,
+    overrides,
+    isOpen,
+    dismissButtonLabel,
+    confirmButtonLabel,
+    ...otherProps
+  } = props;
   const dialogID = React.useMemo(() => `dialog-confirm-${new Date().getTime()}`, []);
   const buttonRef = React.useRef<HTMLButtonElement | null>(null);
   const theme = useTheme();
+
+  const overridesMap = React.useMemo(
+    () => ({
+      Container,
+      Content,
+      Footer,
+      Header,
+      ...overrides,
+    }),
+    [overrides],
+  );
 
   React.useEffect(() => {
     setTimeout(() => {
@@ -81,22 +124,17 @@ const ModalConfirmBox: React.ForwardRefRenderFunction<ReactModal, ModalConfirmBo
         isOpen={isOpen}
         {...otherProps}
       >
-        <Container
-          role="modal-confirmbox"
-          aria-labelledby={`${dialogID}-title`}
-          aria-describedby={`${dialogID}-description`}
-        >
-          <Header>
-            <HeaderTitle id={`${dialogID}-title`}>{title}</HeaderTitle>
-          </Header>
-          <Content id={`${dialogID}-description`}>{message}</Content>
-          <Footer>
-            <Button onClick={onRequestClose}>Dismiss</Button>
-            <Button color="primary" onClick={onRequestYes}>
-              Confirm
-            </Button>
-          </Footer>
-        </Container>
+        <overridesMap.Container dialogID={dialogID}>
+          <overridesMap.Header dialogID={dialogID}>{title}</overridesMap.Header>
+          <overridesMap.Content dialogID={dialogID}>{message}</overridesMap.Content>
+          <overridesMap.Footer
+            dialogID={dialogID}
+            onRequestClose={onRequestClose}
+            onRequestYes={onRequestYes}
+            dismissButtonLabel={dismissButtonLabel}
+            confirmButtonLabel={confirmButtonLabel}
+          />
+        </overridesMap.Container>
       </ReactModal>
       <Global
         styles={css`
@@ -149,4 +187,4 @@ const ModalConfirmBox: React.ForwardRefRenderFunction<ReactModal, ModalConfirmBo
   );
 };
 
-export default React.forwardRef(ModalConfirmBox);
+export default React.forwardRef(ConfirmBox);

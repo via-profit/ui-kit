@@ -1,61 +1,73 @@
 import * as React from 'react';
-import styled from '@emotion/styled';
 import { Global, css, useTheme } from '@emotion/react';
 import ReactModal from 'react-modal';
 
-import Button from '../Button';
+import Container, { MessageBoxContainerProps } from './MessageBoxContainer';
+import Content, { MessageBoxContentProps } from './MessageBoxContent';
+import Footer, { MessageBoxFooterProps } from './MessageBoxFooter';
+import Header, { MessageBoxHeaderProps } from './MessageBoxHeader';
 
-export interface ModalMessageBoxProps extends ReactModal.Props {
+export interface MessageBoxProps extends ReactModal.Props {
+  /**
+   * Dialog title
+   */
   readonly title: string;
+
+  /**
+   * Dialog message
+   */
   readonly message: React.ReactNode;
+
+  /**
+   * On close request
+   */
+  readonly onRequestClose: (
+    event: React.MouseEvent<Element, MouseEvent> | React.KeyboardEvent<Element>,
+  ) => void;
+
+  /**
+   * Label of button
+   * **Default**: `"OK"`
+   */
+  readonly okButtonLabel?: React.ReactNode;
+
+  /**
+   * Overridable components map
+   */
+  readonly overrides?: MessageBoxOverrides;
 }
 
-const Container = styled.div`
-  display: flex;
-  flex-flow: column;
-  min-width: 20em;
-`;
+export interface MessageBoxOverrides {
+  /**
+   * Element container
+   */
+  readonly Container?: React.ForwardRefExoticComponent<
+    MessageBoxContainerProps & React.RefAttributes<HTMLDivElement>
+  >;
+  /**
+   * Element ontent
+   */
+  readonly Content?: React.ForwardRefExoticComponent<
+    MessageBoxContentProps & React.RefAttributes<HTMLDivElement>
+  >;
 
-const Header = styled.div`
-  padding: 1em 1em 0 1em;
-`;
+  /**
+   * Element footer
+   */
+  readonly Footer?: React.ForwardRefExoticComponent<
+    MessageBoxFooterProps & React.RefAttributes<HTMLDivElement>
+  >;
 
-const HeaderTitle = styled.div`
-  font-size: 1.4rem;
-  font-weight: 600;
-`;
+  /**
+   * Element header
+   */
+  readonly Header?: React.ForwardRefExoticComponent<
+    MessageBoxHeaderProps & React.RefAttributes<HTMLDivElement>
+  >;
+}
 
-const Content = styled.div`
-  flex: 1;
-  padding: 1em 1em;
-`;
-
-const Footer = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  padding: 1em 1em 1em 1em;
-
-  & > button {
-    border-radius: 0;
-  }
-
-  & > button:first-of-type {
-    border-top-left-radius: 1em;
-    border-bottom-left-radius: 1em;
-  }
-
-  & > button:last-child {
-    border-top-right-radius: 1em;
-    border-bottom-right-radius: 1em;
-  }
-`;
-
-const ModalMessageBox: React.ForwardRefRenderFunction<ReactModal, ModalMessageBoxProps> = (
-  props,
-  ref,
-) => {
-  const { title, message, onRequestClose, isOpen, ...otherProps } = props;
+const MessageBox: React.ForwardRefRenderFunction<ReactModal, MessageBoxProps> = (props, ref) => {
+  const { title, message, onRequestClose, overrides, okButtonLabel, isOpen, ...otherProps } = props;
   const dialogID = React.useMemo(() => `dialog-Message-${new Date().getTime()}`, []);
   const buttonRef = React.useRef<HTMLButtonElement | null>(null);
   const theme = useTheme();
@@ -67,6 +79,17 @@ const ModalMessageBox: React.ForwardRefRenderFunction<ReactModal, ModalMessageBo
       }
     }, 15);
   }, [isOpen]);
+
+  const overridesMap = React.useMemo(
+    () => ({
+      Container,
+      Content,
+      Footer,
+      Header,
+      ...overrides,
+    }),
+    [overrides],
+  );
 
   return (
     <>
@@ -80,21 +103,15 @@ const ModalMessageBox: React.ForwardRefRenderFunction<ReactModal, ModalMessageBo
         isOpen={isOpen}
         {...otherProps}
       >
-        <Container
-          role="dialog"
-          aria-labelledby={`${dialogID}-title`}
-          aria-describedby={`${dialogID}-description`}
-        >
-          <Header>
-            <HeaderTitle id={`${dialogID}-title`}>{title}</HeaderTitle>
-          </Header>
-          <Content id={`${dialogID}-description`}>{message}</Content>
-          <Footer>
-            <Button onClick={onRequestClose} ref={buttonRef}>
-              OK
-            </Button>
-          </Footer>
-        </Container>
+        <overridesMap.Container dialogID={dialogID}>
+          <overridesMap.Header dialogID={dialogID}>{title}</overridesMap.Header>
+          <overridesMap.Content dialogID={dialogID}>{message}</overridesMap.Content>
+          <overridesMap.Footer
+            dialogID={dialogID}
+            onRequestClose={onRequestClose}
+            okButtonLabel={okButtonLabel}
+          />
+        </overridesMap.Container>
       </ReactModal>
       <Global
         styles={css`
@@ -146,4 +163,4 @@ const ModalMessageBox: React.ForwardRefRenderFunction<ReactModal, ModalMessageBo
   );
 };
 
-export default React.forwardRef(ModalMessageBox);
+export default React.forwardRef(MessageBox);
