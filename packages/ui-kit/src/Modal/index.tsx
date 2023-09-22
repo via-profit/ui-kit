@@ -1,22 +1,22 @@
 import * as React from 'react';
 import type ReactModal from 'react-modal';
 
-import ModalDialog, { ModalDialogProps } from './ModalDialog';
+import Dialog, { DialogProps } from './Dialog';
 import ConfirmBox, { ConfirmBoxProps } from './ConfirmBox';
 import MessageBox, { MessageBoxProps } from './MessageBox';
-import ModalDrawer, { ModalDrawerProps } from './ModalDrawer';
+import Drawer, { DrawerProps } from './Drawer';
 
 interface BaseProps {
   readonly variant?: 'dialog' | 'message-box' | 'confirm-box' | 'drawer';
 }
 
 export type ModalProps =
-  | (ModalDialogProps & BaseProps)
+  | (DialogProps & BaseProps)
   | (ConfirmBoxProps & BaseProps)
   | (MessageBoxProps & BaseProps)
-  | (ModalDrawerProps & BaseProps);
+  | (DrawerProps & BaseProps);
 
-const isDialog = (props: ModalProps): props is ModalDialogProps =>
+const isDialog = (props: ModalProps): props is DialogProps =>
   ('variant' in props && props.variant === 'dialog') || typeof props.variant === 'undefined';
 
 const isConfirmBox = (props: ModalProps): props is ConfirmBoxProps =>
@@ -25,12 +25,12 @@ const isConfirmBox = (props: ModalProps): props is ConfirmBoxProps =>
 const isMessageBox = (props: ModalProps): props is MessageBoxProps =>
   'variant' in props && props.variant === 'message-box';
 
-const isDrawer = (props: ModalProps): props is ModalDrawerProps =>
+const isDrawer = (props: ModalProps): props is DrawerProps =>
   'variant' in props && props.variant === 'drawer';
 
 const Modal: React.ForwardRefRenderFunction<ReactModal, ModalProps> = (props, ref) => {
   if (isDialog(props)) {
-    return <ModalDialog {...props} ref={ref} />;
+    return <Dialog {...props} ref={ref} />;
   }
   if (isConfirmBox(props)) {
     return <ConfirmBox {...props} ref={ref} />;
@@ -39,7 +39,7 @@ const Modal: React.ForwardRefRenderFunction<ReactModal, ModalProps> = (props, re
     return <MessageBox {...props} ref={ref} />;
   }
   if (isDrawer(props)) {
-    return <ModalDrawer {...(props as any)} ref={ref} />;
+    return <Drawer {...(props as any)} ref={ref} />;
   }
   const { variant } = props;
 

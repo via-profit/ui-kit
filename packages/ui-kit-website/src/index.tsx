@@ -4,6 +4,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { loadableReady } from '@loadable/component';
 import { CacheProvider as CSSCacheProvider } from '@emotion/react';
 import createCache from '@emotion/cache';
+import ReactModal from 'react-modal';
 
 import readPreloadedState from '~/utils/readPreloadedState';
 import ReduxProvider from '~/providers/ReduxProvider';
@@ -27,6 +28,8 @@ const bootstrap = async () => {
       ...preloadedStates?.REDUX?.ui,
     },
   }));
+
+  ReactModal.setAppElement(rootElement);
 
   const AppData = (
     <ReduxProvider>

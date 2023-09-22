@@ -1,23 +1,21 @@
 import * as React from 'react';
-import styled from '@emotion/styled';
 import { Global, css, useTheme } from '@emotion/react';
 import ReactModal from 'react-modal';
 
-export interface ModalDialogProps extends ReactModal.Props {
+export interface DialogProps extends ReactModal.Props {
   readonly children: React.ReactNode | React.ReactNode[];
 }
 
-const Container = styled.div``;
-
-const ModalDialog: React.ForwardRefRenderFunction<ReactModal, ModalDialogProps> = (props, ref) => {
+const Dialog: React.ForwardRefRenderFunction<ReactModal, DialogProps> = (props, ref) => {
   const { children, ...otherProps } = props;
   const theme = useTheme();
 
   return (
     <>
       <ReactModal ref={ref} closeTimeoutMS={200} portalClassName="modal-dialog" {...otherProps}>
-        <Container>{children}</Container>
+        <div>{children}</div>
       </ReactModal>
+
       <Global
         styles={css`
           .modal-dialog .ReactModal__Overlay {
@@ -70,4 +68,4 @@ const ModalDialog: React.ForwardRefRenderFunction<ReactModal, ModalDialogProps> 
   );
 };
 
-export default React.forwardRef(ModalDialog);
+export default React.forwardRef(Dialog);

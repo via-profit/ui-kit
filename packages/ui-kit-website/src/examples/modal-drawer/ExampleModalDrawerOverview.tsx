@@ -16,15 +16,14 @@ const ExampleModalDrawerOverview: React.FC = () => {
       <Button onClick={() => setMessageboxOpen(true)}>Open messagebox</Button>
       <Button onClick={() => setConfirmboxOpen(true)}>Open confirmbox</Button>
 
-      <Modal variant="drawer" isOpen={drawerIsOpen} onRequestClose={() => setDrawerOpen(false)}>
-        <div>
-          <Typography noMargin>Drawer content</Typography>
-        </div>
+      <Modal variant="drawer" showCloseButton isOpen={drawerIsOpen} onRequestClose={() => setDrawerOpen(false)} footer={<>fdfds</>}>
+        <Typography noMargin>Drawer content</Typography>
+        <Typography noMargin>Drawer content</Typography>
+        <Typography noMargin>Drawer content</Typography>
       </Modal>
 
       <Modal
         variant="dialog"
-        closeButton
         isOpen={dialogIsOpen}
         onRequestClose={() => setDialogOpen(false)}
       >

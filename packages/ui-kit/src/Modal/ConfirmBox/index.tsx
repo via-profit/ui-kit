@@ -125,15 +125,37 @@ const ConfirmBox: React.ForwardRefRenderFunction<ReactModal, ConfirmBoxProps> = 
         {...otherProps}
       >
         <overridesMap.Container dialogID={dialogID}>
-          <overridesMap.Header dialogID={dialogID}>{title}</overridesMap.Header>
-          <overridesMap.Content dialogID={dialogID}>{message}</overridesMap.Content>
-          <overridesMap.Footer
-            dialogID={dialogID}
-            onRequestClose={onRequestClose}
-            onRequestYes={onRequestYes}
-            dismissButtonLabel={dismissButtonLabel}
-            confirmButtonLabel={confirmButtonLabel}
-          />
+          {React.useMemo(
+            () => (
+              <overridesMap.Header dialogID={dialogID}>{title}</overridesMap.Header>
+            ),
+            [overridesMap, dialogID, title],
+          )}
+          {React.useMemo(
+            () => (
+              <overridesMap.Content dialogID={dialogID}>{message}</overridesMap.Content>
+            ),
+            [dialogID, message, overridesMap],
+          )}
+          {React.useMemo(
+            () => (
+              <overridesMap.Footer
+                dialogID={dialogID}
+                onRequestClose={onRequestClose}
+                onRequestYes={onRequestYes}
+                dismissButtonLabel={dismissButtonLabel}
+                confirmButtonLabel={confirmButtonLabel}
+              />
+            ),
+            [
+              confirmButtonLabel,
+              dialogID,
+              dismissButtonLabel,
+              onRequestClose,
+              onRequestYes,
+              overridesMap,
+            ],
+          )}
         </overridesMap.Container>
       </ReactModal>
       <Global
