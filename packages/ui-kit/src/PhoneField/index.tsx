@@ -142,17 +142,20 @@ const PhoneField: React.ForwardRefRenderFunction<HTMLDivElement, PhoneFieldProps
     <TextField
       ref={ref}
       {...textFieldProps}
-      startIcon={
-        <CountryFlagComponent
-          flag={CountryFlag}
-          onClick={() => {
-            if (textInputRef.current) {
-              textInputRef.current.select();
-              textInputRef.current.focus();
-            }
-          }}
-        />
-      }
+      startIcon={React.useMemo(
+        () => (
+          <CountryFlagComponent
+            flag={CountryFlag}
+            onClick={() => {
+              if (textInputRef.current) {
+                textInputRef.current.select();
+                textInputRef.current.focus();
+              }
+            }}
+          />
+        ),
+        [CountryFlag],
+      )}
       value={currentValue}
       placeholder={placeholder}
       onChange={handleChange}
