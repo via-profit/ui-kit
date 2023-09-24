@@ -3,6 +3,7 @@ import { Global, css, useTheme } from '@emotion/react';
 import ReactModal from 'react-modal';
 
 export interface DialogProps extends ReactModal.Props {
+  readonly variant: 'dialog';
   readonly children: React.ReactNode | React.ReactNode[];
 }
 
@@ -49,7 +50,9 @@ const Dialog: React.ForwardRefRenderFunction<ReactModal, DialogProps> = (props, 
             background: ${theme.color.surface.toString()} !important;
             border-radius: 1em !important;
             transform: translate(-50%, -40%) !important;
-            transition: transform 100ms ease-in-out, opacity 100ms ease-in-out !important;
+            transition:
+              transform 100ms ease-in-out,
+              opacity 100ms ease-in-out !important;
           }
 
           .modal-dialog .ReactModal__Content--after-open {

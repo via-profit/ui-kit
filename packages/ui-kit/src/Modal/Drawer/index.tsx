@@ -8,6 +8,8 @@ import Content, { DrawerContentProps } from './DrawerContent';
 import Footer, { DrawerFooterProps } from './DrawerFooter';
 
 export interface DrawerProps extends ReactModal.Props {
+
+  readonly variant: 'drawer';
   /**
    * Drawer content
    */

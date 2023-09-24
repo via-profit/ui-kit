@@ -8,15 +8,11 @@ import Footer, { MessageBoxFooterProps } from './MessageBoxFooter';
 import Header, { MessageBoxHeaderProps } from './MessageBoxHeader';
 
 export interface MessageBoxProps extends ReactModal.Props {
+  readonly variant: 'message-box';
   /**
    * Dialog title
    */
   readonly title: string;
-
-  /**
-   * Dialog message
-   */
-  readonly message: React.ReactNode;
 
   /**
    * On close request
@@ -67,7 +63,8 @@ export interface MessageBoxOverrides {
 }
 
 const MessageBox: React.ForwardRefRenderFunction<ReactModal, MessageBoxProps> = (props, ref) => {
-  const { title, message, onRequestClose, overrides, okButtonLabel, isOpen, ...otherProps } = props;
+  const { title, children, onRequestClose, overrides, okButtonLabel, isOpen, ...otherProps } =
+    props;
   const dialogID = React.useMemo(() => `dialog-Message-${new Date().getTime()}`, []);
   const buttonRef = React.useRef<HTMLButtonElement | null>(null);
   const theme = useTheme();
@@ -105,7 +102,7 @@ const MessageBox: React.ForwardRefRenderFunction<ReactModal, MessageBoxProps> = 
       >
         <overridesMap.Container dialogID={dialogID}>
           <overridesMap.Header dialogID={dialogID}>{title}</overridesMap.Header>
-          <overridesMap.Content dialogID={dialogID}>{message}</overridesMap.Content>
+          <overridesMap.Content dialogID={dialogID}>{children}</overridesMap.Content>
           <overridesMap.Footer
             dialogID={dialogID}
             onRequestClose={onRequestClose}
@@ -144,7 +141,9 @@ const MessageBox: React.ForwardRefRenderFunction<ReactModal, MessageBoxProps> = 
             background: ${theme.color.surface.toString()} !important;
             border-radius: 1em !important;
             transform: translate(-50%, -40%) !important;
-            transition: transform 100ms ease-in-out, opacity 100ms ease-in-out !important;
+            transition:
+              transform 100ms ease-in-out,
+              opacity 100ms ease-in-out !important;
           }
 
           .modal-messagebox .ReactModal__Content--after-open {

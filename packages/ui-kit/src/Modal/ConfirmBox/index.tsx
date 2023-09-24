@@ -8,15 +8,12 @@ import Footer, { ConfirmBoxFooterProps } from './ConfirmBoxFooter';
 import Header, { ConfirmBoxHeaderProps } from './ConfirmBoxHeader';
 
 export interface ConfirmBoxProps extends ReactModal.Props {
+
+  readonly variant: 'confirm-box';
   /**
    * Dialog title
    */
   readonly title: string;
-
-  /**
-   * Dialog message
-   */
-  readonly message: React.ReactNode;
 
   /**
    * On confirmation event
@@ -80,7 +77,7 @@ export interface ConfirmBoxOverrides {
 const ConfirmBox: React.ForwardRefRenderFunction<ReactModal, ConfirmBoxProps> = (props, ref) => {
   const {
     title,
-    message,
+    children,
     onRequestYes,
     onRequestClose,
     overrides,
@@ -133,9 +130,9 @@ const ConfirmBox: React.ForwardRefRenderFunction<ReactModal, ConfirmBoxProps> = 
           )}
           {React.useMemo(
             () => (
-              <overridesMap.Content dialogID={dialogID}>{message}</overridesMap.Content>
+              <overridesMap.Content dialogID={dialogID}>{children}</overridesMap.Content>
             ),
-            [dialogID, message, overridesMap],
+            [dialogID, children, overridesMap],
           )}
           {React.useMemo(
             () => (
