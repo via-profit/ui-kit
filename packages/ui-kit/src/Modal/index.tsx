@@ -10,6 +10,11 @@ interface BaseProps {
   readonly variant?: 'dialog' | 'message-box' | 'confirm-box' | 'drawer';
 }
 
+export * from './Dialog';
+export * from './ConfirmBox';
+export * from './MessageBox';
+export * from './Drawer';
+
 export type ModalProps =
   | (DialogProps & BaseProps)
   | (ConfirmBoxProps & BaseProps)
