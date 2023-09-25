@@ -10,8 +10,11 @@ const ExampleConfirmBox: React.FC = () => {
     <>
       <Button onClick={() => setIsOpen(true)}>Open confirmation dialog</Button>
 
-      <Modal variant="confirm-box" isOpen={isOpen} onRequestClose={() => setIsOpen(false)}
-        title="Title"
+      <Modal
+        variant="confirm-box"
+        isOpen={isOpen}
+        onRequestClose={() => setIsOpen(false)}
+        header="Title"
         onRequestYes={() => setIsOpen(false)}
       >
         <Typography noMargin>Dialog content</Typography>
