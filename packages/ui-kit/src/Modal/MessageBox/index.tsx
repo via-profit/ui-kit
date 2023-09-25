@@ -10,9 +10,9 @@ import Header, { MessageBoxHeaderProps } from './MessageBoxHeader';
 export interface MessageBoxProps extends ReactModal.Props {
   readonly variant: 'message-box';
   /**
-   * Dialog title
+   * Dialog header
    */
-  readonly title: string;
+  readonly header: React.ReactNode;
 
   /**
    * On close request
@@ -63,7 +63,7 @@ export interface MessageBoxOverrides {
 }
 
 const MessageBox: React.ForwardRefRenderFunction<ReactModal, MessageBoxProps> = (props, ref) => {
-  const { title, children, onRequestClose, overrides, okButtonLabel, isOpen, ...otherProps } =
+  const { header, children, onRequestClose, overrides, okButtonLabel, isOpen, ...otherProps } =
     props;
   const dialogID = React.useMemo(() => `dialog-Message-${new Date().getTime()}`, []);
   const buttonRef = React.useRef<HTMLButtonElement | null>(null);
@@ -101,7 +101,7 @@ const MessageBox: React.ForwardRefRenderFunction<ReactModal, MessageBoxProps> = 
         {...otherProps}
       >
         <overridesMap.Container dialogID={dialogID}>
-          <overridesMap.Header dialogID={dialogID}>{title}</overridesMap.Header>
+          <overridesMap.Header dialogID={dialogID}>{header}</overridesMap.Header>
           <overridesMap.Content dialogID={dialogID}>{children}</overridesMap.Content>
           <overridesMap.Footer
             dialogID={dialogID}

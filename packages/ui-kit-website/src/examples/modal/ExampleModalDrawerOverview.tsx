@@ -42,6 +42,8 @@ const FooterText = styled(Typography)`
   font-size: 0.9em;
 `;
 
+const Title: React.FC = () => <>Title</>;
+
 const ExampleModalDrawerOverview: React.FC = () => {
   const [isOpen, setOpenState] = React.useState(false);
 
@@ -53,7 +55,7 @@ const ExampleModalDrawerOverview: React.FC = () => {
         variant="drawer"
         showCloseButton
         isOpen={isOpen}
-        title="Dialog title"
+        header={<Title />}
         toolbar={
           <Toolbar>
             <ToolbarTitle>Toolbar</ToolbarTitle>
@@ -64,7 +66,8 @@ const ExampleModalDrawerOverview: React.FC = () => {
         onRequestClose={() => setOpenState(false)}
         footer={
           <FooterText>
-            <Strong>Footer:</Strong> Voluptate magna culpa pariatur cillum incididunt cupidatat ullamco minim.
+            <Strong>Footer:</Strong> Voluptate magna culpa pariatur cillum incididunt cupidatat
+            ullamco minim.
           </FooterText>
         }
       >

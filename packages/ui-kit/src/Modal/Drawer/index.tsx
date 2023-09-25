@@ -8,7 +8,6 @@ import Content, { DrawerContentProps } from './DrawerContent';
 import Footer, { DrawerFooterProps } from './DrawerFooter';
 
 export interface DrawerProps extends ReactModal.Props {
-
   readonly variant: 'drawer';
   /**
    * Drawer content
@@ -16,9 +15,9 @@ export interface DrawerProps extends ReactModal.Props {
   readonly children: React.ReactNode | React.ReactNode[];
 
   /**
-   * Drawer title
+   * Drawer header
    */
-  readonly title?: React.ReactNode;
+  readonly header?: React.ReactNode;
 
   /**
    * Drawer toolbar
@@ -75,7 +74,7 @@ const Drawer: React.ForwardRefRenderFunction<ReactModal, DrawerProps> = (props, 
     children,
     onRequestClose,
     showCloseButton,
-    title,
+    header,
     toolbar,
     footer,
     overrides,
@@ -85,10 +84,10 @@ const Drawer: React.ForwardRefRenderFunction<ReactModal, DrawerProps> = (props, 
   const hasFooter = React.useMemo(() => typeof footer !== 'undefined' && footer !== null, [footer]);
   const hasHeader = React.useMemo(
     () =>
-      typeof title === 'string' ||
+      typeof header === 'string' ||
       typeof toolbar !== 'undefined' ||
       typeof onRequestClose === 'function',
-    [onRequestClose, title, toolbar],
+    [onRequestClose, header, toolbar],
   );
 
   const overridesMap = React.useMemo(
@@ -117,7 +116,7 @@ const Drawer: React.ForwardRefRenderFunction<ReactModal, DrawerProps> = (props, 
           {hasHeader && (
             <overridesMap.Header
               showCloseButton={showCloseButton}
-              title={title}
+              header={header}
               onRequestClose={onRequestClose}
             >
               {toolbar}

@@ -24,10 +24,8 @@ const ConfirmBoxHeader: React.ForwardRefRenderFunction<HTMLDivElement, ConfirmBo
   const { children, dialogID, ...nativeProps } = props;
 
   return (
-    <Header>
-      <HeaderTitle {...nativeProps} id={`${dialogID}-title`} ref={ref}>
-        {children}
-      </HeaderTitle>
+    <Header {...nativeProps} ref={ref}>
+      <HeaderTitle id={`${dialogID}-title`}>{children}</HeaderTitle>
     </Header>
   );
 };

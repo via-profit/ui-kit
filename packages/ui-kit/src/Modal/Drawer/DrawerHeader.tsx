@@ -1,15 +1,16 @@
 import React from 'react';
 import styled from '@emotion/styled';
 
+import Base from '../../Typography/Base';
 import CloseOutlineIcon from '../CloseIcon';
 import Button from '../../Button';
 
 export type DrawerHeaderProps = Omit<React.HTMLAttributes<HTMLDivElement>, 'title'> & {
   /**
-   * Drawer title
+   * Drawer header
    */
 
-  readonly title?: React.ReactNode;
+  readonly header?: React.ReactNode;
 
   /**
    * Display close button in the header
@@ -31,7 +32,7 @@ const Header = styled.div`
   justify-content: space-between;
 `;
 
-const Title = styled.div`
+const Title = styled(Base)`
   font-size: 1.3em;
   font-weight: 600;
   margin-right: 1em;
@@ -63,11 +64,11 @@ const DrawerHeader: React.ForwardRefRenderFunction<HTMLDivElement, DrawerHeaderP
   props,
   ref,
 ) => {
-  const { title, children, showCloseButton, onRequestClose, ...nativeProps } = props;
+  const { header, children, showCloseButton, onRequestClose, ...nativeProps } = props;
 
   return (
     <Header {...nativeProps} ref={ref}>
-      {typeof title === 'string' && <Title>{title}</Title>}
+      <Title>{header}</Title>
       <Toolbar>{children}</Toolbar>
       {typeof onRequestClose === 'function' && showCloseButton && (
         <CloseButton type="button" $withToolbar={Boolean(toolbar)} onClick={onRequestClose}>
