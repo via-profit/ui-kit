@@ -9,7 +9,9 @@ import ReactRefreshWebpackPlugin from '@pmmmwh/react-refresh-webpack-plugin';
 import Mustache from 'mustache';
 import 'webpack-dev-server';
 
-dotenv.config();
+const { parsed } = dotenv.config({
+  path: path.resolve(__dirname, '../.env'),
+});
 const isDev = process.env.NODE_ENV === 'development';
 
 const webpackProdConfig: Configuration = {
@@ -130,8 +132,8 @@ const webpackProdConfig: Configuration = {
         hot: true,
         // liveReload: true,
         compress: true,
-        port: Number(process.env.SERVER_PORT),
-        host: process.env.SERVER_HOSTNAME,
+        port: Number(parsed?.SERVER_PORT || 8080),
+        host: parsed?.SERVER_HOSTNAME,
       }
     : undefined,
   performance: isDev
