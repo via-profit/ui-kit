@@ -11,7 +11,7 @@ const InnerContainer = styled.div<{ selected?: boolean; hovered?: boolean }>`
   user-select: none;
   padding: 0.4em 0.8em;
   transition: all 240ms ease-out;
-  border-radius: ${({ theme }) => theme.shape.radiusFactor * 1}em;
+  border-radius: ${({ theme }) => theme.shape.radiusFactor}em;
   background-color: ${({ theme, selected, hovered }) => {
     if (selected && hovered) {
       return theme.color.accentPrimary.darken(0.1).toString();

@@ -6,7 +6,7 @@ const CalendarPaper = styled.div`
   flex-direction: column;
   justify-content: stretch;
   background-color: ${({ theme }) => theme.color.surface.toString()};
-  border-radius: ${({ theme }) => theme.shape.radiusFactor * 1}em;
+  border-radius: ${({ theme }) => theme.shape.radiusFactor}em;
   padding: 0.4em;
   max-width: 17.6em;
   max-height: 20.4em;

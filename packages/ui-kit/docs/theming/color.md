@@ -6,7 +6,6 @@
 - [Интерфейс класса Color](#интерфейс-класса-color)
 - [Методы класса Color](#методы-класса-color)
 
-
 ## Описание
 
 Класс используется как инструмент манипуляции с цветами темы, но его возможно использовать и вне темы оформления, например:
@@ -88,11 +87,6 @@ declare class Color {
    */
   contrast(rgb2: string | Color): number;
   /**
-   * Lighten or darknest color to lum steps
-   * lum - 0-25
-   */
-  private shade;
-  /**
    * Returns the current color as separate rgb channels
    */
   rgb(): {
@@ -113,19 +107,6 @@ declare class Color {
    * Returns the current color as an hex string
    */
   hexString(): string;
-  /**
-   * Parse the transmitted color and returns its\
-   * representation as separate rgba channels
-   */
-  private parseColor;
-  /**
-   * Recodes the transmitted color value in hsl format to rgba
-   */
-  private hslToRgb;
-  /**
-   * Returns color code by web color name
-   */
-  private getHextByWebColor;
 }
 ````
 

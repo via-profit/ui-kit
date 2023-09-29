@@ -4,7 +4,7 @@ import styled from '@emotion/styled';
 export type SurfaceSubheaderProps = React.HTMLAttributes<HTMLDivElement>;
 
 const StyledHeader = styled.div`
-  padding: 1rem 1rem 0 1rem;
+  padding: 0.5em 1rem 0 1rem;
   font-size: 0.9rem;
   font-weight: 200;
   color: ${({ theme }) => theme.color.textSecondary.toString()};
