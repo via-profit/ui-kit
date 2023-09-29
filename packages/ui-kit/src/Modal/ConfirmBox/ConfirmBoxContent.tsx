@@ -8,7 +8,7 @@ export type ConfirmBoxContentProps = React.HTMLAttributes<HTMLDivElement> & {
   readonly dialogID: string;
 };
 
-const Content = styled.div`
+const StyledConfirmBoxContent = styled.div`
   flex: 1;
   padding: 1em 1em;
 `;
@@ -20,9 +20,9 @@ const ConfirmBoxContent: React.ForwardRefRenderFunction<HTMLDivElement, ConfirmB
   const { children, dialogID, ...nativeProps } = props;
 
   return (
-    <Content id={`${dialogID}-description`} {...nativeProps} ref={ref}>
+    <StyledConfirmBoxContent id={`${dialogID}-description`} {...nativeProps} ref={ref}>
       {children}
-    </Content>
+    </StyledConfirmBoxContent>
   );
 };
 

@@ -8,7 +8,7 @@ export type ConfirmBoxContainerProps = React.HTMLAttributes<HTMLDivElement> & {
   readonly dialogID: string;
 };
 
-const Container = styled.div`
+const StyledConfirmBoxContainer = styled.div`
   display: flex;
   flex-flow: column;
   min-width: 20em;
@@ -21,7 +21,7 @@ const ConfirmBoxContainer: React.ForwardRefRenderFunction<
   const { children, dialogID, ...nativeProps } = props;
 
   return (
-    <Container
+    <StyledConfirmBoxContainer
       role="modal-confirmbox"
       aria-labelledby={`${dialogID}-title`}
       aria-describedby={`${dialogID}-description`}
@@ -29,7 +29,7 @@ const ConfirmBoxContainer: React.ForwardRefRenderFunction<
       ref={ref}
     >
       {children}
-    </Container>
+    </StyledConfirmBoxContainer>
   );
 };
 

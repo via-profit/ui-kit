@@ -8,11 +8,11 @@ export type ConfirmBoxHeaderProps = React.HTMLAttributes<HTMLDivElement> & {
   readonly dialogID: string;
 };
 
-const Header = styled.div`
+const StyedConfirmBoxHeader = styled.div`
   padding: 1em 1em 0 1em;
 `;
 
-const HeaderTitle = styled.div`
+const ConfirmBoxTitle = styled.div`
   font-size: 1.4rem;
   font-weight: 600;
 `;
@@ -24,9 +24,9 @@ const ConfirmBoxHeader: React.ForwardRefRenderFunction<HTMLDivElement, ConfirmBo
   const { children, dialogID, ...nativeProps } = props;
 
   return (
-    <Header {...nativeProps} ref={ref}>
-      <HeaderTitle id={`${dialogID}-title`}>{children}</HeaderTitle>
-    </Header>
+    <StyedConfirmBoxHeader {...nativeProps} ref={ref}>
+      <ConfirmBoxTitle id={`${dialogID}-title`}>{children}</ConfirmBoxTitle>
+    </StyedConfirmBoxHeader>
   );
 };
 

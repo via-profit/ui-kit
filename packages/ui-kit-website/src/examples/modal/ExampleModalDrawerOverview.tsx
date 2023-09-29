@@ -1,12 +1,13 @@
 import React from 'react';
 import styled from '@emotion/styled';
+import { ClassNames } from '@emotion/react';
 import Modal from '@via-profit/ui-kit/src/Modal';
 import Button from '@via-profit/ui-kit/src/Button';
 import Surface from '@via-profit/ui-kit/src/Surface';
 import Typography from '@via-profit/ui-kit/src/Typography';
 import Strong from '@via-profit/ui-kit/src/Typography/Strong';
 
-const Content = styled.div`
+const DummyWrapper = styled.div`
   display: flex;
   flex-wrap: wrap;
 `;
@@ -45,25 +46,29 @@ const FooterText = styled(Typography)`
 const Title: React.FC = () => <>Title</>;
 
 const ExampleModalDrawerOverview: React.FC = () => {
-  const [isOpen, setOpenState] = React.useState(false);
+  const [isOpenDrawer1, setOpenDrawer1] = React.useState(false);
+  const [isOpenDrawer2, setOpenDrawer2] = React.useState(false);
 
   return (
     <>
-      <Button onClick={() => setOpenState(true)}>Open drawer</Button>
+      <Button onClick={() => setOpenDrawer1(true)}>Open large drawer </Button>
+      <Button onClick={() => setOpenDrawer2(true)}>Open simple drawer</Button>
 
       <Modal
         variant="drawer"
+        anchor="bottom"
         showCloseButton
-        isOpen={isOpen}
+        isOpen={isOpenDrawer1}
         header={<Title />}
         toolbar={
           <Toolbar>
             <ToolbarTitle>Toolbar</ToolbarTitle>
             <Button>Button 1</Button>
             <Button>Button 2</Button>
+            <Button onClick={() => setOpenDrawer2(true)}>Open simple drawer</Button>
           </Toolbar>
         }
-        onRequestClose={() => setOpenState(false)}
+        onRequestClose={() => setOpenDrawer1(false)}
         footer={
           <FooterText>
             <Strong>Footer:</Strong> Voluptate magna culpa pariatur cillum incididunt cupidatat
@@ -71,7 +76,7 @@ const ExampleModalDrawerOverview: React.FC = () => {
           </FooterText>
         }
       >
-        <Content>
+        <DummyWrapper>
           {[...new Array(80).keys()].map(key => (
             <Dummy key={key}>
               <Strong>Lorem ipsum</Strong>
@@ -80,7 +85,29 @@ const ExampleModalDrawerOverview: React.FC = () => {
               </CardText>
             </Dummy>
           ))}
-        </Content>
+        </DummyWrapper>
+      </Modal>
+
+      <Modal
+        variant="drawer"
+        anchor="left"
+        isOpen={isOpenDrawer2}
+        onRequestClose={() => setOpenDrawer2(false)}
+      >
+        <ClassNames>
+          {({ css }) => (
+            <Dummy
+              className={css`
+                flex-basis: initial;
+              `}
+            >
+              <Strong>Lorem ipsum</Strong>
+              <CardText noMargin>
+                Pariatur sint commodo commodo enim adipisicing irure proident cillum sint.
+              </CardText>
+            </Dummy>
+          )}
+        </ClassNames>
       </Modal>
     </>
   );

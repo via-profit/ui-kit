@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 
 export type DrawerFooterProps = React.HTMLAttributes<HTMLDivElement>;
 
-const Footer = styled.div`
+const StyledDrawerFooter = styled.div`
   padding: 0.5em 1em;
 `;
 
@@ -14,9 +14,9 @@ const DrawerFooter: React.ForwardRefRenderFunction<HTMLDivElement, DrawerFooterP
   const { children, ...nativeProps } = props;
 
   return (
-    <Footer {...nativeProps} ref={ref}>
+    <StyledDrawerFooter {...nativeProps} ref={ref}>
       {children}
-    </Footer>
+    </StyledDrawerFooter>
   );
 };
 

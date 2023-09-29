@@ -3,11 +3,13 @@ import styled from '@emotion/styled';
 
 export type DrawerContainerProps = React.HTMLAttributes<HTMLDivElement>;
 
-const Container = styled.div`
+const StyledDrawerContainer = styled.div`
   min-height: 2rem;
-  height: 100%;
   display: flex;
   flex-flow: column;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
 `;
 
 const DrawerContainer: React.ForwardRefRenderFunction<HTMLDivElement, DrawerContainerProps> = (
@@ -17,9 +19,9 @@ const DrawerContainer: React.ForwardRefRenderFunction<HTMLDivElement, DrawerCont
   const { children, ...nativeProps } = props;
 
   return (
-    <Container {...nativeProps} ref={ref}>
+    <StyledDrawerContainer {...nativeProps} ref={ref}>
       {children}
-    </Container>
+    </StyledDrawerContainer>
   );
 };
 

@@ -34,7 +34,7 @@ export type ConfirmBoxFooterProps = Omit<React.HTMLAttributes<HTMLDivElement>, '
   readonly confirmButtonLabel?: React.ReactNode;
 };
 
-const Footer = styled.div`
+const StyledConfirmBoxFooter = styled.div`
   display: flex;
   justify-content: flex-end;
   align-items: center;
@@ -63,14 +63,14 @@ const ConfirmBoxFooter: React.ForwardRefRenderFunction<HTMLDivElement, ConfirmBo
     props;
 
   return (
-    <Footer {...nativeProps} ref={ref}>
+    <StyledConfirmBoxFooter {...nativeProps} ref={ref}>
       <Button onClick={onRequestClose}>
         {typeof dismissButtonLabel === 'undefined' ? 'Dismiss' : dismissButtonLabel}
       </Button>
       <Button color="primary" onClick={onRequestYes}>
         {typeof confirmButtonLabel === 'undefined' ? 'Confirm' : confirmButtonLabel}
       </Button>
-    </Footer>
+    </StyledConfirmBoxFooter>
   );
 };
 

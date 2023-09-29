@@ -1,5 +1,4 @@
 import * as React from 'react';
-import type ReactModal from 'react-modal';
 
 import Dialog, { DialogProps } from './Dialog';
 import ConfirmBox, { ConfirmBoxProps } from './ConfirmBox';
@@ -33,18 +32,18 @@ const isMessageBox = (props: ModalProps): props is MessageBoxProps =>
 const isDrawer = (props: ModalProps): props is DrawerProps =>
   'variant' in props && props.variant === 'drawer';
 
-const Modal: React.ForwardRefRenderFunction<ReactModal, ModalProps> = (props, ref) => {
+const Modal: React.FC<ModalProps> = props => {
   if (isDialog(props)) {
-    return <Dialog {...props} ref={ref} />;
+    return <Dialog {...props} />;
   }
   if (isConfirmBox(props)) {
-    return <ConfirmBox {...props} ref={ref} />;
+    return <ConfirmBox {...props} />;
   }
   if (isMessageBox(props)) {
-    return <MessageBox {...props} ref={ref} />;
+    return <MessageBox {...props} />;
   }
   if (isDrawer(props)) {
-    return <Drawer {...(props as any)} ref={ref} />;
+    return <Drawer {...(props as any)} />;
   }
   const { variant } = props;
 
@@ -53,4 +52,4 @@ const Modal: React.ForwardRefRenderFunction<ReactModal, ModalProps> = (props, re
   );
 };
 
-export default React.forwardRef(Modal);
+export default Modal;

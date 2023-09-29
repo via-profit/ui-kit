@@ -1,14 +1,22 @@
 import * as React from 'react';
-import { Global, css, useTheme } from '@emotion/react';
-import ReactModal from 'react-modal';
 
+import BaseModal, { BaseModalProps } from '../BaseModal';
+import DrawerInner, { AnchorVariant } from './DrawerInner';
 import Container, { DrawerContainerProps } from './DrawerContainer';
 import Header, { DrawerHeaderProps } from './DrawerHeader';
 import Content, { DrawerContentProps } from './DrawerContent';
 import Footer, { DrawerFooterProps } from './DrawerFooter';
 
-export interface DrawerProps extends ReactModal.Props {
+export interface DrawerProps extends Omit<BaseModalProps, 'overrides'> {
   readonly variant: 'drawer';
+
+  /**
+   * Drawer position\
+   * \
+   * **Varians:** `bottom` `right` `left` `top`\
+   * **Default:** `bottom`
+   */
+  readonly anchor: AnchorVariant;
   /**
    * Drawer content
    */
@@ -69,26 +77,28 @@ export interface DrawerOverrides {
   >;
 }
 
-const Drawer: React.ForwardRefRenderFunction<ReactModal, DrawerProps> = (props, ref) => {
+const Drawer: React.FC<DrawerProps> = props => {
   const {
     children,
     onRequestClose,
     showCloseButton,
     header,
+    anchor,
     toolbar,
     footer,
     overrides,
     ...otherProps
   } = props;
-  const theme = useTheme();
   const hasFooter = React.useMemo(() => typeof footer !== 'undefined' && footer !== null, [footer]);
   const hasHeader = React.useMemo(
     () =>
-      typeof header === 'string' ||
+      typeof header !== 'undefined' ||
       typeof toolbar !== 'undefined' ||
-      typeof onRequestClose === 'function',
-    [onRequestClose, header, toolbar],
+      typeof showCloseButton !== 'undefined',
+    [showCloseButton, header, toolbar],
   );
+
+  const dialogID = React.useMemo(() => `drawer-confirm-${new Date().getTime()}`, []);
 
   const overridesMap = React.useMemo(
     () => ({
@@ -103,14 +113,20 @@ const Drawer: React.ForwardRefRenderFunction<ReactModal, DrawerProps> = (props, 
 
   return (
     <>
-      <ReactModal
-        ref={ref}
-        closeTimeoutMS={300}
-        shouldCloseOnEsc
-        shouldCloseOnOverlayClick
-        portalClassName="modal-drawer"
+      <BaseModal
         onRequestClose={onRequestClose}
         {...otherProps}
+        overrides={{
+          Inner: React.forwardRef(function Inner(props, ref) {
+            const { children } = props;
+
+            return (
+              <DrawerInner anchor={anchor} dialogID={dialogID} ref={ref} {...props}>
+                {children}
+              </DrawerInner>
+            );
+          }),
+        }}
       >
         <overridesMap.Container>
           {hasHeader && (
@@ -126,54 +142,9 @@ const Drawer: React.ForwardRefRenderFunction<ReactModal, DrawerProps> = (props, 
           <overridesMap.Content>{children}</overridesMap.Content>
           {hasFooter && <overridesMap.Footer>{footer}</overridesMap.Footer>}
         </overridesMap.Container>
-      </ReactModal>
-
-      <Global
-        styles={css`
-          .modal-drawer .ReactModal__Overlay {
-            position: fixed;
-            inset: 0;
-            z-index: ${theme.zIndex.modal}!important;
-            background-color: ${theme.color.textPrimary.alpha(0).toString()}!important;
-            transition: background-color 240ms ease-out;
-          }
-
-          .modal-drawer .ReactModal__Overlay--after-open {
-            background-color: ${theme.color.textPrimary.alpha(0.5).toString()}!important;
-          }
-
-          .modal-drawer .ReactModal__Overlay--before-close {
-            background-color: ${theme.color.textPrimary.alpha(0).toString()}!important;
-          }
-
-          .modal-drawer .ReactModal__Content {
-            border: none !important;
-            position: absolute !important;
-            bottom: 0 !important;
-            padding: 0 !important;
-            left: 0 !important;
-            right: 0 !important;
-            overflow: auto !important;
-            -webkit-overflow-scrolling: touch !important;
-            outline: none !important;
-            background: ${theme.color.surface.toString()}!important;
-            border-radius: 1em 1em 0 0 !important;
-            transform: translate(0, 100%) !important;
-            transition: transform 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms !important;
-          }
-
-          .modal-drawer .ReactModal__Content--after-open {
-            transform: translate(0, 0) !important;
-          }
-
-          .modal-drawer .ReactModal__Content--before-close {
-            transform: translate(0, 100%) !important;
-            transition-duration: 160ms !important;
-          }
-        `}
-      />
+      </BaseModal>
     </>
   );
 };
 
-export default React.forwardRef(Drawer);
+export default Drawer;

@@ -16,7 +16,7 @@ const ExampleMeesageBox: React.FC = () => {
         onRequestClose={() => setIsOpen(false)}
         header="Title"
       >
-        <Typography noMargin>Dialog content</Typography>
+        <Typography noMargin>Message box</Typography>
       </Modal>
     </>
   );

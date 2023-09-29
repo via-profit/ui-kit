@@ -11,3 +11,4 @@
  - [Комбобокс](./selectbox/README.md)
  - [Таблица](./table/README.md)
  - [Типографика](./typography/README.md)
+ - [Модальные окна](./modal/README.md)

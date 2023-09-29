@@ -2,7 +2,7 @@ import React from 'react';
 import styled from '@emotion/styled';
 
 import Base from '../../Typography/Base';
-import CloseOutlineIcon from '../CloseIcon';
+import DrawerCloseIcon from './DrawerCloseIcon';
 import Button from '../../Button';
 
 export type DrawerHeaderProps = Omit<React.HTMLAttributes<HTMLDivElement>, 'title'> & {
@@ -25,27 +25,27 @@ export type DrawerHeaderProps = Omit<React.HTMLAttributes<HTMLDivElement>, 'titl
   ) => void;
 };
 
-const Header = styled.div`
+const StyledDrawerHeader = styled.div`
   padding: 1em;
   display: flex;
   align-items: center;
   justify-content: space-between;
 `;
 
-const Title = styled(Base)`
+const DrawerTitle = styled(Base)`
   font-size: 1.3em;
   font-weight: 600;
   margin-right: 1em;
 `;
 
-const Toolbar = styled.div`
+const DrawerToolbar = styled.div`
   flex: 1;
   display: flex;
   align-items: center;
   justify-content: flex-end;
 `;
 
-const CloseButton = styled(Button)<{ $withToolbar: boolean }>`
+const StyledDrawerCloseButton = styled(Button)<{ $withToolbar: boolean }>`
   margin-left: ${props => (props.$withToolbar ? '1em' : 0)};
   color: ${props => props.theme.color.textPrimary.toString()};
   background: none;
@@ -67,15 +67,19 @@ const DrawerHeader: React.ForwardRefRenderFunction<HTMLDivElement, DrawerHeaderP
   const { header, children, showCloseButton, onRequestClose, ...nativeProps } = props;
 
   return (
-    <Header {...nativeProps} ref={ref}>
-      <Title>{header}</Title>
-      <Toolbar>{children}</Toolbar>
+    <StyledDrawerHeader {...nativeProps} ref={ref}>
+      {typeof header !== 'undefined' && <DrawerTitle>{header}</DrawerTitle>}
+      {typeof children !== 'undefined' && <DrawerToolbar>{children}</DrawerToolbar>}
       {typeof onRequestClose === 'function' && showCloseButton && (
-        <CloseButton type="button" $withToolbar={Boolean(toolbar)} onClick={onRequestClose}>
-          <CloseOutlineIcon />
-        </CloseButton>
+        <StyledDrawerCloseButton
+          type="button"
+          $withToolbar={Boolean(toolbar)}
+          onClick={onRequestClose}
+        >
+          <DrawerCloseIcon />
+        </StyledDrawerCloseButton>
       )}
-    </Header>
+    </StyledDrawerHeader>
   );
 };
 

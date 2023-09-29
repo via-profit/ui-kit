@@ -25,7 +25,6 @@
     "@emotion/styled": "^11.10.6",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-modal": "^3.16.1",
     "react-popper": "^2.3.0",
     "react-window": "^1.8.8"
   },
@@ -52,7 +51,6 @@
     "@types/nodemon": "^1.19.3",
     "@types/react": "^18.2.22",
     "@types/react-dom": "^18.2.7",
-    "@types/react-modal": "^3.16.0",
     "@types/react-relay": "^14.1.5",
     "@types/react-slick": "^0.23.10",
     "@types/react-window": "^1.8.5",
@@ -88,7 +86,6 @@
     "raw-loader": "^4.0.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-modal": "^3.16.1",
     "react-popper": "^2.3.0",
     "react-refresh": "^0.14.0",
     "react-router-dom": "^6.16.0",

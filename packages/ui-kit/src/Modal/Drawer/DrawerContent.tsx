@@ -3,12 +3,13 @@ import styled from '@emotion/styled';
 
 export type DrawerContentProps = React.HTMLAttributes<HTMLDivElement>;
 
-const Content = styled.div`
+const StyledDrawerContent = styled.div`
   overflow-y: auto;
   flex: 1;
   display: flex;
   flex-direction: column;
-  padding: 0.5em 1em;
+  border-radius: inherit;
+  background-color: ${({ theme }) => theme.color.backgroundPrimary.toString()};
 `;
 
 const DrawerContent: React.ForwardRefRenderFunction<HTMLDivElement, DrawerContentProps> = (
@@ -18,9 +19,9 @@ const DrawerContent: React.ForwardRefRenderFunction<HTMLDivElement, DrawerConten
   const { children, ...nativeProps } = props;
 
   return (
-    <Content {...nativeProps} ref={ref}>
+    <StyledDrawerContent {...nativeProps} ref={ref}>
       {children}
-    </Content>
+    </StyledDrawerContent>
   );
 };
 
