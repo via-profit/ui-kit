@@ -6,6 +6,7 @@ import Header from '~/components/Header';
 import PageWrapper from '~/components/PageWrapper';
 import Footer from '~/components/Footer';
 import Sidebar from './Sidebar';
+import GlobalStyles from './GlobalStyles';
 
 const Wrapper = styled.div`
   flex: 1;
@@ -16,26 +17,31 @@ const Wrapper = styled.div`
 const Content = styled.div`
   flex: 1;
   padding: 0 1em 1em;
+  margin-left: 14rem;
   width: 70%;
   box-sizing: border-box;
 `;
 
 const StyledSidebar = styled(Sidebar)`
-  flex-basis: 16rem;
+  top: 4.8rem;
+  width: 14rem;
 `;
 
 const TemplateDocs: React.FC = () => (
-  <PageWrapper>
-    <Header />
-    <Wrapper>
-      <StyledSidebar />
-      <Content>
-        <Outlet />
-        <ScrollRestoration />
-      </Content>
-    </Wrapper>
-    <Footer />
-  </PageWrapper>
+  <>
+    <GlobalStyles />
+    <PageWrapper>
+      <Header />
+      <Wrapper>
+        <StyledSidebar />
+        <Content>
+          <Outlet />
+          <ScrollRestoration />
+        </Content>
+      </Wrapper>
+      <Footer />
+    </PageWrapper>
+  </>
 );
 
 export default TemplateDocs;

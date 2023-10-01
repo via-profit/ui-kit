@@ -5,6 +5,7 @@ import Flag from '@via-profit/ui-kit/src/CountryFlags/RU';
 
 const ExampleSurfaceCard: React.FC = () => (
   <Surface
+    inline
     subheader="Yekaterinburg"
     header={
       <>

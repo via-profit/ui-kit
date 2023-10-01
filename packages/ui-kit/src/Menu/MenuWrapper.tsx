@@ -15,7 +15,9 @@ const StyledMenuWrapper = styled.div<{ $isOpen: boolean }>`
   flex-direction: column;
   display: flex;
   flex-direction: column;
-  transition: visibility 120ms ease-out, opacity 120ms ease-out;
+  transition:
+    visibility 120ms ease-out,
+    opacity 120ms ease-out;
   opacity: ${props => (props.$isOpen ? 1 : 0)};
   visibility: ${props => (props.$isOpen ? 'visible' : 'hidden')};
   background-color: ${({ theme }) => theme.color.surface.toString()};

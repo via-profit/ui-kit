@@ -8,6 +8,7 @@ import ThemeSwitcher from './ThemeSwitcher';
 const Container = styled.header`
   position: sticky;
   top: 0;
+  z-index: ${({ theme }) => theme.zIndex.header};
   color: ${({ theme }) => theme.color.accentPrimaryContrast.toString()};
   background-color: ${({ theme }) => theme.color.accentPrimary.darken(20).toString()};
   box-shadow: ${({ theme }) => theme.color.accentPrimary.darken(100).alpha(0.2).toString()} 0 0.3em

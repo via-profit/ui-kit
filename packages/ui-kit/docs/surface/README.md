@@ -23,16 +23,13 @@ const Example: React.FC = () => {
 export default Example;
 ```
 
-_Результат:_
-
 <ExampleSurfaceBasic />
-
-&nbsp;
-&nbsp;
-
 
 Компонент принимает свойства, позволяющие отображать его в виде карточки:
 
+- `header` — Принимает заголовок карточки
+- `subheader` — Принимает подзаголовок карточки
+- `inline` — Отображает карточку инлайново
 
 _Пример использования:_
 
@@ -43,8 +40,13 @@ import Surface from '@via-profit/ui-kit/Surface';
 const Example: React.FC = () => {
   return (
     <Surface
-      header="Surface header"
-      subheader="Simple subheader"
+      inline
+      subheader="Yekaterinburg"
+      header={
+        <>
+          <Flag /> Russian Federation
+        </>
+      }
     >
       <Typography>
         Nostrud sunt qui esse aute cupidatat ullamco.
@@ -60,13 +62,7 @@ const Example: React.FC = () => {
 export default Example;
 ```
 
-_Результат:_
-
 <ExampleSurfaceCard />
-
-&nbsp;
-&nbsp;
-
 
 ## Переопределение
 
@@ -75,7 +71,7 @@ _Результат:_
 - `<Container>` — Обёртка
 - `<Header>` — Обёртка заголовка в случае её отображения
 - `<Subheader>` — Обёртка подзаголовка в случае её отображения
-- `<Content>` — Обёртка конентной части
+- `<Content>` — Обёртка контентной части
 
 Используйте свойство `overrides` чтобы переопределить один или несколько компонентов:
 
@@ -87,6 +83,7 @@ import Surface from '@via-profit/ui-kit/Surface';
 
 const Example: React.FC = () => (
   <Surface
+    inline
     overrides={{
       // Перезаписываем Content.
       // Обратите внимание, что здесь прокидывается ref, однако
@@ -105,23 +102,20 @@ const Example: React.FC = () => (
 export default Example;
 ```
 
-_Результат:_
-
 <ExampleSurfaceOverrides />
-&nbsp;
-&nbsp;
 
 ## Свойства
-<!-- 
-Помимо перечисленных свойств, компонент принимает [стандартные аттрибуты](https://developer.mozilla.org/ru/docs/Web/HTML/Element/button#атрибуты) HTML элемента `<button>`
 
-| Свойство                   | Тип                                      | По умолчанию          | Описание                                                                                                                                        |
-| -------------------------- | :--------------------------------------- | :-------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
-| **variant**                | `standard` `outlined`                    | `standard`            | Вариант отображения.                                                                                                                            |
-| **color**                  | `default` `secondary` `primary` `String` | `default`             | Цвет кнопки. В качестве пользовательского цвета принимается строка в формате **hex** или **rgb(a)**.                                            |
-| **iconOnly**               | `boolean`                                | `undefined`           | Если `true`, то кнопка будет представлена как кнопка-иконка. Данное свойство не следует использовать одновременно с `startIcon` и/или `endIcon` |
-| **startIcon**              | `<JSX.Element>`                          | `undefined`           | Элемент иконки, отображаемой слева от текста кнопки                                                                                             |
-| **endIcon**                | `<JSX.Element>`                          | `undefined`           | Элемент иконки, отображаемой справа от текста кнопки                                                                                            |
-| **overrides**              | `Object`                                 | `undefined`           | Объект элементов для переопределения составных компонентов кнопки                                                                               |
-| **overrides .IconWrapper** | `<React.Component>`                      | `<ButtonIconWrapper>` | Компонент обёртка для иконки, отображаемой слева и/или справа от текста кнопки                                                                  |
-| **overrides .TextWrapper** | `<React.Component>`                      | `<ButtonTextWrapper>` | Компонент обёртка текста кнопки                                                                                                                 | -->
+Помимо перечисленных свойств, компонент принимает [стандартные аттрибуты](https://developer.mozilla.org/ru/docs/Web/HTML/Element/div#атрибуты) HTML элемента `<div>`
+
+| Свойство                 | Тип                        | По умолчанию         | Описание                                                                                 |
+| ------------------------ | :------------------------- | :------------------- | ---------------------------------------------------------------------------------------- |
+| **inline**               | `boolean`                  | `false`              | Если `true`, то элемент примет вид `inline-flex` контейнера и `flex` в противном случае. |
+| **header**               | `<JSX.Element>` `<String>` | `undefined`          | Элемент заголовка                                                                        |
+| **subheader**            | `<JSX.Element>` `<String>` | `undefined`          | Элемент подзаголовка                                                                     |
+| **children**             | `<JSX.Element>` `<String>` |                      | Содержимое                                                                               |
+| **overrides**            | `Object`                   | `undefined`          | Объект элементов для переопределения составных компонентов поверхности                   |
+| **overrides .Container** | `<React.Component>`        | `<SurfaceContainer>` | Компонент обёртка                                                                        |
+| **overrides .Header**    | `<React.Component>`        | `<SurfaceHeader>`    | Компонент обёртка заголовка в случае её отображения                                      |
+| **overrides .Subheader** | `<React.Component>`        | `<SurfaceSubheader>` | Компонент обёртка подзаголовка в случае её отображения                                   |
+| **overrides .Content**   | `<React.Component>`        | `<SurfaceContent>`   | Компонент обёртка контентной части                                                       |

@@ -28,12 +28,7 @@ const Example: React.FC = () => {
 export default Example;
 ```
 
-_Результат:_
-
 <ExampleButtonBasic />
-
-&nbsp;
-&nbsp;
 
 ## Варианты
 
@@ -65,11 +60,7 @@ const Example: React.FC = () => (
 export default Example;
 ```
 
-_Результат:_
-
 <ExampleButtonVariants />
-&nbsp;
-&nbsp;
 
 ## Цвета
 
@@ -112,11 +103,7 @@ const Example: React.FC = () => (
 export default Example;
 ```
 
-_Результат:_
-
 <ExampleButtonColors />
-&nbsp;
-&nbsp;
 
 ## Иконки
 
@@ -140,11 +127,7 @@ const Example: React.FC = () => (
 );
 ```
 
-_Результат:_
-
 <ExampleButtonIcons />
-&nbsp;
-&nbsp;
 
 ## Переопределение
 
@@ -183,11 +166,7 @@ const Example: React.FC = () => (
 export default Example;
 ```
 
-_Результат:_
-
 <ExampleButtonOverrides />
-&nbsp;
-&nbsp;
 
 ## Свойства
 

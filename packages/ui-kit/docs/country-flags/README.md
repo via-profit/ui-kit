@@ -34,11 +34,7 @@ const Example: React.FC = () => (
 export default Example;
 ```
 
-_Результат:_
-
 <ExampleCountryFlagsOverview />
-&nbsp;
-&nbsp;
 
 ## Свойства
 

@@ -47,84 +47,86 @@ const ExampleAutocompleteOverview: React.FC = () => {
   const items = countries;
 
   return (
-    <Autocomplete
-      ref={autocompleteRef}
-      isOpen={isOpen}
-      estimatedItemSize={32}
-      multiple={isMultiple}
-      renderItem={({ item }) => <>{item.name}</>}
-      items={items}
-      getOptionSelected={({ item, value }) => item.code === value.code}
-      value={selectedItems}
-      filterItems={(variants, { query }) =>
-        variants.filter(c => {
-          const candidade = c.name.trim().toLowerCase();
+    <>
+      <Autocomplete
+        ref={autocompleteRef}
+        isOpen={isOpen}
+        estimatedItemSize={32}
+        multiple={isMultiple}
+        renderItem={({ item }) => <>{item.name}</>}
+        items={items}
+        getOptionSelected={({ item, value }) => item.code === value.code}
+        value={selectedItems}
+        filterItems={(variants, { query }) =>
+          variants.filter(c => {
+            const candidade = c.name.trim().toLowerCase();
 
-          return candidade.indexOf(query) !== -1;
-        })
-      }
-      itemToString={item => item.name}
-      onSelectItem={item => {
-        if (Array.isArray(item)) {
-          setSelectedItems(item);
+            return candidade.indexOf(query) !== -1;
+          })
         }
-
-        if (!Array.isArray(item)) {
-          anchorElementRef.current?.focus();
-          setSelectedItems([item as unknown as Item]);
-          setOpen(false);
-        }
-      }}
-      renderInput={({ selected, ...inputProps }) => (
-        <>
-          <InputBox>
-            <TextField ref={anchorElementRef} {...inputProps} />
-            <Button
-              onMouseDown={event => {
-                event.preventDefault();
-                autocompleteRef.current?.blur();
-                autocompleteRef.current?.focus();
-              }}
-            >
-              ^
-            </Button>
-            <Button
-              onClick={() => {
-                autocompleteRef.current?.clear();
-              }}
-            >
-              X
-            </Button>
-          </InputBox>
-          {Array.isArray(selected) && (
-            <ChipBox>
-              {(selected as Item[]).map(selecedeItem => (
-                <Chip
-                  key={selecedeItem.code}
-                  onClick={() => {
-                    setSelectedItems(s => s.filter(s => s.code !== selecedeItem.code));
-                    autocompleteRef.current?.focus();
-                    autocompleteRef.current?.clearInput();
-                  }}
-                >
-                  {selecedeItem.code}
-                </Chip>
-              ))}
-            </ChipBox>
-          )}
-        </>
-      )}
-      onRequestOpen={() => setOpen(true)}
-      onRequestClose={event => {
-        const isKeybordEvent = (e: typeof event): e is KeyboardEvent => e?.type === 'keydown';
-        if (isKeybordEvent(event)) {
-          if (event.code === 'Escape') {
-            anchorElementRef.current?.focus();
+        itemToString={item => item.name}
+        onSelectItem={item => {
+          if (Array.isArray(item)) {
+            setSelectedItems(item);
           }
-        }
-        setOpen(false);
-      }}
-    />
+
+          if (!Array.isArray(item)) {
+            anchorElementRef.current?.focus();
+            setSelectedItems([item as unknown as Item]);
+            setOpen(false);
+          }
+        }}
+        renderInput={({ selected, ...inputProps }) => (
+          <>
+            <InputBox>
+              <TextField ref={anchorElementRef} {...inputProps} />
+              <Button
+                onMouseDown={event => {
+                  event.preventDefault();
+                  autocompleteRef.current?.blur();
+                  autocompleteRef.current?.focus();
+                }}
+              >
+                ^
+              </Button>
+              <Button
+                onClick={() => {
+                  autocompleteRef.current?.clear();
+                }}
+              >
+                X
+              </Button>
+            </InputBox>
+            {Array.isArray(selected) && (
+              <ChipBox>
+                {(selected as Item[]).map(selecedeItem => (
+                  <Chip
+                    key={selecedeItem.code}
+                    onClick={() => {
+                      setSelectedItems(s => s.filter(s => s.code !== selecedeItem.code));
+                      autocompleteRef.current?.focus();
+                      autocompleteRef.current?.clearInput();
+                    }}
+                  >
+                    {selecedeItem.code}
+                  </Chip>
+                ))}
+              </ChipBox>
+            )}
+          </>
+        )}
+        onRequestOpen={() => setOpen(true)}
+        onRequestClose={event => {
+          const isKeybordEvent = (e: typeof event): e is KeyboardEvent => e?.type === 'keydown';
+          if (isKeybordEvent(event)) {
+            if (event.code === 'Escape') {
+              anchorElementRef.current?.focus();
+            }
+          }
+          setOpen(false);
+        }}
+      />
+    </>
   );
 };
 

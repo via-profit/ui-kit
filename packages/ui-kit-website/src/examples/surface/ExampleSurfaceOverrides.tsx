@@ -13,6 +13,7 @@ const StyledContent = styled.div`
 const ExampleSurfaceOverrides: React.FC = () => (
   <>
     <Surface
+      inline
       overrides={{
         Content: React.forwardRef(function Content(props, ref) {
           const { children } = props;

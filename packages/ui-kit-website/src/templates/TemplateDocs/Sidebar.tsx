@@ -3,14 +3,13 @@ import styled from '@emotion/styled';
 import { css } from '@emotion/react';
 import { Link, matchPath, useLocation } from 'react-router-dom';
 
-import SurfaceContainer, {
-  SurfaceContainerProps,
-} from '@via-profit/ui-kit/src/Surface/SurfaceContainer';
-
-const Container = styled(SurfaceContainer)`
-  border-radius: 0;
+const Container = styled.div`
   background-color: ${({ theme }) => theme.color.backgroundSecondary.toString()};
   color: ${({ theme }) => theme.color.accentPrimaryContrast.toString()};
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  overflow-y: auto;
 `;
 
 const ItemsList = styled.nav`
@@ -38,14 +37,14 @@ const Item = styled(Link, { shouldForwardProp: p => p.match(/^\$/) === null })<I
     `};
 `;
 
-const Sidebar: React.ForwardRefRenderFunction<HTMLDivElement, SurfaceContainerProps> = (
-  props,
-  ref,
-) => {
+const Sidebar: React.ForwardRefRenderFunction<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement>
+> = (props, ref) => {
   const { pathname } = useLocation();
 
   return (
-    <Container noMargin {...props} ref={ref}>
+    <Container {...props} ref={ref}>
       <ItemsList>
         <Item $isActive={matchPath('/docs/button/*', pathname) !== null} to="/docs/button">
           Button

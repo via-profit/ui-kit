@@ -77,11 +77,7 @@ import MyIcon from './MyIcon';
 const Example: React.FC = () => <TextField startIcon={<MyIcon />} label="Name" />;
 ```
 
-_Результат:_
-
 <ExampleTextFieldIcons />
-&nbsp;
-&nbsp;
 
 ## Свойства
 

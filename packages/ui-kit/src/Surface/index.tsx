@@ -11,17 +11,17 @@ export type SurfaceProps = React.HTMLAttributes<HTMLDivElement> & {
   /**
    * Header content
    */
-  readonly header?: React.ReactNode;
+  readonly header?: JSX.Element | string;
 
   /**
    * Subheader content
    */
-  readonly subheader?: React.ReactNode;
+  readonly subheader?: JSX.Element | string;
 
   /**
-   * Disable bottom margin
+   * If true then surface will be inline-flex element, and the flex otherwise
    */
-  readonly noMargin?: boolean;
+  readonly inline?: boolean;
 
   /**
    * Overridable components map
@@ -57,7 +57,7 @@ export interface SurfaceOverrides {
 }
 
 const Surface: React.ForwardRefRenderFunction<HTMLDivElement, SurfaceProps> = (props, ref) => {
-  const { children, header, subheader, noMargin, overrides, ...nativeProps } = props;
+  const { children, header, subheader, inline, overrides, ...nativeProps } = props;
 
   const hasHeader = typeof header !== 'undefined' && header !== null;
   const hasSubheader = typeof subheader !== 'undefined' && subheader !== null;
@@ -80,7 +80,7 @@ const Surface: React.ForwardRefRenderFunction<HTMLDivElement, SurfaceProps> = (p
   }
 
   return (
-    <overridesMap.Container {...nativeProps} noMargin={noMargin} ref={ref}>
+    <overridesMap.Container {...nativeProps} inline={inline} ref={ref}>
       {hasHeader && <overridesMap.Header>{header}</overridesMap.Header>}
       {hasSubheader && <overridesMap.Subheader>{subheader}</overridesMap.Subheader>}
       <overridesMap.Content>{children}</overridesMap.Content>

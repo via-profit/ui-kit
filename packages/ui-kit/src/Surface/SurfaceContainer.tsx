@@ -1,17 +1,16 @@
 import React from 'react';
 import styled from '@emotion/styled';
-import { css } from '@emotion/react';
 
 export type SurfaceContainerProps = React.HTMLAttributes<HTMLDivElement> & {
-  readonly noMargin?: boolean;
+  readonly inline?: boolean;
 };
 
 type StyledProps = {
-  readonly $noMargin?: boolean;
+  readonly $inline?: boolean;
 };
 
 const StyledSurfaceContainer = styled.div<StyledProps>`
-  display: inline-flex;
+  display: ${({ $inline }) => ($inline ? 'inline-flex' : 'flex')};
   box-sizing: border-box;
   flex-direction: column;
   background: ${({ theme }) => theme.color.surface.toString()};
@@ -20,22 +19,16 @@ const StyledSurfaceContainer = styled.div<StyledProps>`
     `0 0.5em 2em -0.8em ${theme.color.surface.darken(100).alpha(0.4).toString()}`};
   border-radius: ${({ theme }) => theme.shape.radiusFactor}em;
   font-size: 1em;
-  ${({ $noMargin }) =>
-    typeof $noMargin === 'undefined' &&
-    $noMargin === false &&
-    css`
-      margin-bottom: 1em;
-    `}
 `;
 
 const SurfaceContainer: React.ForwardRefRenderFunction<HTMLDivElement, SurfaceContainerProps> = (
   props,
   ref,
 ) => {
-  const { noMargin, children, ...nativeProps } = props;
+  const { inline, children, ...nativeProps } = props;
 
   return (
-    <StyledSurfaceContainer $noMargin={noMargin} {...nativeProps} ref={ref}>
+    <StyledSurfaceContainer $inline={inline} {...nativeProps} ref={ref}>
       {children}
     </StyledSurfaceContainer>
   );

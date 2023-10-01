@@ -11,12 +11,26 @@
 Класс используется как инструмент манипуляции с цветами темы, но его возможно использовать и вне темы оформления, например:
 
 ```ts
+import React from 'react';
 import Color from '@via-profit/ui-kit/Color';
 
-const lightRed = new Color('red').lighten(50).hexString();
+const Example: React.FC = () => {
+  const background = React.useMemo(() => new Color('red').darken(50).hexString(), []);
+  const foreground = React.useMemo(() => new Color('red').lighten(200).hexString(), []);
 
-console.log(lightRed);
+  return (
+    <span
+      style={{
+        backgroundColor: background,
+        color: foreground,
+      }}>
+      Lorem ipsum
+    </span>
+  );
+};
 ```
+
+<ExampleColorBasic>
 
 ## Интерфейс класса Color
 
