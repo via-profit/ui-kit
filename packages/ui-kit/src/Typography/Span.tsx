@@ -1,8 +1,21 @@
+import React from 'react';
 import styled from '@emotion/styled';
 
-const Span = styled.span`
+export type SpanProps = React.HTMLAttributes<HTMLSpanElement>;
+
+const Styled = styled.span`
   font-size: 1em;
   color: currentColor;
 `;
 
-export default Span;
+const Span: React.ForwardRefRenderFunction<HTMLSpanElement, SpanProps> = (props, ref) => {
+  const { children, ...nativeProps } = props;
+
+  return (
+    <Styled {...nativeProps} ref={ref}>
+      {children}
+    </Styled>
+  );
+};
+
+export default React.forwardRef(Span);

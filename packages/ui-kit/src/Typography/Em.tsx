@@ -1,8 +1,21 @@
+import React from 'react';
 import styled from '@emotion/styled';
 
-const Em = styled.em`
+export type EmProps = React.HTMLAttributes<HTMLElement>;
+
+const Styled = styled.em`
   font-size: 1em;
   color: currentColor;
 `;
 
-export default Em;
+const Em: React.ForwardRefRenderFunction<HTMLElement, EmProps> = (props, ref) => {
+  const { children, ...nativeProps } = props;
+
+  return (
+    <Styled {...nativeProps} ref={ref}>
+      {children}
+    </Styled>
+  );
+};
+
+export default React.forwardRef(Em);

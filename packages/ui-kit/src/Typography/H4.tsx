@@ -1,9 +1,22 @@
+import React from 'react';
 import styled from '@emotion/styled';
 
-const H4 = styled.h4`
+export type H4Props = React.HTMLAttributes<HTMLHeadingElement>;
+
+const Styled = styled.h4`
   font-size: 1.2rem;
   font-weight: 500;
   color: currentColor;
 `;
 
-export default H4;
+const H4: React.ForwardRefRenderFunction<HTMLHeadingElement, H4Props> = (props, ref) => {
+  const { children, ...nativeProps } = props;
+
+  return (
+    <Styled {...nativeProps} ref={ref}>
+      {children}
+    </Styled>
+  );
+};
+
+export default React.forwardRef(H4);
