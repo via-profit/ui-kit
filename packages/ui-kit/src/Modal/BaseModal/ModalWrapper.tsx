@@ -122,7 +122,7 @@ const ModalWrapper: React.FC<ModalWrapperProps> = props => {
     }
 
     const keydown = (event: KeyboardEvent) => {
-      if (event.key.toLowerCase() !== 'tab') {
+      if (event.key.toLowerCase() !== 'tab' || !isOpenProp) {
         return;
       }
 
@@ -139,7 +139,7 @@ const ModalWrapper: React.FC<ModalWrapperProps> = props => {
       }
       window.document.removeEventListener('keydown', keydown);
     };
-  }, [nextFocus]);
+  }, [nextFocus, isOpenProp]);
 
   /**
    * Component will unmount
