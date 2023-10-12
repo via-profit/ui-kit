@@ -28,6 +28,13 @@ const ModalWrapper: React.FC<ModalWrapperProps> = props => {
   const getScrollWidth = React.useCallback(() => {
     const outer = window.document.createElement('div');
     const inner = window.document.createElement('div');
+
+    const isVerticalScrollbar =
+      window.document.body.scrollHeight > window.document.body.clientHeight;
+    if (!isVerticalScrollbar) {
+      return 0;
+    }
+
     let widthNoScroll = 0;
     let widthWithScroll = 0;
 
