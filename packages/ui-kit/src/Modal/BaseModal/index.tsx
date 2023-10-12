@@ -116,17 +116,17 @@ const BaseModal: React.FC<BaseModalProps> = props => {
     return newNode;
   }, []);
 
-  React.useEffect(
-    () => () => {
-      if (typeof window !== 'undefined') {
-        const node = window.document.body.querySelector(`#${PORTAL_ID}`);
-        if (node) {
-          node.remove();
-        }
-      }
-    },
-    [],
-  );
+  // React.useEffect(
+  //   () => () => {
+  //     if (typeof window !== 'undefined') {
+  //       const node = window.document.body.querySelector(`#${PORTAL_ID}`);
+  //       if (node) {
+  //         node.remove();
+  //       }
+  //     }
+  //   },
+  //   [],
+  // );
 
   return (
     <NoSSR>
