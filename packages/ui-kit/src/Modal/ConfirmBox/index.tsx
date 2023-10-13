@@ -7,7 +7,6 @@ import Footer, { ConfirmBoxFooterProps } from './ConfirmBoxFooter';
 import Header, { ConfirmBoxHeaderProps } from './ConfirmBoxHeader';
 
 export interface ConfirmBoxProps extends Omit<BaseModalProps, 'overrides'> {
-  readonly variant: 'confirm-box';
   /**
    * Dialog header
    */

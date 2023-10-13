@@ -4,7 +4,6 @@ import BaseModal, { BaseModalProps } from '../BaseModal';
 import DialogInner from './DialogInner';
 
 export interface DialogProps extends BaseModalProps {
-  readonly variant: 'dialog';
   readonly children: React.ReactNode | React.ReactNode[];
 }
 

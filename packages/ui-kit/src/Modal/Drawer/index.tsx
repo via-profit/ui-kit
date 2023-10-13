@@ -8,8 +8,6 @@ import Content, { DrawerContentProps } from './DrawerContent';
 import Footer, { DrawerFooterProps } from './DrawerFooter';
 
 export interface DrawerProps extends Omit<BaseModalProps, 'overrides'> {
-  readonly variant: 'drawer';
-
   /**
    * Drawer position\
    * \

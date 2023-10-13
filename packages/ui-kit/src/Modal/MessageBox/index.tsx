@@ -7,7 +7,6 @@ import Footer, { MessageBoxFooterProps } from './MessageBoxFooter';
 import Header, { MessageBoxHeaderProps } from './MessageBoxHeader';
 
 export interface MessageBoxProps extends Omit<BaseModalProps, 'overrides'> {
-  readonly variant: 'message-box';
   /**
    * Dialog header
    */
