@@ -8,7 +8,7 @@ export interface DialogProps extends BaseModalProps {
 }
 
 const Dialog: React.FC<DialogProps> = props => {
-  const { children, ...restProps } = props;
+  const { children, overrides, ...restProps } = props;
   const dialogID = React.useMemo(() => `dialog-${new Date().getTime()}`, []);
 
   return (
@@ -16,15 +16,18 @@ const Dialog: React.FC<DialogProps> = props => {
       <BaseModal
         {...restProps}
         overrides={{
-          Inner: React.forwardRef(function Inner(props, ref) {
-            const { children } = props;
+          ...overrides,
+          Inner:
+            overrides?.Inner ??
+            React.forwardRef(function Inner(props, ref) {
+              const { children } = props;
 
-            return (
-              <DialogInner dialogID={dialogID} ref={ref} {...props}>
-                {children}
-              </DialogInner>
-            );
-          }),
+              return (
+                <DialogInner dialogID={dialogID} ref={ref} {...props}>
+                  {children}
+                </DialogInner>
+              );
+            }),
         }}
       >
         {children}
