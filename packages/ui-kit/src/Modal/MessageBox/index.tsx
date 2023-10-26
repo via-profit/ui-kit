@@ -5,6 +5,7 @@ import Container, { MessageBoxContainerProps } from './MessageBoxContainer';
 import Content, { MessageBoxContentProps } from './MessageBoxContent';
 import Footer, { MessageBoxFooterProps } from './MessageBoxFooter';
 import Header, { MessageBoxHeaderProps } from './MessageBoxHeader';
+import Overlay, { ModalOverlayProps } from '../BaseModal/ModalOverlay';
 
 export interface MessageBoxProps extends Omit<BaseModalProps, 'overrides'> {
   /**
@@ -56,6 +57,13 @@ export interface MessageBoxOverrides {
   readonly Header?: React.ForwardRefExoticComponent<
     MessageBoxHeaderProps & React.RefAttributes<HTMLDivElement>
   >;
+
+  /**
+   * Overlay header
+   */
+  readonly Overlay?: React.ForwardRefExoticComponent<
+    ModalOverlayProps & React.RefAttributes<HTMLDivElement>
+  >;
 }
 
 const MessageBox: React.FC<MessageBoxProps> = props => {
@@ -78,6 +86,7 @@ const MessageBox: React.FC<MessageBoxProps> = props => {
       Content,
       Footer,
       Header,
+      Overlay,
       ...overrides,
     }),
     [overrides],
@@ -85,7 +94,14 @@ const MessageBox: React.FC<MessageBoxProps> = props => {
 
   return (
     <>
-      <BaseModal onRequestClose={onRequestClose} isOpen={isOpen} {...otherProps}>
+      <BaseModal
+        onRequestClose={onRequestClose}
+        isOpen={isOpen}
+        overrides={{
+          Overlay: overridesMap.Overlay,
+        }}
+        {...otherProps}
+      >
         <overridesMap.Container dialogID={dialogID}>
           <overridesMap.Header dialogID={dialogID}>{header}</overridesMap.Header>
           <overridesMap.Content dialogID={dialogID}>{children}</overridesMap.Content>

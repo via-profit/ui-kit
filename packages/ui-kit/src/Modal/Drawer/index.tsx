@@ -6,6 +6,7 @@ import Container, { DrawerContainerProps } from './DrawerContainer';
 import Header, { DrawerHeaderProps } from './DrawerHeader';
 import Content, { DrawerContentProps } from './DrawerContent';
 import Footer, { DrawerFooterProps } from './DrawerFooter';
+import Overlay, { ModalOverlayProps } from '../BaseModal/ModalOverlay';
 
 export interface DrawerProps extends Omit<BaseModalProps, 'overrides'> {
   /**
@@ -73,6 +74,13 @@ export interface DrawerOverrides {
   readonly Header?: React.ForwardRefExoticComponent<
     DrawerHeaderProps & React.RefAttributes<HTMLDivElement>
   >;
+
+  /**
+   * Overlay element
+   */
+  readonly Overlay?: React.ForwardRefExoticComponent<
+    ModalOverlayProps & React.RefAttributes<HTMLDivElement>
+  >;
 }
 
 const Drawer: React.FC<DrawerProps> = props => {
@@ -104,6 +112,7 @@ const Drawer: React.FC<DrawerProps> = props => {
       Header,
       Content,
       Footer,
+      Overlay,
       ...overrides,
     }),
     [overrides],
@@ -115,6 +124,7 @@ const Drawer: React.FC<DrawerProps> = props => {
         onRequestClose={onRequestClose}
         {...otherProps}
         overrides={{
+          Overlay: overridesMap.Overlay,
           Inner: React.forwardRef(function Inner(props, ref) {
             const { children } = props;
 

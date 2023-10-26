@@ -5,6 +5,7 @@ import Container, { ConfirmBoxContainerProps } from './ConfirmBoxContainer';
 import Content, { ConfirmBoxContentProps } from './ConfirmBoxContent';
 import Footer, { ConfirmBoxFooterProps } from './ConfirmBoxFooter';
 import Header, { ConfirmBoxHeaderProps } from './ConfirmBoxHeader';
+import Overlay, { ModalOverlayProps } from '../BaseModal/ModalOverlay';
 
 export interface ConfirmBoxProps extends Omit<BaseModalProps, 'overrides'> {
   /**
@@ -67,6 +68,13 @@ export interface ConfirmBoxOverrides {
   readonly Header?: React.ForwardRefExoticComponent<
     ConfirmBoxHeaderProps & React.RefAttributes<HTMLDivElement>
   >;
+
+  /**
+   * Overlay element
+   */
+  readonly Overlay?: React.ForwardRefExoticComponent<
+    ModalOverlayProps & React.RefAttributes<HTMLDivElement>
+  >;
 }
 
 const ConfirmBox: React.FC<ConfirmBoxProps> = props => {
@@ -90,6 +98,7 @@ const ConfirmBox: React.FC<ConfirmBoxProps> = props => {
       Content,
       Footer,
       Header,
+      Overlay,
       ...overrides,
     }),
     [overrides],
@@ -105,7 +114,14 @@ const ConfirmBox: React.FC<ConfirmBoxProps> = props => {
 
   return (
     <>
-      <BaseModal onRequestClose={onRequestClose} isOpen={isOpen} {...otherProps}>
+      <BaseModal
+        onRequestClose={onRequestClose}
+        isOpen={isOpen}
+        {...otherProps}
+        overrides={{
+          Overlay: overridesMap.Overlay,
+        }}
+      >
         <overridesMap.Container dialogID={dialogID}>
           {React.useMemo(
             () => (
