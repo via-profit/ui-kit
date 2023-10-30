@@ -1,5 +1,5 @@
 import React from 'react';
-import PhoneField, { PhonePayload } from '@via-profit/ui-kit/src/PhoneField';
+import PhoneField, { PhonePayload, usePhoneUtils } from '@via-profit/ui-kit/src/PhoneField';
 import templates from '@via-profit/ui-kit/src/PhoneField/templates';
 
 import RU from '@via-profit/ui-kit/src/CountryFlags/RU';
@@ -7,34 +7,50 @@ import RU from '@via-profit/ui-kit/src/CountryFlags/RU';
 const ExamplePhoneFieldOverview: React.FC = () => {
   const [phoneState, setPhoneState] = React.useState<PhonePayload | null>(null);
 
-  const isInvalid = React.useMemo(
-    () =>
-      Boolean(phoneState?.value && phoneState.value.length > 0 && phoneState?.isValid === false),
-    [phoneState?.isValid, phoneState?.value],
+  const { getTemplateInfo, parseAndFormat, parseInput } = usePhoneUtils({
+    templates,
+  });
+
+  const phones = React.useMemo(
+    () => [
+      ['RU', '+7 (912) 212-99-84'],
+      ['RU', '8 (912) 212-99-84'],
+      ['RU', '8912 212-99-84'],
+      ['RU', '7 912 212-99-84'],
+      ['KZ', '+7 7172 555-555'],
+      ['KZ', '+7 (7172) 74-61-60'],
+      ['BY', '+375 24 123 55 26'],
+      ['BY', '+375 25 110 45 94'],
+      ['BY', '+375 29 985 45 88'],
+      ['JP', '+81 (156) 878-255'],
+      ['JP', '+81599 352 110'],
+      ['IL', '+97232345678'],
+    ],
+    [],
   );
 
   return (
-    <PhoneField
-      requiredAsterisk
-      templates={[
-        // Russian template
-        ['RU', <RU key="ru-1" />, '7', '+x (xxx) xxx-xx-xx', '+7 (987) 654-32-10', /^\+$/], // must be at first (Default RU)
-        ['RU', <RU key="ru-2" />, '7', '8 (xxx) xxx-xx-xx', '8 (987) 654-32-10', /^8[^1]{0,}/], // 8912...
-        [
-          'RU',
-          <RU key="ru-3" />,
-          '7',
-          '+7 (xxx) xxx-xx-xx',
-          '+7 (987) 654-32-10',
-          /^\+{0,1}7([0-5]|[8-9])[0-9][0-9]/,
-        ], // +79...
-      ]}
-      label="Enter the phone number"
-      error={isInvalid}
-      errorText={isInvalid ? 'Invalid phone' : undefined}
-      value={phoneState?.value || ''}
-      onChange={payload => setPhoneState(payload)}
-    />
+    <>
+      {phones.map(([country, phone], index) => {
+        const { text, CountryFlag, countryCode } = parseAndFormat(phone);
+
+        return (
+          <div key={index}>
+            <span style={{ marginRight: '0.3em' }}>{CountryFlag}</span>
+            {text}
+            {countryCode !== country && <b style={{ color: 'red', marginLeft: '0.5em' }}>WRONG</b>}
+          </div>
+        );
+      })}
+
+      <PhoneField
+        requiredAsterisk
+        templates={templates}
+        label="Enter the phone number"
+        value={phoneState?.value || ''}
+        onChange={payload => setPhoneState(payload)}
+      />
+    </>
   );
 };
 
