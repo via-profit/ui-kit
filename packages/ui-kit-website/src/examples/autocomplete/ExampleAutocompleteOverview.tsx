@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from '@emotion/styled';
 import Autocomplete, { AutocompleteRef } from '@via-profit/ui-kit/src/Autocomplete';
+import MenuItem from '@via-profit/ui-kit/src/Menu/MenuItem';
 import Button from '@via-profit/ui-kit/src/Button';
 import TextField from '@via-profit/ui-kit/src/TextField';
 
@@ -53,7 +54,7 @@ const ExampleAutocompleteOverview: React.FC = () => {
         isOpen={isOpen}
         estimatedItemSize={32}
         multiple={isMultiple}
-        renderItem={({ item }) => <>{item.name}</>}
+        renderItem={(item, itemProps) => <MenuItem {...itemProps}>{item.name}</MenuItem>}
         items={items}
         getOptionSelected={({ item, value }) => item.code === value.code}
         value={selectedItems}
@@ -81,6 +82,7 @@ const ExampleAutocompleteOverview: React.FC = () => {
             <InputBox>
               <TextField ref={anchorElementRef} {...inputProps} />
               <Button
+                iconOnly
                 onMouseDown={event => {
                   event.preventDefault();
                   autocompleteRef.current?.blur();
@@ -90,6 +92,7 @@ const ExampleAutocompleteOverview: React.FC = () => {
                 ^
               </Button>
               <Button
+                iconOnly
                 onClick={() => {
                   autocompleteRef.current?.clear();
                 }}

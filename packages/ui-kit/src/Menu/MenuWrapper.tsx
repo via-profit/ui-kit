@@ -3,10 +3,7 @@ import styled from '@emotion/styled';
 
 export interface MenuWrapperProps extends React.HTMLAttributes<HTMLDivElement> {
   readonly isOpen: boolean;
-  readonly dimensions: {
-    readonly width: number;
-    readonly height: number;
-  };
+  readonly innerRef: React.Ref<HTMLDivElement>;
 }
 
 const StyledMenuWrapper = styled.div<{ $isOpen: boolean }>`
@@ -56,18 +53,19 @@ const StyledMenuWrapper = styled.div<{ $isOpen: boolean }>`
   }
 `;
 
-const MenuWrapperInner = styled.div<Pick<MenuWrapperProps, 'dimensions'>>`
+const MenuWrapperInner = styled.div`
   padding: 0.4em;
   box-sizing: content-box;
-  min-width: ${({ dimensions }) => dimensions.width}px;
-  min-height: ${({ dimensions }) => dimensions.height}px;
+  max-height: 300px;
+  max-width: 300px;
+  overflow-y: auto;
 `;
 
 const MenuWrapper: React.ForwardRefRenderFunction<HTMLDivElement, MenuWrapperProps> = (
   props,
   ref,
 ) => {
-  const { isOpen, dimensions, children, ...nativeProps } = props;
+  const { isOpen, children, innerRef, ...nativeProps } = props;
   const [isOpenState, setOpenState] = React.useState(false);
 
   React.useEffect(() => {
@@ -76,7 +74,7 @@ const MenuWrapper: React.ForwardRefRenderFunction<HTMLDivElement, MenuWrapperPro
 
   return (
     <StyledMenuWrapper {...nativeProps} ref={ref} $isOpen={isOpenState}>
-      <MenuWrapperInner dimensions={dimensions}>{children}</MenuWrapperInner>
+      <MenuWrapperInner ref={innerRef}>{children}</MenuWrapperInner>
     </StyledMenuWrapper>
   );
 };

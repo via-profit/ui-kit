@@ -1,6 +1,7 @@
 import React from 'react';
 import Button from '@via-profit/ui-kit/src/Button';
 import Menu, { MenuRef } from '@via-profit/ui-kit/src/Menu';
+import MenuItem from '@via-profit/ui-kit/src/Menu/MenuItem';
 
 type Item = {
   readonly id: number;
@@ -11,7 +12,7 @@ const ExampleMenuOverview: React.FC = () => {
   const [anchorElement, setAnchorElement] = React.useState<HTMLButtonElement | null>(null);
   const [selectedItems, setSelectedItems] = React.useState<readonly Item[]>([]);
   const [isMultiple] = React.useState(false);
-  const [itemsLength] = React.useState(1200);
+  const [itemsLength] = React.useState(30);
   const menuRef = React.useRef<MenuRef<(typeof selectedItems)[0]> | null>(null);
 
   const items = React.useMemo(() => {
@@ -27,13 +28,32 @@ const ExampleMenuOverview: React.FC = () => {
   return (
     <>
       <Button
+        variant="outlined"
+        onClick={() => {
+          menuRef.current?.highlightIndex(27);
+        }}
+      >
+        highlight to item 27
+      </Button>
+      <Button
+        variant="outlined"
+        onClick={() => {
+          menuRef.current?.highlightIndex(8);
+        }}
+      >
+        highlight to item 8
+      </Button>
+      <Button
         variant="standard"
         onClick={event => {
           setAnchorElement(current => (current ? null : event.currentTarget));
           // setOpen(!isOpen);
         }}
       >
-        {isMultiple ? 'Toggle multiple menu' : 'Toggle menu'}
+        {selectedItems.length === 0 && <span>please select</span>}
+        {selectedItems.map(item => (
+          <span key={item.id}>{item.name}</span>
+        ))}
       </Button>
       <Menu
         ref={menuRef}
@@ -42,7 +62,7 @@ const ExampleMenuOverview: React.FC = () => {
         value={selectedItems}
         multiple={isMultiple}
         items={items}
-        renderItem={({ item }) => <>{item.name}</>}
+        renderItem={(item, itemProps) => <MenuItem {...itemProps}>{item.name}</MenuItem>}
         getOptionSelected={({ item, value }) => item.id === value.id}
         onSelectItem={item => {
           if (isMultiple && Array.isArray(item)) {

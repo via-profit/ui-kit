@@ -103,6 +103,9 @@ const Sidebar: React.ForwardRefRenderFunction<
         <Item $isActive={matchPath('/docs/modal/*', pathname) !== null} to="/docs/modal">
           Modal
         </Item>
+        <Item $isActive={matchPath('/docs/calendar/*', pathname) !== null} to="/docs/calendar">
+          Calendar
+        </Item>
       </ItemsList>
     </Container>
   );

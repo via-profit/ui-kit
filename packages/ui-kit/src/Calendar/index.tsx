@@ -10,10 +10,11 @@ import CalendarTopBar from './CalendarTopBar';
 import CalendarMonthControl from './CalendarMonthControl';
 import CalendarWeekDaysBar, { WeekNameLabelFormat } from './CalendarWeekDaysBar';
 import Menu from '../Menu';
+import MenuItem from '../Menu/MenuItem';
 import ButtonBase from '../Button/ButtonBase';
 
 export interface CalendarProps {
-  readonly date?: Date;
+  readonly date: Date;
   readonly locale?: string;
   readonly selected?: Date[];
   readonly onSelectDate?: (date: Date) => void;
@@ -42,9 +43,7 @@ const Calendar: React.FC<CalendarProps> = props => {
   } = props;
 
   const [yearsMenuEl, setYearsMenuEl] = React.useState<HTMLButtonElement | null>(null);
-
   const [monthMenuEl, setMonthMenuEl] = React.useState<HTMLButtonElement | null>(null);
-
   const [selectedDates, setSelectedDates] = React.useState<Date[]>([...(selected || [])]);
   const calendar = useCalendar({
     weekStartDay,
@@ -64,13 +63,6 @@ const Calendar: React.FC<CalendarProps> = props => {
 
     return title.charAt(0).toUpperCase() + title.slice(1);
   }, [calendar.date, calendar.locale]);
-
-  React.useEffect(() => {
-    calendar.dispatch({
-      type: 'partial',
-      payload: props,
-    });
-  }, [calendar, props]);
 
   // If selected props has been changed
   React.useEffect(() => {
@@ -199,7 +191,7 @@ const Calendar: React.FC<CalendarProps> = props => {
               }
             }}
             items={years}
-            renderItem={item => item.item}
+            renderItem={(item, itemProps) => <MenuItem {...itemProps}>{item}</MenuItem>}
           />
 
           <Menu
@@ -231,7 +223,7 @@ const Calendar: React.FC<CalendarProps> = props => {
                 ),
               };
             })}
-            renderItem={item => item.item.label}
+            renderItem={(item, itemProps) => <MenuItem {...itemProps}>{item.label}</MenuItem>}
           />
         </span>
         <CalendarMonthControl displayIcon="next" onClick={handleNextClick} />

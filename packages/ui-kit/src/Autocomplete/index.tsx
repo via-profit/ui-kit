@@ -1,7 +1,6 @@
 import React from 'react';
 
 import Menu, { MenuRef, MenuProps, OnSelectItem, Value } from '../Menu';
-import popperOptions from './popper-options';
 
 export type AutocompleteProps<
   T,
@@ -129,10 +128,8 @@ const Autocomplete = React.forwardRef(
         hightlightFirstItem: () => menuRef.current?.hightlightFirstItem(),
         hightlightLastItem: () => menuRef.current?.hightlightLastItem(),
         selectHightlightedItem: () => menuRef.current?.selectHightlightedItem(),
-        updatePopper: () => menuRef.current?.updatePopper(),
         scrollToFirstSelected: () => menuRef.current?.scrollToFirstSelected(),
         selectItem: (index: number) => menuRef.current?.selectItem(index),
-        scrollTo: (scrollOffset: number) => menuRef.current?.scrollTo(scrollOffset),
         scrollToItem: (index: number, align?: any) => menuRef.current?.scrollToItem(index, align),
         clear: () => {
           setCurrentValue(null);
@@ -338,7 +335,6 @@ const Autocomplete = React.forwardRef(
           multiple={multiple}
           zIndex={zIndex}
           closeOutsideClick
-          popperOptions={popperOptions}
           onRequestClose={evt => {
             if (evt?.target !== anchorElement) {
               onRequestClose(evt);

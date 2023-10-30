@@ -147,7 +147,7 @@ const BaseModal: React.FC<BaseModalProps> = props => {
             </ModalWrapper>
           </ContextProvider>,
           portalEl,
-          'ui-modal-portal',
+          PORTAL_ID,
         )}
     </NoSSR>
   );

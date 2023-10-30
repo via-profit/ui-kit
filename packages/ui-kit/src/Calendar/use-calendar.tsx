@@ -84,7 +84,14 @@ export const useCalendar = (props: UseCalendarProps) => {
     ...props,
   });
 
-  const { date, minDate, maxDate, locale, weekStartDay, displayLeadingZero } = state;
+  const {
+    date = new Date(),
+    minDate = new Date(new Date().getFullYear() - 100, 0, 1, 0, 0, 0),
+    maxDate = new Date(new Date().getFullYear() + 100, 0, 1, 0, 0, 0),
+    locale = 'ru-RU',
+    weekStartDay = 'monday',
+    displayLeadingZero = false,
+  } = state;
 
   const isSameDay = React.useCallback(
     (a: Date, b: Date) =>
@@ -140,7 +147,6 @@ export const useCalendar = (props: UseCalendarProps) => {
     const list: Week[] = [];
     const startOfDate = new Date(date.getFullYear(), date.getMonth(), 1, 0, 0, 0, 0);
     const lastOfDate = new Date(date.getFullYear(), date.getMonth() + 1, 0, 0, 0, 0);
-
     const startDayNum = weekDaysMap[weekStartDay as WeekDayName];
 
     const week = new Set<Date>();

@@ -1,6 +1,7 @@
 import React from 'react';
 
 import SelectBox from '@via-profit/ui-kit/src/SelectBox';
+import MenuItem from '@via-profit/ui-kit/src/Menu/MenuItem';
 
 type Item = {
   readonly id: number;
@@ -28,9 +29,8 @@ const ExampleSelectBoxOverview: React.FC = () => {
       items={items}
       isOpen={isOpen}
       value={selectedItems}
-      itemToString={item => item?.name || 'no name'}
+      renderItem={(item, itemProps) => <MenuItem {...itemProps}>{item.name}</MenuItem>}
       multiple={multiple}
-      renderItem={({ item }) => <>{item.name}</>}
       getOptionSelected={({ item, value }) => item.id === value.id}
       onRequestOpen={() => setOpen(true)}
       onSelectItem={item => {

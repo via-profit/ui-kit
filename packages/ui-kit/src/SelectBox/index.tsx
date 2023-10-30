@@ -2,7 +2,6 @@ import React from 'react';
 
 import Menu, { MenuRef, MenuProps, OnSelectItem, Value } from '../Menu';
 import SelectButton from './SelectButton';
-import popperOptions from './popper-options';
 
 type SelectBoxMenuProps<T, Multiple extends boolean | undefined = false> = Pick<
   MenuProps<T, Multiple>,
@@ -338,7 +337,6 @@ const SelectBox = React.forwardRef(
           multiple={multiple}
           zIndex={zIndex}
           closeOutsideClick
-          popperOptions={popperOptions}
           onRequestClose={evt => {
             if (evt?.target !== anchorElement) {
               onRequestClose(evt);

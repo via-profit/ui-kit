@@ -1,5 +1,7 @@
 import React from 'react';
 
+export const PORTAL_ID = 'ui-kit-portal';
+
 export type State = {
   readonly isOpen: boolean;
   readonly isMounted: boolean;
@@ -20,8 +22,6 @@ export type ActionSetState = {
 };
 
 export type Action = ActionSetState;
-
-export const PORTAL_ID = 'modal-portal';
 
 export const defaultState: State = {
   isOpen: false,
