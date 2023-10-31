@@ -8,7 +8,6 @@
  - [Маскированное поле](./masked-field/README.md)
  - [Меню](./menu/README.md)
  - [Поле для ввода телефона](./phone-field/README.md)
- - [Комбобокс](./selectbox/README.md)
  - [Таблица](./table/README.md)
  - [Типографика](./typography/README.md)
  - [Модальные окна](./modal/README.md)

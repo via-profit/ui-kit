@@ -1,7 +1,8 @@
 import React from 'react';
 
 import useContext, { actionSetmenuState } from './context';
-import MenuWrapper from './MenuWrapper';
+import List, { MenuListProps } from './MenuList';
+import Item, { MenuItemProps } from './MenuItem';
 
 export interface MenuContainerProps<T, Multiple extends boolean | undefined = undefined> {
   /**
@@ -45,7 +46,17 @@ export interface MenuContainerProps<T, Multiple extends boolean | undefined = un
    */
   readonly autofocus?: boolean;
 
-  readonly placeInsideAnchor?: boolean;
+  /**
+   * Anchor position\
+   * Default: `left-bottom`
+   */
+  readonly anchorPos?:
+    | 'left-top'
+    | 'left-bottom'
+    | 'right-top'
+    | 'right-bottom'
+    | 'left-bottom-right'
+    | 'left-top-right';
   /**
    * A function that determines which of the elements is currently selected
    */
@@ -57,17 +68,37 @@ export interface MenuContainerProps<T, Multiple extends boolean | undefined = un
   readonly onSelectItem?: OnSelectItem<T, Multiple>;
 
   /**
-   * A function that renders each list item
+   * A function that renders each list item as string
    */
-  readonly renderItem: RenderItem<T>;
+  readonly itemToString?: ItemToString<T>;
 
   /**
    * The function that will be called at the moment when you want to close the menu
    */
   readonly onRequestClose: OnRequestClose;
+
+  /**
+   * Overridable components map
+   */
+  readonly overrides?: MenuContainerOverrides<T>;
 }
 
-export type MenuContainerRef<T> = {
+export interface MenuContainerOverrides<T> {
+  /**
+   * Element wrapper
+   */
+  readonly List?: React.ForwardRefExoticComponent<
+    MenuListProps & React.RefAttributes<HTMLDivElement>
+  >;
+  /**
+   * Element list item
+   */
+  readonly Item?: React.ForwardRefExoticComponent<
+    MenuItemProps & { item: T } & React.RefAttributes<HTMLDivElement>
+  >;
+}
+
+export type MenuContainerRef = {
   scrollToIndex: (index: number) => void;
   /**
    * Scroll list to first of selected item
@@ -107,18 +138,7 @@ export type MenuContainerRef<T> = {
 
 export type Value<T, Multiple> = Multiple extends undefined | undefined ? T : readonly T[];
 export type GetOptionSelected<T> = (payload: { readonly item: T; readonly value: T }) => boolean;
-export type RenderItem<T> = (
-  item: T,
-  props: {
-    readonly index: number;
-    readonly key: number;
-    readonly selected: boolean;
-    readonly hovered: boolean;
-    readonly onMouseEnter: React.MouseEventHandler<HTMLDivElement>;
-    readonly onMouseLeave: React.MouseEventHandler<HTMLDivElement>;
-    readonly onClick: React.MouseEventHandler<HTMLDivElement>;
-  },
-) => React.ReactNode;
+export type ItemToString<T> = (item: T) => string;
 
 export type OnSelectItem<T, Multiple extends boolean | undefined = undefined> = (
   value: Value<T, Multiple>,
@@ -135,7 +155,7 @@ export type OnRequestClose = (
 const MenuContainer = React.forwardRef(
   <T, Multiple extends boolean | undefined = undefined>(
     props: MenuContainerProps<T, Multiple>,
-    ref: React.Ref<MenuContainerRef<T>>,
+    ref: React.Ref<MenuContainerRef>,
   ) => {
     const {
       items,
@@ -145,12 +165,23 @@ const MenuContainer = React.forwardRef(
       anchorElement,
       multiple,
       autofocus = true,
-      placeInsideAnchor = false,
+      anchorPos = 'left-bottom',
+      overrides,
+      itemToString = d => JSON.stringify(d),
       onSelectItem,
       getOptionSelected,
-      renderItem,
+      // renderItem,
       onRequestClose,
     } = props;
+
+    const overridesMap = React.useMemo(
+      () => ({
+        List,
+        Item,
+        ...overrides,
+      }),
+      [overrides],
+    );
 
     const getSelectedIndexes = React.useCallback(() => {
       const idx = new Set<number>();
@@ -183,8 +214,7 @@ const MenuContainer = React.forwardRef(
     const [menuIsOpen, setMenuOpen] = React.useState(Boolean(isOpen));
     const [currentAnchorElement, setAnchorElement] = React.useState(anchorElement);
     const isOpenRef = React.useRef(menuIsOpen);
-    const menuWrapperRef = React.useRef<HTMLDivElement | null>(null);
-    const menuInnerRef = React.useRef<HTMLDivElement | null>(null);
+    const MenuListRef = React.useRef<HTMLDivElement | null>(null);
     const {
       dispatch,
       state: { selectedIndexes, markedIndex, hoveredIndex },
@@ -196,18 +226,56 @@ const MenuContainer = React.forwardRef(
     const calculateElementPos = React.useCallback(
       (elem: HTMLElement) => {
         const rect = elem.getBoundingClientRect();
-
-        return {
-          left: rect.left + window.scrollX,
-          top: rect.top + window.scrollY + rect.height,
-          width: placeInsideAnchor ? rect.width : undefined,
+        const position: { left: number; top: number; width?: number } = {
+          left: 0,
+          top: 0,
+          // width: placeInsideAnchor ? rect.width : undefined,
         };
+
+        switch (anchorPos) {
+          case 'left-bottom':
+            position.left = rect.left + window.scrollX;
+            position.top = rect.top + window.scrollY + rect.height;
+            break;
+
+          case 'left-top':
+            position.left = rect.left + window.scrollX;
+            break;
+
+          case 'right-top':
+            position.left = rect.left + window.scrollX + rect.width;
+            position.top = rect.top + window.scrollY;
+            break;
+
+          case 'right-bottom':
+            position.left = rect.left + window.scrollX + rect.width;
+            position.top = rect.top + window.scrollY + rect.height;
+            break;
+
+          case 'left-bottom-right':
+            position.left = rect.left + window.scrollX;
+            position.top = rect.top + window.scrollY + rect.height;
+            position.width = rect.width;
+            break;
+
+          case 'left-top-right':
+            position.left = rect.left + window.scrollX;
+            position.top = rect.top + window.scrollY;
+            position.width = rect.width;
+            break;
+
+          default:
+            // do nothing
+            break;
+        }
+
+        return position;
       },
-      [placeInsideAnchor],
+      [anchorPos],
     );
 
     const scrollToIndex = React.useCallback((index: number) => {
-      const option = menuInnerRef?.current?.children[index];
+      const option = MenuListRef?.current?.children[index];
       if (option) {
         option.scrollIntoView({
           behavior: 'auto',
@@ -317,7 +385,7 @@ const MenuContainer = React.forwardRef(
     React.useImperativeHandle(
       ref,
       () => ({
-        // focus: () => menuWrapperRef.current?.focus(),
+        // focus: () => MenuListRef.current?.focus(),
         scrollToIndex: (idx: number) => scrollToIndex(idx),
         highlightIndex: (idx: number) => highlightIndex(idx),
         hightlightPrevItem: () => hightlightPrevItem(),
@@ -452,7 +520,7 @@ const MenuContainer = React.forwardRef(
         let needToClose = true;
 
         while (parentElem && 'parentNode' in parentElem) {
-          if (parentElem === menuWrapperRef.current) {
+          if (parentElem === MenuListRef.current) {
             needToClose = false;
             break;
           }
@@ -490,7 +558,7 @@ const MenuContainer = React.forwardRef(
 
           if (autofocus) {
             setTimeout(() => {
-              menuWrapperRef.current?.focus();
+              MenuListRef.current?.focus();
             }, 300);
           }
         }
@@ -565,26 +633,29 @@ const MenuContainer = React.forwardRef(
     }
 
     return (
-      <MenuWrapper
+      <overridesMap.List
         isOpen={Boolean(isOpen)}
-        ref={menuWrapperRef}
-        innerRef={menuInnerRef}
+        ref={MenuListRef}
         tabIndex={-1}
         onKeyDown={listKeydownEvent}
         style={{ ...pos, position: 'absolute' }}
       >
-        {items.map((item, index) =>
-          renderItem(item, {
-            key: index,
-            onMouseEnter: itemMouseEnterHandler(index, hoveredIndex),
-            onMouseLeave: itemMouseLeaveHandler(index, hoveredIndex),
-            onClick: itemClickHandler(index),
-            index,
-            selected: selectedIndexes.includes(index),
-            hovered: hoveredIndex === index || markedIndex === index,
-          }),
-        )}
-      </MenuWrapper>
+        {items.map((item, index) => (
+          <overridesMap.Item
+            item={item}
+            // eslint-disable-next-line react/no-array-index-key
+            key={index.toString()}
+            onMouseEnter={itemMouseEnterHandler(index, hoveredIndex)}
+            onMouseLeave={itemMouseLeaveHandler(index, hoveredIndex)}
+            onClick={itemClickHandler(index)}
+            index={index}
+            selected={selectedIndexes.includes(index)}
+            hovered={hoveredIndex === index || markedIndex === index}
+          >
+            {itemToString(item)}
+          </overridesMap.Item>
+        ))}
+      </overridesMap.List>
     );
   },
 );
@@ -592,5 +663,5 @@ const MenuContainer = React.forwardRef(
 MenuContainer.displayName = 'Menu';
 
 export default MenuContainer as <T, Multiple extends boolean | undefined = undefined>(
-  props: MenuContainerProps<T, Multiple> & { ref?: React.Ref<MenuContainerRef<T>> },
+  props: MenuContainerProps<T, Multiple> & { ref?: React.Ref<MenuContainerRef> },
 ) => JSX.Element;

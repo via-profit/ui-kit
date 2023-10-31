@@ -11,12 +11,12 @@ export type MenuProps<T, Multiple extends boolean | undefined = undefined> = Men
   Multiple
 >;
 
-export type MenuRef<T> = MenuContainerRef<T>;
+export type MenuRef = MenuContainerRef;
 
 const Menu = React.forwardRef(
   <T, Multiple extends boolean | undefined = undefined>(
     props: MenuProps<T, Multiple>,
-    ref: React.Ref<MenuRef<T>>,
+    ref: React.Ref<MenuRef>,
   ) => {
     const { ...restProps } = props;
     const [domLoaded, setDomLoaded] = React.useState(false);
@@ -61,5 +61,5 @@ const Menu = React.forwardRef(
 Menu.displayName = 'Menu';
 
 export default Menu as <T, Multiple extends boolean | undefined = undefined>(
-  props: MenuProps<T, Multiple> & { ref?: React.Ref<MenuRef<T>> },
+  props: MenuProps<T, Multiple> & { ref?: React.Ref<MenuRef> },
 ) => JSX.Element;

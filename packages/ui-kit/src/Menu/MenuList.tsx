@@ -1,12 +1,12 @@
 import React from 'react';
 import styled from '@emotion/styled';
 
-export interface MenuWrapperProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface MenuListProps extends React.HTMLAttributes<HTMLDivElement> {
   readonly isOpen: boolean;
-  readonly innerRef: React.Ref<HTMLDivElement>;
+  readonly style: React.CSSProperties;
 }
 
-const StyledMenuWrapper = styled.div<{ $isOpen: boolean }>`
+const StyledMenuList = styled.div<{ $isOpen: boolean }>`
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -51,9 +51,6 @@ const StyledMenuWrapper = styled.div<{ $isOpen: boolean }>`
   & ::-webkit-scrollbar-thumb:vertical:hover {
     background: ${({ theme }) => theme.color.accentPrimary.toString()};
   }
-`;
-
-const MenuWrapperInner = styled.div`
   padding: 0.4em;
   box-sizing: content-box;
   max-height: 300px;
@@ -61,11 +58,8 @@ const MenuWrapperInner = styled.div`
   overflow-y: auto;
 `;
 
-const MenuWrapper: React.ForwardRefRenderFunction<HTMLDivElement, MenuWrapperProps> = (
-  props,
-  ref,
-) => {
-  const { isOpen, children, innerRef, ...nativeProps } = props;
+const MenuList: React.ForwardRefRenderFunction<HTMLDivElement, MenuListProps> = (props, ref) => {
+  const { isOpen, children, ...nativeProps } = props;
   const [isOpenState, setOpenState] = React.useState(false);
 
   React.useEffect(() => {
@@ -73,10 +67,10 @@ const MenuWrapper: React.ForwardRefRenderFunction<HTMLDivElement, MenuWrapperPro
   }, [isOpen]);
 
   return (
-    <StyledMenuWrapper {...nativeProps} ref={ref} $isOpen={isOpenState}>
-      <MenuWrapperInner ref={innerRef}>{children}</MenuWrapperInner>
-    </StyledMenuWrapper>
+    <StyledMenuList {...nativeProps} ref={ref} $isOpen={isOpenState}>
+      {children}
+    </StyledMenuList>
   );
 };
 
-export default React.forwardRef(MenuWrapper);
+export default React.forwardRef(MenuList);

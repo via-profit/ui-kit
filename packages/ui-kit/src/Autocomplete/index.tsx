@@ -9,21 +9,9 @@ export type AutocompleteProps<
 
 export type AutocompleteContainerRef = HTMLDivElement;
 
-type AutocompleteMenuProps<T, Multiple extends boolean | undefined = undefined> = Pick<
-  MenuProps<T, Multiple>,
-  | 'items'
-  | 'value'
-  | 'estimatedItemSize'
-  | 'endThreshold'
-  | 'overscanCount'
-  | 'getOptionSelected'
-  | 'onEndReached'
-  | 'onSelectItem'
-  | 'renderItem'
-  | 'multiple'
-  | 'zIndex'
-  | 'onRequestClose'
-  | 'isOpen'
+type AutocompleteMenuProps<T, Multiple extends boolean | undefined = undefined> = MenuProps<
+  T,
+  Multiple
 > & {
   readonly containerRef?: React.Ref<AutocompleteContainerRef>;
   readonly itemToString: ItemToString<T, Multiple>;
@@ -62,20 +50,7 @@ export type RenderInputProps<T, Multiple extends boolean | undefined = undefined
   readonly onChange: React.ChangeEventHandler<HTMLInputElement>;
 };
 
-export type AutocompleteRef<T> = Pick<
-  MenuRef<T>,
-  | 'scrollToItem'
-  | 'scrollTo'
-  | 'scrollToFirstSelected'
-  | 'selectItem'
-  | 'highlightIndex'
-  | 'hightlightPrevItem'
-  | 'hightlightNextItem'
-  | 'hightlightFirstItem'
-  | 'hightlightLastItem'
-  | 'selectHightlightedItem'
-  | 'updatePopper'
-> & {
+export type AutocompleteRef = MenuRef & {
   readonly clear: () => void;
   readonly focus: () => void;
   readonly blur: () => void;
@@ -85,15 +60,11 @@ export type AutocompleteRef<T> = Pick<
 const Autocomplete = React.forwardRef(
   <T, Multiple extends boolean | undefined = undefined>(
     props: AutocompleteProps<T, Multiple>,
-    ref: React.Ref<AutocompleteRef<T>>,
+    ref: React.Ref<AutocompleteRef>,
   ) => {
     const {
       items,
       value,
-      estimatedItemSize,
-      endThreshold,
-      overscanCount,
-      zIndex,
       isOpen,
       multiple,
       itemToString,
@@ -101,15 +72,13 @@ const Autocomplete = React.forwardRef(
       filterItems,
       renderInput,
       getOptionSelected,
-      onEndReached,
       onSelectItem,
-      renderItem,
       onRequestClose,
       onRequestOpen,
       onInputChange,
     } = props;
     const [inputValue, setInputValue] = React.useState<string>('');
-    const menuRef = React.useRef<MenuRef<T> | null>(null);
+    const menuRef = React.useRef<MenuRef | null>(null);
     const isFocusedRef = React.useRef(false);
     const [currentOpen, setCurrentOpen] = React.useState(isOpen);
     const [currentValue, setCurrentValue] = React.useState(value);
@@ -122,15 +91,15 @@ const Autocomplete = React.forwardRef(
     React.useImperativeHandle(
       ref,
       () => ({
-        highlightIndex: (index: number) => menuRef.current?.highlightIndex(index),
-        hightlightPrevItem: () => menuRef.current?.hightlightPrevItem(),
-        hightlightNextItem: () => menuRef.current?.hightlightNextItem(),
+        scrollToIndex: (idx: number) => menuRef.current?.scrollToIndex(idx),
+        scrollToFirstSelected: () => menuRef.current?.scrollToFirstSelected(),
         hightlightFirstItem: () => menuRef.current?.hightlightFirstItem(),
         hightlightLastItem: () => menuRef.current?.hightlightLastItem(),
+        hightlightNextItem: () => menuRef.current?.hightlightNextItem(),
+        hightlightPrevItem: () => menuRef.current?.hightlightPrevItem(),
         selectHightlightedItem: () => menuRef.current?.selectHightlightedItem(),
-        scrollToFirstSelected: () => menuRef.current?.scrollToFirstSelected(),
+        highlightIndex: (idx: number) => menuRef.current?.highlightIndex(idx),
         selectItem: (index: number) => menuRef.current?.selectItem(index),
-        scrollToItem: (index: number, align?: any) => menuRef.current?.scrollToItem(index, align),
         clear: () => {
           setCurrentValue(null);
           setInputValue('');
@@ -325,15 +294,9 @@ const Autocomplete = React.forwardRef(
           isOpen={currentOpen && filteredItems.length > 0}
           autofocus={false}
           anchorElement={anchorElement}
-          estimatedItemSize={estimatedItemSize}
-          endThreshold={endThreshold}
-          overscanCount={overscanCount}
           getOptionSelected={getOptionSelected}
-          onEndReached={onEndReached}
           onSelectItem={onSelectItemF}
-          renderItem={renderItem}
           multiple={multiple}
-          zIndex={zIndex}
           closeOutsideClick
           onRequestClose={evt => {
             if (evt?.target !== anchorElement) {
@@ -349,5 +312,5 @@ const Autocomplete = React.forwardRef(
 Autocomplete.displayName = 'Autocomplete';
 
 export default Autocomplete as <T, Multiple extends boolean | undefined = undefined>(
-  props: AutocompleteProps<T, Multiple> & { ref?: React.Ref<AutocompleteRef<T>> },
+  props: AutocompleteProps<T, Multiple> & { ref?: React.Ref<AutocompleteRef> },
 ) => JSX.Element;

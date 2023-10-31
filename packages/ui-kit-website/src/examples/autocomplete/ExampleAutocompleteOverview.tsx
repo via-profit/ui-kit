@@ -40,95 +40,13 @@ const Chip = styled.div`
 `;
 
 const ExampleAutocompleteOverview: React.FC = () => {
-  const anchorElementRef = React.useRef<HTMLDivElement | null>(null);
-  const [selectedItems, setSelectedItems] = React.useState<readonly Item[]>([]);
-  const [isMultiple] = React.useState(false);
-  const [isOpen, setOpen] = React.useState(false);
-  const autocompleteRef = React.useRef<AutocompleteRef<Item> | null>(null);
-  const items = countries;
+  const [value, setValue] = React.useState<Item | null>(null);
+  const [anchorElem, setAnchorElem] = React.useState<HTMLDivElement | null>(null);
+  const autocompleteRef = React.useRef<AutocompleteRef | null>(null);
 
   return (
     <>
-      <Autocomplete
-        ref={autocompleteRef}
-        isOpen={isOpen}
-        estimatedItemSize={32}
-        multiple={isMultiple}
-        renderItem={(item, itemProps) => <MenuItem {...itemProps}>{item.name}</MenuItem>}
-        items={items}
-        getOptionSelected={({ item, value }) => item.code === value.code}
-        value={selectedItems}
-        filterItems={(variants, { query }) =>
-          variants.filter(c => {
-            const candidade = c.name.trim().toLowerCase();
-
-            return candidade.indexOf(query) !== -1;
-          })
-        }
-        itemToString={item => item.name}
-        onSelectItem={item => {
-          if (Array.isArray(item)) {
-            setSelectedItems(item);
-          }
-
-          if (!Array.isArray(item)) {
-            anchorElementRef.current?.focus();
-            setSelectedItems([item as unknown as Item]);
-            setOpen(false);
-          }
-        }}
-        renderInput={({ selected, ...inputProps }) => (
-          <>
-            <InputBox>
-              <TextField ref={anchorElementRef} {...inputProps} />
-              <Button
-                iconOnly
-                onMouseDown={event => {
-                  event.preventDefault();
-                  autocompleteRef.current?.blur();
-                  autocompleteRef.current?.focus();
-                }}
-              >
-                ^
-              </Button>
-              <Button
-                iconOnly
-                onClick={() => {
-                  autocompleteRef.current?.clear();
-                }}
-              >
-                X
-              </Button>
-            </InputBox>
-            {Array.isArray(selected) && (
-              <ChipBox>
-                {(selected as Item[]).map(selecedeItem => (
-                  <Chip
-                    key={selecedeItem.code}
-                    onClick={() => {
-                      setSelectedItems(s => s.filter(s => s.code !== selecedeItem.code));
-                      autocompleteRef.current?.focus();
-                      autocompleteRef.current?.clearInput();
-                    }}
-                  >
-                    {selecedeItem.code}
-                  </Chip>
-                ))}
-              </ChipBox>
-            )}
-          </>
-        )}
-        onRequestOpen={() => setOpen(true)}
-        onRequestClose={event => {
-          const isKeybordEvent = (e: typeof event): e is KeyboardEvent => e?.type === 'keydown';
-          if (isKeybordEvent(event)) {
-            if (event.code === 'Escape') {
-              anchorElementRef.current?.focus();
-            }
-          }
-          setOpen(false);
-        }}
-      />
+      nop
     </>
   );
 };

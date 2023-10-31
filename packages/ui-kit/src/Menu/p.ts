@@ -10,7 +10,7 @@
 
 // import options from './popper-options';
 // import MenuItem from './MenuItem';
-// import MenuWrapper from './MenuWrapper';
+// import MenuList from './MenuList';
 // import reducer, { defaultState } from './reducer';
 
 // export interface MenuProps<T, Multiple extends boolean | undefined = undefined> {
@@ -312,7 +312,7 @@
 //     const sizeMapRef = React.useRef(new Map<number, number>());
 //     const listVirtRef = React.useRef<VirtualizedListType<T> | null>(null);
 //     const listOuterRef = React.useRef<OuterListType | null>(null);
-//     const menuWrapperRef = React.useRef<HTMLDivElement | null>(null);
+//     const MenuListRef = React.useRef<HTMLDivElement | null>(null);
 //     const [{ selectedIndexes, markedIndex, hoveredIndex }, dispatch] = React.useReducer(reducer, {
 //       ...defaultState,
 //       selectedIndexes: getSelectedIndexes(),
@@ -434,7 +434,7 @@
 //     React.useImperativeHandle(
 //       ref,
 //       () => ({
-//         focus: () => menuWrapperRef.current?.focus(),
+//         focus: () => MenuListRef.current?.focus(),
 //         scrollToItem: (index: number, align?: VirtListAlign) =>
 //           listVirtRef.current?.scrollToItem(index, align),
 //         scrollTo: (scrollOffset: number) => listVirtRef.current?.scrollTo(scrollOffset),
@@ -692,7 +692,7 @@
 
 //           if (autofocus) {
 //             setTimeout(() => {
-//               menuWrapperRef.current?.focus();
+//               MenuListRef.current?.focus();
 //             }, autofocusDelay);
 //           }
 //         }
@@ -751,9 +751,9 @@
 //             }}
 //           >
 //             {menuIsOpen && (
-//               <MenuWrapper
+//               <MenuList
 //                 isOpen={menuIsOpen}
-//                 ref={menuWrapperRef}
+//                 ref={MenuListRef}
 //                 tabIndex={tabIndex}
 //                 dimensions={dimensions}
 //                 onKeyDown={listKeydownEvent}
@@ -812,7 +812,7 @@
 //                     );
 //                   }}
 //                 </VirtualizedList>
-//               </MenuWrapper>
+//               </MenuList>
 //             )}
 //           </div>,
 //           typeof portalNode === 'function' ? portalNode() : portalNode || window.document.body,
