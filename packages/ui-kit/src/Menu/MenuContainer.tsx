@@ -19,15 +19,35 @@ export interface MenuContainerProps<T, Multiple extends boolean | undefined = un
   /**
    * Menu open state
    */
-  readonly isOpen?: boolean;
+  readonly isOpen: boolean;
 
   /**
    * An HTML element. It's used to set the position of the menu.
+   * \
+   * **Default**: `false`
    */
-  readonly anchorElement: HTMLElement | null;
+  readonly anchorElement?: HTMLElement | null;
 
   /**
-   * Close list if click outside of list\
+   * A function that extract key for each item\
+   * (for details: [React List and keys](https://react.dev/learn/rendering-lists))\
+   * \
+   * Example:
+   * ```tsx
+   * <Menu
+   *    ...
+   *   keyExtractor={item => item.id} // <-- Just use the user ID
+   *   items={[
+   *     {id: '1', name: 'Olezhka Rukobludenko'},
+   *     {id: '2', name: 'Feodosiya Trahovna'},
+   *   ]}
+   * />
+   * ```
+   */
+  readonly keyExtractor: KeyExtractor<T>;
+
+  /**
+   * Close list if click outside of the list and anchor element\
    * \
    * **Default**: `true`
    */
@@ -35,6 +55,8 @@ export interface MenuContainerProps<T, Multiple extends boolean | undefined = un
 
   /**
    * Allow the multiple selection
+   * \
+   * **Default**: `false`
    */
   readonly multiple?: Multiple;
 
@@ -48,15 +70,36 @@ export interface MenuContainerProps<T, Multiple extends boolean | undefined = un
 
   /**
    * Anchor position\
+   * \
    * Default: `left-bottom`
    */
   readonly anchorPos?:
+    | 'static'
     | 'left-top'
     | 'left-bottom'
     | 'right-top'
     | 'right-bottom'
     | 'left-bottom-right'
     | 'left-top-right';
+
+  /**
+   * Should menu will be closed when item selected\
+   * \
+   * **Default**: if **multiple** is true then `false` otherwise - `true`
+   */
+  readonly closeOnSelect?: boolean;
+
+  /**
+   * Do not use react portal\
+   * \
+   * **Default**: `false`
+   */
+  readonly disablePortal?: boolean;
+
+  /**
+   * Overridable components map
+   */
+  readonly overrides?: MenuContainerOverrides<T>;
   /**
    * A function that determines which of the elements is currently selected
    */
@@ -68,19 +111,16 @@ export interface MenuContainerProps<T, Multiple extends boolean | undefined = un
   readonly onSelectItem?: OnSelectItem<T, Multiple>;
 
   /**
-   * A function that renders each list item as string
+   * A function that renders each list item as string\
+   * \
+   * **Default**: `JSON.stringify(...)`
    */
   readonly itemToString?: ItemToString<T>;
 
   /**
    * The function that will be called at the moment when you want to close the menu
    */
-  readonly onRequestClose: OnRequestClose;
-
-  /**
-   * Overridable components map
-   */
-  readonly overrides?: MenuContainerOverrides<T>;
+  readonly onRequestClose?: OnRequestClose;
 }
 
 export interface MenuContainerOverrides<T> {
@@ -99,6 +139,9 @@ export interface MenuContainerOverrides<T> {
 }
 
 export type MenuContainerRef = {
+  /**
+   * Scroll list to specified element index
+   */
   scrollToIndex: (index: number) => void;
   /**
    * Scroll list to first of selected item
@@ -134,12 +177,17 @@ export type MenuContainerRef = {
    * Highlight the last item in list
    */
   hightlightLastItem: () => void;
+
+  /**
+   * Select highlighted item in list
+   */
+  selectHightlightedItem: () => void;
 };
 
 export type Value<T, Multiple> = Multiple extends undefined | undefined ? T : readonly T[];
 export type GetOptionSelected<T> = (payload: { readonly item: T; readonly value: T }) => boolean;
 export type ItemToString<T> = (item: T) => string;
-
+export type KeyExtractor<T> = (item: T) => React.Key;
 export type OnSelectItem<T, Multiple extends boolean | undefined = undefined> = (
   value: Value<T, Multiple>,
 ) => void;
@@ -152,6 +200,9 @@ export type OnRequestClose = (
     | MouseEvent,
 ) => void;
 
+const itemToStringDefault = <T,>(item: T) =>
+  typeof item === 'string' ? item : JSON.stringify(item);
+
 const MenuContainer = React.forwardRef(
   <T, Multiple extends boolean | undefined = undefined>(
     props: MenuContainerProps<T, Multiple>,
@@ -160,18 +211,19 @@ const MenuContainer = React.forwardRef(
     const {
       items,
       value,
-      isOpen,
-      closeOutsideClick = true,
       anchorElement,
-      multiple,
-      autofocus = true,
-      anchorPos = 'left-bottom',
       overrides,
-      itemToString = d => JSON.stringify(d),
+      closeOutsideClick = true,
+      isOpen = props.anchorPos === 'static' ? true : false,
+      multiple = false,
+      autofocus = true,
+      closeOnSelect = !multiple,
+      anchorPos = 'left-bottom',
+      itemToString = itemToStringDefault,
+      onRequestClose = () => undefined,
+      keyExtractor,
       onSelectItem,
       getOptionSelected,
-      // renderItem,
-      onRequestClose,
     } = props;
 
     const overridesMap = React.useMemo(
@@ -222,54 +274,63 @@ const MenuContainer = React.forwardRef(
     const selectedIndexesRef = React.useRef(selectedIndexes);
     const timeoutRef = React.useRef<NodeJS.Timeout | null>(null);
 
-    const [pos, setpos] = React.useState({ left: 0, top: 0 });
+    const [style, setStyle] = React.useState<React.CSSProperties>({
+      /* empty object */
+    });
     const calculateElementPos = React.useCallback(
-      (elem: HTMLElement) => {
+      (elem: HTMLElement): React.CSSProperties => {
         const rect = elem.getBoundingClientRect();
-        const position: { left: number; top: number; width?: number } = {
-          left: 0,
-          top: 0,
-          // width: placeInsideAnchor ? rect.width : undefined,
-        };
 
         switch (anchorPos) {
           case 'left-bottom':
-            position.left = rect.left + window.scrollX;
-            position.top = rect.top + window.scrollY + rect.height;
-            break;
+            return {
+              position: 'absolute',
+              left: rect.left + window.scrollX,
+              top: rect.top + window.scrollY + rect.height,
+            };
 
           case 'left-top':
-            position.left = rect.left + window.scrollX;
-            break;
+            return {
+              position: 'absolute',
+              left: rect.left + window.scrollX,
+            };
 
           case 'right-top':
-            position.left = rect.left + window.scrollX + rect.width;
-            position.top = rect.top + window.scrollY;
-            break;
+            return {
+              position: 'absolute',
+              left: rect.left + window.scrollX + rect.width,
+              top: rect.top + window.scrollY,
+            };
 
           case 'right-bottom':
-            position.left = rect.left + window.scrollX + rect.width;
-            position.top = rect.top + window.scrollY + rect.height;
-            break;
+            return {
+              position: 'absolute',
+              left: rect.left + window.scrollX + rect.width,
+              top: rect.top + window.scrollY + rect.height,
+            };
 
           case 'left-bottom-right':
-            position.left = rect.left + window.scrollX;
-            position.top = rect.top + window.scrollY + rect.height;
-            position.width = rect.width;
-            break;
+            return {
+              position: 'absolute',
+              left: rect.left + window.scrollX,
+              top: rect.top + window.scrollY + rect.height,
+              width: rect.width,
+            };
 
           case 'left-top-right':
-            position.left = rect.left + window.scrollX;
-            position.top = rect.top + window.scrollY;
-            position.width = rect.width;
-            break;
+            return {
+              position: 'absolute',
+              left: rect.left + window.scrollX,
+              top: rect.top + window.scrollY,
+              width: rect.width,
+            };
 
+          case 'static':
           default:
-            // do nothing
-            break;
+            return {
+              /* empty object */
+            };
         }
-
-        return position;
       },
       [anchorPos],
     );
@@ -286,7 +347,7 @@ const MenuContainer = React.forwardRef(
 
     React.useEffect(() => {
       if (isOpen && anchorElement) {
-        setpos(calculateElementPos(anchorElement));
+        setStyle(calculateElementPos(anchorElement));
       }
     }, [anchorElement, isOpen, calculateElementPos]);
 
@@ -333,9 +394,13 @@ const MenuContainer = React.forwardRef(
             // For single
             onSelectItem(item as Value<T, Multiple>);
           }
+
+          if (closeOnSelect) {
+            onRequestClose();
+          }
         }
       },
-      [items, onSelectItem, selectedIndexes, value, multiple],
+      [onSelectItem, onRequestClose, closeOnSelect, items, selectedIndexes, value, multiple],
     );
 
     /**
@@ -520,7 +585,10 @@ const MenuContainer = React.forwardRef(
         let needToClose = true;
 
         while (parentElem && 'parentNode' in parentElem) {
-          if (parentElem === MenuListRef.current) {
+          if (
+            parentElem === MenuListRef.current ||
+            (anchorElement && parentElem === anchorElement)
+          ) {
             needToClose = false;
             break;
           }
@@ -544,7 +612,7 @@ const MenuContainer = React.forwardRef(
 
         window.document.removeEventListener('resize', windowResizeEvent);
       };
-    }, [menuIsOpen, onRequestClose, closeOutsideClick]);
+    }, [menuIsOpen, onRequestClose, anchorElement, closeOutsideClick]);
 
     /**
      * Toggle menu open
@@ -628,7 +696,7 @@ const MenuContainer = React.forwardRef(
       [dispatch],
     );
 
-    if (!anchorElement) {
+    if (!isOpen) {
       return null;
     }
 
@@ -638,13 +706,12 @@ const MenuContainer = React.forwardRef(
         ref={MenuListRef}
         tabIndex={-1}
         onKeyDown={listKeydownEvent}
-        style={{ ...pos, position: 'absolute' }}
+        style={style}
       >
         {items.map((item, index) => (
           <overridesMap.Item
             item={item}
-            // eslint-disable-next-line react/no-array-index-key
-            key={index.toString()}
+            key={keyExtractor(item)}
             onMouseEnter={itemMouseEnterHandler(index, hoveredIndex)}
             onMouseLeave={itemMouseLeaveHandler(index, hoveredIndex)}
             onClick={itemClickHandler(index)}

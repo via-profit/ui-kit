@@ -266,7 +266,7 @@ class Color {
   private hslToRgb(value: string): ParsedColor {
     const hsl = value.match(/(\d+(\.\d+)?)/g);
     if (!hsl || hsl.length < 3) {
-      throw new Error('is not a valid hsl color');
+      throw new Error(`[@via-profit/ui-kit] «${hsl}» Is not a valid hsl color`);
     }
 
     const h = Number(hsl[0]) / 360;

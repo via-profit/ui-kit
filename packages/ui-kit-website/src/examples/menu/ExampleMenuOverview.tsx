@@ -1,6 +1,6 @@
 import React from 'react';
 import Button from '@via-profit/ui-kit/src/Button';
-import Menu, { MenuRef } from '@via-profit/ui-kit/src/Menu';
+import Menu from '@via-profit/ui-kit/src/Menu';
 
 type Item = {
   readonly id: number;
@@ -15,27 +15,26 @@ const items: Item[] = [...new Array(30).keys()].map(i => ({
 const ExampleMenuOverview: React.FC = () => {
   const [anchorElement, setAnchorElement] = React.useState<HTMLButtonElement | null>(null);
   const [value, setValue] = React.useState<Item | null>(null);
-  const menuRef = React.useRef<MenuRef | null>(null);
 
   return (
     <>
-      <Button variant="standard" onClick={event => setAnchorElement(event.currentTarget)}>
+      <Button
+        variant="standard"
+        onClick={event => setAnchorElement(!anchorElement ? event.currentTarget : null)}
+      >
         {!value && <span>please select</span>}
         {value && <span>{value.name}</span>}
       </Button>
       <Menu
-        ref={menuRef}
         anchorElement={anchorElement}
         isOpen={Boolean(anchorElement)}
         value={value}
         items={items}
+        keyExtractor={item => item.id}
         itemToString={item => item.name}
         getOptionSelected={({ item, value }) => item.id === value.id}
         onRequestClose={() => setAnchorElement(null)}
-        onSelectItem={item => {
-          setValue(item);
-          setAnchorElement(null);
-        }}
+        onSelectItem={item => setValue(item)}
       />
     </>
   );

@@ -18,15 +18,28 @@ const Menu = React.forwardRef(
     props: MenuProps<T, Multiple>,
     ref: React.Ref<MenuRef>,
   ) => {
-    const { ...restProps } = props;
     const [domLoaded, setDomLoaded] = React.useState(false);
+
+    if (props.anchorPos !== 'static' && typeof props.anchorElement === 'undefined') {
+      throw new Error(
+        `[@via-profit/ui-kit] You set «anchorPos» property as «static». In this case you should use «anchorElement» property`,
+      );
+    }
+
+    if (props.anchorPos === 'static' && Boolean(props.disablePortal) === false) {
+      throw new Error(
+        `[@via-profit/ui-kit] You set «anchorPos» property as «static» with the portal. Please, pass the property «disablePortal» as true`,
+      );
+    }
 
     /**
      * Client render detection
      */
     React.useEffect(() => {
-      setDomLoaded(true);
-    }, []);
+      if (!props.disablePortal) {
+        setDomLoaded(true);
+      }
+    }, [props.disablePortal]);
 
     const portalEl = React.useMemo(() => {
       if (typeof window === 'undefined') {
@@ -46,10 +59,18 @@ const Menu = React.forwardRef(
       return newNode;
     }, []);
 
+    if (props.disablePortal) {
+      return (
+        <MenuContextProvider>
+          <MenuContainer {...props} ref={ref} />
+        </MenuContextProvider>
+      );
+    }
+
     return domLoaded && portalEl
       ? ReactDOM.createPortal(
           <MenuContextProvider>
-            <MenuContainer {...restProps} ref={ref} />
+            <MenuContainer {...props} ref={ref} />
           </MenuContextProvider>,
           portalEl,
           PORTAL_ID,
