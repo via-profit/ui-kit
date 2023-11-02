@@ -1,7 +1,7 @@
 import React from 'react';
-import styled from '@emotion/styled';
 import Autocomplete, { AutocompleteRef } from '@via-profit/ui-kit/src/Autocomplete';
-import TextField from '@via-profit/ui-kit/src/TextField';
+import MenuItem from '@via-profit/ui-kit/src/Menu/MenuItem';
+import Button from '@via-profit/ui-kit/src/Button';
 
 import countries from './countries.json';
 
@@ -11,11 +11,15 @@ type Item = {
 };
 
 const ExampleAutocompleteOverview: React.FC = () => {
-  const [value, setValue] = React.useState<Item | null>(null);
+  const [value, setValue] = React.useState<Item | null>(
+    countries.find(c => c.code === 'RU') || null,
+  );
   const [isOpen, setIsOpen] = React.useState(false);
 
   return (
     <>
+      <Button onClick={() => setValue(countries.find(c => c.code === 'RU') || null)}>set RU</Button>
+      <Button onClick={() => setValue(countries.find(c => c.code === 'US') || null)}>set US</Button>
       <Autocomplete
         value={value}
         items={countries}
@@ -26,7 +30,14 @@ const ExampleAutocompleteOverview: React.FC = () => {
         onRequestClose={() => setIsOpen(false)}
         onRequestOpen={() => setIsOpen(true)}
         onSelectItem={item => setValue(item)}
-      />
+        selecteditemToString={item => item.name}
+      >
+        {({ item }, itemProps) => (
+          <MenuItem {...itemProps} key={item.code}>
+            {item.name}
+          </MenuItem>
+        )}
+      </Autocomplete>
     </>
   );
 };

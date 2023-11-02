@@ -15,7 +15,7 @@ const items: Item[] = [...new Array(30).keys()].map(i => ({
 
 const ExampleMenuOverview: React.FC = () => {
   const [anchorElement, setAnchorElement] = React.useState<HTMLButtonElement | null>(null);
-  const [value, setValue] = React.useState<Item | null>(null);
+  const [value, setValue] = React.useState<Item | null>(items[2]);
 
   return (
     <>

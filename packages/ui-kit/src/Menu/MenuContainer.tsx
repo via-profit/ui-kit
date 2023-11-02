@@ -2,7 +2,7 @@ import React from 'react';
 
 import useContext, { actionSetmenuState } from './context';
 import List, { MenuListProps } from './MenuList';
-import type { MenuItemProps, MenuItemCommonProps } from './MenuItem';
+import type { MenuItemCommonProps } from './MenuItem';
 
 export type AnchorElement<E extends HTMLElement = HTMLElement> = E;
 

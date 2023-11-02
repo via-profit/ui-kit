@@ -2,25 +2,29 @@ import React from 'react';
 
 import Menu, {
   MenuRef,
-  MenuProps,
   Value,
   AnchorElement,
+  Children,
+  OnSelectItem,
+  OnRequestClose,
 } from '@via-profit/ui-kit/src/Menu';
 import TextField from '@via-profit/ui-kit/src/TextField';
 import Button from '@via-profit/ui-kit/src/Button';
 
 import IconClear from './IconClear';
+import reducer from './reducer';
+
 
 export type AutocompleteProps<T, Multiple extends boolean | undefined = undefined> = {
-  readonly value: MenuProps<T, Multiple>['value'];
-  readonly items: MenuProps<T, Multiple>['items'];
-  readonly multiple?: MenuProps<T, Multiple>['multiple'];
+  readonly value: Value<T, Multiple> | null;
+  readonly items: T[];
+  readonly multiple?: Multiple;
   readonly isOpen?: boolean;
-  readonly keyExtractor: MenuProps<T, Multiple>['keyExtractor'];
+  readonly children: Children<T>;
   readonly filterItems: FilterItems<T>;
-  readonly itemToString?: MenuProps<T, Multiple>['itemToString'];
-  readonly onSelectItem?: MenuProps<T, Multiple>['onSelectItem'];
-  readonly onRequestClose?: MenuProps<T, Multiple>['onRequestClose'];
+  readonly onSelectItem?: OnSelectItem<T>;
+  readonly selecteditemToString: ItemToString<T, Multiple>;
+  readonly onRequestClose?: OnRequestClose;
   readonly onRequestOpen?: (
     event:
       | React.KeyboardEvent<HTMLInputElement>
@@ -29,6 +33,9 @@ export type AutocompleteProps<T, Multiple extends boolean | undefined = undefine
   ) => void;
 };
 
+export type ItemToString<T, Multiple extends boolean | undefined = undefined> = (
+  item: Value<T, Multiple>,
+) => string;
 export type AutocompleteContainerRef = HTMLDivElement;
 
 export type FilterItems<T> = (
@@ -64,10 +71,6 @@ export type FilterItems<T> = (
 //   ) => readonly T[];
 // };
 
-export type ItemToString<T, Multiple> = Multiple extends undefined | false
-  ? (item: T) => string
-  : undefined;
-
 export type AutocompleteRef = {
   foo: () => void;
   // readonly clear: () => void;
@@ -87,8 +90,9 @@ const Autocomplete = React.forwardRef(
       multiple,
       isOpen = false,
       filterItems,
-      keyExtractor,
+      children,
       onSelectItem,
+      selecteditemToString,
       onRequestOpen = () => undefined,
       onRequestClose = () => undefined,
     } = props;
@@ -100,6 +104,14 @@ const Autocomplete = React.forwardRef(
     const [currentValue, setCurrentValue] = React.useState(value);
     const [anchorElement, setAnchorElement] = React.useState<AnchorElement | null>(null);
     const [filteredItems, setFilteredItems] = React.useState(items);
+
+    const [] = React.useReducer(reducer, {
+      currentValue: value,
+      currentOpen: isOpen,
+      filteredItems: items,
+      anchorElement: null
+    });
+    
 
     /**
      * API
@@ -215,6 +227,7 @@ const Autocomplete = React.forwardRef(
     React.useEffect(() => {
       if (value === null) {
         setCurrentValue(null);
+        setInputValue('')
 
         return;
       }
@@ -222,24 +235,30 @@ const Autocomplete = React.forwardRef(
       if (multiple) {
         if (Array.isArray(value)) {
           setCurrentValue(value);
+          setInputValue(selecteditemToString(value));
         }
         if (!Array.isArray(value)) {
           setCurrentValue([value] as Value<T, Multiple>);
+          setInputValue(selecteditemToString(value));
         }
       }
 
       if (!multiple) {
         if (Array.isArray(value)) {
           setCurrentValue(value[0]);
+          setInputValue(selecteditemToString(value));
         }
         if (!Array.isArray(value)) {
           setCurrentValue(value);
+          setInputValue(selecteditemToString(value));
         }
       }
-    }, [value, multiple]);
+    }, [value, multiple, selecteditemToString]);
 
     React.useEffect(() => {
       setCurrentOpen(isOpen);
+      menuRef.current?.scrollToFirstSelected
+      ()
     }, [isOpen]);
 
     // const renderInputOnChange: React.ChangeEventHandler<HTMLInputElement> = React.useCallback(
@@ -274,11 +293,9 @@ const Autocomplete = React.forwardRef(
       setInputValue('');
       setFilteredItems(items);
 
-     
-
       setTimeout(() => {
         inputRef.current?.focus();
-      }, 15)
+      }, 15);
     }, [items]);
 
     // const inputElement = React.useMemo(() => {
@@ -351,7 +368,7 @@ const Autocomplete = React.forwardRef(
                 ? items
                 : filterItems(items, { query, inputValue });
 
-            setFilteredItems(newItems);
+            setFilteredItems(newItems as T[]);
           }}
         />
         <Menu
@@ -363,16 +380,14 @@ const Autocomplete = React.forwardRef(
           isOpen={currentOpen && filteredItems.length > 0}
           autofocus={false}
           anchorElement={anchorElement}
-          keyExtractor={keyExtractor}
-          itemToString={itemToString}
           closeOutsideClick
           onSelectItem={item => {
             if (typeof onSelectItem === 'function') {
-              onSelectItem(item);
+              onSelectItem(item as T);
             }
 
             if (!multiple) {
-              setInputValue(itemToString(item as T));
+              setInputValue(selecteditemToString(item));
             }
           }}
           closeOnSelect={multiple ? false : true}
@@ -381,7 +396,9 @@ const Autocomplete = React.forwardRef(
               onRequestClose(evt);
             }
           }}
-        />
+        >
+          {children}
+        </Menu>
       </div>
     );
   },
