@@ -30,7 +30,6 @@ const ExampleMenuAPI: React.FC = () => {
       <Button variant="standard" onClick={() => menuRef.current?.selectHightlightedItem()}>
         Select highlighted item in list
       </Button>
-
       <div>{!value ? <>Value is null</> : <>Selected value is «{value.name}»</>}</div>
 
       <Menu

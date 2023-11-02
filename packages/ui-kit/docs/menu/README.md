@@ -53,6 +53,10 @@ export default ExampleMenuOverview;
 
 <ExampleMenuOverview>
 
+## using anchor position
+
+<ExampleMenuAnchorPos />
+
 ## Using API
 
 <ExampleMenuAPI />

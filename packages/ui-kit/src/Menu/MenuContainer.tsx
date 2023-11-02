@@ -73,14 +73,7 @@ export interface MenuContainerProps<T, Multiple extends boolean | undefined = un
    * \
    * Default: `left-bottom`
    */
-  readonly anchorPos?:
-    | 'static'
-    | 'left-top'
-    | 'left-bottom'
-    | 'right-top'
-    | 'right-bottom'
-    | 'left-bottom-right'
-    | 'left-top-right';
+  readonly anchorPos?: MenuAnchorPos;
 
   /**
    * Should menu will be closed when item selected\
@@ -199,6 +192,15 @@ export type OnRequestClose = (
     | KeyboardEvent
     | MouseEvent,
 ) => void;
+
+export type MenuAnchorPos =
+  | 'static'
+  | 'left-top'
+  | 'left-bottom'
+  | 'right-top'
+  | 'right-bottom'
+  | 'left-bottom-right'
+  | 'left-top-right';
 
 const itemToStringDefault = <T,>(item: T) =>
   typeof item === 'string' ? item : JSON.stringify(item);
