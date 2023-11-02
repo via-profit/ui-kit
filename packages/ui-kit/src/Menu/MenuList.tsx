@@ -21,7 +21,7 @@ const StyledMenuList = styled.div<{ $isOpen: boolean }>`
   border-radius: ${({ theme }) => theme.shape.radiusFactor * 2}em;
   box-shadow: 0 4px 24px ${({ theme }) => theme.color.surface.darken(50).alpha(0.6).toString()};
   &:focus {
-    outline: none;
+    outline-color: ${({ theme }) => theme.color.accentPrimary.toString()};
   }
   & ::-webkit-scrollbar {
     width: 0.6rem;
@@ -51,11 +51,11 @@ const StyledMenuList = styled.div<{ $isOpen: boolean }>`
   & ::-webkit-scrollbar-thumb:vertical:hover {
     background: ${({ theme }) => theme.color.accentPrimary.toString()};
   }
-  padding: 0.4em;
-  box-sizing: content-box;
+  box-sizing: border-box;
   max-height: 300px;
   max-width: 300px;
   overflow-y: auto;
+  padding: 0.4em;
 `;
 
 const MenuList: React.ForwardRefRenderFunction<HTMLDivElement, MenuListProps> = (props, ref) => {

@@ -4,6 +4,8 @@ import useContext, { actionSetmenuState } from './context';
 import List, { MenuListProps } from './MenuList';
 import Item, { MenuItemProps } from './MenuItem';
 
+export type AnchorElement<E extends HTMLElement = HTMLElement> = E;
+
 export interface MenuContainerProps<T, Multiple extends boolean | undefined = undefined> {
   /**
    * List of items
@@ -26,7 +28,7 @@ export interface MenuContainerProps<T, Multiple extends boolean | undefined = un
    * \
    * **Default**: `false`
    */
-  readonly anchorElement?: HTMLElement | null;
+  readonly anchorElement?: AnchorElement | null;
 
   /**
    * A function that extract key for each item\
@@ -202,7 +204,7 @@ export type MenuAnchorPos =
   | 'left-bottom-right'
   | 'left-top-right';
 
-const itemToStringDefault = <T,>(item: T) =>
+export const itemToStringDefault = <T,>(item: T) =>
   typeof item === 'string' ? item : JSON.stringify(item);
 
 const MenuContainer = React.forwardRef(
@@ -276,9 +278,7 @@ const MenuContainer = React.forwardRef(
     const selectedIndexesRef = React.useRef(selectedIndexes);
     const timeoutRef = React.useRef<NodeJS.Timeout | null>(null);
 
-    const [style, setStyle] = React.useState<React.CSSProperties>({
-      /* empty object */
-    });
+    const [style, setStyle] = React.useState<React.CSSProperties>({});
     const calculateElementPos = React.useCallback(
       (elem: HTMLElement): React.CSSProperties => {
         const rect = elem.getBoundingClientRect();
@@ -287,6 +287,7 @@ const MenuContainer = React.forwardRef(
           case 'left-bottom':
             return {
               position: 'absolute',
+              visibility: 'visible',
               left: rect.left + window.scrollX,
               top: rect.top + window.scrollY + rect.height,
             };
@@ -294,12 +295,14 @@ const MenuContainer = React.forwardRef(
           case 'left-top':
             return {
               position: 'absolute',
+              visibility: 'visible',
               left: rect.left + window.scrollX,
             };
 
           case 'right-top':
             return {
               position: 'absolute',
+              visibility: 'visible',
               left: rect.left + window.scrollX + rect.width,
               top: rect.top + window.scrollY,
             };
@@ -307,6 +310,7 @@ const MenuContainer = React.forwardRef(
           case 'right-bottom':
             return {
               position: 'absolute',
+              visibility: 'visible',
               left: rect.left + window.scrollX + rect.width,
               top: rect.top + window.scrollY + rect.height,
             };
@@ -314,6 +318,7 @@ const MenuContainer = React.forwardRef(
           case 'left-bottom-right':
             return {
               position: 'absolute',
+              visibility: 'visible',
               left: rect.left + window.scrollX,
               top: rect.top + window.scrollY + rect.height,
               width: rect.width,
@@ -322,6 +327,7 @@ const MenuContainer = React.forwardRef(
           case 'left-top-right':
             return {
               position: 'absolute',
+              visibility: 'visible',
               left: rect.left + window.scrollX,
               top: rect.top + window.scrollY,
               width: rect.width,
@@ -330,7 +336,7 @@ const MenuContainer = React.forwardRef(
           case 'static':
           default:
             return {
-              /* empty object */
+              visibility: 'visible',
             };
         }
       },
