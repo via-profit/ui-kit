@@ -2,9 +2,17 @@ import React from 'react';
 
 import useContext, { actionSetmenuState } from './context';
 import List, { MenuListProps } from './MenuList';
-import Item, { MenuItemProps } from './MenuItem';
+import type { MenuItemProps, MenuItemCommonProps } from './MenuItem';
 
 export type AnchorElement<E extends HTMLElement = HTMLElement> = E;
+
+export type Children<T> = (
+  data: {
+    item: T;
+    index: number;
+  },
+  itemProps: MenuItemCommonProps,
+) => React.ReactNode;
 
 export interface MenuContainerProps<T, Multiple extends boolean | undefined = undefined> {
   /**
@@ -17,6 +25,8 @@ export interface MenuContainerProps<T, Multiple extends boolean | undefined = un
    * If `Menu` component has `multiple` property then value must be an array of items
    */
   readonly value: Value<T, Multiple> | null;
+
+  readonly children: Children<T>;
 
   /**
    * Menu open state
@@ -46,7 +56,7 @@ export interface MenuContainerProps<T, Multiple extends boolean | undefined = un
    * />
    * ```
    */
-  readonly keyExtractor: KeyExtractor<T>;
+  // readonly keyExtractor: KeyExtractor<T>;
 
   /**
    * Close list if click outside of the list and anchor element\
@@ -110,7 +120,7 @@ export interface MenuContainerProps<T, Multiple extends boolean | undefined = un
    * \
    * **Default**: `JSON.stringify(...)`
    */
-  readonly itemToString?: ItemToString<T>;
+  // readonly itemToString?: ItemToString<T>;
 
   /**
    * The function that will be called at the moment when you want to close the menu
@@ -124,12 +134,6 @@ export interface MenuContainerOverrides<T> {
    */
   readonly List?: React.ForwardRefExoticComponent<
     MenuListProps & React.RefAttributes<HTMLDivElement>
-  >;
-  /**
-   * Element list item
-   */
-  readonly Item?: React.ForwardRefExoticComponent<
-    MenuItemProps & { item: T } & React.RefAttributes<HTMLDivElement>
   >;
 }
 
@@ -181,8 +185,8 @@ export type MenuContainerRef = {
 
 export type Value<T, Multiple> = Multiple extends undefined | undefined ? T : readonly T[];
 export type GetOptionSelected<T> = (payload: { readonly item: T; readonly value: T }) => boolean;
-export type ItemToString<T> = (item: T) => string;
-export type KeyExtractor<T> = (item: T) => React.Key;
+// export type ItemToString<T> = (item: T) => string;
+// export type KeyExtractor<T> = (item: T) => React.Key;
 export type OnSelectItem<T, Multiple extends boolean | undefined = undefined> = (
   value: Value<T, Multiple>,
 ) => void;
@@ -204,8 +208,8 @@ export type MenuAnchorPos =
   | 'left-bottom-right'
   | 'left-top-right';
 
-export const itemToStringDefault = <T,>(item: T) =>
-  typeof item === 'string' ? item : JSON.stringify(item);
+// export const itemToStringDefault = <T,>(item: T) =>
+//   typeof item === 'string' ? item : JSON.stringify(item);
 
 const MenuContainer = React.forwardRef(
   <T, Multiple extends boolean | undefined = undefined>(
@@ -217,15 +221,16 @@ const MenuContainer = React.forwardRef(
       value,
       anchorElement,
       overrides,
+      children,
       closeOutsideClick = true,
       isOpen = props.anchorPos === 'static' ? true : false,
       multiple = false,
       autofocus = true,
       closeOnSelect = !multiple,
       anchorPos = 'left-bottom',
-      itemToString = itemToStringDefault,
+      // itemToString = itemToStringDefault,
       onRequestClose = () => undefined,
-      keyExtractor,
+      // keyExtractor,
       onSelectItem,
       getOptionSelected,
     } = props;
@@ -233,7 +238,6 @@ const MenuContainer = React.forwardRef(
     const overridesMap = React.useMemo(
       () => ({
         List,
-        Item,
         ...overrides,
       }),
       [overrides],
@@ -716,20 +720,22 @@ const MenuContainer = React.forwardRef(
         onKeyDown={listKeydownEvent}
         style={style}
       >
-        {items.map((item, index) => (
-          <overridesMap.Item
-            item={item}
-            key={keyExtractor(item)}
-            onMouseEnter={itemMouseEnterHandler(index, hoveredIndex)}
-            onMouseLeave={itemMouseLeaveHandler(index, hoveredIndex)}
-            onClick={itemClickHandler(index)}
-            index={index}
-            selected={selectedIndexes.includes(index)}
-            hovered={hoveredIndex === index || markedIndex === index}
-          >
-            {itemToString(item)}
-          </overridesMap.Item>
-        ))}
+        {items.map((item, index) =>
+          children(
+            {
+              item,
+              index,
+            },
+            {
+              key: index,
+              onMouseEnter: itemMouseEnterHandler(index, hoveredIndex),
+              onMouseLeave: itemMouseLeaveHandler(index, hoveredIndex),
+              onClick: itemClickHandler(index),
+              selected: selectedIndexes.includes(index),
+              hovered: hoveredIndex === index || markedIndex === index,
+            },
+          ),
+        )}
       </overridesMap.List>
     );
   },

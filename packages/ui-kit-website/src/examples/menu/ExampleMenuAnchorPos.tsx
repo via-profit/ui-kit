@@ -1,6 +1,7 @@
 import React from 'react';
 import Button from '@via-profit/ui-kit/src/Button';
 import Menu, { MenuAnchorPos } from '@via-profit/ui-kit/src/Menu';
+import MenuItem from '@via-profit/ui-kit/src/Menu/MenuItem';
 import styled from '@emotion/styled';
 
 type Item = {
@@ -99,11 +100,15 @@ const ExampleMenuAnchorPos: React.FC = () => {
           disablePortal
           value={value}
           items={items}
-          keyExtractor={item => item.id}
-          itemToString={item => item.name}
           getOptionSelected={({ item, value }) => item.id === value.id}
           onSelectItem={item => setValue(item)}
-        />
+        >
+          {({ item }, itemProps) => (
+            <MenuItem {...itemProps} key={item.id}>
+              {item.name}
+            </MenuItem>
+          )}
+        </Menu>
       </StyledAnchorContainer>
     </>
   );

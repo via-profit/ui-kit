@@ -5,7 +5,6 @@ import Menu, {
   MenuProps,
   Value,
   AnchorElement,
-  itemToStringDefault,
 } from '@via-profit/ui-kit/src/Menu';
 import TextField from '@via-profit/ui-kit/src/TextField';
 import Button from '@via-profit/ui-kit/src/Button';
@@ -92,7 +91,6 @@ const Autocomplete = React.forwardRef(
       onSelectItem,
       onRequestOpen = () => undefined,
       onRequestClose = () => undefined,
-      itemToString = itemToStringDefault,
     } = props;
     const [inputValue, setInputValue] = React.useState<string>('');
     const menuRef = React.useRef<MenuRef | null>(null);

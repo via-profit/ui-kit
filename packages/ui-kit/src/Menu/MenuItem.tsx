@@ -1,10 +1,12 @@
 import React from 'react';
 import styled from '@emotion/styled';
 
-export type MenuItemProps = React.HTMLAttributes<HTMLDivElement> & {
-  readonly index: number;
+export type MenuItemProps = React.HTMLAttributes<HTMLDivElement> & MenuItemCommonProps;
+
+export type MenuItemCommonProps = {
   readonly selected: boolean;
   readonly hovered: boolean;
+  readonly key: React.Key;
   readonly onMouseEnter: React.MouseEventHandler<HTMLDivElement>;
   readonly onMouseLeave: React.MouseEventHandler<HTMLDivElement>;
   readonly onClick: React.MouseEventHandler<HTMLDivElement>;
@@ -39,16 +41,8 @@ const InnerContainer = styled.div<{ selected?: boolean; hovered?: boolean }>`
 `;
 
 const MenuItem = React.forwardRef((props: MenuItemProps, ref: React.Ref<HTMLDivElement>) => {
-  const {
-    children,
-    index,
-    selected,
-    hovered,
-    onMouseEnter,
-    onMouseLeave,
-    onClick,
-    ...nativeProps
-  } = props;
+  const { children, selected, hovered, onMouseEnter, onMouseLeave, onClick, ...nativeProps } =
+    props;
 
   return (
     <InnerContainer

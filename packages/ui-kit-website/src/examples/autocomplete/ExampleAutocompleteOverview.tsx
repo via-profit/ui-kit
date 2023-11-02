@@ -20,8 +20,6 @@ const ExampleAutocompleteOverview: React.FC = () => {
         value={value}
         items={countries}
         isOpen={isOpen}
-        keyExtractor={item => item.code}
-        itemToString={item => item.name}
         filterItems={(items, { query }) =>
           items.filter(item => item.name.toLocaleLowerCase().indexOf(query) !== -1)
         }

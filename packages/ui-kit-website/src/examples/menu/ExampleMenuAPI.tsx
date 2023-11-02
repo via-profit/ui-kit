@@ -1,6 +1,7 @@
 import React from 'react';
 import Button from '@via-profit/ui-kit/src/Button';
 import Menu, { MenuRef } from '@via-profit/ui-kit/src/Menu';
+import MenuItem from '@via-profit/ui-kit/src/Menu/MenuItem';
 import IconRight from '~/components/Icons/ChevronRightOutline';
 import IconLeft from '~/components/Icons/ChevronLeftOutline';
 
@@ -39,11 +40,15 @@ const ExampleMenuAPI: React.FC = () => {
         disablePortal
         value={value}
         items={items}
-        keyExtractor={item => item.id}
-        itemToString={item => item.name}
         getOptionSelected={({ item, value }) => item.id === value.id}
         onSelectItem={item => setValue(item)}
-      />
+      >
+        {({ item }, itemProps) => (
+          <MenuItem {...itemProps} key={item.id}>
+            {item.name}
+          </MenuItem>
+        )}
+      </Menu>
     </>
   );
 };
