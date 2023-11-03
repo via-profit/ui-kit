@@ -13,6 +13,7 @@ export type AutocompleteProps<T, Multiple extends boolean | undefined = undefine
   readonly items: T[];
   readonly multiple?: Multiple;
   readonly isOpen?: boolean;
+  readonly isLoading?: boolean;
   readonly children: Children<T>;
   readonly filterItems?: FilterItems<T>;
   readonly onSelectItem?: OnSelectItem<T>;
@@ -62,6 +63,7 @@ const Autocomplete = React.forwardRef(
       value,
       multiple,
       isOpen = false,
+      isLoading = false,
       filterItems,
       children,
       onSelectItem,
@@ -74,7 +76,8 @@ const Autocomplete = React.forwardRef(
     const inputRef = React.useRef<HTMLInputElement | null>(null);
     const isFocusedRef = React.useRef(false);
     const { state, dispatch } = useContext();
-    const { currentOpen, filteredItems, inputValue, currentValue, anchorElement } = state;
+    const { currentOpen, filteredItems, inputValue, currentValue, anchorElement, currentLoading } =
+      state;
 
     const clear = React.useCallback(() => {
       if (onSelectItem) {
@@ -211,12 +214,10 @@ const Autocomplete = React.forwardRef(
     }, [filteredItems]);
 
     React.useEffect(() => {
-      dispatch(actionSetPartial({ currentOpen: isOpen }));
-    }, [isOpen, dispatch]);
-
-    React.useEffect(() => {
-      dispatch(actionSetPartial({ filteredItems: items }));
-    }, [items, dispatch]);
+      dispatch(
+        actionSetPartial({ currentOpen: isOpen, currentLoading: isLoading, filteredItems: items }),
+      );
+    }, [isOpen, isLoading, items, dispatch]);
 
     return (
       <div>
@@ -224,9 +225,13 @@ const Autocomplete = React.forwardRef(
           () => (
             <TextField
               endIcon={
-                <Button iconOnly onClick={() => clear()}>
-                  <IconClear />
-                </Button>
+                currentLoading ? (
+                  <>Loading...</>
+                ) : (
+                  <Button iconOnly onClick={() => clear()}>
+                    <IconClear />
+                  </Button>
+                )
               }
               onKeyDown={inputKeydownEvent}
               ref={el => {
@@ -278,6 +283,7 @@ const Autocomplete = React.forwardRef(
             inputKeydownEvent,
             inputValue,
             items,
+            currentLoading,
             onInputChange,
             onRequestOpen,
           ],

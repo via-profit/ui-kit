@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from '@emotion/styled';
+import { css } from '@emotion/react';
 
 export type MenuItemProps = React.HTMLAttributes<HTMLDivElement> & MenuItemCommonProps;
 
@@ -38,6 +39,13 @@ const InnerContainer = styled.div<{ selected?: boolean; hovered?: boolean }>`
 
     return 'inherit';
   }};
+  ${({ selected }) =>
+    selected &&
+    css`
+      & mark {
+        color: inherit;
+      }
+    `}
 `;
 
 const MenuItem = React.forwardRef((props: MenuItemProps, ref: React.Ref<HTMLDivElement>) => {

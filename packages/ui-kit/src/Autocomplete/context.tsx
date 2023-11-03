@@ -4,6 +4,7 @@ import type { AnchorElement } from '@via-profit/ui-kit/src/Menu';
 
 type State = {
   readonly currentOpen: boolean;
+  readonly currentLoading: boolean;
   readonly anchorElement: AnchorElement | null;
   readonly filteredItems: readonly unknown[];
   readonly inputValue: string;
@@ -29,6 +30,7 @@ export const actionSetPartial = (payload: ActionSetPartial['payload']): ActionSe
 
 export const defaultState: State = {
   currentOpen: false,
+  currentLoading: false,
   anchorElement: null,
   filteredItems: [],
   currentValue: null,
