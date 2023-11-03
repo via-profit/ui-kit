@@ -4,16 +4,15 @@ import Menu, {
   MenuRef,
   Value,
   AnchorElement,
-  Children,
   OnSelectItem,
   OnRequestClose,
 } from '@via-profit/ui-kit/src/Menu';
+import type { MenuItemCommonProps } from '@via-profit/ui-kit/src/Menu/MenuItem';
 import TextField from '@via-profit/ui-kit/src/TextField';
 import Button from '@via-profit/ui-kit/src/Button';
 
 import IconClear from './IconClear';
 import reducer from './reducer';
-
 
 export type AutocompleteProps<T, Multiple extends boolean | undefined = undefined> = {
   readonly value: Value<T, Multiple> | null;
@@ -32,6 +31,15 @@ export type AutocompleteProps<T, Multiple extends boolean | undefined = undefine
       | React.FocusEvent<HTMLInputElement, Element>,
   ) => void;
 };
+
+export type Children<T> = (
+  data: {
+    item: T;
+    index: number;
+    inputValue: string;
+  },
+  itemProps: MenuItemCommonProps,
+) => React.ReactNode;
 
 export type ItemToString<T, Multiple extends boolean | undefined = undefined> = (
   item: Value<T, Multiple>,
@@ -105,13 +113,12 @@ const Autocomplete = React.forwardRef(
     const [anchorElement, setAnchorElement] = React.useState<AnchorElement | null>(null);
     const [filteredItems, setFilteredItems] = React.useState(items);
 
-    const [] = React.useReducer(reducer, {
-      currentValue: value,
-      currentOpen: isOpen,
-      filteredItems: items,
-      anchorElement: null
-    });
-    
+    // const [] = React.useReducer(reducer, {
+    //   currentValue: value,
+    //   currentOpen: isOpen,
+    //   filteredItems: items,
+    //   anchorElement: null
+    // });
 
     /**
      * API
@@ -227,7 +234,7 @@ const Autocomplete = React.forwardRef(
     React.useEffect(() => {
       if (value === null) {
         setCurrentValue(null);
-        setInputValue('')
+        setInputValue('');
 
         return;
       }
@@ -257,8 +264,7 @@ const Autocomplete = React.forwardRef(
 
     React.useEffect(() => {
       setCurrentOpen(isOpen);
-      menuRef.current?.scrollToFirstSelected
-      ()
+      menuRef.current?.scrollToFirstSelected();
     }, [isOpen]);
 
     // const renderInputOnChange: React.ChangeEventHandler<HTMLInputElement> = React.useCallback(
@@ -397,7 +403,7 @@ const Autocomplete = React.forwardRef(
             }
           }}
         >
-          {children}
+          {({ index, item }, itemProps) => children({ index, item, inputValue }, itemProps)}
         </Menu>
       </div>
     );

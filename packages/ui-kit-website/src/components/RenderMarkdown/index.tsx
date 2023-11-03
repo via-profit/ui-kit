@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import styled from '@emotion/styled';
 import Markdown, { MarkdownToJSX } from 'markdown-to-jsx';
 import H1 from '@via-profit/ui-kit/src/Typography/H1';
@@ -111,7 +111,6 @@ const titleToAnchor = (headername: string | React.ReactNode): string => {
 const MarkdownRender: React.FC<Props> = props => {
   const { children, overrides } = props;
   const { pathname } = useLocation();
-  const navigate = useNavigate();
 
   return (
     <Markdown
@@ -206,9 +205,9 @@ const MarkdownRender: React.FC<Props> = props => {
                     if (element) {
                       const yOffset = -80; // app header height
                       const y = element.getBoundingClientRect().top + window.scrollY + yOffset;
-
+                    
                       window.scrollTo({ top: y, behavior: 'smooth' });
-                      navigate(`${pathname}#${anchorName}`, { preventScrollReset: true });
+                      window.history.pushState(true, "", `${pathname}#${anchorName}`);
                     }
                   }}
                   title={typeof title === 'string' ? title : undefined}

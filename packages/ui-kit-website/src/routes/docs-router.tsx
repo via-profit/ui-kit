@@ -23,6 +23,7 @@ const AutocompleteOverview = loadable(
 const CountryFlagsOverview = loadable(
   () => import('~/pages/Docs/CountryFlags/CountryFlagsOverview'),
 );
+const HighlightedOverview = loadable(() => import('~/pages/Docs/Highlighted/HighlightedOverview'));
 
 const docsRouter: RouteObject = {
   path: 'docs',
@@ -161,6 +162,15 @@ const docsRouter: RouteObject = {
       element: (
         <React.Suspense fallback={<>Loading...</>}>
           <CalendarOverview />
+        </React.Suspense>
+      ),
+    },
+    {
+      path: 'highlighted',
+      caseSensitive: true,
+      element: (
+        <React.Suspense fallback={<>Loading...</>}>
+          <HighlightedOverview />
         </React.Suspense>
       ),
     },
