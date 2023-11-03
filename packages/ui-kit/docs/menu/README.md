@@ -51,11 +51,11 @@ const Example: React.FC = () => {
 export default ExampleMenuOverview;
 ```
 
-<ExampleMenuOverview>
+<!-- <ExampleMenuOverview> -->
 
 ## using anchor position
 
-<ExampleMenuAnchorPos />
+<!-- <ExampleMenuAnchorPos /> -->
 
 ## Using API
 

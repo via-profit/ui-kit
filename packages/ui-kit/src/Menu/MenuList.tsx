@@ -3,20 +3,14 @@ import styled from '@emotion/styled';
 
 export interface MenuListProps extends React.HTMLAttributes<HTMLDivElement> {
   readonly isOpen: boolean;
-  readonly style: React.CSSProperties;
 }
 
 const StyledMenuList = styled.div<{ $isOpen: boolean }>`
   flex: 1;
   display: flex;
   flex-direction: column;
-  display: flex;
-  flex-direction: column;
-  transition:
-    visibility 120ms ease-out,
-    opacity 120ms ease-out;
+  transition: opacity 120ms ease-out;
   opacity: ${props => (props.$isOpen ? 1 : 0)};
-  visibility: ${props => (props.$isOpen ? 'visible' : 'hidden')};
   background-color: ${({ theme }) => theme.color.surface.toString()};
   border-radius: ${({ theme }) => theme.shape.radiusFactor * 2}em;
   box-shadow: 0 4px 24px ${({ theme }) => theme.color.surface.darken(50).alpha(0.6).toString()};
@@ -52,22 +46,15 @@ const StyledMenuList = styled.div<{ $isOpen: boolean }>`
     background: ${({ theme }) => theme.color.accentPrimary.toString()};
   }
   box-sizing: border-box;
-  max-height: 300px;
-  max-width: 300px;
   overflow-y: auto;
   padding: 0.4em;
 `;
 
 const MenuList: React.ForwardRefRenderFunction<HTMLDivElement, MenuListProps> = (props, ref) => {
   const { isOpen, children, ...nativeProps } = props;
-  const [isOpenState, setOpenState] = React.useState(false);
-
-  React.useEffect(() => {
-    setOpenState(isOpen);
-  }, [isOpen]);
 
   return (
-    <StyledMenuList {...nativeProps} ref={ref} $isOpen={isOpenState}>
+    <StyledMenuList {...nativeProps} ref={ref} $isOpen={isOpen}>
       {children}
     </StyledMenuList>
   );

@@ -2,6 +2,7 @@ import React from 'react';
 
 import useContext, { actionSetmenuState } from './context';
 import List, { MenuListProps } from './MenuList';
+import Popper, { MenuListPopperProps } from './MenuListPopper';
 import type { MenuItemCommonProps } from './MenuItem';
 
 export type AnchorElement<E extends HTMLElement = HTMLElement> = E;
@@ -135,6 +136,13 @@ export interface MenuContainerOverrides<T> {
   readonly List?: React.ForwardRefExoticComponent<
     MenuListProps & React.RefAttributes<HTMLDivElement>
   >;
+
+  /**
+   * List popper container
+   */
+  readonly Popper?: React.ForwardRefExoticComponent<
+    MenuListPopperProps & React.RefAttributes<HTMLDivElement>
+  >;
 }
 
 export type MenuContainerRef = {
@@ -208,9 +216,6 @@ export type MenuAnchorPos =
   | 'left-bottom-right'
   | 'left-top-right';
 
-// export const itemToStringDefault = <T,>(item: T) =>
-//   typeof item === 'string' ? item : JSON.stringify(item);
-
 const MenuContainer = React.forwardRef(
   <T, Multiple extends boolean | undefined = undefined>(
     props: MenuContainerProps<T, Multiple>,
@@ -238,6 +243,7 @@ const MenuContainer = React.forwardRef(
     const overridesMap = React.useMemo(
       () => ({
         List,
+        Popper,
         ...overrides,
       }),
       [overrides],
@@ -282,16 +288,23 @@ const MenuContainer = React.forwardRef(
     const selectedIndexesRef = React.useRef(selectedIndexes);
     const timeoutRef = React.useRef<NodeJS.Timeout | null>(null);
 
-    const [style, setStyle] = React.useState<React.CSSProperties>({});
+    const [style, setStyle] = React.useState<React.CSSProperties | null>(null);
     const calculateElementPos = React.useCallback(
-      (elem: HTMLElement): React.CSSProperties => {
+      (elem: HTMLElement | null): React.CSSProperties => {
+        // for static
+        if (!elem || anchorPos === 'static') {
+          return {
+            position: 'static',
+          };
+        }
+
+        // for absolute
         const rect = elem.getBoundingClientRect();
 
         switch (anchorPos) {
           case 'left-bottom':
             return {
               position: 'absolute',
-              visibility: 'visible',
               left: rect.left + window.scrollX,
               top: rect.top + window.scrollY + rect.height,
             };
@@ -299,14 +312,13 @@ const MenuContainer = React.forwardRef(
           case 'left-top':
             return {
               position: 'absolute',
-              visibility: 'visible',
               left: rect.left + window.scrollX,
+              top: rect.top + window.scrollY,
             };
 
           case 'right-top':
             return {
               position: 'absolute',
-              visibility: 'visible',
               left: rect.left + window.scrollX + rect.width,
               top: rect.top + window.scrollY,
             };
@@ -314,7 +326,6 @@ const MenuContainer = React.forwardRef(
           case 'right-bottom':
             return {
               position: 'absolute',
-              visibility: 'visible',
               left: rect.left + window.scrollX + rect.width,
               top: rect.top + window.scrollY + rect.height,
             };
@@ -322,7 +333,6 @@ const MenuContainer = React.forwardRef(
           case 'left-bottom-right':
             return {
               position: 'absolute',
-              visibility: 'visible',
               left: rect.left + window.scrollX,
               top: rect.top + window.scrollY + rect.height,
               width: rect.width,
@@ -331,17 +341,13 @@ const MenuContainer = React.forwardRef(
           case 'left-top-right':
             return {
               position: 'absolute',
-              visibility: 'visible',
               left: rect.left + window.scrollX,
               top: rect.top + window.scrollY,
               width: rect.width,
             };
 
-          case 'static':
           default:
-            return {
-              visibility: 'visible',
-            };
+            return {};
         }
       },
       [anchorPos],
@@ -358,9 +364,17 @@ const MenuContainer = React.forwardRef(
     }, []);
 
     React.useEffect(() => {
-      if (isOpen && anchorElement) {
-        setStyle(calculateElementPos(anchorElement));
-      }
+      const recalc = () => {
+        setStyle(calculateElementPos(anchorElement || null));
+      };
+
+      window.addEventListener('resize', recalc);
+
+      recalc();
+
+      return () => {
+        window.removeEventListener('resize', recalc);
+      };
     }, [anchorElement, isOpen, calculateElementPos]);
 
     /**
@@ -708,35 +722,36 @@ const MenuContainer = React.forwardRef(
       [dispatch],
     );
 
-    if (!isOpen) {
+    if (!isOpen || !style) {
       return null;
     }
 
     return (
-      <overridesMap.List
-        isOpen={Boolean(isOpen)}
-        ref={MenuListRef}
-        tabIndex={-1}
-        onKeyDown={listKeydownEvent}
-        style={style}
-      >
-        {items.map((item, index) =>
-          children(
-            {
-              item,
-              index,
-            },
-            {
-              key: index,
-              onMouseEnter: itemMouseEnterHandler(index, hoveredIndex),
-              onMouseLeave: itemMouseLeaveHandler(index, hoveredIndex),
-              onClick: itemClickHandler(index),
-              selected: selectedIndexes.includes(index),
-              hovered: hoveredIndex === index || markedIndex === index,
-            },
-          ),
-        )}
-      </overridesMap.List>
+      <overridesMap.Popper isOpen={Boolean(isOpen)} style={style}>
+        <overridesMap.List
+          isOpen={Boolean(isOpen)}
+          ref={MenuListRef}
+          tabIndex={-1}
+          onKeyDown={listKeydownEvent}
+        >
+          {items.map((item, index) =>
+            children(
+              {
+                item,
+                index,
+              },
+              {
+                key: index,
+                onMouseEnter: itemMouseEnterHandler(index, hoveredIndex),
+                onMouseLeave: itemMouseLeaveHandler(index, hoveredIndex),
+                onClick: itemClickHandler(index),
+                selected: selectedIndexes.includes(index),
+                hovered: hoveredIndex === index || markedIndex === index,
+              },
+            ),
+          )}
+        </overridesMap.List>
+      </overridesMap.Popper>
     );
   },
 );
