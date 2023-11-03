@@ -1,3 +1,5 @@
 # Автокомплит
 
 <ExampleAutocompleteOverview>
+
+<ExampleAutocompleteFetch>

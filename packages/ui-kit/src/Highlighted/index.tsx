@@ -87,7 +87,6 @@ const Highlighted: React.ForwardRefRenderFunction<HTMLSpanElement, HighlightedPr
       {patterns.length > 0 &&
         text
           .split(regex)
-          .filter(part => part)
           .map((part, i) =>
             regex.test(part) ? (
               <overridesMap.Mark key={i}>{part}</overridesMap.Mark>

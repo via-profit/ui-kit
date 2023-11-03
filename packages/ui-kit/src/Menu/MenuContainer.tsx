@@ -15,7 +15,7 @@ export type Children<T> = (
   itemProps: MenuItemCommonProps,
 ) => React.ReactNode;
 
-export interface MenuContainerProps<T, Multiple extends boolean | undefined = undefined> {
+export interface MenuProps<T, Multiple extends boolean | undefined = undefined> {
   /**
    * List of items
    */
@@ -105,7 +105,7 @@ export interface MenuContainerProps<T, Multiple extends boolean | undefined = un
   /**
    * Overridable components map
    */
-  readonly overrides?: MenuContainerOverrides;
+  readonly overrides?: MenuOverrides;
   /**
    * A function that determines which of the elements is currently selected
    */
@@ -129,7 +129,7 @@ export interface MenuContainerProps<T, Multiple extends boolean | undefined = un
   readonly onRequestClose?: OnRequestClose;
 }
 
-export interface MenuContainerOverrides {
+export interface MenuOverrides {
   /**
    * Element wrapper
    */
@@ -145,7 +145,7 @@ export interface MenuContainerOverrides {
   >;
 }
 
-export type MenuContainerRef = {
+export type MenuRef = {
   /**
    * Scroll list to specified element index
    */
@@ -218,8 +218,8 @@ export type MenuAnchorPos =
 
 const MenuContainer = React.forwardRef(
   <T, Multiple extends boolean | undefined = undefined>(
-    props: MenuContainerProps<T, Multiple>,
-    ref: React.Ref<MenuContainerRef>,
+    props: MenuProps<T, Multiple>,
+    ref: React.Ref<MenuRef>,
   ) => {
     const {
       items,
@@ -749,8 +749,8 @@ const MenuContainer = React.forwardRef(
   },
 );
 
-MenuContainer.displayName = 'Menu';
+MenuContainer.displayName = 'MenuContainer';
 
 export default MenuContainer as <T, Multiple extends boolean | undefined = undefined>(
-  props: MenuContainerProps<T, Multiple> & { ref?: React.Ref<MenuContainerRef> },
+  props: MenuProps<T, Multiple> & { ref?: React.Ref<MenuRef> },
 ) => JSX.Element;

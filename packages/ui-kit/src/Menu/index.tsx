@@ -2,16 +2,9 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 import { MenuContextProvider, PORTAL_ID } from './context';
-import MenuContainer, { MenuContainerProps, MenuContainerRef } from './MenuContainer';
+import MenuContainer, { MenuProps, MenuRef } from './MenuContainer';
 
 export * from './MenuContainer';
-
-export type MenuProps<T, Multiple extends boolean | undefined = undefined> = MenuContainerProps<
-  T,
-  Multiple
->;
-
-export type MenuRef = MenuContainerRef;
 
 const Menu = React.forwardRef(
   <T, Multiple extends boolean | undefined = undefined>(
