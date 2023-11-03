@@ -163,6 +163,7 @@ const Calendar: React.FC<CalendarProps> = props => {
 
   return (
     <CalendarPaper>
+      {calendar.date.toISOString()}
       <CalendarTopBar>
         <CalendarMonthControl displayIcon="prev" onClick={handlePrevClick} />
         <span>
@@ -191,8 +192,9 @@ const Calendar: React.FC<CalendarProps> = props => {
               }
             }}
             items={years}
-            renderItem={(item, itemProps) => <MenuItem {...itemProps}>{item}</MenuItem>}
-          />
+          >
+            {({ item }, itemProps) => <MenuItem {...itemProps}>{item}</MenuItem>}
+          </Menu>
 
           <Menu
             value={{ value: calendar.date.getMonth(), label: 'month' }}
@@ -223,8 +225,9 @@ const Calendar: React.FC<CalendarProps> = props => {
                 ),
               };
             })}
-            renderItem={(item, itemProps) => <MenuItem {...itemProps}>{item.label}</MenuItem>}
-          />
+          >
+            {({ item }, itemProps) => <MenuItem {...itemProps}>{item.label}</MenuItem>}
+          </Menu>
         </span>
         <CalendarMonthControl displayIcon="next" onClick={handleNextClick} />
       </CalendarTopBar>

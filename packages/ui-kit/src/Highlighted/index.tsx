@@ -63,11 +63,13 @@ const Highlighted: React.ForwardRefRenderFunction<HTMLSpanElement, HighlightedPr
   ref,
 ) => {
   const { text, highlight, overrides, ...nativeProps } = props;
-  const regex = React.useMemo(() => {
-    const patterns = typeof highlight === 'string' ? [highlight] : highlight;
 
-    return new RegExp(`(${patterns.join('|')})`, 'gi');
-  }, [highlight]);
+  const patterns = React.useMemo(
+    () => (typeof highlight === 'string' ? [highlight] : highlight).filter(h => h.trim() !== ''),
+    [highlight],
+  );
+
+  const regex = React.useMemo(() => new RegExp(`(${patterns.join('|')})`, 'gi'), [patterns]);
 
   const overridesMap = React.useMemo(
     () => ({
@@ -81,16 +83,18 @@ const Highlighted: React.ForwardRefRenderFunction<HTMLSpanElement, HighlightedPr
 
   return (
     <overridesMap.Container {...nativeProps} ref={ref}>
-      {text
-        .split(regex)
-        .filter(part => part)
-        .map((part, i) =>
-          regex.test(part) ? (
-            <overridesMap.Mark key={i}>{part}</overridesMap.Mark>
-          ) : (
-            <overridesMap.Text key={i}>{part}</overridesMap.Text>
-          ),
-        )}
+      {patterns.length === 0 && <overridesMap.Text>{text}</overridesMap.Text>}
+      {patterns.length > 0 &&
+        text
+          .split(regex)
+          .filter(part => part)
+          .map((part, i) =>
+            regex.test(part) ? (
+              <overridesMap.Mark key={i}>{part}</overridesMap.Mark>
+            ) : (
+              <overridesMap.Text key={i}>{part}</overridesMap.Text>
+            ),
+          )}
     </overridesMap.Container>
   );
 };
