@@ -105,7 +105,7 @@ export interface MenuContainerProps<T, Multiple extends boolean | undefined = un
   /**
    * Overridable components map
    */
-  readonly overrides?: MenuContainerOverrides<T>;
+  readonly overrides?: MenuContainerOverrides;
   /**
    * A function that determines which of the elements is currently selected
    */
@@ -129,7 +129,7 @@ export interface MenuContainerProps<T, Multiple extends boolean | undefined = un
   readonly onRequestClose?: OnRequestClose;
 }
 
-export interface MenuContainerOverrides<T> {
+export interface MenuContainerOverrides {
   /**
    * Element wrapper
    */
@@ -290,14 +290,7 @@ const MenuContainer = React.forwardRef(
 
     const [style, setStyle] = React.useState<React.CSSProperties | null>(null);
     const calculateElementPos = React.useCallback(
-      (elem: HTMLElement | null): React.CSSProperties => {
-        // for static
-        if (!elem || anchorPos === 'static') {
-          return {
-            position: 'static',
-          };
-        }
-
+      (elem: HTMLElement): React.CSSProperties => {
         // for absolute
         const rect = elem.getBoundingClientRect();
 
@@ -346,8 +339,11 @@ const MenuContainer = React.forwardRef(
               width: rect.width,
             };
 
+          case 'static':
           default:
-            return {};
+            return {
+              position: 'static',
+            };
         }
       },
       [anchorPos],
@@ -365,7 +361,9 @@ const MenuContainer = React.forwardRef(
 
     React.useEffect(() => {
       const recalc = () => {
-        setStyle(calculateElementPos(anchorElement || null));
+        if (anchorElement) {
+          setStyle(calculateElementPos(anchorElement || null));
+        }
       };
 
       window.addEventListener('resize', recalc);
@@ -722,18 +720,13 @@ const MenuContainer = React.forwardRef(
       [dispatch],
     );
 
-    if (!isOpen || !style) {
+    if (!isOpen || (anchorPos !== 'static' && !style)) {
       return null;
     }
 
     return (
-      <overridesMap.Popper isOpen={Boolean(isOpen)} style={style}>
-        <overridesMap.List
-          isOpen={Boolean(isOpen)}
-          ref={MenuListRef}
-          tabIndex={-1}
-          onKeyDown={listKeydownEvent}
-        >
+      <overridesMap.Popper isOpen={Boolean(isOpen)} style={style || undefined}>
+        <overridesMap.List isOpen={Boolean(isOpen)} ref={MenuListRef} onKeyDown={listKeydownEvent}>
           {items.map((item, index) =>
             children(
               {

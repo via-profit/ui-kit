@@ -3,10 +3,14 @@ import styled from '@emotion/styled';
 
 export interface MenuListPopperProps extends React.HTMLAttributes<HTMLDivElement> {
   readonly isOpen: boolean;
-  readonly style: React.CSSProperties;
+  readonly style?: React.CSSProperties;
 }
 
-const StyledMenuListPopper = styled.div<{ $isOpen: boolean }>`
+type StyleProps = {
+  readonly $isOpen: boolean;
+};
+
+const StyledMenuListPopper = styled.div<StyleProps>`
   visibility: ${props => (props.$isOpen ? 'visible' : 'hidden')};
   max-height: 300px;
   max-width: 300px;

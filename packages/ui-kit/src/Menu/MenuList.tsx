@@ -54,7 +54,7 @@ const MenuList: React.ForwardRefRenderFunction<HTMLDivElement, MenuListProps> = 
   const { isOpen, children, ...nativeProps } = props;
 
   return (
-    <StyledMenuList {...nativeProps} ref={ref} $isOpen={isOpen}>
+    <StyledMenuList tabIndex={-1} $isOpen={isOpen} {...nativeProps} ref={ref}>
       {children}
     </StyledMenuList>
   );
