@@ -49,11 +49,14 @@ const Example: React.FC = () => {
       }
     >
       <Typography>
-        Nostrud sunt qui esse aute cupidatat ullamco.
-        <br /> Pariatur et commodo aute commodo cupidatat amet aliqua non cillum commodo ad eu nulla
-        aliqua.
-        <br />
-        Consequat duis ipsum duis sit ea.
+        Russia, or the Russian Federation, is a country spanning Eastern Europe and Northern Asia.
+        It is the largest country in the world by area, extends across eleven time zones,
+        and shares land boundaries with fourteen countries.
+        It is the world's ninth-most populous country and Europe's most populous country.
+        The country's capital and largest city is Moscow.
+        Saint Petersburg is Russia's second-largest city and "cultural capital".
+        Other major urban areas in the country include Novosibirsk, Yekaterinburg,
+        Nizhny Novgorod, Chelyabinsk, Krasnoyarsk, and Kazan.
       </Typography>
     </Surface>
   );

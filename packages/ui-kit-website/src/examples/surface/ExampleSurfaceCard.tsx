@@ -1,6 +1,7 @@
 import React from 'react';
 import Surface from '@via-profit/ui-kit/src/Surface';
 import Typography from '@via-profit/ui-kit/src/Typography';
+import Strong from '@via-profit/ui-kit/src/Typography/Strong';
 import Flag from '@via-profit/ui-kit/src/CountryFlags/RU';
 
 const ExampleSurfaceCard: React.FC = () => (
@@ -14,11 +15,18 @@ const ExampleSurfaceCard: React.FC = () => (
     }
   >
     <Typography>
-      Nostrud sunt qui esse aute cupidatat ullamco.
-      <br /> Pariatur et commodo aute commodo cupidatat amet aliqua non cillum commodo ad eu nulla
-      aliqua.
-      <br />
-      Consequat duis ipsum duis sit ea.
+      The Russian Federation, is a country spanning Eastern Europe and Northern Asia.
+    </Typography>
+    <Typography>
+      It is the <Strong>largest country in the world</Strong> by area, extends across eleven time
+      zones, and shares land boundaries with fourteen countries. It is the world&apos;s ninth-most
+      populous country and Europe&apos;s most populous country.
+    </Typography>
+    <Typography>
+      The country&apos;s capital and largest city is Moscow. Saint Petersburg is Russia&apos;s
+      second-largest city and «cultural capital». Other major urban areas in the country include
+      Novosibirsk, <Strong>Yekaterinburg</Strong>, Nizhny Novgorod, Chelyabinsk, Krasnoyarsk, and
+      Kazan.
     </Typography>
   </Surface>
 );
