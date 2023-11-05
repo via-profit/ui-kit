@@ -1,7 +1,7 @@
 import React from 'react';
 import Autocomplete from '@via-profit/ui-kit/src/Autocomplete';
 import MenuItem from '@via-profit/ui-kit/src/Menu/MenuItem';
-// import Button from '@via-profit/ui-kit/src/Button';
+import Button from '@via-profit/ui-kit/src/Button';
 import Highlighted from '@via-profit/ui-kit/src/Highlighted';
 
 import countries from './countries.json';
@@ -57,8 +57,8 @@ const ExampleAutocompleteFetch: React.FC = () => {
 
   return (
     <>
-      {/* <Button onClick={() => setValue(countries.find(c => c.code === 'RU') || null)}>set RU</Button>
-      <Button onClick={() => setValue(countries.find(c => c.code === 'US') || null)}>set US</Button> */}
+      <Button onClick={() => setValue(countries.find(c => c.code === 'RU') || null)}>set RU</Button>
+      <Button onClick={() => setValue(countries.find(c => c.code === 'US') || null)}>set US</Button>
 
       <Autocomplete
         value={value}
@@ -68,7 +68,7 @@ const ExampleAutocompleteFetch: React.FC = () => {
         onRequestClose={() => setIsOpen(false)}
         onRequestOpen={() => setIsOpen(true)}
         onSelectItem={item => setValue(item)}
-        selecteditemToString={item => item.name}
+        selectedItemToString={item => item.name}
         onInputChange={onInputChange}
       >
         {({ item, inputValue }, itemProps) => (

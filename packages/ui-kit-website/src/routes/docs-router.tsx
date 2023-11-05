@@ -1,6 +1,9 @@
+/* eslint-disable import/max-dependencies */
 import React from 'react';
 import { RouteObject } from 'react-router-dom';
 import loadable from '@loadable/component';
+
+import LoadingIndicator from '@via-profit/ui-kit/src/LoadingIndicator';
 
 const TemplateDocs = loadable(() => import('~/templates/TemplateDocs/index'));
 const NotFound = loadable(() => import('~/pages/NotFound/index'));
@@ -24,6 +27,9 @@ const CountryFlagsOverview = loadable(
   () => import('~/pages/Docs/CountryFlags/CountryFlagsOverview'),
 );
 const HighlightedOverview = loadable(() => import('~/pages/Docs/Highlighted/HighlightedOverview'));
+const LoadingIndicatorOverview = loadable(
+  () => import('~/pages/Docs/LoadingIndicator/LoadingIndicatorOverview'),
+);
 
 const docsRouter: RouteObject = {
   path: 'docs',
@@ -34,7 +40,7 @@ const docsRouter: RouteObject = {
       path: '',
       caseSensitive: true,
       element: (
-        <React.Suspense fallback={<>Loading...</>}>
+        <React.Suspense fallback={<LoadingIndicator />}>
           <Introduction />
         </React.Suspense>
       ),
@@ -43,7 +49,7 @@ const docsRouter: RouteObject = {
       path: 'button',
       caseSensitive: true,
       element: (
-        <React.Suspense fallback={<>Loading...</>}>
+        <React.Suspense fallback={<LoadingIndicator />}>
           <ButtonOverview />
         </React.Suspense>
       ),
@@ -52,7 +58,7 @@ const docsRouter: RouteObject = {
       path: 'table',
       caseSensitive: true,
       element: (
-        <React.Suspense fallback={<>Loading...</>}>
+        <React.Suspense fallback={<LoadingIndicator />}>
           <Tables />
         </React.Suspense>
       ),
@@ -61,7 +67,7 @@ const docsRouter: RouteObject = {
       path: 'text-field',
       caseSensitive: true,
       element: (
-        <React.Suspense fallback={<>Loading...</>}>
+        <React.Suspense fallback={<LoadingIndicator />}>
           <TextFields />
         </React.Suspense>
       ),
@@ -70,7 +76,7 @@ const docsRouter: RouteObject = {
       path: 'theming',
       caseSensitive: true,
       element: (
-        <React.Suspense fallback={<>Loading...</>}>
+        <React.Suspense fallback={<LoadingIndicator />}>
           <ThemingOverview />
         </React.Suspense>
       ),
@@ -79,7 +85,7 @@ const docsRouter: RouteObject = {
       path: 'theming/color',
       caseSensitive: true,
       element: (
-        <React.Suspense fallback={<>Loading...</>}>
+        <React.Suspense fallback={<LoadingIndicator />}>
           <ThemingColor />
         </React.Suspense>
       ),
@@ -88,7 +94,7 @@ const docsRouter: RouteObject = {
       path: 'surface',
       caseSensitive: true,
       element: (
-        <React.Suspense fallback={<>Loading...</>}>
+        <React.Suspense fallback={<LoadingIndicator />}>
           <SurfaceOverview />
         </React.Suspense>
       ),
@@ -97,7 +103,7 @@ const docsRouter: RouteObject = {
       path: 'masked-field',
       caseSensitive: true,
       element: (
-        <React.Suspense fallback={<>Loading...</>}>
+        <React.Suspense fallback={<LoadingIndicator />}>
           <MaskedFieldOverview />
         </React.Suspense>
       ),
@@ -106,7 +112,7 @@ const docsRouter: RouteObject = {
       path: 'typography',
       caseSensitive: true,
       element: (
-        <React.Suspense fallback={<>Loading...</>}>
+        <React.Suspense fallback={<LoadingIndicator />}>
           <TypographyOverview />
         </React.Suspense>
       ),
@@ -115,7 +121,7 @@ const docsRouter: RouteObject = {
       path: 'phone-field',
       caseSensitive: true,
       element: (
-        <React.Suspense fallback={<>Loading...</>}>
+        <React.Suspense fallback={<LoadingIndicator />}>
           <PhoneFieldOverview />
         </React.Suspense>
       ),
@@ -124,7 +130,7 @@ const docsRouter: RouteObject = {
       path: 'menu',
       caseSensitive: true,
       element: (
-        <React.Suspense fallback={<>Loading...</>}>
+        <React.Suspense fallback={<LoadingIndicator />}>
           <MenuOverview />
         </React.Suspense>
       ),
@@ -133,7 +139,7 @@ const docsRouter: RouteObject = {
       path: 'autocomplete',
       caseSensitive: true,
       element: (
-        <React.Suspense fallback={<>Loading...</>}>
+        <React.Suspense fallback={<LoadingIndicator />}>
           <AutocompleteOverview />
         </React.Suspense>
       ),
@@ -142,7 +148,7 @@ const docsRouter: RouteObject = {
       path: 'country-flags',
       caseSensitive: true,
       element: (
-        <React.Suspense fallback={<>Loading...</>}>
+        <React.Suspense fallback={<LoadingIndicator />}>
           <CountryFlagsOverview />
         </React.Suspense>
       ),
@@ -151,7 +157,7 @@ const docsRouter: RouteObject = {
       path: 'modal',
       caseSensitive: true,
       element: (
-        <React.Suspense fallback={<>Loading...</>}>
+        <React.Suspense fallback={<LoadingIndicator />}>
           <ModalOverview />
         </React.Suspense>
       ),
@@ -160,7 +166,7 @@ const docsRouter: RouteObject = {
       path: 'calendar',
       caseSensitive: true,
       element: (
-        <React.Suspense fallback={<>Loading...</>}>
+        <React.Suspense fallback={<LoadingIndicator />}>
           <CalendarOverview />
         </React.Suspense>
       ),
@@ -169,8 +175,17 @@ const docsRouter: RouteObject = {
       path: 'highlighted',
       caseSensitive: true,
       element: (
-        <React.Suspense fallback={<>Loading...</>}>
+        <React.Suspense fallback={<LoadingIndicator />}>
           <HighlightedOverview />
+        </React.Suspense>
+      ),
+    },
+    {
+      path: 'loading-indicator',
+      caseSensitive: true,
+      element: (
+        <React.Suspense fallback={<LoadingIndicator />}>
+          <LoadingIndicatorOverview />
         </React.Suspense>
       ),
     },

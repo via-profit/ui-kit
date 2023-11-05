@@ -11,3 +11,5 @@
  - [Таблица](./table/README.md)
  - [Типографика](./typography/README.md)
  - [Модальные окна](./modal/README.md)
+ - [Календарь](./calendar/README.md)
+ - [Подсветка подстроки](./highlighted/README.md)

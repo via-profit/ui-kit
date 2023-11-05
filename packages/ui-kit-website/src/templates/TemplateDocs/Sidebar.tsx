@@ -109,6 +109,12 @@ const Sidebar: React.ForwardRefRenderFunction<
         >
           Highlighted
         </Item>
+        <Item
+          $isActive={matchPath('/docs/loading-indicator/*', pathname) !== null}
+          to="/docs/loading-indicator"
+        >
+          Loading indicator
+        </Item>
       </ItemsList>
     </Container>
   );

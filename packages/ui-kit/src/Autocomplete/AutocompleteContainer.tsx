@@ -1,23 +1,40 @@
 import React from 'react';
 
 import Menu, { MenuRef, Value, OnSelectItem, OnRequestClose } from '@via-profit/ui-kit/src/Menu';
-import type { MenuItemCommonProps } from '@via-profit/ui-kit/src/Menu/MenuItem';
 import TextField from '@via-profit/ui-kit/src/TextField';
 import Button from '@via-profit/ui-kit/src/Button';
+import Spinner from '@via-profit/ui-kit/src/LoadingIndicator/Spinner';
+import type { MenuItemCommonProps } from '@via-profit/ui-kit/src/Menu/MenuItem';
 
 import IconClear from './IconClear';
+
 import useContext, { actionSetPartial } from './context';
 
 export type AutocompleteProps<T, Multiple extends boolean | undefined = undefined> = {
   readonly value: Value<T, Multiple> | null;
+
+  /**
+   * Array of items. If will be array of objects or array of strings
+   */
   readonly items: T[];
   readonly multiple?: Multiple;
+
+  /**
+   * Menu open state\
+   * If `true` then menu is open, otherwise - closed
+   */
   readonly isOpen?: boolean;
+
+  /**
+   * Loading indicator visiblility\
+   * If `true` then visible, otherwise - hidden
+   */
   readonly isLoading?: boolean;
+  readonly clearIfNotSelected?: boolean;
   readonly children: Children<T>;
   readonly filterItems?: FilterItems<T>;
   readonly onSelectItem?: OnSelectItem<T>;
-  readonly selecteditemToString: ItemToString<T, Multiple>;
+  readonly selectedItemToString: ItemToString<T, Multiple>;
   readonly onRequestClose?: OnRequestClose;
   readonly onInputChange?: React.ChangeEventHandler<HTMLInputElement>;
   readonly onRequestOpen?: (
@@ -64,10 +81,11 @@ const Autocomplete = React.forwardRef(
       multiple,
       isOpen = false,
       isLoading = false,
+      clearIfNotSelected = true,
       filterItems,
       children,
       onSelectItem,
-      selecteditemToString,
+      selectedItemToString,
       onInputChange,
       onRequestOpen = () => undefined,
       onRequestClose = () => undefined,
@@ -175,31 +193,36 @@ const Autocomplete = React.forwardRef(
       [currentOpen, onRequestClose, onRequestOpen],
     );
 
+    /**
+     * Only affected value change action
+     */
     React.useEffect(() => {
-      if (value === null && currentValue !== null) {
-        dispatch(actionSetPartial({ currentValue: null }));
-
+      if (value === currentValue) {
         return;
       }
 
       if (multiple) {
         if (Array.isArray(value)) {
-          dispatch(actionSetPartial({ currentValue: value }));
-        }
-        if (!Array.isArray(value)) {
-          dispatch(actionSetPartial({ currentValue: value }));
+          dispatch(
+            actionSetPartial({
+              currentValue: value,
+              inputValue: value === null ? inputValue : selectedItemToString(value),
+            }),
+          );
         }
       }
 
       if (!multiple) {
-        if (Array.isArray(value)) {
-          dispatch(actionSetPartial({ currentValue: value }));
-        }
         if (!Array.isArray(value)) {
-          dispatch(actionSetPartial({ currentValue: value }));
+          dispatch(
+            actionSetPartial({
+              currentValue: value,
+              inputValue: value === null ? inputValue : selectedItemToString(value),
+            }),
+          );
         }
       }
-    }, [value, multiple, currentValue, dispatch, selecteditemToString]);
+    }, [value, multiple, currentValue, inputValue, dispatch, selectedItemToString]);
 
     React.useEffect(() => {
       if (currentOpen && menuRef.current) {
@@ -225,13 +248,9 @@ const Autocomplete = React.forwardRef(
           () => (
             <TextField
               endIcon={
-                currentLoading ? (
-                  <>Loading...</>
-                ) : (
-                  <Button iconOnly onClick={() => clear()}>
-                    <IconClear />
-                  </Button>
-                )
+                <Button iconOnly onClick={() => (currentLoading ? 'undefined' : clear())}>
+                  {currentLoading ? <Spinner /> : <IconClear />}
+                </Button>
               }
               onKeyDown={inputKeydownEvent}
               ref={el => {
@@ -243,6 +262,14 @@ const Autocomplete = React.forwardRef(
               value={inputValue}
               onBlur={() => {
                 isFocusedRef.current = false;
+
+                if (clearIfNotSelected) {
+                  dispatch(
+                    actionSetPartial({
+                      inputValue: value !== null ? selectedItemToString(value) : '',
+                    }),
+                  );
+                }
               }}
               onFocus={event => {
                 isFocusedRef.current = true;
@@ -276,16 +303,19 @@ const Autocomplete = React.forwardRef(
             />
           ),
           [
-            anchorElement,
-            clear,
-            dispatch,
-            filterItems,
+            currentLoading,
             inputKeydownEvent,
             inputValue,
-            items,
-            currentLoading,
-            onInputChange,
+            clear,
+            anchorElement,
+            dispatch,
+            clearIfNotSelected,
+            value,
+            selectedItemToString,
             onRequestOpen,
+            onInputChange,
+            filterItems,
+            items,
           ],
         )}
         {React.useMemo(
@@ -308,7 +338,7 @@ const Autocomplete = React.forwardRef(
                 if (!multiple) {
                   dispatch(
                     actionSetPartial({
-                      inputValue: selecteditemToString(item as Value<T, Multiple>),
+                      inputValue: selectedItemToString(item as Value<T, Multiple>),
                     }),
                   );
                 }
@@ -336,7 +366,7 @@ const Autocomplete = React.forwardRef(
             dispatch,
             onRequestClose,
             onSelectItem,
-            selecteditemToString,
+            selectedItemToString,
           ],
         )}
       </div>

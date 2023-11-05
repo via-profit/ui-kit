@@ -85,7 +85,7 @@ const relativeToAbsolute = (base: string, rel: string): string => {
 
   rel.split('/').forEach(item => {
     if (item === '..') {
-      resultArray.pop();
+      // resultArray.pop();
 
       return;
     }
@@ -205,9 +205,9 @@ const MarkdownRender: React.FC<Props> = props => {
                     if (element) {
                       const yOffset = -80; // app header height
                       const y = element.getBoundingClientRect().top + window.scrollY + yOffset;
-                    
+
                       window.scrollTo({ top: y, behavior: 'smooth' });
-                      window.history.pushState(true, "", `${pathname}#${anchorName}`);
+                      window.history.pushState(true, '', `${pathname}#${anchorName}`);
                     }
                   }}
                   title={typeof title === 'string' ? title : undefined}

@@ -2,6 +2,7 @@ import React from 'react';
 import Autocomplete from '@via-profit/ui-kit/src/Autocomplete';
 import MenuItem from '@via-profit/ui-kit/src/Menu/MenuItem';
 import Button from '@via-profit/ui-kit/src/Button';
+import Paragraph from '@via-profit/ui-kit/src/Typography/Paragraph';
 import Highlighted from '@via-profit/ui-kit/src/Highlighted';
 
 import countries from './countries.json';
@@ -21,6 +22,7 @@ const ExampleAutocompleteOverview: React.FC = () => {
     <>
       <Button onClick={() => setValue(countries.find(c => c.code === 'RU') || null)}>set RU</Button>
       <Button onClick={() => setValue(countries.find(c => c.code === 'US') || null)}>set US</Button>
+      <Paragraph>{value ? value.name : 'no selected'}</Paragraph>
       <Autocomplete
         value={value}
         items={countries}
@@ -31,7 +33,7 @@ const ExampleAutocompleteOverview: React.FC = () => {
         onRequestClose={() => setIsOpen(false)}
         onRequestOpen={() => setIsOpen(true)}
         onSelectItem={item => setValue(item)}
-        selecteditemToString={item => item.name}
+        selectedItemToString={item => item.name}
       >
         {({ item, inputValue }, itemProps) => (
           <MenuItem {...itemProps} key={item.code}>
