@@ -11,6 +11,9 @@ type Item = {
   readonly name: string;
 };
 
+const randomInteger = (min: number, max: number) =>
+  Math.floor(Math.random() * (max - min + 1)) + min;
+
 const ExampleAutocompleteFetch: React.FC = () => {
   const [value, setValue] = React.useState<Item | null>(null);
   const [items, setItems] = React.useState<Item[]>([]);
@@ -22,19 +25,22 @@ const ExampleAutocompleteFetch: React.FC = () => {
     (query: string) =>
       new Promise<Item[]>(resolve => {
         setIsLoading(true);
-        setTimeout(() => {
-          setIsLoading(false);
-          if (query.trim() === '') {
-            resolve([]);
+        setTimeout(
+          () => {
+            setIsLoading(false);
+            if (query.trim() === '') {
+              resolve([]);
 
-            return;
-          }
+              return;
+            }
 
-          const list = countries
-            .filter(item => item.name.toLocaleLowerCase().indexOf(query) !== -1)
-            .splice(0, 10);
-          resolve(list);
-        }, 600);
+            const list = countries
+              .filter(item => item.name.toLocaleLowerCase().indexOf(query) !== -1)
+              .splice(0, 10);
+            resolve(list);
+          },
+          randomInteger(600, 2000),
+        );
       }),
     [],
   );

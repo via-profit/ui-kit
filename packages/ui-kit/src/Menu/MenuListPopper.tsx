@@ -12,8 +12,8 @@ type StyleProps = {
 
 const StyledMenuListPopper = styled.div<StyleProps>`
   visibility: ${props => (props.$isOpen ? 'visible' : 'hidden')};
-  max-height: 300px;
-  max-width: 300px;
+  max-height: 18em;
+  max-width: 18em;
   display: flex;
   position: static;
 `;

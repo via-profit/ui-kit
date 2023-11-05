@@ -15,7 +15,7 @@ class Color {
         ...value.rgb(),
       };
     } else {
-      this.#color = this.parseColor(value);
+      this.#color = Color.parseColor(value);
     }
 
     this.#cache = { ...this.#color };
@@ -185,7 +185,7 @@ class Color {
    * Parse the transmitted color and returns its\
    * representation as separate rgba channels
    */
-  private parseColor(value: string): ParsedColor {
+  public static parseColor(value: string): ParsedColor {
     const inputColor = value.trim().toLowerCase();
     const hsl = inputColor.indexOf('hsl') === 0;
     const hex3 = inputColor.replace(/[^#0-9a-f]/g, '').match(/^#([0-9a-f]{3})$/i);
@@ -241,13 +241,13 @@ class Color {
     }
 
     if (hsl) {
-      return this.hslToRgb(inputColor);
+      return Color.hslToRgb(inputColor);
     }
 
-    const webHex = this.getHextByWebColor(inputColor);
+    const webHex = Color.getHextByWebColor(inputColor);
 
     if (webHex) {
-      return this.parseColor(webHex);
+      return Color.parseColor(webHex);
     }
 
     console.error(`Failed to parse color value «${value}»`);
@@ -261,9 +261,9 @@ class Color {
   }
 
   /**
-   * Recodes the transmitted color value in hsl format to rgba
+   * Decodes the transmitted color value in hsl format to rgba
    */
-  private hslToRgb(value: string): ParsedColor {
+  public static hslToRgb(value: string): ParsedColor {
     const hsl = value.match(/(\d+(\.\d+)?)/g);
     if (!hsl || hsl.length < 3) {
       throw new Error(`[@via-profit/ui-kit] «${hsl}» Is not a valid hsl color`);
@@ -320,7 +320,7 @@ class Color {
   /**
    * Returns color code by web color name
    */
-  private getHextByWebColor(value: string) {
+  public static getHextByWebColor(value: string) {
     const webColors = {
       aliceblue: '#F0F8FF',
       antiquewhite: '#FAEBD7',
