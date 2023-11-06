@@ -72,7 +72,7 @@ const BadgeStandard: React.ForwardRefRenderFunction<HTMLSpanElement, BadgeStanda
         return {
           $background,
           $color:
-            $background.contrast(theme.color.textPrimary.rgbString()) > 5
+            $background.contrast(theme.color.textPrimary) > 5
               ? theme.color.textPrimary
               : theme.color.surface,
         };
@@ -88,6 +88,7 @@ const BadgeStandard: React.ForwardRefRenderFunction<HTMLSpanElement, BadgeStanda
 
   return (
     <StyledStandardBadge
+      variant="standard"
       $color={$color}
       $background={$background}
       color={color}

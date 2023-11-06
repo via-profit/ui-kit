@@ -62,7 +62,7 @@ const BadgeOutlined: React.ForwardRefRenderFunction<HTMLSpanElement, BadgeOutlin
   }, [color, theme.color]);
 
   return (
-    <StyledOutlinedBadge $color={$color} color={color} {...restProps} ref={ref}>
+    <StyledOutlinedBadge $color={$color} color={color} variant="outlined" {...restProps} ref={ref}>
       {children}
     </StyledOutlinedBadge>
   );

@@ -61,7 +61,7 @@ export type Children<T> = (
 ) => React.ReactNode;
 
 export type ItemToString<T, Multiple extends boolean | undefined = undefined> = (
-  item: Value<T, Multiple>,
+  item: Multiple extends undefined ? T : readonly T[],
 ) => string;
 
 export type OnChange<T, Multiple extends boolean | undefined = undefined> = (
@@ -219,7 +219,11 @@ const Autocomplete = React.forwardRef(
       dispatch(
         actionSetPartial({
           currentValue: value,
-          inputValue: multiple ? '' : value === null ? inputValue : selectedItemToString(value),
+          inputValue: multiple
+            ? ''
+            : value === null
+            ? inputValue
+            : selectedItemToString(value as Multiple extends undefined ? T : readonly T[]),
         }),
       );
     }, [value, multiple, currentValue, inputValue, dispatch, selectedItemToString]);
@@ -270,7 +274,13 @@ const Autocomplete = React.forwardRef(
                 if (clearIfNotSelected) {
                   dispatch(
                     actionSetPartial({
-                      inputValue: multiple ? '' : value !== null ? selectedItemToString(value) : '',
+                      inputValue: multiple
+                        ? ''
+                        : value !== null
+                        ? selectedItemToString(
+                            value as Multiple extends undefined ? T : readonly T[],
+                          )
+                        : '',
                     }),
                   );
                 }

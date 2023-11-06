@@ -217,7 +217,7 @@ export type GetOptionSelected<T> = (payload: { readonly item: T; readonly value:
 // export type ItemToString<T> = (item: T) => string;
 // export type KeyExtractor<T> = (item: T) => React.Key;
 export type OnSelectItem<T, Multiple extends boolean | undefined = undefined> = (
-  value: Value<T, Multiple>,
+  value: Multiple extends undefined ? T : readonly T[],
 ) => void;
 
 export type OnRequestClose = (
@@ -436,11 +436,11 @@ const MenuContainer = React.forwardRef(
               selItems.add(item as Value<T, Multiple>);
             }
 
-            onSelectItem(Array.from(selItems) as Value<T, Multiple>);
+            onSelectItem(Array.from(selItems) as Multiple extends undefined ? T : readonly T[]);
           } else {
             // For single
 
-            onSelectItem(item as Value<T, Multiple>);
+            onSelectItem(item as Multiple extends undefined ? T : readonly T[]);
           }
 
           if (closeOnSelect) {

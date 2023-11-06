@@ -20,6 +20,14 @@ export interface BadgeBaseProps extends Omit<BadgeNativeProps, 'color'> {
   readonly startIcon?: JSX.Element;
 
   /**
+   * Badge style variant\
+   * Allowed variants: `standard` or `outlined`\
+   * \
+   * **Default**: `standard`
+   */
+  readonly variant?: 'standard' | 'outlined';
+
+  /**
    * You can pass the primary, default, secondary name of the colors or your specified color value
    */
   readonly color?: BadgeContainerProps['color'];
@@ -62,7 +70,7 @@ export interface BadgeBaseOverrides {
 }
 
 const BadgeBase: React.ForwardRefRenderFunction<HTMLSpanElement, BadgeBaseProps> = (props, ref) => {
-  const { children, startIcon, color, onDelete, overrides, ...nativeProps } = props;
+  const { children, startIcon, color, variant, overrides, onDelete, ...nativeProps } = props;
   const overridesMap = React.useMemo(
     () => ({
       TextWrapper,
@@ -77,12 +85,14 @@ const BadgeBase: React.ForwardRefRenderFunction<HTMLSpanElement, BadgeBaseProps>
   return (
     <overridesMap.Container {...nativeProps} color={color} ref={ref}>
       {typeof startIcon !== 'undefined' && startIcon !== null && (
-        <overridesMap.IconWrapper position="start">{startIcon}</overridesMap.IconWrapper>
+        <overridesMap.IconWrapper>{startIcon}</overridesMap.IconWrapper>
       )}
 
       <overridesMap.TextWrapper>{children}</overridesMap.TextWrapper>
 
-      {typeof onDelete === 'function' && <overridesMap.ButtonDelete onClick={onDelete} />}
+      {typeof onDelete === 'function' && (
+        <overridesMap.ButtonDelete variant={variant} onClick={onDelete} color={color} />
+      )}
     </overridesMap.Container>
   );
 };
