@@ -115,6 +115,9 @@ const Sidebar: React.ForwardRefRenderFunction<
         >
           Loading indicator
         </Item>
+        <Item $isActive={matchPath('/docs/badge/*', pathname) !== null} to="/docs/badge">
+          Badge
+        </Item>
       </ItemsList>
     </Container>
   );

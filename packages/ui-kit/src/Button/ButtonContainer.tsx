@@ -29,7 +29,6 @@ type StyledProps = {
 const StyledButton = styled.button<StyledProps>`
   border-radius: ${({ theme }) => theme.shape.radiusFactor * 2}em;
   padding: 0.8em 1em;
-  font-size: 0.8rem;
   cursor: ${({ disabled }) => (disabled ? 'default' : 'pointer')};
   font-size: 1em;
   border-width: 0;

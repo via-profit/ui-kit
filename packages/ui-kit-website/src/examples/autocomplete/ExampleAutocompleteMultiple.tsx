@@ -3,6 +3,7 @@ import Autocomplete from '@via-profit/ui-kit/src/Autocomplete';
 import MenuItem from '@via-profit/ui-kit/src/Menu/MenuItem';
 import Highlighted from '@via-profit/ui-kit/src/Highlighted';
 import Badge from '@via-profit/ui-kit/src/Badge';
+import styled from '@emotion/styled';
 
 import countries from './countries.json';
 
@@ -11,22 +12,34 @@ type Item = {
   readonly name: string;
 };
 
+const BadgeContainer = styled.div`
+  & > span {
+    margin: 0 0.4em 0.4em 0%;
+  }
+
+  & > span:last-of-type {
+    margin-right: 0;
+  }
+`;
+
 const ExampleAutocompleteMultiple: React.FC = () => {
   const [value, setValue] = React.useState<readonly Item[]>([]);
   const [isOpen, setIsOpen] = React.useState(false);
 
   return (
     <>
-      <div>
+      <BadgeContainer>
         {value.map(item => (
           <Badge
-            onClick={() => setValue(values => values.filter(v => v.code !== item.code))}
+            variant="outlined"
+            color="primary"
+            onDelete={() => setValue(values => values.filter(v => v.code !== item.code))}
             key={item.code}
           >
             {item.name}
           </Badge>
         ))}
-      </div>
+      </BadgeContainer>
       <Autocomplete
         multiple
         value={value}
