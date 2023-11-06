@@ -71,7 +71,7 @@ _Пример использования:_
 
 ## Иконки
 
-Бейдж может отображать иконку, переданную в свойстве `startIcon`. Помимо иконки можно передать функцию в качестве свойства `onDelete` и в этом случае бейдж отобразит кнопку удаления. 
+Бейдж может отображать иконку, переданную в свойстве `startIcon`. Помимо иконки можно передать функцию в качестве свойства `onDelete` и в этом случае бейдж отобразит кнопку удаления.
 **Важно:** Передавать следует не React компонент, а JSX выражение:
 
 ```tsx
@@ -84,10 +84,76 @@ const Example: React.FC = () => (
     variant="outlined"
     color="secondary"
     onDelete={event => someDeleteFunction()}
-    >
+  >
     Oleg Dolgoperedryagov
   </Badge>
 );
 ```
 
 <ExampleBadgeIcons />
+
+## Переопределение
+
+Компонент `<Button>` является составным и реализован при помощи следующих компонентов:
+
+- `<Container>` — Компонент нативного элемента бейджа `<span>`
+- `<TextWrapper>` — Обёртка для текста
+- `<IconWrapper>` — Обёртка иконки в случае её отображения
+- `<ButtonDelete>` — Кнопка удаления в случае её отображения
+
+Используйте свойство `overrides` чтобы переопределить один или несколько компонентов:
+
+_Пример использования:_
+
+```tsx
+import React from 'react';
+import styled from '@emotion/styled';
+import Badge from '@via-profit/ui-kit/Badge';
+
+import BadgeContainer from '@via-profit/ui-kit/Badge/BadgeContainer';
+import BadgeTextWrapper from '@via-profit/ui-kit/Badge/BadgeTextWrapper';
+
+const StyledContainer = styled(BadgeContainer)`
+  background-color: red !important;
+`;
+
+const StyledTextWrapper = styled(BadgeTextWrapper)`
+  color: #fff !important;
+`;
+
+const Example: React.FC = () => (
+  <Badge
+    variant="standard"
+    overrides={{
+      Container: React.forwardRef(function Override(props, ref) {
+        return <StyledContainer {...props} ref={ref} />;
+      }),
+      TextWrapper: React.forwardRef(function Override(props, ref) {
+        return <StyledTextWrapper {...props} ref={ref} />;
+      }),
+    }}
+  >
+    Standard
+  </Badge>
+);
+
+export default Example;
+```
+
+<ExampleBadgeOverrides />
+
+## Свойства
+
+Помимо перечисленных свойств, компонент принимает [стандартные аттрибуты](https://developer.mozilla.org/ru/docs/Web/HTML/Element/span#атрибуты) HTML элемента `<span>`
+
+| Свойство                    | Обязателен | Тип                                      | По умолчанию          | Описание                                                                                                                               |
+| --------------------------- | :--------: | :--------------------------------------- | :-------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| **variant**                 |     \*     | `standard` `outlined`                    | `standard`            | Вариант отображения.                                                                                                                   |
+| **color**                   |            | `default` `secondary` `primary` `String` | `default`             | Цвет бейджа. В качестве пользовательского цвета принимается строка в формате **hex** или **rgb(a)**.                                   |
+| **startIcon**               |            | `<JSX.Element>`                          | `undefined`           | Элемент иконки, отображаемой слева от текста бейджа.                                                                                   |
+| **onDelete**                |            | `Function`                               | `undefined`           | Функция, которая будет вызвана при нажатии на кнопку удаления. Кнопка удаления отображается только в случае передачи данного свойства. |
+| **overrides**               |            | `Object`                                 | `undefined`           | Объект элементов для переопределения составных компонентов бейджа                                                                      |
+| **overrides .Container**    |            | `<React.Component>`                      | `<BadgeContainer>`    | Компонент нативного `<span>`                                                                                                           |
+| **overrides .IconWrapper**  |            | `<React.Component>`                      | `<BadgeIconWrapper>`  | Компонент обёртка для иконки, отображаемой слева от текста бейджа                                                                      |
+| **overrides .TextWrapper**  |            | `<React.Component>`                      | `<BadgeTextWrapper>`  | Компонент обёртка текста бейджа                                                                                                        |
+| **overrides .ButtonDelete** |            | `<React.Component>`                      | `<BadgeDeleteButton>` | Компонент кнопки удаления                                                                                                              |
