@@ -28,7 +28,7 @@ const items: Item[] = [
 ];
 
 const Example: React.FC = () => {
-  const [value, setValue] = React.useState<Item | null>(null);
+  const [value, setValue] = React.useState<readonly Item | null>(null);
   const [isOpen, setIsOpen] = React.useState(false);
 
   return (
