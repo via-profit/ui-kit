@@ -71,7 +71,7 @@ _Пример использования:_
 
 ## Иконки
 
-Бейдж может отображать иконку, переданную в свойстве `startIcon`.
+Бейдж может отображать иконку, переданную в свойстве `startIcon`. Помимо иконки можно передать функцию в качестве свойства `onDelete` и в этом случае бейдж отобразит кнопку удаления. 
 **Важно:** Передавать следует не React компонент, а JSX выражение:
 
 ```tsx
@@ -83,6 +83,7 @@ const Example: React.FC = () => (
     startIcon={<MyIcon />}
     variant="outlined"
     color="secondary"
+    onDelete={event => someDeleteFunction()}
     >
     Oleg Dolgoperedryagov
   </Badge>

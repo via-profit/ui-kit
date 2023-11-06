@@ -64,13 +64,13 @@ const BadgeDeleteButton: React.ForwardRefRenderFunction<
       case variant === 'outlined' && color === 'primary':
         return {
           $color: theme.color.accentPrimary.darken(10),
-          $background: theme.color.accentPrimary.alpha(0),
+          $background: new Color('rgba(0,0,0,0)'),
         };
 
       case variant === 'outlined' && color === 'secondary':
         return {
           $color: theme.color.accentSecondary.darken(10),
-          $background: theme.color.accentSecondary.alpha(0),
+          $background: new Color('rgba(0,0,0,0)'),
         };
 
       case variant === 'outlined' && typeof color === 'string':
