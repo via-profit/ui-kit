@@ -1,6 +1,6 @@
 import React from 'react';
 
-import type { AnchorElement } from '@via-profit/ui-kit/src/Menu';
+import type { AnchorElement } from '../Menu';
 
 type State = {
   readonly currentOpen: boolean;

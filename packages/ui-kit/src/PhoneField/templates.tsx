@@ -1,13 +1,13 @@
 import React from 'react';
 
 // import UnknownFlag from './UnknownFlag';
-import RU from '@via-profit/ui-kit/src/CountryFlags/RU';
-import BY from '@via-profit/ui-kit/src/CountryFlags/BY';
-import KZ from '@via-profit/ui-kit/src/CountryFlags/KZ';
-import UA from '@via-profit/ui-kit/src/CountryFlags/UA';
-import JP from '@via-profit/ui-kit/src/CountryFlags/JP';
-import US from '@via-profit/ui-kit/src/CountryFlags/US';
-import IL from '@via-profit/ui-kit/src/CountryFlags/IL';
+import RU from '../CountryFlags/RU';
+import BY from '../CountryFlags/BY';
+import KZ from '../CountryFlags/KZ';
+import UA from '../CountryFlags/UA';
+import JP from '../CountryFlags/JP';
+import US from '../CountryFlags/US';
+import IL from '../CountryFlags/IL';
 
 export type CallingCode = string;
 

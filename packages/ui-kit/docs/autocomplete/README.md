@@ -56,6 +56,40 @@ const Example: React.FC = () => {
 export default Example;
 ```
 
-<ExampleAutocompleteOverview>
+<ExampleAutocompleteOverview />
 
-<ExampleAutocompleteFetch>
+
+### Fetch
+
+<ExampleAutocompleteFetch />
+
+
+### Multiple
+
+<ExampleAutocompleteMultiple />
+
+
+Lorem ipsum
+
+Lorem ipsum
+
+
+Lorem ipsum
+
+Lorem ipsum
+
+
+Lorem ipsum
+
+Lorem ipsum
+
+
+Lorem ipsum
+
+Lorem ipsum
+
+
+Lorem ipsum
+
+Lorem ipsum
+

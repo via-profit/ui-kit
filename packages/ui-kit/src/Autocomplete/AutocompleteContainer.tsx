@@ -1,10 +1,10 @@
 import React from 'react';
 
-import Menu, { MenuRef, Value, OnSelectItem, OnRequestClose } from '@via-profit/ui-kit/src/Menu';
-import TextField from '@via-profit/ui-kit/src/TextField';
-import Button from '@via-profit/ui-kit/src/Button';
-import Spinner from '@via-profit/ui-kit/src/LoadingIndicator/Spinner';
-import type { MenuItemCommonProps } from '@via-profit/ui-kit/src/Menu/MenuItem';
+import Menu, { MenuRef, Value, OnRequestClose, GetOptionSelected } from '../Menu';
+import TextField from '../TextField';
+import Button from '../Button';
+import Spinner from '../LoadingIndicator/Spinner';
+import type { MenuItemCommonProps } from '../Menu/MenuItem';
 
 import IconClear from './IconClear';
 
@@ -33,8 +33,9 @@ export type AutocompleteProps<T, Multiple extends boolean | undefined = undefine
   readonly clearIfNotSelected?: boolean;
   readonly children: Children<T>;
   readonly filterItems?: FilterItems<T>;
-  readonly onSelectItem?: OnSelectItem<T>;
+  readonly onChange?: OnChange<T, Multiple>;
   readonly selectedItemToString: ItemToString<T, Multiple>;
+  readonly getOptionSelected?: GetOptionSelected<T>;
   readonly onRequestClose?: OnRequestClose;
   readonly onInputChange?: React.ChangeEventHandler<HTMLInputElement>;
   readonly onRequestOpen?: (
@@ -57,6 +58,10 @@ export type Children<T> = (
 export type ItemToString<T, Multiple extends boolean | undefined = undefined> = (
   item: Value<T, Multiple>,
 ) => string;
+
+export type OnChange<T, Multiple extends boolean | undefined = undefined> = (
+  item: Value<T, Multiple> | null,
+) => void;
 
 export type FilterItems<T> = (
   items: readonly T[],
@@ -84,22 +89,23 @@ const Autocomplete = React.forwardRef(
       clearIfNotSelected = true,
       filterItems,
       children,
-      onSelectItem,
+      onChange,
       selectedItemToString,
       onInputChange,
+      getOptionSelected,
       onRequestOpen = () => undefined,
       onRequestClose = () => undefined,
     } = props;
     const menuRef = React.useRef<MenuRef | null>(null);
     const inputRef = React.useRef<HTMLInputElement | null>(null);
     const isFocusedRef = React.useRef(false);
-    const { state, dispatch } = useContext();
+    const { state, dispatch } = useContext<T>();
     const { currentOpen, filteredItems, inputValue, currentValue, anchorElement, currentLoading } =
       state;
 
     const clear = React.useCallback(() => {
-      if (onSelectItem) {
-        onSelectItem(null as T);
+      if (onChange) {
+        onChange(null);
       }
       dispatch(
         actionSetPartial({
@@ -112,7 +118,7 @@ const Autocomplete = React.forwardRef(
       setTimeout(() => {
         inputRef.current?.focus();
       }, 15);
-    }, [dispatch, onSelectItem, items]);
+    }, [dispatch, onChange, items]);
     /**
      * API
      */
@@ -324,24 +330,40 @@ const Autocomplete = React.forwardRef(
               ref={menuRef}
               anchorPos="left-bottom-right"
               multiple={multiple}
-              items={filteredItems}
+              items={filteredItems as T[]}
               value={currentValue as Value<T, Multiple>}
               isOpen={currentOpen && filteredItems.length > 0}
               autofocus={false}
               anchorElement={anchorElement}
               closeOutsideClick
+              getOptionSelected={getOptionSelected}
               onSelectItem={item => {
-                if (typeof onSelectItem === 'function') {
-                  onSelectItem(item as T);
+                // console.log('selected', item);
+                if (typeof onChange === 'function') {
+                  if (!multiple) {
+                    onChange(item);
+                  } else {
+                    // const set = new Set<any>(currentValue ? [...currentValue as any] : undefined);
+                    // if (currentValue) {
+                    //   set.add()
+                    // }
+                    const s = [...(currentValue || [])];
+                    onChange([...(currentValue || [])].concat(item));
+                  }
                 }
 
-                if (!multiple) {
-                  dispatch(
-                    actionSetPartial({
-                      inputValue: selectedItemToString(item as Value<T, Multiple>),
-                    }),
-                  );
-                }
+                // if (multiple) {
+                //   if (typeof onChange === 'function') {
+                //     onChange(item ? ([item] as Value<T, Multiple>) : null);
+                //   }
+                // }
+
+                // console.log(ImageBitmapRenderingContext)
+                // dispatch(
+                //   actionSetPartial({
+                //     inputValue: selectedItemToString(multiple ? [item] : item),
+                //   }),
+                // );
               }}
               closeOnSelect={multiple ? false : true}
               onRequestClose={evt => {
@@ -365,7 +387,8 @@ const Autocomplete = React.forwardRef(
             children,
             dispatch,
             onRequestClose,
-            onSelectItem,
+            onChange,
+            getOptionSelected,
             selectedItemToString,
           ],
         )}

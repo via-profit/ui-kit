@@ -12,6 +12,7 @@ type StyleProps = {
 
 const StyledMenuListPopper = styled.div<StyleProps>`
   visibility: ${props => (props.$isOpen ? 'visible' : 'hidden')};
+  z-index: ${({ theme }) => theme.zIndex.modal};
   max-height: 18em;
   max-width: 18em;
   display: flex;

@@ -73,7 +73,7 @@ const ExampleAutocompleteFetch: React.FC = () => {
         isOpen={isOpen}
         onRequestClose={() => setIsOpen(false)}
         onRequestOpen={() => setIsOpen(true)}
-        onSelectItem={item => setValue(item)}
+        onChange={item => setValue(item)}
         selectedItemToString={item => item.name}
         onInputChange={onInputChange}
       >

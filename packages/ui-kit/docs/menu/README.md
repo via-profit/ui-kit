@@ -51,9 +51,13 @@ const Example: React.FC = () => {
 export default ExampleMenuOverview;
 ```
 
-<ExampleMenuOverview>
+<ExampleMenuOverview />
 
-## using anchor position
+## Using multiple
+
+<ExampleMenuMultiple />
+
+## Using anchor position
 
 <ExampleMenuAnchorPos />
 

@@ -10,13 +10,14 @@ type Item = {
   readonly name: string;
 };
 
-const ExampleAutocompleteOverview: React.FC = () => {
-  const [value, setValue] = React.useState<Item | null>(null);
+const ExampleAutocompleteMultiple: React.FC = () => {
+  const [value, setValue] = React.useState<Item[] | null>(null);
   const [isOpen, setIsOpen] = React.useState(false);
 
   return (
     <Autocomplete
       value={value}
+      multiple
       items={countries}
       isOpen={isOpen}
       filterItems={(items, { query }) =>
@@ -24,8 +25,12 @@ const ExampleAutocompleteOverview: React.FC = () => {
       }
       onRequestClose={() => setIsOpen(false)}
       onRequestOpen={() => setIsOpen(true)}
-      onChange={item => setValue(item)}
-      selectedItemToString={item => item.name}
+      onChange={items => {
+        console.log(items);
+
+        setValue(items ? [...items] : null);
+      }}
+      selectedItemToString={items => items.map(({ name }) => name).join(', ')}
     >
       {({ item, inputValue }, itemProps) => (
         <MenuItem {...itemProps} key={item.code}>
@@ -36,4 +41,4 @@ const ExampleAutocompleteOverview: React.FC = () => {
   );
 };
 
-export default ExampleAutocompleteOverview;
+export default ExampleAutocompleteMultiple;

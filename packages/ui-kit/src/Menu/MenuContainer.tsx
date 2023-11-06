@@ -23,10 +23,31 @@ export interface MenuProps<T, Multiple extends boolean | undefined = undefined> 
 
   /**
    * Current value\
-   * If `Menu` component has `multiple` property then value must be an array of items
+   * If `Menu` component has `multiple` property then value must be an array of items\
+   * **Note**: Value can be null only when `multiple` property has been `false`
    */
-  readonly value: Value<T, Multiple> | null;
+  readonly value: Value<T, Multiple>;
 
+  /**
+   * Function to which an object with data will be passed\
+   * The first of  argument - is an object with item and item index\
+   * The second argument - is an item properties (onKeyDown, onClick, etc.)\
+   * \
+   * Example:
+   * ```tsx
+   * <Menu
+   *   anchorElement={anchorElement}
+   *   value={value}
+   *   ...
+   * >
+   *   {({ item }, itemProps) => (
+   *     <MenuItem {...itemProps} key={item.id}>
+   *       {item.name}
+   *     </MenuItem>
+   *   )}
+   * </Menu>
+   * ```
+   */
   readonly children: Children<T>;
 
   /**
@@ -191,7 +212,7 @@ export type MenuRef = {
   selectHightlightedItem: () => void;
 };
 
-export type Value<T, Multiple> = Multiple extends undefined | undefined ? T : readonly T[];
+export type Value<T, Multiple> = Multiple extends undefined | undefined ? T | null : readonly T[];
 export type GetOptionSelected<T> = (payload: { readonly item: T; readonly value: T }) => boolean;
 // export type ItemToString<T> = (item: T) => string;
 // export type KeyExtractor<T> = (item: T) => React.Key;
@@ -379,7 +400,7 @@ const MenuContainer = React.forwardRef(
      * Scroll to first of selected item
      */
     const scrollToFirstSelected = React.useCallback(() => {
-      const indexes = getSelectedIndexes();
+      const indexes = [...selectedIndexes];
       // Sort array of indexes by DESC and get the index
       const index = indexes.length ? [...indexes.sort()][0] : -1;
       dispatch({
@@ -389,7 +410,7 @@ const MenuContainer = React.forwardRef(
         },
       });
       scrollToIndex(index);
-    }, [dispatch, getSelectedIndexes, scrollToIndex]);
+    }, [dispatch, selectedIndexes, scrollToIndex]);
 
     /**
      * Select specified item by index
@@ -404,8 +425,10 @@ const MenuContainer = React.forwardRef(
 
         if (typeof onSelectItem === 'function') {
           // For multiple
-          if (multiple && Array.isArray(value)) {
-            const selItems = new Set<Value<T, Multiple>>(value);
+          if (multiple) {
+            const selItems = new Set<Value<T, Multiple>>(
+              value !== null ? (value as Value<T, Multiple>[]) : [],
+            );
 
             if (selectedIndexes.includes(index)) {
               selItems.delete(item as Value<T, Multiple>);
@@ -413,9 +436,10 @@ const MenuContainer = React.forwardRef(
               selItems.add(item as Value<T, Multiple>);
             }
 
-            onSelectItem([...selItems] as Value<T, Multiple>);
+            onSelectItem(Array.from(selItems) as Value<T, Multiple>);
           } else {
             // For single
+
             onSelectItem(item as Value<T, Multiple>);
           }
 
@@ -424,7 +448,7 @@ const MenuContainer = React.forwardRef(
           }
         }
       },
-      [onSelectItem, onRequestClose, closeOnSelect, items, selectedIndexes, value, multiple],
+      [onSelectItem, onRequestClose, selectedIndexes, closeOnSelect, items, value, multiple],
     );
 
     /**
