@@ -6,7 +6,6 @@ export interface MenuListProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 const StyledMenuList = styled.div<{ $isOpen: boolean }>`
-  flex: 1;
   display: flex;
   flex-direction: column;
   transition: opacity 120ms ease-out;
@@ -48,6 +47,8 @@ const StyledMenuList = styled.div<{ $isOpen: boolean }>`
   box-sizing: border-box;
   overflow-y: auto;
   padding: 0.4em;
+  max-height: 18em;
+  max-width: 18em;
 `;
 
 const MenuList: React.ForwardRefRenderFunction<HTMLDivElement, MenuListProps> = (props, ref) => {

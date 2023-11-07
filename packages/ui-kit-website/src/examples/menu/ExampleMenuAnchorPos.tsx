@@ -1,8 +1,9 @@
 import React from 'react';
 import Button from '@via-profit/ui-kit/src/Button';
-import Menu, { MenuAnchorPos } from '@via-profit/ui-kit/src/Menu';
+import Menu, { AnchorPos } from '@via-profit/ui-kit/src/Menu';
 import MenuItem from '@via-profit/ui-kit/src/Menu/MenuItem';
 import styled from '@emotion/styled';
+import { useTheme } from '@emotion/react';
 
 type Item = {
   readonly id: number;
@@ -16,8 +17,8 @@ const items: Item[] = [
 ];
 
 const StyledAnchorContainer = styled.div`
-  width: 20em;
-  height: 20em;
+  width: 22em;
+  height: 22em;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -34,9 +35,9 @@ const StyledAnchorElement = styled.div`
 `;
 
 type AnchorButtonProps = {
-  readonly value: MenuAnchorPos;
+  readonly value: AnchorPos;
   readonly isActive: boolean;
-  readonly onChange: (value: MenuAnchorPos) => void;
+  readonly onChange: (value: AnchorPos) => void;
 };
 
 const AnchorButton: React.FC<AnchorButtonProps> = props => {
@@ -55,40 +56,43 @@ const AnchorButton: React.FC<AnchorButtonProps> = props => {
 
 const ExampleMenuAnchorPos: React.FC = () => {
   const [value, setValue] = React.useState<Item | null>(null);
-  const [anchorPos, setAnchorPos] = React.useState<MenuAnchorPos>('left-bottom');
+  const [anchorPos, setAnchorPos] = React.useState<AnchorPos>('auto-start-end');
   const [anchorElement, setAnchorElement] = React.useState<HTMLDivElement | null>(null);
+  const theme = useTheme();
 
   return (
     <>
+      <div>
+        <AnchorButton
+          value="auto"
+          isActive={anchorPos === 'auto'}
+          onChange={() => setAnchorPos('auto')}
+        />
+        <AnchorButton
+          value="auto-start-end"
+          isActive={anchorPos === 'auto-start-end'}
+          onChange={() => setAnchorPos('auto-start-end')}
+        />
+      </div>
       <AnchorButton
-        value="left-bottom"
-        isActive={anchorPos === 'left-bottom'}
-        onChange={() => setAnchorPos('left-bottom')}
+        value="top-start"
+        isActive={anchorPos === 'top-start'}
+        onChange={() => setAnchorPos('top-start')}
       />
       <AnchorButton
-        value="left-top"
-        isActive={anchorPos === 'left-top'}
-        onChange={() => setAnchorPos('left-top')}
+        value="top"
+        isActive={anchorPos === 'top'}
+        onChange={() => setAnchorPos('top')}
       />
       <AnchorButton
-        value="right-top"
-        isActive={anchorPos === 'right-top'}
-        onChange={() => setAnchorPos('right-top')}
+        value="top-start-end"
+        isActive={anchorPos === 'top-start-end'}
+        onChange={() => setAnchorPos('top-start-end')}
       />
       <AnchorButton
-        value="right-bottom"
-        isActive={anchorPos === 'right-bottom'}
-        onChange={() => setAnchorPos('right-bottom')}
-      />
-      <AnchorButton
-        value="left-bottom-right"
-        isActive={anchorPos === 'left-bottom-right'}
-        onChange={() => setAnchorPos('left-bottom-right')}
-      />
-      <AnchorButton
-        value="left-top-right"
-        isActive={anchorPos === 'left-top-right'}
-        onChange={() => setAnchorPos('left-top-right')}
+        value="top-end"
+        isActive={anchorPos === 'top-end'}
+        onChange={() => setAnchorPos('top-end')}
       />
 
       <StyledAnchorContainer>
@@ -98,6 +102,7 @@ const ExampleMenuAnchorPos: React.FC = () => {
           anchorElement={anchorElement}
           anchorPos={anchorPos}
           disablePortal
+          zIndex={theme.zIndex.header - 1}
           value={value}
           items={items}
           getOptionSelected={({ item, value }) => item.id === value.id}
@@ -110,6 +115,27 @@ const ExampleMenuAnchorPos: React.FC = () => {
           )}
         </Menu>
       </StyledAnchorContainer>
+
+      <AnchorButton
+        value="bottom-start"
+        isActive={anchorPos === 'bottom-start'}
+        onChange={() => setAnchorPos('bottom-start')}
+      />
+      <AnchorButton
+        value="bottom"
+        isActive={anchorPos === 'bottom'}
+        onChange={() => setAnchorPos('bottom')}
+      />
+      <AnchorButton
+        value="bottom-start-end"
+        isActive={anchorPos === 'bottom-start-end'}
+        onChange={() => setAnchorPos('bottom-start-end')}
+      />
+      <AnchorButton
+        value="bottom-end"
+        isActive={anchorPos === 'bottom-end'}
+        onChange={() => setAnchorPos('bottom-end')}
+      />
     </>
   );
 };

@@ -2,7 +2,7 @@ import React from 'react';
 
 import useContext, { actionSetmenuState } from './context';
 import List, { MenuListProps } from './MenuList';
-import Popper, { MenuListPopperProps } from './MenuListPopper';
+import Popper, { MenuListPopperProps, AnchorPos } from './MenuListPopper';
 import type { MenuItemCommonProps } from './MenuItem';
 
 export type AnchorElement<E extends HTMLElement = HTMLElement> = E;
@@ -105,9 +105,9 @@ export interface MenuProps<T, Multiple extends boolean | undefined = undefined> 
   /**
    * Anchor position\
    * \
-   * Default: `left-bottom`
+   * Default: `auto`
    */
-  readonly anchorPos?: MenuAnchorPos;
+  readonly anchorPos?: AnchorPos;
 
   /**
    * Should menu will be closed when item selected\
@@ -122,6 +122,13 @@ export interface MenuProps<T, Multiple extends boolean | undefined = undefined> 
    * **Default**: `false`
    */
   readonly disablePortal?: boolean;
+
+  /**
+   * Popper z-index\
+   * \
+   * **Default**: theme.zIndex.dropdown
+   */
+  readonly zIndex?: number;
 
   /**
    * Overridable components map
@@ -214,8 +221,7 @@ export type MenuRef = {
 
 export type Value<T, Multiple> = Multiple extends undefined | undefined ? T | null : readonly T[];
 export type GetOptionSelected<T> = (payload: { readonly item: T; readonly value: T }) => boolean;
-// export type ItemToString<T> = (item: T) => string;
-// export type KeyExtractor<T> = (item: T) => React.Key;
+
 export type OnSelectItem<T, Multiple extends boolean | undefined = undefined> = (
   value: Multiple extends undefined ? T : readonly T[],
 ) => void;
@@ -227,15 +233,6 @@ export type OnRequestClose = (
     | KeyboardEvent
     | MouseEvent,
 ) => void;
-
-export type MenuAnchorPos =
-  | 'static'
-  | 'left-top'
-  | 'left-bottom'
-  | 'right-top'
-  | 'right-bottom'
-  | 'left-bottom-right'
-  | 'left-top-right';
 
 const MenuContainer = React.forwardRef(
   <T, Multiple extends boolean | undefined = undefined>(
@@ -250,16 +247,17 @@ const MenuContainer = React.forwardRef(
       children,
       closeOutsideClick = true,
       isOpen = props.anchorPos === 'static' ? true : false,
+      anchorPos = 'auto',
       multiple = false,
       autofocus = true,
       closeOnSelect = !multiple,
-      anchorPos = 'left-bottom',
-      // itemToString = itemToStringDefault,
       onRequestClose = () => undefined,
-      // keyExtractor,
+      zIndex,
       onSelectItem,
       getOptionSelected,
     } = props;
+
+    // const [] = React
 
     const overridesMap = React.useMemo(
       () => ({
@@ -298,10 +296,12 @@ const MenuContainer = React.forwardRef(
       return [...idx];
     }, [getOptionSelected, items, value]);
 
+    // const [currentAnchorPos, setCurrentAnchorPos] = React.useState(anchorPos);
     const [menuIsOpen, setMenuOpen] = React.useState(Boolean(isOpen));
     const [currentAnchorElement, setAnchorElement] = React.useState(anchorElement);
     const isOpenRef = React.useRef(menuIsOpen);
-    const MenuListRef = React.useRef<HTMLDivElement | null>(null);
+    const menuListRef = React.useRef<HTMLDivElement | null>(null);
+    const menuPopperRef = React.useRef<HTMLDivElement | null>(null);
     const {
       dispatch,
       state: { selectedIndexes, markedIndex, hoveredIndex },
@@ -309,69 +309,8 @@ const MenuContainer = React.forwardRef(
     const selectedIndexesRef = React.useRef(selectedIndexes);
     const timeoutRef = React.useRef<NodeJS.Timeout | null>(null);
 
-    const [style, setStyle] = React.useState<React.CSSProperties | null>(null);
-    const calculateElementPos = React.useCallback(
-      (elem: HTMLElement): React.CSSProperties => {
-        // for absolute
-        const rect = elem.getBoundingClientRect();
-
-        switch (anchorPos) {
-          case 'left-bottom':
-            return {
-              position: 'absolute',
-              left: rect.left + window.scrollX,
-              top: rect.top + window.scrollY + rect.height,
-            };
-
-          case 'left-top':
-            return {
-              position: 'absolute',
-              left: rect.left + window.scrollX,
-              top: rect.top + window.scrollY,
-            };
-
-          case 'right-top':
-            return {
-              position: 'absolute',
-              left: rect.left + window.scrollX + rect.width,
-              top: rect.top + window.scrollY,
-            };
-
-          case 'right-bottom':
-            return {
-              position: 'absolute',
-              left: rect.left + window.scrollX + rect.width,
-              top: rect.top + window.scrollY + rect.height,
-            };
-
-          case 'left-bottom-right':
-            return {
-              position: 'absolute',
-              left: rect.left + window.scrollX,
-              top: rect.top + window.scrollY + rect.height,
-              width: rect.width,
-            };
-
-          case 'left-top-right':
-            return {
-              position: 'absolute',
-              left: rect.left + window.scrollX,
-              top: rect.top + window.scrollY,
-              width: rect.width,
-            };
-
-          case 'static':
-          default:
-            return {
-              position: 'static',
-            };
-        }
-      },
-      [anchorPos],
-    );
-
     const scrollToIndex = React.useCallback((index: number) => {
-      const option = MenuListRef?.current?.children[index];
+      const option = menuListRef?.current?.children[index];
       if (option) {
         option.scrollIntoView({
           behavior: 'auto',
@@ -381,20 +320,28 @@ const MenuContainer = React.forwardRef(
     }, []);
 
     React.useEffect(() => {
+      let timeout: NodeJS.Timeout | null;
       const recalc = () => {
-        if (anchorElement) {
-          setStyle(calculateElementPos(anchorElement || null));
+        if (timeout) {
+          clearTimeout(timeout);
         }
+        timeout = setTimeout(() => {
+          if (anchorElement) {
+            // calculateElementPos();
+          }
+        }, 300);
       };
 
       window.addEventListener('resize', recalc);
+      window.addEventListener('scroll', recalc);
 
       recalc();
 
       return () => {
         window.removeEventListener('resize', recalc);
+        window.removeEventListener('scroll', recalc);
       };
-    }, [anchorElement, isOpen, calculateElementPos]);
+    }, [anchorElement, isOpen]);
 
     /**
      * Scroll to first of selected item
@@ -498,7 +445,7 @@ const MenuContainer = React.forwardRef(
     React.useImperativeHandle(
       ref,
       () => ({
-        // focus: () => MenuListRef.current?.focus(),
+        // focus: () => menuListRef.current?.focus(),
         scrollToIndex: (idx: number) => scrollToIndex(idx),
         highlightIndex: (idx: number) => highlightIndex(idx),
         hightlightPrevItem: () => hightlightPrevItem(),
@@ -634,7 +581,7 @@ const MenuContainer = React.forwardRef(
 
         while (parentElem && 'parentNode' in parentElem) {
           if (
-            parentElem === MenuListRef.current ||
+            parentElem === menuListRef.current ||
             (anchorElement && parentElem === anchorElement)
           ) {
             needToClose = false;
@@ -674,7 +621,7 @@ const MenuContainer = React.forwardRef(
 
           if (autofocus) {
             setTimeout(() => {
-              MenuListRef.current?.focus();
+              menuListRef.current?.focus();
             }, 300);
           }
         }
@@ -744,13 +691,15 @@ const MenuContainer = React.forwardRef(
       [dispatch],
     );
 
-    if (!isOpen || (anchorPos !== 'static' && !style)) {
-      return null;
-    }
-
     return (
-      <overridesMap.Popper isOpen={Boolean(isOpen)} style={style || undefined}>
-        <overridesMap.List isOpen={Boolean(isOpen)} ref={MenuListRef} onKeyDown={listKeydownEvent}>
+      <overridesMap.Popper
+        isOpen={Boolean(isOpen)}
+        ref={menuPopperRef}
+        zindex={zIndex}
+        anchorElement={anchorElement}
+        anchorPos={anchorPos}
+      >
+        <overridesMap.List isOpen={Boolean(isOpen)} ref={menuListRef} onKeyDown={listKeydownEvent}>
           {items.map((item, index) =>
             children(
               {

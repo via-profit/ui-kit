@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom';
 import { MenuContextProvider, PORTAL_ID } from './context';
 import MenuContainer, { MenuProps, MenuRef } from './MenuContainer';
 
+export * from './MenuListPopper';
 export * from './MenuContainer';
 
 const Menu = React.forwardRef(

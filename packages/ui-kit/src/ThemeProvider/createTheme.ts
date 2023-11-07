@@ -18,7 +18,7 @@ export const createTheme: CreateTheme = overrides => {
     },
     zIndex: {
       header: 8,
-      mainDrawer: 9,
+      dropdown: 7,
       modal: 10,
       ...zIndex,
     },

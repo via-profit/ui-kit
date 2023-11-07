@@ -1,6 +1,6 @@
 import React from 'react';
 
-import Menu, { MenuRef, Value, OnRequestClose, GetOptionSelected } from '../Menu';
+import Menu, { MenuRef, Value, OnRequestClose, GetOptionSelected, AnchorPos } from '../Menu';
 import TextField, { TextFieldProps } from '../TextField';
 import Button from '../Button';
 import Spinner from '../LoadingIndicator/Spinner';
@@ -30,10 +30,37 @@ export interface AutocompleteProps<T, Multiple extends boolean | undefined = und
    * Loading indicator visiblility\
    * If `true` then visible, otherwise - hidden
    */
+  /**
+   * Anchor position\
+   * \
+   * Default: `auto-start-end`
+   */
+  readonly anchorPos?: AnchorPos;
+
+  /**
+   * Text field loading state\
+   * If `true` then text field has been contained the loading indicator, otherwise - nop
+   */
   readonly isLoading?: boolean;
+
+  /**
+   * Should the autocomplete element be cleared when blur and if no element is selected
+   */
   readonly clearIfNotSelected?: boolean;
+
+  /**
+   * items render function
+   */
   readonly children: Children<T>;
-  readonly placeholder?: TextFieldProps['placeholder'];
+
+  /**
+   * Field placeholder
+   */
+  readonly placeholder?: string;
+
+  /**
+   * Field label text or element
+   */
   readonly label?: TextFieldProps['label'];
   readonly error?: TextFieldProps['error'];
   readonly errorText?: TextFieldProps['errorText'];
@@ -92,6 +119,7 @@ const Autocomplete = React.forwardRef(
       isOpen = false,
       isLoading = false,
       clearIfNotSelected = true,
+      anchorPos = 'auto-start-end',
       placeholder,
       label,
       error,
@@ -341,7 +369,7 @@ const Autocomplete = React.forwardRef(
           () => (
             <Menu
               ref={menuRef}
-              anchorPos="left-bottom-right"
+              anchorPos={anchorPos}
               multiple={multiple}
               items={filteredItems as T[]}
               value={currentValue as Value<T, Multiple>}
@@ -374,6 +402,7 @@ const Autocomplete = React.forwardRef(
             filteredItems,
             inputValue,
             multiple,
+            anchorPos,
             children,
             onRequestClose,
             onChange,
