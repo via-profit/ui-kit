@@ -127,7 +127,7 @@ export interface MenuProps<T, Multiple extends boolean | undefined = undefined> 
   /**
    * Popper z-index\
    * \
-   * **Default**: theme.zIndex.dropdown
+   * **Default**: theme.zIndex.modal
    */
   readonly zIndex?: number;
 
@@ -136,7 +136,16 @@ export interface MenuProps<T, Multiple extends boolean | undefined = undefined> 
    */
   readonly overrides?: MenuOverrides;
   /**
-   * A function that determines which of the elements is currently selected
+   * A function that determines which of the elements is currently selected\
+   * Example:
+   * ```tsx
+   * <Menu
+   *   ...
+   *   getOptionSelected={({ item, value }) => item.id === value.id}
+   * >
+   *  ...
+   * </Menu>
+   * ```
    */
   readonly getOptionSelected?: GetOptionSelected<T>;
 
@@ -265,21 +274,19 @@ const MenuContainer = React.forwardRef(
     const getSelectedIndexes = React.useCallback(() => {
       const idx = new Set<number>();
 
-      if (typeof value === 'object' && value !== null) {
+      if (value !== null) {
         if (typeof getOptionSelected === 'function') {
-          if (Array.isArray(value)) {
-            value.forEach(v => {
+          if (multiple) {
+            (value as T[]).forEach(v => {
               idx.add(items.findIndex(item => getOptionSelected({ item, value: v })));
             });
-          }
-
-          if (!Array.isArray(value)) {
+          } else {
             idx.add(items.findIndex(item => getOptionSelected({ item, value: value as T })));
           }
         }
 
-        if (Array.isArray(value)) {
-          value.forEach(v => {
+        if (multiple) {
+          (value as T[]).forEach(v => {
             idx.add(items.findIndex(item => JSON.stringify(item) === JSON.stringify(v)));
           });
         } else {
@@ -288,7 +295,7 @@ const MenuContainer = React.forwardRef(
       }
 
       return [...idx];
-    }, [getOptionSelected, items, value]);
+    }, [getOptionSelected, items, multiple, value]);
 
     // const [currentAnchorPos, setCurrentAnchorPos] = React.useState(anchorPos);
     const [menuIsOpen, setMenuOpen] = React.useState(Boolean(isOpen));

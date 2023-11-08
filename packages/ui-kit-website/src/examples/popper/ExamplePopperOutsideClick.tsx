@@ -3,8 +3,8 @@ import Button from '@via-profit/ui-kit/src/Button';
 import Popper from '@via-profit/ui-kit/src/Popper';
 import Surface from '@via-profit/ui-kit/src/Surface';
 import ClickOutside from '@via-profit/ui-kit/src/ClickOutside';
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { FormattedMessage } from 'react-intl';
 
 const StyledAnchorContainer = styled.div`
   width: 22em;
@@ -18,22 +18,24 @@ const StyledAnchorContainer = styled.div`
 
 const ExamplePopperOutsideClick: React.FC = () => {
   const [anchorElement, setAnchorElement] = React.useState<HTMLButtonElement | null>(null);
-  const { zIndex } = useTheme();
 
   return (
     <StyledAnchorContainer>
       <ClickOutside onOutsideClick={() => setAnchorElement(null)}>
         <div>
           <Button onClick={event => setAnchorElement(anchorElement ? null : event.currentTarget)}>
-            Toggle Popper
+            <FormattedMessage defaultMessage="Открыть/Закрыть Popper" />
           </Button>
+
           <Popper
             anchorPos="auto"
+            disablePortal
             anchorElement={anchorElement}
             isOpen={Boolean(anchorElement)}
-            zindex={zIndex.header - 1}
           >
-            <Surface>Popper content</Surface>
+            <Surface>
+              <FormattedMessage defaultMessage="Какой-то контент" />
+            </Surface>
           </Popper>
         </div>
       </ClickOutside>

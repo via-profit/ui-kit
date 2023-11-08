@@ -13,7 +13,9 @@ const GloalStyles: React.FC = () => {
           margin: 0;
           padding: 0;
           min-height: 100%;
-          font-family: Open Sans, system-ui;
+          font-family:
+            Open Sans,
+            system-ui;
           background-color: ${theme.color.backgroundPrimary.toString()};
           color: ${theme.color.textPrimary.toString()};
         }

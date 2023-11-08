@@ -15,6 +15,7 @@ _Пример использования:_
 import React from 'react';
 import Button from '@via-profit/ui-kit/Button';
 import Menu from '@via-profit/ui-kit/Menu';
+import MenuItem from '@via-profit/ui-kit/Menu/MenuItem';
 
 type Item = {
   readonly id: number;
@@ -38,12 +39,16 @@ const Example: React.FC = () => {
         isOpen={Boolean(anchorElement)}
         value={value}
         items={items}
-        keyExtractor={item => item.id}
-        itemToString={item => item.name}
         getOptionSelected={({ item, value }) => item.id === value.id}
         onRequestClose={() => setAnchorElement(null)}
         onSelectItem={item => setValue(item)}
-      />
+      >
+        {({ item }, itemProps) => (
+          <MenuItem {...itemProps} key={item.id}>
+            {item.name}
+          </MenuItem>
+        )}
+      </Menu>
     </>
   );
 };

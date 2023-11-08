@@ -1,8 +1,22 @@
 import React from 'react';
 
 export interface ClickOutsideProps {
+  /**
+   * React Element\
+   * **WAttention**: Do not use fragment as a child. use `<div>` instead
+   */
   readonly children: React.ReactElement;
+
+  /**
+   * Callback function that will be called when the required event occurs
+   */
   readonly onOutsideClick: OnOutsideClick;
+
+  /**
+   * Mouse event. Use `false` to disable all\
+   * \
+   * **Default**: `onMouseDown`
+   */
   readonly mouseEvent?: OutsideMouseEventName | false;
 }
 

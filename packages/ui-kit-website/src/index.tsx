@@ -8,6 +8,7 @@ import createCache from '@emotion/cache';
 import readPreloadedState from '~/utils/readPreloadedState';
 import ReduxProvider from '~/providers/ReduxProvider';
 import ThemeProvider from '~/providers/ThemeProvider';
+import LocaleProvider from './providers/LocaleProvider';
 import routes from '~/routes';
 import reduxDefaultState from '~/redux/defaultState';
 
@@ -32,7 +33,9 @@ const bootstrap = async () => {
     <ReduxProvider>
       <ThemeProvider>
         <CSSCacheProvider value={cssCache}>
-          <RouterProvider router={router} />
+          <LocaleProvider>
+            <RouterProvider router={router} />
+          </LocaleProvider>
         </CSSCacheProvider>
       </ThemeProvider>
     </ReduxProvider>

@@ -38,7 +38,6 @@ export interface UIThemeOverrideColor {
 export interface UIThemeOverrideZIndex {
   readonly header?: number;
   readonly modal?: number;
-  readonly dropdown?: number;
 }
 
 export interface UIThemeOverrideShape {

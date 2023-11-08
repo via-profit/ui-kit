@@ -12,6 +12,14 @@ const babelConfig = {
     '@babel/plugin-proposal-optional-chaining',
     '@emotion/babel-plugin',
     [
+      'babel-plugin-formatjs',
+      {
+        idInterpolationPattern: '[sha512:contenthash:base64:6]',
+        removeDefaultMessage: true,
+        ast: true,
+      },
+    ],
+    [
       '@babel/plugin-transform-typescript',
       {
         allowNamespaces: true,

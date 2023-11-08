@@ -46,7 +46,7 @@ const AnchorButton: React.FC<AnchorButtonProps> = props => {
   return (
     <Button
       color={isActive ? 'primary' : 'default'}
-      variant="outlined"
+      variant="plain"
       onClick={() => onChange(value)}
     >
       {value}

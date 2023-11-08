@@ -4,6 +4,7 @@ import Popper from '@via-profit/ui-kit/src/Popper';
 import Surface from '@via-profit/ui-kit/src/Surface';
 import styled from '@emotion/styled';
 import { useTheme } from '@emotion/react';
+import { FormattedMessage } from 'react-intl';
 
 const StyledAnchorContainer = styled.div`
   width: 22em;
@@ -22,16 +23,24 @@ const ExampleMenuAnchorPos: React.FC = () => {
   return (
     <>
       <StyledAnchorContainer>
-        <Button onClick={event => setAnchorElement(anchorElement ? null : event.currentTarget)}>
-          Toggle Popper
+        <Button
+          color="primary"
+          onClick={event => setAnchorElement(anchorElement ? null : event.currentTarget)}
+        >
+          {anchorElement ? (
+            <FormattedMessage defaultMessage="Скрыть" />
+          ) : (
+            <FormattedMessage defaultMessage="Показать" />
+          )}
         </Button>
         <Popper
-          anchorPos="auto"
           anchorElement={anchorElement}
           isOpen={Boolean(anchorElement)}
           zindex={zIndex.header - 1}
         >
-          <Surface>Popper content</Surface>
+          <Surface>
+            <FormattedMessage defaultMessage="Какой-либо контент" />
+          </Surface>
         </Popper>
       </StyledAnchorContainer>
     </>

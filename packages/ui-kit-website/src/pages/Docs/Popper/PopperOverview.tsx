@@ -6,6 +6,7 @@ import content from '@via-profit/ui-kit/docs/popper/README.md';
 import ExamplePopperOverview from '~/examples/popper/ExamplePopperOverview';
 import ExamplePopperAnchorPos from '~/examples/popper/ExamplePopperAnchorPos';
 import ExamplePopperOutsideClick from '~/examples/popper/ExamplePopperOutsideClick';
+import ExamplePopperModal from '~/examples/popper/ExamplePopperModal';
 
 const PopperOverview: React.FC = () => (
   <Surface>
@@ -14,6 +15,7 @@ const PopperOverview: React.FC = () => (
         ExamplePopperOverview,
         ExamplePopperAnchorPos,
         ExamplePopperOutsideClick,
+        ExamplePopperModal,
       }}
     >
       {content}

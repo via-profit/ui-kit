@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 import styled from '@emotion/styled';
 
 export type AnchorPos =
@@ -19,16 +20,20 @@ export interface PopperProps extends React.HTMLAttributes<HTMLDivElement> {
   readonly anchorElement?: HTMLElement | null;
   readonly anchorPos?: AnchorPos;
   readonly zindex?: number;
+  readonly disablePortal?: boolean;
 }
 
 type StyleProps = {
   readonly $zIndex?: number;
+  readonly $disablePortal?: boolean;
 };
+
+export const PORTAL_ID = 'ui-kit-portal';
 
 const StyledPopper = styled.div<StyleProps>`
   position: absolute;
-  z-index: ${({ theme, $zIndex }) =>
-    typeof $zIndex !== 'undefined' ? $zIndex : theme.zIndex.dropdown};
+  z-index: ${({ theme, $zIndex, $disablePortal }) =>
+    typeof $zIndex !== 'undefined' ? $zIndex : $disablePortal ? undefined : theme.zIndex.modal};
   display: flex;
   pointer-events: none;
   & > * {
@@ -37,14 +42,56 @@ const StyledPopper = styled.div<StyleProps>`
 `;
 
 const Popper: React.ForwardRefRenderFunction<HTMLDivElement, PopperProps> = (props, ref) => {
-  const { isOpen, children, anchorElement, zindex, anchorPos = 'auto', ...nativeProps } = props;
+  const {
+    isOpen,
+    children,
+    anchorElement,
+    zindex,
+    anchorPos = 'auto',
+    // eslint-disable-next-line react/destructuring-assignment
+    disablePortal = props.anchorPos === 'static',
+    ...nativeProps
+  } = props;
   const [style, setStyle] = React.useState<React.CSSProperties | null>(null);
+  const [domLoaded, setDomLoaded] = React.useState(false);
 
   if (anchorPos !== 'static' && typeof anchorElement === 'undefined') {
     throw new Error(
       '[@via-profit/ui-kit] When the «anchorPos» is «satic» then «anchorElement» most be an element or null, but got undefined',
     );
   }
+  if (anchorPos === 'static' && !disablePortal) {
+    throw new Error(
+      '[@via-profit/ui-kit] When the «anchorPos» is «satic» then «disablePortal» most be false',
+    );
+  }
+
+  /**
+   * Client render detection
+   */
+  React.useEffect(() => {
+    if (!disablePortal) {
+      setDomLoaded(true);
+    }
+  }, [disablePortal]);
+
+  const portalEl = React.useMemo(() => {
+    if (typeof window === 'undefined') {
+      return undefined;
+    }
+
+    const node = window.document.body.querySelector(`#${PORTAL_ID}`);
+    if (node) {
+      return node;
+    }
+
+    const newNode = window.document.createElement('div');
+    newNode.setAttribute('id', PORTAL_ID);
+
+    window.document.body.appendChild(newNode);
+
+    return newNode;
+  }, []);
 
   const calculateStyles = React.useCallback(() => {
     // For a static placement
@@ -257,20 +304,30 @@ const Popper: React.ForwardRefRenderFunction<HTMLDivElement, PopperProps> = (pro
     }
   }, [isOpen, anchorElement, anchorPos, calculateStyles]);
 
+  const renderNode = React.useCallback(
+    () => (
+      <StyledPopper
+        {...nativeProps}
+        style={{ ...style, ...nativeProps.style }}
+        $zIndex={zindex}
+        $disablePortal={disablePortal}
+        ref={ref}
+      >
+        {style && children}
+      </StyledPopper>
+    ),
+    [children, disablePortal, nativeProps, ref, style, zindex],
+  );
+
   if (!isOpen || !style) {
     return null;
   }
 
-  return (
-    <StyledPopper
-      {...nativeProps}
-      style={{ ...style, ...nativeProps.style }}
-      $zIndex={zindex}
-      ref={ref}
-    >
-      {style && children}
-    </StyledPopper>
-  );
+  if (disablePortal) {
+    return renderNode();
+  }
+
+  return domLoaded && portalEl ? ReactDOM.createPortal(renderNode(), portalEl, PORTAL_ID) : null;
 };
 
 export default React.forwardRef(Popper);

@@ -1,7 +1,5 @@
 import React from 'react';
 
-export const PORTAL_ID = 'ui-kit-portal';
-
 export interface MenuState {
   readonly selectedIndexes: readonly number[];
   readonly markedIndex: number;

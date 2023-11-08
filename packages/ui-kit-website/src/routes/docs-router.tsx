@@ -32,6 +32,9 @@ const LoadingIndicatorOverview = loadable(
 );
 const BadgeOverview = loadable(() => import('~/pages/Docs/Badge/BadgeOverview'));
 const PopperOverview = loadable(() => import('~/pages/Docs/Popper/PopperOverview'));
+const ClickOutsideOverview = loadable(
+  () => import('~/pages/Docs/ClickOutside/ClickOutsideOverview'),
+);
 
 const docsRouter: RouteObject = {
   path: 'docs',
@@ -206,6 +209,15 @@ const docsRouter: RouteObject = {
       element: (
         <React.Suspense fallback={<LoadingIndicator />}>
           <PopperOverview />
+        </React.Suspense>
+      ),
+    },
+    {
+      path: 'click-outside',
+      caseSensitive: true,
+      element: (
+        <React.Suspense fallback={<LoadingIndicator />}>
+          <ClickOutsideOverview />
         </React.Suspense>
       ),
     },

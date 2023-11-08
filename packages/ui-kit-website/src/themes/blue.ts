@@ -10,7 +10,6 @@ const blue: UIThemeOverrides = {
   },
   zIndex: {
     header: 8,
-    dropdown: 9,
     modal: 10,
   },
   color: {

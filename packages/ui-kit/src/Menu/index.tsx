@@ -1,7 +1,7 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+// import ReactDOM from 'react-dom';
 
-import { MenuContextProvider, PORTAL_ID } from './context';
+import { MenuContextProvider } from './context';
 import MenuContainer, { MenuProps, MenuRef } from './MenuContainer';
 import { AnchorPos as PopperAnchorPos } from '../Popper';
 
@@ -13,8 +13,6 @@ const Menu = React.forwardRef(
     props: MenuProps<T, Multiple>,
     ref: React.Ref<MenuRef>,
   ) => {
-    const [domLoaded, setDomLoaded] = React.useState(false);
-
     if (props.anchorPos !== 'static' && typeof props.anchorElement === 'undefined') {
       throw new Error(
         `[@via-profit/ui-kit] You set «anchorPos» property as «static». In this case you should use «anchorElement» property`,
@@ -27,50 +25,56 @@ const Menu = React.forwardRef(
       );
     }
 
-    /**
-     * Client render detection
-     */
-    React.useEffect(() => {
-      if (!props.disablePortal) {
-        setDomLoaded(true);
-      }
-    }, [props.disablePortal]);
+    // const [domLoaded, setDomLoaded] = React.useState(false);
+    // /**
+    //  * Client render detection
+    //  */
+    // React.useEffect(() => {
+    //   if (!props.disablePortal) {
+    //     setDomLoaded(true);
+    //   }
+    // }, [props.disablePortal]);
 
-    const portalEl = React.useMemo(() => {
-      if (typeof window === 'undefined') {
-        return undefined;
-      }
+    // const portalEl = React.useMemo(() => {
+    //   if (typeof window === 'undefined') {
+    //     return undefined;
+    //   }
 
-      const node = window.document.body.querySelector(`#${PORTAL_ID}`);
-      if (node) {
-        return node;
-      }
+    //   const node = window.document.body.querySelector(`#${PORTAL_ID}`);
+    //   if (node) {
+    //     return node;
+    //   }
 
-      const newNode = window.document.createElement('div');
-      newNode.setAttribute('id', PORTAL_ID);
+    //   const newNode = window.document.createElement('div');
+    //   newNode.setAttribute('id', PORTAL_ID);
 
-      window.document.body.appendChild(newNode);
+    //   window.document.body.appendChild(newNode);
 
-      return newNode;
-    }, []);
+    //   return newNode;
+    // }, []);
 
-    if (props.disablePortal) {
-      return (
-        <MenuContextProvider>
-          <MenuContainer {...props} ref={ref} />
-        </MenuContextProvider>
-      );
-    }
+    return (
+      <MenuContextProvider>
+        <MenuContainer {...props} ref={ref} />
+      </MenuContextProvider>
+    );
+    // if (props.disablePortal) {
+    //   return (
+    //     <MenuContextProvider>
+    //       <MenuContainer {...props} ref={ref} />
+    //     </MenuContextProvider>
+    //   );
+    // }
 
-    return domLoaded && portalEl
-      ? ReactDOM.createPortal(
-          <MenuContextProvider>
-            <MenuContainer {...props} ref={ref} />
-          </MenuContextProvider>,
-          portalEl,
-          PORTAL_ID,
-        )
-      : null;
+    // return domLoaded && portalEl
+    //   ? ReactDOM.createPortal(
+    //       <MenuContextProvider>
+    //         <MenuContainer {...props} ref={ref} />
+    //       </MenuContextProvider>,
+    //       portalEl,
+    //       PORTAL_ID,
+    //     )
+    //   : null;
   },
 );
 

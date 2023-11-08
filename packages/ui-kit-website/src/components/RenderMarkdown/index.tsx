@@ -74,6 +74,7 @@ const CodeInline = styled.code`
   border-radius: 4px;
   font-size: 1em;
   font-weight: 500;
+  white-space: nowrap;
 `;
 
 const relativeToAbsolute = (base: string, rel: string): string => {

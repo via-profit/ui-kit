@@ -6,17 +6,15 @@ import { Link, matchPath, useLocation } from 'react-router-dom';
 const Container = styled.div`
   background-color: ${({ theme }) => theme.color.backgroundSecondary.toString()};
   color: ${({ theme }) => theme.color.accentPrimaryContrast.toString()};
-  position: fixed;
-  left: 0;
-  bottom: 0;
-  overflow-y: auto;
 `;
 
 const ItemsList = styled.nav`
   display: flex;
   flex-direction: column;
+  overflow-y: auto;
   position: sticky;
   top: 5rem;
+  max-height: calc(100vh - 5rem);
 `;
 
 type ItemStyle = {
@@ -120,6 +118,12 @@ const Sidebar: React.ForwardRefRenderFunction<
         </Item>
         <Item $isActive={matchPath('/docs/popper/*', pathname) !== null} to="/docs/popper">
           Popper
+        </Item>
+        <Item
+          $isActive={matchPath('/docs/click-outside/*', pathname) !== null}
+          to="/docs/click-outside"
+        >
+          Click outside
         </Item>
       </ItemsList>
     </Container>

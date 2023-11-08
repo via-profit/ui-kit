@@ -12,12 +12,12 @@ const Wrapper = styled.div`
   flex: 1;
   display: flex;
   flex-flow: row nowrap;
+  position: relative;
 `;
 
 const Content = styled.div`
   flex: 1;
   padding: 0 1em 1em;
-  margin-left: 14rem;
   width: 70%;
   box-sizing: border-box;
 `;
