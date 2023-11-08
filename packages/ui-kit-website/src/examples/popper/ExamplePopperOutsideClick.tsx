@@ -27,12 +27,7 @@ const ExamplePopperOutsideClick: React.FC = () => {
             <FormattedMessage defaultMessage="Открыть/Закрыть Popper" />
           </Button>
 
-          <Popper
-            anchorPos="auto"
-            disablePortal
-            anchorElement={anchorElement}
-            isOpen={Boolean(anchorElement)}
-          >
+          <Popper anchorPos="auto" anchorElement={anchorElement} isOpen={Boolean(anchorElement)}>
             <Surface>
               <FormattedMessage defaultMessage="Какой-то контент" />
             </Surface>

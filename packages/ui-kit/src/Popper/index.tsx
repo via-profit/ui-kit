@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import styled from '@emotion/styled';
+
+import Container, { PopperContainerProps } from './PopperContainer';
 
 export type AnchorPos =
   | 'auto'
@@ -20,26 +21,22 @@ export interface PopperProps extends React.HTMLAttributes<HTMLDivElement> {
   readonly anchorElement?: HTMLElement | null;
   readonly anchorPos?: AnchorPos;
   readonly zindex?: number;
-  readonly disablePortal?: boolean;
+  /**
+   * Overridable components map
+   */
+  readonly overrides?: PopperOverrides;
 }
 
-type StyleProps = {
-  readonly $zIndex?: number;
-  readonly $disablePortal?: boolean;
-};
+export interface PopperOverrides {
+  /**
+   * Popper Container
+   */
+  readonly Container?: React.ForwardRefExoticComponent<
+    PopperContainerProps & React.RefAttributes<HTMLDivElement>
+  >;
+}
 
 export const PORTAL_ID = 'ui-kit-portal';
-
-const StyledPopper = styled.div<StyleProps>`
-  position: absolute;
-  z-index: ${({ theme, $zIndex, $disablePortal }) =>
-    typeof $zIndex !== 'undefined' ? $zIndex : $disablePortal ? undefined : theme.zIndex.modal};
-  display: flex;
-  pointer-events: none;
-  & > * {
-    pointer-events: all;
-  }
-`;
 
 const Popper: React.ForwardRefRenderFunction<HTMLDivElement, PopperProps> = (props, ref) => {
   const {
@@ -47,24 +44,33 @@ const Popper: React.ForwardRefRenderFunction<HTMLDivElement, PopperProps> = (pro
     children,
     anchorElement,
     zindex,
+    overrides,
     anchorPos = 'auto',
-    // eslint-disable-next-line react/destructuring-assignment
-    disablePortal = props.anchorPos === 'static',
     ...nativeProps
   } = props;
   const [style, setStyle] = React.useState<React.CSSProperties | null>(null);
   const [domLoaded, setDomLoaded] = React.useState(false);
+
+  const disablePortal = React.useMemo(() => anchorPos === 'static', [anchorPos]);
 
   if (anchorPos !== 'static' && typeof anchorElement === 'undefined') {
     throw new Error(
       '[@via-profit/ui-kit] When the «anchorPos» is «satic» then «anchorElement» most be an element or null, but got undefined',
     );
   }
-  if (anchorPos === 'static' && !disablePortal) {
-    throw new Error(
-      '[@via-profit/ui-kit] When the «anchorPos» is «satic» then «disablePortal» most be false',
-    );
-  }
+  // if (anchorPos === 'static' && !disablePortal) {
+  //   throw new Error(
+  //     '[@via-profit/ui-kit] When the «anchorPos» is «satic» then «disablePortal» most be false',
+  //   );
+  // }
+
+  const overridesMap = React.useMemo(
+    () => ({
+      Container,
+      ...overrides,
+    }),
+    [overrides],
+  );
 
   /**
    * Client render detection
@@ -117,6 +123,7 @@ const Popper: React.ForwardRefRenderFunction<HTMLDivElement, PopperProps> = (pro
             height: Math.floor(window.innerHeight - anchorRect.top - anchorRect.height - 5),
             width: Math.floor(window.innerWidth - anchorRect.left - 15),
             // backgroundColor: 'rgba(255, 0, 0, .5)',
+            display: 'flex',
             alignItems: 'flex-start',
             justifyContent: 'flex-start',
           });
@@ -274,6 +281,7 @@ const Popper: React.ForwardRefRenderFunction<HTMLDivElement, PopperProps> = (pro
                 height: Math.floor(window.innerHeight - anchorRect.top - anchorRect.height - 5),
                 width: Math.floor(window.innerWidth - anchorRect.left - 15),
                 // backgroundColor: 'rgba(255, 0, 0, .5)',
+                display: 'flex',
                 alignItems: 'flex-start',
               });
             }
@@ -306,17 +314,17 @@ const Popper: React.ForwardRefRenderFunction<HTMLDivElement, PopperProps> = (pro
 
   const renderNode = React.useCallback(
     () => (
-      <StyledPopper
+      <overridesMap.Container
         {...nativeProps}
         style={{ ...style, ...nativeProps.style }}
-        $zIndex={zindex}
-        $disablePortal={disablePortal}
+        zIndex={zindex}
+        disablePortal={disablePortal}
         ref={ref}
       >
         {style && children}
-      </StyledPopper>
+      </overridesMap.Container>
     ),
-    [children, disablePortal, nativeProps, ref, style, zindex],
+    [children, disablePortal, nativeProps, overridesMap, ref, style, zindex],
   );
 
   if (!isOpen || !style) {

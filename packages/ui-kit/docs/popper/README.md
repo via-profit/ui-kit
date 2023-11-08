@@ -5,6 +5,7 @@
 - [Описание](#описание)
 - [Позиция](#позиция)
 - [Всплывающая подсказка](#всплывающая-подсказка)
+- [Переопределение](#переопределение)
 - [Свойства](#свойства)
 
 ## Описание
@@ -111,7 +112,6 @@ const Example: React.FC = () => {
 
           <Popper
             anchorPos="auto"
-            disablePortal
             anchorElement={anchorElement}
             isOpen={Boolean(anchorElement)}
           >
@@ -128,12 +128,66 @@ export default Example;
 
 <ExamplePopperOutsideClick />
 
+## Переопределение
+
+Компонент `<Popper>` является составным и реализован при помощи следующих компонентов:
+
+- `<Container>` — Компонент нативного элемента `<div>`
+
+Используйте свойство `overrides` чтобы переопределить один или несколько компонентов:
+
+_Пример использования:_
+
+```tsx
+import React from 'react';
+
+import Button from '@via-profit/ui-kit/Button';
+import Popper from '@via-profit/ui-kit/Popper';
+import Surface from '@via-profit/ui-kit/Surface';
+
+const ExamplePopperOverrides: React.FC = () => {
+  const [anchorElement, setAnchorElement] = React.useState<HTMLButtonElement | null>(null);
+
+  return (
+    <>
+      <StyledAnchorContainer>
+        <Popper
+          anchorElement={anchorElement}
+          isOpen={Boolean(anchorElement)}
+          overrides={{
+            Container: React.forwardRef(function Override(props, ref) {
+              return (
+                <div
+                  {...props}
+                  style={{
+                    ...props.style,
+                    backgroundColor: 'rgba(208, 255, 0, 0.5)',
+                  }}
+                  ref={ref}
+                />
+              );
+            }),
+          }}
+        >
+          <Surface>
+            <FormattedMessage defaultMessage="Какой-либо контент" />
+          </Surface>
+        </Popper>
+      </StyledAnchorContainer>
+    </>
+  );
+};
+
+export default ExamplePopperOverrides;
+```
+
 ## Свойства
 
-| Свойство          | Обязателен | Тип                                                                                                                                                                                          | По умолчанию         | Описание                                                                                                                                                                                      |
-| ----------------- | :--------: | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **isOpen**        |     \*     | `boolean`                                                                                                                                                                                    |                      | Определяет является ли компонент открытым (видимым)                                                                                                                                           |
-| **anchorElement** |            | `HTMLElement` `null`                                                                                                                                                                         |                      | Анкор. HTML-эелмент или `null`. Позиционирование будет выполняться относительно этого элемента. В случае, если свойство `anchorPos` установлено в `static`, данный пропс будет проигнорирован |
-| **anchorPos**     |            | <br />`auto`<br />`auto-start-end`<br />`top-start`<br />`top-end`<br />`top`<br />`bottom`<br />`top-start-end`<br />`bottom-start-end`<br />`bottom-start`<br />`bottom-end`<br />`static` | `auto`               | Вариант позиционирования относитльено анкора.                                                                                                                                                 |
-| **disablePortal** |            | `boolean`                                                                                                                                                                                    | `false`              | Флаг отключает использование порталов.                                                                                                                                                        |
-| **zIndex**        |            | `number`                                                                                                                                                                                     | `theme.zIndex.modal` | Перманентное указание свойства `z-index` для элемента. В случае, если свойство `disablePortal` истино, то данный пропс игнорируется.                                                          |
+| Свойство                 | Обязателен | Тип                                                                                                                                                                                          | По умолчанию         | Описание                                                                                                                                                                                      |
+| ------------------------ | :--------: | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **isOpen**               |     \*     | `boolean`                                                                                                                                                                                    |                      | Определяет является ли компонент открытым (видимым)                                                                                                                                           |
+| **anchorElement**        |            | `HTMLElement` `null`                                                                                                                                                                         |                      | Анкор. HTML-эелмент или `null`. Позиционирование будет выполняться относительно этого элемента. В случае, если свойство `anchorPos` установлено в `static`, данный пропс будет проигнорирован |
+| **anchorPos**            |            | <br />`auto`<br />`auto-start-end`<br />`top-start`<br />`top-end`<br />`top`<br />`bottom`<br />`top-start-end`<br />`bottom-start-end`<br />`bottom-start`<br />`bottom-end`<br />`static` | `auto`               | Вариант позиционирования относитльено анкора.                                                                                                                                                 |
+| **zIndex**               |            | `number`                                                                                                                                                                                     | `theme.zIndex.modal` | Перманентное указание свойства `z-index` для элемента.                                                          |
+| **overrides**            |            | `Object`                                                                                                                                                                                     | `undefined`          | Объект элементов для переопределения составных компонентов Popper                                                                                                                             |
+| **overrides .Container** |            | `<React.Component>`                                                                                                                                                                          | `<ButtonContainer>`  | Компонент нативного `<div>`, который является контейнером                                                                                                                                     |

@@ -1,8 +1,9 @@
 import React from 'react';
 import Button from '@via-profit/ui-kit/src/Button';
+import Surface from '@via-profit/ui-kit/src/Surface';
 import Popper, { AnchorPos } from '@via-profit/ui-kit/src/Popper';
 import styled from '@emotion/styled';
-import Surface from '@via-profit/ui-kit/src/Surface';
+import { useTheme } from '@emotion/react';
 
 const StyledAnchorContainer = styled.div`
   width: 22em;
@@ -43,6 +44,7 @@ const AnchorButton: React.FC<AnchorButtonProps> = props => {
 };
 
 const ExamplePopperAnchorPos: React.FC = () => {
+  const theme = useTheme();
   const [anchorPos, setAnchorPos] = React.useState<AnchorPos>('auto');
   const [anchorElement, setAnchorElement] = React.useState<HTMLDivElement | null>(null);
 
@@ -83,7 +85,12 @@ const ExamplePopperAnchorPos: React.FC = () => {
 
       <StyledAnchorContainer>
         <StyledAnchorElement ref={setAnchorElement} />
-        <Popper anchorPos={anchorPos} anchorElement={anchorElement} isOpen>
+        <Popper
+          anchorPos={anchorPos}
+          anchorElement={anchorElement}
+          isOpen
+          zindex={theme.zIndex.header - 1}
+        >
           <Surface>Popper content</Surface>
         </Popper>
       </StyledAnchorContainer>
