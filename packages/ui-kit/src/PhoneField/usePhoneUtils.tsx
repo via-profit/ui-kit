@@ -45,7 +45,7 @@ export const usePhoneUtils = (params: { templates: readonly PhoneTemplate[] }) =
       <UnknownFlag key="unknnown" />,
       null,
       '+x xxx xxx-xx-xx',
-      '+30 987 654-32-10',
+      '+7 987 654-32-10',
       /^\+{0,1}.*/,
     ],
   ]);

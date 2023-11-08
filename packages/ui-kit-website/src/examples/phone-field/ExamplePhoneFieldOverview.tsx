@@ -2,12 +2,10 @@ import React from 'react';
 import PhoneField, { PhonePayload, usePhoneUtils } from '@via-profit/ui-kit/src/PhoneField';
 import templates from '@via-profit/ui-kit/src/PhoneField/templates';
 
-import RU from '@via-profit/ui-kit/src/CountryFlags/RU';
-
 const ExamplePhoneFieldOverview: React.FC = () => {
   const [phoneState, setPhoneState] = React.useState<PhonePayload | null>(null);
 
-  const { getTemplateInfo, parseAndFormat, parseInput } = usePhoneUtils({
+  const { parseAndFormat } = usePhoneUtils({
     templates,
   });
 
@@ -35,6 +33,7 @@ const ExamplePhoneFieldOverview: React.FC = () => {
         const { text, CountryFlag, countryCode } = parseAndFormat(phone);
 
         return (
+          // eslint-disable-next-line react/no-array-index-key
           <div key={index}>
             <span style={{ marginRight: '0.3em' }}>{CountryFlag}</span>
             {text}
@@ -45,6 +44,7 @@ const ExamplePhoneFieldOverview: React.FC = () => {
 
       <PhoneField
         requiredAsterisk
+        placeholder="+7 (987) 654-32-10"
         templates={templates}
         label="Enter the phone number"
         value={phoneState?.value || ''}

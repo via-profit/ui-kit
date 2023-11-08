@@ -9,6 +9,39 @@ import JP from '../CountryFlags/JP';
 import US from '../CountryFlags/US';
 import IL from '../CountryFlags/IL';
 
+export const templates: PhoneTemplate[] = [
+  // Russian template
+  ['RU', <RU key="ru-1" />, '7', '+x (xxx) xxx-xx-xx', '+7 (987) 654-32-10', /^\+$/], // must be at first (Default RU)
+  ['RU', <RU key="ru-2" />, '7', '8 (xxx) xxx-xx-xx', '8 (987) 654-32-10', /^8[^1]{0,}/], // 8912...
+  [
+    'RU',
+    <RU key="ru-3" />,
+    '7',
+    '+7 (xxx) xxx-xx-xx',
+    '+7 (987) 654-32-10',
+    /^\+{0,1}7([0-5]|[8-9])[0-9][0-9]/,
+  ], // +79...
+
+  // Other fucking countries
+  ['BY', <BY key="by" />, '375', '+375 (xx) xxx-xx-xx', '+375 (98) 765-43-21', /^\+{0,1}375/],
+  ['KZ', <KZ key="kz-1" />, '7', '+997 (xx) xxx-xx-xx', '+997 (98) 765-43-21', /^\+{0,1}997/],
+  [
+    'KZ',
+    <KZ key="kz-2" />,
+    '7',
+    '+7 (xxx) xxx-xx-xx',
+    '+7 (600) 765-43-21',
+    /^\+{0,1}7[6-7][0-9][0-9]/,
+  ], // +7600 - +7700
+  ['UA', <UA key="ua" />, '380', '+380 (xx) xxx-xxxx', '+380 (98) 765-4321', /^\+{0,1}380/],
+  ['JP', <JP key="jp" />, '81', '+81 (xx) xxx-xxxx', '+81 (98) 765-4321', /^\+{0,1}81/],
+  ['US', <US key="us" />, '1', '+1 xxx xxx-xx-xx', '+1 987 654-32-10', /^\+{0,1}1/],
+
+  ['IL', <IL key="il" />, '972', '+972 xx xxx-xx-xx', '+972 65 432-10-01', /^\+972/],
+];
+
+export default templates;
+
 export type CallingCode = string;
 
 /**
@@ -350,37 +383,3 @@ export type PhoneTemplate = [
   Placeholder,
   RegExpDetect,
 ];
-
-export const templates: PhoneTemplate[] = [
-  // Russian template
-  ['RU', <RU key="ru-1" />, '7', '+x (xxx) xxx-xx-xx', '+7 (987) 654-32-10', /^\+$/], // must be at first (Default RU)
-  ['RU', <RU key="ru-2" />, '7', '8 (xxx) xxx-xx-xx', '8 (987) 654-32-10', /^8[^1]{0,}/], // 8912...
-  // ['RU', '7', '+7 (xxx) xxx-xx-xx', '+7 (987) 654-32-10', /^\+{0,1}7{0,1}9/], // 912...
-  [
-    'RU',
-    <RU key="ru-3" />,
-    '7',
-    '+7 (xxx) xxx-xx-xx',
-    '+7 (987) 654-32-10',
-    /^\+{0,1}7([0-5]|[8-9])[0-9][0-9]/,
-  ], // +79...
-
-  // Other fucking countries
-  ['BY', <BY key="by" />, '375', '+375 (xx) xxx-xx-xx', '+375 (98) 765-43-21', /^\+{0,1}375/],
-  ['KZ', <KZ key="kz-1" />, '7', '+997 (xx) xxx-xx-xx', '+997 (98) 765-43-21', /^\+{0,1}997/],
-  [
-    'KZ',
-    <KZ key="kz-2" />,
-    '7',
-    '+7 (xxx) xxx-xx-xx',
-    '+7 (600) 765-43-21',
-    /^\+{0,1}7[6-7][0-9][0-9]/,
-  ], // +7600 - +7700
-  ['UA', <UA key="ua" />, '380', '+380 (xx) xxx-xxxx', '+380 (98) 765-4321', /^\+{0,1}380/],
-  ['JP', <JP key="jp" />, '81', '+81 (xx) xxx-xxxx', '+81 (98) 765-4321', /^\+{0,1}81/],
-  ['US', <US key="us" />, '1', '+1 xxx xxx-xx-xx', '+1 987 654-32-10', /^\+{0,1}1/],
-
-  ['IL', <IL key="il" />, '972', '+972 xx xxx-xx-xx', '+972 65 432-10-01', /^\+972/],
-];
-
-export default templates;
