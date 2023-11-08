@@ -1,9 +1,10 @@
 import React from 'react';
 
-import Menu, { MenuRef, Value, OnRequestClose, GetOptionSelected, AnchorPos } from '../Menu';
+import Menu, { MenuRef, Value, OnRequestClose, GetOptionSelected } from '../Menu';
 import TextField, { TextFieldProps } from '../TextField';
 import Button from '../Button';
 import Spinner from '../LoadingIndicator/Spinner';
+import type { AnchorPos } from '../Popper';
 import type { MenuItemCommonProps } from '../Menu/MenuItem';
 
 import IconClear from './IconClear';

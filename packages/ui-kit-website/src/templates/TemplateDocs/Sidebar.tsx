@@ -118,6 +118,9 @@ const Sidebar: React.ForwardRefRenderFunction<
         <Item $isActive={matchPath('/docs/badge/*', pathname) !== null} to="/docs/badge">
           Badge
         </Item>
+        <Item $isActive={matchPath('/docs/popper/*', pathname) !== null} to="/docs/popper">
+          Popper
+        </Item>
       </ItemsList>
     </Container>
   );

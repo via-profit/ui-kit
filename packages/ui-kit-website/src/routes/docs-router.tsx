@@ -30,7 +30,8 @@ const HighlightedOverview = loadable(() => import('~/pages/Docs/Highlighted/High
 const LoadingIndicatorOverview = loadable(
   () => import('~/pages/Docs/LoadingIndicator/LoadingIndicatorOverview'),
 );
-const BadgeOverview = loadable(() => import('~/pages/Docs/badge/BadgeOverview'));
+const BadgeOverview = loadable(() => import('~/pages/Docs/Badge/BadgeOverview'));
+const PopperOverview = loadable(() => import('~/pages/Docs/Popper/PopperOverview'));
 
 const docsRouter: RouteObject = {
   path: 'docs',
@@ -196,6 +197,15 @@ const docsRouter: RouteObject = {
       element: (
         <React.Suspense fallback={<LoadingIndicator />}>
           <BadgeOverview />
+        </React.Suspense>
+      ),
+    },
+    {
+      path: 'popper',
+      caseSensitive: true,
+      element: (
+        <React.Suspense fallback={<LoadingIndicator />}>
+          <PopperOverview />
         </React.Suspense>
       ),
     },

@@ -2,8 +2,9 @@ import React from 'react';
 
 import useContext, { actionSetmenuState } from './context';
 import List, { MenuListProps } from './MenuList';
-import Popper, { MenuListPopperProps, AnchorPos } from './MenuListPopper';
+import Popper, { AnchorPos } from '../Popper';
 import type { MenuItemCommonProps } from './MenuItem';
+import ClickOutside from '../ClickOutside';
 
 export type AnchorElement<E extends HTMLElement = HTMLElement> = E;
 
@@ -163,13 +164,6 @@ export interface MenuOverrides {
    */
   readonly List?: React.ForwardRefExoticComponent<
     MenuListProps & React.RefAttributes<HTMLDivElement>
-  >;
-
-  /**
-   * List popper container
-   */
-  readonly Popper?: React.ForwardRefExoticComponent<
-    MenuListPopperProps & React.RefAttributes<HTMLDivElement>
   >;
 }
 
@@ -571,40 +565,9 @@ const MenuContainer = React.forwardRef(
         }
       };
 
-      const mouseDownEvent = (event: MouseEvent) => {
-        if (!menuIsOpen) {
-          return;
-        }
-
-        let parentElem = event.target as Node;
-        let needToClose = true;
-
-        while (parentElem && 'parentNode' in parentElem) {
-          if (
-            parentElem === menuListRef.current ||
-            (anchorElement && parentElem === anchorElement)
-          ) {
-            needToClose = false;
-            break;
-          }
-          parentElem = parentElem.parentNode as Node;
-        }
-
-        if (needToClose) {
-          onRequestClose(event);
-        }
-      };
-
-      if (closeOutsideClick) {
-        window.document.addEventListener('mousedown', mouseDownEvent);
-      }
       window.document.addEventListener('resize', windowResizeEvent);
 
       return () => {
-        if (closeOutsideClick) {
-          window.document.removeEventListener('mousedown', mouseDownEvent);
-        }
-
         window.document.removeEventListener('resize', windowResizeEvent);
       };
     }, [menuIsOpen, onRequestClose, anchorElement, closeOutsideClick]);
@@ -622,7 +585,7 @@ const MenuContainer = React.forwardRef(
           if (autofocus) {
             setTimeout(() => {
               menuListRef.current?.focus();
-            }, 300);
+            }, 15);
           }
         }
 
@@ -692,32 +655,41 @@ const MenuContainer = React.forwardRef(
     );
 
     return (
-      <overridesMap.Popper
-        isOpen={Boolean(isOpen)}
-        ref={menuPopperRef}
-        zindex={zIndex}
-        anchorElement={anchorElement}
-        anchorPos={anchorPos}
+      <ClickOutside
+        onOutsideClick={onRequestClose}
+        mouseEvent={closeOutsideClick ? 'onMouseDown' : false}
       >
-        <overridesMap.List isOpen={Boolean(isOpen)} ref={menuListRef} onKeyDown={listKeydownEvent}>
-          {items.map((item, index) =>
-            children(
-              {
-                item,
-                index,
-              },
-              {
-                key: index,
-                onMouseEnter: itemMouseEnterHandler(index, hoveredIndex),
-                onMouseLeave: itemMouseLeaveHandler(index, hoveredIndex),
-                onClick: itemClickHandler(index),
-                selected: selectedIndexes.includes(index),
-                hovered: hoveredIndex === index || markedIndex === index,
-              },
-            ),
-          )}
-        </overridesMap.List>
-      </overridesMap.Popper>
+        <Popper
+          isOpen={Boolean(isOpen)}
+          ref={menuPopperRef}
+          zindex={zIndex}
+          anchorPos={anchorPos}
+          anchorElement={anchorElement}
+        >
+          <overridesMap.List
+            isOpen={Boolean(isOpen)}
+            ref={menuListRef}
+            onKeyDown={listKeydownEvent}
+          >
+            {items.map((item, index) =>
+              children(
+                {
+                  item,
+                  index,
+                },
+                {
+                  key: index,
+                  onMouseEnter: itemMouseEnterHandler(index, hoveredIndex),
+                  onMouseLeave: itemMouseLeaveHandler(index, hoveredIndex),
+                  onClick: itemClickHandler(index),
+                  selected: selectedIndexes.includes(index),
+                  hovered: hoveredIndex === index || markedIndex === index,
+                },
+              ),
+            )}
+          </overridesMap.List>
+        </Popper>
+      </ClickOutside>
     );
   },
 );

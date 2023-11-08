@@ -14,3 +14,4 @@
  - [Календарь](./calendar/README.md)
  - [Подсветка подстроки](./highlighted/README.md)
  - [Бейдж](./badge/README.md)
+ - [Popper](./popper/README.md)

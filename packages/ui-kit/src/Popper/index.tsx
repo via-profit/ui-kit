@@ -14,7 +14,7 @@ export type AnchorPos =
   | 'bottom-end'
   | 'static';
 
-export interface MenuListPopperProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface PopperProps extends React.HTMLAttributes<HTMLDivElement> {
   readonly isOpen: boolean;
   readonly anchorElement?: HTMLElement | null;
   readonly anchorPos?: AnchorPos;
@@ -25,7 +25,7 @@ type StyleProps = {
   readonly $zIndex?: number;
 };
 
-const StyledMenuListPopper = styled.div<StyleProps>`
+const StyledPopper = styled.div<StyleProps>`
   position: absolute;
   z-index: ${({ theme, $zIndex }) =>
     typeof $zIndex !== 'undefined' ? $zIndex : theme.zIndex.dropdown};
@@ -36,12 +36,15 @@ const StyledMenuListPopper = styled.div<StyleProps>`
   }
 `;
 
-const MenuListPopper: React.ForwardRefRenderFunction<HTMLDivElement, MenuListPopperProps> = (
-  props,
-  ref,
-) => {
+const Popper: React.ForwardRefRenderFunction<HTMLDivElement, PopperProps> = (props, ref) => {
   const { isOpen, children, anchorElement, zindex, anchorPos = 'auto', ...nativeProps } = props;
   const [style, setStyle] = React.useState<React.CSSProperties | null>(null);
+
+  if (anchorPos !== 'static' && typeof anchorElement === 'undefined') {
+    throw new Error(
+      '[@via-profit/ui-kit] When the «anchorPos» is «satic» then «anchorElement» most be an element or null, but got undefined',
+    );
+  }
 
   const calculateStyles = React.useCallback(() => {
     // For a static placement
@@ -259,15 +262,15 @@ const MenuListPopper: React.ForwardRefRenderFunction<HTMLDivElement, MenuListPop
   }
 
   return (
-    <StyledMenuListPopper
+    <StyledPopper
       {...nativeProps}
       style={{ ...style, ...nativeProps.style }}
       $zIndex={zindex}
       ref={ref}
     >
       {style && children}
-    </StyledMenuListPopper>
+    </StyledPopper>
   );
 };
 
-export default React.forwardRef(MenuListPopper);
+export default React.forwardRef(Popper);

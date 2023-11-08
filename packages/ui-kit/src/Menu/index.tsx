@@ -3,8 +3,9 @@ import ReactDOM from 'react-dom';
 
 import { MenuContextProvider, PORTAL_ID } from './context';
 import MenuContainer, { MenuProps, MenuRef } from './MenuContainer';
+import { AnchorPos as PopperAnchorPos } from '../Popper';
 
-export * from './MenuListPopper';
+export type AnchorPos = PopperAnchorPos;
 export * from './MenuContainer';
 
 const Menu = React.forwardRef(
