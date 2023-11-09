@@ -2,6 +2,8 @@ import React from 'react';
 import Button from '@via-profit/ui-kit/src/Button';
 import Menu from '@via-profit/ui-kit/src/Menu';
 import MenuItem from '@via-profit/ui-kit/src/Menu/MenuItem';
+import Badge from '@via-profit/ui-kit/src/Badge';
+import { FormattedMessage } from 'react-intl';
 
 type Item = {
   readonly id: number;
@@ -19,12 +21,24 @@ const ExampleMenuMultiple: React.FC = () => {
 
   return (
     <>
+      <div>
+        {value.length === 0 && <FormattedMessage defaultMessage="Ничего не выбрано" />}
+        {value.map(item => (
+          <Badge
+            color="primary"
+            variant="outlined"
+            key={item.id}
+            onDelete={() => setValue(value.filter(v => v.id !== item.id))}
+          >
+            {item.name}
+          </Badge>
+        ))}
+      </div>
       <Button
         variant="standard"
         onClick={event => setAnchorElement(!anchorElement ? event.currentTarget : null)}
       >
-        {(!value || value.length === 0) && <span>please select</span>}
-        {value && <span>{value.map(({ name }) => name).join(', ')}</span>}
+        <FormattedMessage defaultMessage="Выберите" />
       </Button>
       <Menu
         anchorElement={anchorElement}

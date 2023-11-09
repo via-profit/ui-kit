@@ -26,8 +26,14 @@
   "OpBahx": {
     "defaultMessage": "Открыть popper"
   },
+  "QmljCN": {
+    "defaultMessage": "Выбрано: {selected}"
+  },
   "RwqXf6": {
     "defaultMessage": "Показать"
+  },
+  "gwIXyk": {
+    "defaultMessage": "Ничего не выбрано"
   },
   "l775qE": {
     "defaultMessage": "Открыть Popper"

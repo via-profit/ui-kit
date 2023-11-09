@@ -2,6 +2,7 @@ import React from 'react';
 import Button from '@via-profit/ui-kit/src/Button';
 import Menu from '@via-profit/ui-kit/src/Menu';
 import MenuItem from '@via-profit/ui-kit/src/Menu/MenuItem';
+import Strong from '@via-profit/ui-kit/src/Typography/Strong';
 import { FormattedMessage } from 'react-intl';
 
 type Item = {
@@ -16,7 +17,7 @@ const items: Item[] = [...new Array(30).keys()].map(i => ({
 
 const ExampleMenuOverview: React.FC = () => {
   const [anchorElement, setAnchorElement] = React.useState<HTMLButtonElement | null>(null);
-  const [value, setValue] = React.useState<Item | null>(items[2]);
+  const [value, setValue] = React.useState<Item | null>(null);
 
   return (
     <>
@@ -29,7 +30,16 @@ const ExampleMenuOverview: React.FC = () => {
             <FormattedMessage defaultMessage="Выберите" />
           </span>
         )}
-        {value && <span>{value.name}</span>}
+        {value && (
+          <span>
+            <FormattedMessage
+              defaultMessage="Выбрано: {selected}"
+              values={{
+                selected: <Strong>{value.name}</Strong>,
+              }}
+            />
+          </span>
+        )}
       </Button>
       <Menu
         anchorElement={anchorElement}

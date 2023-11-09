@@ -40,7 +40,6 @@ const ExampleMenuAPI: React.FC = () => {
         ref={menuRef}
         isOpen
         anchorPos="static"
-        disablePortal
         value={value}
         items={items}
         getOptionSelected={({ item, value }) => item.id === value.id}

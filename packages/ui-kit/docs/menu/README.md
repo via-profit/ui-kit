@@ -3,6 +3,7 @@
 ## Содержание
 
 - [Описание](#описание)
+- [Мультивыбор](#мультивыбор)
 - [Api](#api)
 - [Свойства](#свойства)
 
@@ -59,13 +60,87 @@ export default ExampleMenuOverview;
 
 <ExampleMenuOverview />
 
-## Using multiple
+## Мультивыбор
+
+Компонент может работать в режиме мультивыбора, для чего используется свойство `multiple`. Меню, в котором указано свойство multiple позволяет осуществлять множественный выбор элементов списка. При этом, свойство `value` становится массивом.
+
+_Пример использования:_
+
+```tsx
+import React from 'react';
+import Button from '@via-profit/ui-kit/Button';
+import Menu from '@via-profit/ui-kit/Menu';
+import MenuItem from '@via-profit/ui-kit/Menu/MenuItem';
+import Badge from '@via-profit/ui-kit/Badge';
+
+type Item = {
+  readonly id: number;
+  readonly name: string;
+};
+
+const items: Item[] = [...new Array(30).keys()].map(i => ({
+  id: i,
+  name: i % 3 === 0 ? `Item ${i} Eiusmod enim labore reprehenderit` : `Item ${i}`,
+}));
+
+const Example: React.FC = () => {
+  const [anchorElement, setAnchorElement] = React.useState<HTMLButtonElement | null>(null);
+  const [value, setValue] = React.useState<readonly Item[]>([]);
+
+  return (
+    <>
+      <div>
+        {value.length === 0 && <>Ничего не выбрано</>}
+        {value.map(item => (
+          <Badge
+            color="primary"
+            variant="outlined"
+            key={item.id}
+            onDelete={() => setValue(value.filter(v => v.id !== item.id))}
+          >
+            {item.name}
+          </Badge>
+        ))}
+      </div>
+      <Button
+        variant="standard"
+        onClick={event => setAnchorElement(!anchorElement ? event.currentTarget : null)}
+      >
+        Выберите
+      </Button>
+      <Menu
+        anchorElement={anchorElement}
+        isOpen={Boolean(anchorElement)}
+        value={value}
+        multiple
+        items={items}
+        closeOnSelect={false}
+        getOptionSelected={({ item, value }) => item.id === value.id}
+        onRequestClose={() => setAnchorElement(null)}
+        onSelectItem={items => setValue(items)}
+      >
+        {({ item }, itemProps) => (
+          <MenuItem {...itemProps} key={item.id}>
+            {item.name}
+          </MenuItem>
+        )}
+      </Menu>
+    </>
+  );
+};
+
+export default Example;
+```
 
 <ExampleMenuMultiple />
 
 ## Using anchor position
 
 <ExampleMenuAnchorPos />
+
+## Using API
+
+<ExampleMenuAPI />
 
 ## Api
 
@@ -84,7 +159,7 @@ Reference (`ref`) компонента `<Menu>` содержит imperative API.
 | **scrollToFirstSelected**  |                                          | Прокручивает список до первого выбранного элемента.                                 |
 | **focus**                  |                                          | Устанавливает фокус на список.                                                      |
 
-<ExampleMenuAPI />
+
 
 ## Свойства
 

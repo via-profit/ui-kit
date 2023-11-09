@@ -101,7 +101,6 @@ const ExampleMenuAnchorPos: React.FC = () => {
           isOpen
           anchorElement={anchorElement}
           anchorPos={anchorPos}
-          disablePortal
           zIndex={theme.zIndex.header - 1}
           value={value}
           items={items}
