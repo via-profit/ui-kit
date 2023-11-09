@@ -16,7 +16,7 @@
     "lint": "eslint --fix .",
     "i18n:extract": "npm run i18n:extract:ru && npm run i18n:extract:en",
     "i18n:compile": "formatjs compile-folder ./src/lang ./src/translations",
-    "i18n:extract:ru": "formatjs extract 'src/components/**/**/*.{ts,tsx}' 'src/utils/**/**/*.ts' 'src/pages/**/**/*.{ts,tsx}' 'src/providers/**/*.{ts,tsx}' 'src/examples/**/*.{ts,tsx}' --id-interpolation-pattern '[sha512:contenthash:base64:6]' --out-file ./src/lang/ru-RU.json",
+    "i18n:extract:ru": "formatjs extract 'src/components/**/**/*.{ts,tsx}' 'src/utils/**/**/*.ts' 'src/templates/**/**/*.{ts,tsx}' 'src/pages/**/**/*.{ts,tsx}' 'src/providers/**/*.{ts,tsx}' 'src/examples/**/*.{ts,tsx}' --id-interpolation-pattern '[sha512:contenthash:base64:6]' --out-file ./src/lang/ru-RU.json",
     "i18n:extract:en": "jq -s '.[0] * .[1]' ./src/lang/ru-RU.json ./src/lang/en-US.json > ./src/lang/tmp.json && mv ./src/lang/tmp.json ./src/lang/en-US.json",
     "i18n": "npm run i18n:extract && npm run i18n:compile"
   },

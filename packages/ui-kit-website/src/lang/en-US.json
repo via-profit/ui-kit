@@ -1,6 +1,18 @@
 {
+  "+mqMMV": {
+    "defaultMessage": "Цвета"
+  },
+  "2fINQ9": {
+    "defaultMessage": "Темы оформления"
+  },
   "44pMfw": {
     "defaultMessage": "Скрыть"
+  },
+  "4SjODy": {
+    "defaultMessage": "Флаги стран"
+  },
+  "7aec0X": {
+    "defaultMessage": "Кнопка"
   },
   "8xa/OX": {
     "defaultMessage": "Кликни вне этого элемента"
@@ -17,6 +29,15 @@
   "G0WBwd": {
     "defaultMessage": "Всего кликов: {counter}"
   },
+  "GfEP0g": {
+    "defaultMessage": "Поверхность"
+  },
+  "J4Mxi4": {
+    "defaultMessage": "Модальные окна"
+  },
+  "K9vWf3": {
+    "defaultMessage": "Подсветка подстроки"
+  },
   "L0LsrI": {
     "defaultMessage": "Какой-то контент"
   },
@@ -32,17 +53,50 @@
   "RwqXf6": {
     "defaultMessage": "Показать"
   },
+  "T9uJ2Q": {
+    "defaultMessage": "Бейдж"
+  },
+  "UpmoXl": {
+    "defaultMessage": "Автокомплит"
+  },
+  "WUq8iQ": {
+    "defaultMessage": "Таблица"
+  },
+  "Y2i5Fd": {
+    "defaultMessage": "Popper"
+  },
+  "YaMZGV": {
+    "defaultMessage": "Меню"
+  },
+  "b+Rsl5": {
+    "defaultMessage": "Поле ввода телефона"
+  },
+  "bvxjPH": {
+    "defaultMessage": "Типографика"
+  },
   "gwIXyk": {
     "defaultMessage": "Ничего не выбрано"
+  },
+  "i3OiMA": {
+    "defaultMessage": "Индикатор загрузки"
   },
   "l775qE": {
     "defaultMessage": "Открыть Popper"
   },
+  "n48pl/": {
+    "defaultMessage": "Маскированное поле"
+  },
   "n4Y9Sg": {
     "defaultMessage": "Открыть диалог"
   },
-  "7aec0X": {
-    "defaultMessage": "Кнопка"
+  "sfDpMH": {
+    "defaultMessage": "Текстовое поле"
+  },
+  "tfwWYu": {
+    "defaultMessage": "Click outside"
+  },
+  "whQBin": {
+    "defaultMessage": "Календарь"
   },
   "hRe4Lb": {
     "defaultMessage": "Открыть/Закрыть Popper"

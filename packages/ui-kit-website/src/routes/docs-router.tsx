@@ -87,7 +87,7 @@ const docsRouter: RouteObject = {
       ),
     },
     {
-      path: 'theming/color',
+      path: 'color',
       caseSensitive: true,
       element: (
         <React.Suspense fallback={<LoadingIndicator />}>
