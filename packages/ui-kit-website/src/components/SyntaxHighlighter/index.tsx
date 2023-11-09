@@ -3,14 +3,16 @@ import styled from '@emotion/styled';
 import { useTheme } from '@emotion/react';
 import ReactSyntaxHighlighter from 'react-syntax-highlighter/dist/esm/prism-async-light';
 import tsxLng from 'react-syntax-highlighter/dist/esm/languages/prism/tsx';
+import jsonLng from 'react-syntax-highlighter/dist/esm/languages/prism/json';
 import { SyntaxHighlighterProps as OriginalSyntaxHighlighterProps } from 'react-syntax-highlighter';
 import light from './light';
 import dark from './dark';
 
 ReactSyntaxHighlighter.registerLanguage('tsx', tsxLng);
+ReactSyntaxHighlighter.registerLanguage('json', jsonLng);
 
 interface SyntaxHighlighterProps extends Omit<OriginalSyntaxHighlighterProps, 'children'> {
-  readonly language: 'js' | 'jsx' | 'ts' | 'tsx';
+  readonly language: 'js' | 'jsx' | 'ts' | 'tsx' | 'json';
   readonly code: string;
 }
 

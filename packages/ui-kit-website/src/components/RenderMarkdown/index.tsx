@@ -70,11 +70,14 @@ const CodeInline = styled.code`
     theme.isDark
       ? theme.color.accentPrimary.toString()
       : theme.color.accentPrimary.darken(60).toString()};
+  background-color: ${({ theme }) =>
+    theme.isDark
+      ? theme.color.accentPrimary.alpha(0.04).toString()
+      : theme.color.accentPrimary.alpha(0.04).darken(60).toString()};
   padding: 0em 0.4em;
   border-radius: 4px;
   font-size: 1em;
   font-weight: 500;
-  white-space: nowrap;
 `;
 
 const relativeToAbsolute = (base: string, rel: string): string => {
@@ -226,13 +229,18 @@ const MarkdownRender: React.FC<Props> = props => {
             );
           },
           code: p => {
-            const { className, children } = p;
+            const { className, children, lang } = p;
 
-            if (typeof className === 'undefined') {
+            const language =
+              typeof lang === 'string'
+                ? lang
+                : typeof className === 'string'
+                ? className.replace(/^lang-/, '')
+                : null;
+
+            if (!language) {
               return <CodeInline>{String(children).replace(/\n$/, '')}</CodeInline>;
             }
-
-            const language = className.replace(/^lang-/, '');
 
             return (
               <SyntaxHighlighter wrapLongLines language={language as any} code={String(children)} />

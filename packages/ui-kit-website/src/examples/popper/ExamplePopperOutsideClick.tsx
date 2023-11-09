@@ -21,18 +21,16 @@ const ExamplePopperOutsideClick: React.FC = () => {
 
   return (
     <StyledAnchorContainer>
-      <ClickOutside onOutsideClick={() => setAnchorElement(null)}>
-        <div>
-          <Button onClick={event => setAnchorElement(anchorElement ? null : event.currentTarget)}>
-            <FormattedMessage defaultMessage="Открыть/Закрыть Popper" />
-          </Button>
+      <Button onClick={event => setAnchorElement(anchorElement ? null : event.currentTarget)}>
+        <FormattedMessage defaultMessage="Открыть Popper" />
+      </Button>
 
-          <Popper anchorPos="auto" anchorElement={anchorElement} isOpen={Boolean(anchorElement)}>
-            <Surface>
-              <FormattedMessage defaultMessage="Какой-то контент" />
-            </Surface>
-          </Popper>
-        </div>
+      <ClickOutside mouseEvent="onMouseUp" onOutsideClick={() => setAnchorElement(null)}>
+        <Popper anchorPos="auto" anchorElement={anchorElement} isOpen={Boolean(anchorElement)}>
+          <Surface>
+            <FormattedMessage defaultMessage="Какой-то контент" />
+          </Surface>
+        </Popper>
       </ClickOutside>
     </StyledAnchorContainer>
   );

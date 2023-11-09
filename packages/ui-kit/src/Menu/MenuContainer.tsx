@@ -122,7 +122,7 @@ export interface MenuProps<T, Multiple extends boolean | undefined = undefined> 
    * \
    * **Default**: `false`
    */
-  readonly disablePortal?: boolean;
+  // readonly disablePortal?: boolean;
 
   /**
    * Popper z-index\
@@ -177,6 +177,10 @@ export interface MenuOverrides {
 }
 
 export type MenuRef = {
+  /**
+   * Focus on list
+   */
+  focus: () => void;
   /**
    * Scroll list to specified element index
    */
@@ -446,7 +450,7 @@ const MenuContainer = React.forwardRef(
     React.useImperativeHandle(
       ref,
       () => ({
-        // focus: () => menuListRef.current?.focus(),
+        focus: () => menuListRef.current?.focus(),
         scrollToIndex: (idx: number) => scrollToIndex(idx),
         highlightIndex: (idx: number) => highlightIndex(idx),
         hightlightPrevItem: () => hightlightPrevItem(),

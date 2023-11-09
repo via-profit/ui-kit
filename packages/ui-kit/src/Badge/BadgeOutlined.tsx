@@ -21,6 +21,8 @@ const StyledOutlinedBadge = styled(BadgeBase)<StyledProps>`
     background-color: ${({ $color }) => $color.darken(20).alpha(0.1).toString()};
   }
   &:focus-visible {
+    outline-style: solid;
+    outline-width: 0.14em;
     outline-color: ${({ $color, theme }) =>
       $color.rgbString() === theme.color.accentPrimary.rgbString()
         ? theme.color.textPrimary.toString()

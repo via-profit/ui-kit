@@ -15,3 +15,4 @@
  - [Подсветка подстроки](./highlighted/README.md)
  - [Бейдж](./badge/README.md)
  - [Popper](./popper/README.md)
+ - [Click outside](./click-outside/README.md)

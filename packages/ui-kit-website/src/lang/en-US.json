@@ -2,9 +2,6 @@
   "44pMfw": {
     "defaultMessage": "Скрыть"
   },
-  "7aec0X": {
-    "defaultMessage": "Кнопка"
-  },
   "8xa/OX": {
     "defaultMessage": "Кликни вне этого элемента"
   },
@@ -23,17 +20,26 @@
   "L0LsrI": {
     "defaultMessage": "Какой-то контент"
   },
+  "LUCzCR": {
+    "defaultMessage": "Выберите"
+  },
   "OpBahx": {
     "defaultMessage": "Открыть popper"
   },
   "RwqXf6": {
     "defaultMessage": "Показать"
   },
-  "hRe4Lb": {
-    "defaultMessage": "Открыть/Закрыть Popper"
+  "l775qE": {
+    "defaultMessage": "Открыть Popper"
   },
   "n4Y9Sg": {
     "defaultMessage": "Открыть диалог"
+  },
+  "7aec0X": {
+    "defaultMessage": "Кнопка"
+  },
+  "hRe4Lb": {
+    "defaultMessage": "Открыть/Закрыть Popper"
   },
   "4giL8F": {
     "defaultMessage": "Открыть Drawer"

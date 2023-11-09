@@ -34,6 +34,8 @@ const StyledPlainButton = styled(ButtonBase)<StyledProps>`
         background-color: ${$color.alpha(0.3).toString()};
       }
       &:focus-visible {
+        outline-style: solid;
+        outline-width: 0.14em;
         outline-color: ${$color.rgbString() === theme.color.accentPrimary.rgbString()
           ? theme.color.textPrimary.toString()
           : theme.color.accentPrimary.toString()};

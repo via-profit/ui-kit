@@ -14,6 +14,8 @@ const StyledMenuList = styled.div<{ $isOpen: boolean }>`
   border-radius: ${({ theme }) => theme.shape.radiusFactor * 2}em;
   box-shadow: 0 4px 24px ${({ theme }) => theme.color.surface.darken(50).alpha(0.6).toString()};
   &:focus {
+    outline-style: solid;
+    outline-width: 0.14em;
     outline-color: ${({ theme }) => theme.color.accentPrimary.toString()};
   }
   & ::-webkit-scrollbar {

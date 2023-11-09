@@ -2,6 +2,7 @@ import React from 'react';
 import Button from '@via-profit/ui-kit/src/Button';
 import Menu from '@via-profit/ui-kit/src/Menu';
 import MenuItem from '@via-profit/ui-kit/src/Menu/MenuItem';
+import { FormattedMessage } from 'react-intl';
 
 type Item = {
   readonly id: number;
@@ -23,7 +24,11 @@ const ExampleMenuOverview: React.FC = () => {
         variant="standard"
         onClick={event => setAnchorElement(!anchorElement ? event.currentTarget : null)}
       >
-        {!value && <span>please select</span>}
+        {!value && (
+          <span>
+            <FormattedMessage defaultMessage="Выберите" />
+          </span>
+        )}
         {value && <span>{value.name}</span>}
       </Button>
       <Menu

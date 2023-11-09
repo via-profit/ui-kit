@@ -29,11 +29,11 @@ const Example: React.FC = () => {
         color="primary"
         onClick={event => setAnchorElement(anchorElement ? null : event.currentTarget)}
       >
-        Toggle popper
+        Открыть Popper
       </Button>
 
       <Popper anchorElement={anchorElement} isOpen={Boolean(anchorElement)}>
-        <Surface>Popper Content</Surface>
+        <Surface>Popper контент</Surface>
       </Popper>
     </>
   );
@@ -74,7 +74,7 @@ const Example: React.FC = () => {
   return (
     <>
       <Popper anchorPos="auto" anchorElement={anchorElement} isOpen={Boolean(anchorElement)}>
-        <Surface>Popper Content</Surface>
+        <Surface>Контент</Surface>
       </Popper>
     </>
   );
@@ -103,23 +103,22 @@ const Example: React.FC = () => {
   const [anchorElement, setAnchorElement] = React.useState<HTMLButtonElement | null>(null);
 
   return (
-    <StyledAnchorContainer>
-      <ClickOutside onOutsideClick={() => setAnchorElement(null)}>
-        <div>
-          <Button onClick={event => setAnchorElement(anchorElement ? null : event.currentTarget)}>
-            Открыть/Закрыть Popper
-          </Button>
+    <>
+      <Button onClick={event => setAnchorElement(anchorElement ? null : event.currentTarget)}>
+        Открыть Popper
+      </Button>
 
-          <Popper
-            anchorPos="auto"
-            anchorElement={anchorElement}
-            isOpen={Boolean(anchorElement)}
-          >
-            <Surface>Какой-то контент</Surface>
-          </Popper>
-        </div>
+      <ClickOutside onOutsideClick={() => setAnchorElement(null)}>
+        <Popper
+          anchorPos="auto"
+          mouseEvent="onMouseUp"
+          anchorElement={anchorElement}
+          isOpen={Boolean(anchorElement)}
+        >
+          <Surface>Какой-то контент</Surface>
+        </Popper>
       </ClickOutside>
-    </StyledAnchorContainer>
+    </>
   );
 };
 
@@ -145,40 +144,36 @@ import Button from '@via-profit/ui-kit/Button';
 import Popper from '@via-profit/ui-kit/Popper';
 import Surface from '@via-profit/ui-kit/Surface';
 
-const ExamplePopperOverrides: React.FC = () => {
+const Example: React.FC = () => {
   const [anchorElement, setAnchorElement] = React.useState<HTMLButtonElement | null>(null);
 
   return (
-    <>
-      <StyledAnchorContainer>
-        <Popper
-          anchorElement={anchorElement}
-          isOpen={Boolean(anchorElement)}
-          overrides={{
-            Container: React.forwardRef(function Override(props, ref) {
-              return (
-                <div
-                  {...props}
-                  style={{
-                    ...props.style,
-                    backgroundColor: 'rgba(208, 255, 0, 0.5)',
-                  }}
-                  ref={ref}
-                />
-              );
-            }),
-          }}
-        >
-          <Surface>
-            <FormattedMessage defaultMessage="Какой-либо контент" />
-          </Surface>
-        </Popper>
-      </StyledAnchorContainer>
-    </>
+    <Popper
+      anchorElement={anchorElement}
+      isOpen={Boolean(anchorElement)}
+      overrides={{
+        Container: React.forwardRef(function Override(props, ref) {
+          return (
+            <div
+              {...props}
+              style={{
+                ...props.style,
+                backgroundColor: 'rgba(208, 255, 0, 0.5)',
+              }}
+              ref={ref}
+            />
+          );
+        }),
+      }}
+    >
+      <Surface>
+        Какой-либо контент
+      </Surface>
+    </Popper>
   );
 };
 
-export default ExamplePopperOverrides;
+export default Example;
 ```
 
 ## Свойства

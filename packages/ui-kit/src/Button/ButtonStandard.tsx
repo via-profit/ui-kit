@@ -48,6 +48,8 @@ const StyledStandardButton = styled(ButtonBase)<StyledProps>`
         background-color: ${$background.darken(80).toString()};
       }
       &:focus-visible {
+        outline-style: solid;
+        outline-width: 0.14em;
         outline-color: ${$background.rgbString() === theme.color.accentPrimary.rgbString()
           ? theme.color.textPrimary.toString()
           : theme.color.accentPrimary.toString()};
