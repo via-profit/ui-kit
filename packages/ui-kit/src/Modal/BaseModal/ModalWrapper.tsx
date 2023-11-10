@@ -117,7 +117,7 @@ const ModalWrapper: React.FC<ModalWrapperProps> = props => {
   }, []);
 
   React.useEffect(() => {
-    if (containerRef.current) {
+    if (isOpenProp && containerRef.current) {
       containerRef.current.focus();
     }
 

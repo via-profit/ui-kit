@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from '@emotion/styled';
-import { useTheme } from '@emotion/react';
+import { useTheme, css } from '@emotion/react';
 
 import Color from '../Color';
 import BadgeBase, { BadgeBaseProps } from './BadgeBase';
@@ -8,8 +8,9 @@ import BadgeBase, { BadgeBaseProps } from './BadgeBase';
 export type BadgeStandardProps = BadgeBaseProps;
 
 type StyledProps = {
-  readonly $background: Color;
   readonly $color: Color;
+  readonly $background: Color;
+  readonly $clickable: boolean;
 };
 
 const StyledStandardBadge = styled(BadgeBase)<StyledProps>`
@@ -32,14 +33,20 @@ const StyledStandardBadge = styled(BadgeBase)<StyledProps>`
         ? theme.color.textPrimary.toString()
         : theme.color.accentPrimary.toString()};
   }
+  ${({ $clickable }) =>
+    $clickable &&
+    css`
+      cursor: pointer;
+    `}
 `;
 
 const BadgeStandard: React.ForwardRefRenderFunction<HTMLSpanElement, BadgeStandardProps> = (
   props,
   ref,
 ) => {
-  const { children, color, ...restProps } = props;
+  const { children, color, onClick, ...restProps } = props;
   const theme = useTheme();
+  const clickable = React.useMemo(() => typeof onClick === 'function', [onClick]);
   const { $background, $color } = React.useMemo(() => {
     switch (true) {
       case color === 'primary':
@@ -89,10 +96,12 @@ const BadgeStandard: React.ForwardRefRenderFunction<HTMLSpanElement, BadgeStanda
   return (
     <StyledStandardBadge
       variant="standard"
+      $clickable={clickable}
       $color={$color}
       $background={$background}
       color={color}
       {...restProps}
+      tabIndex={clickable ? 0 : -1}
       ref={ref}
     >
       {children}

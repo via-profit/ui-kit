@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from '@emotion/styled';
-import { useTheme } from '@emotion/react';
+import { useTheme, css } from '@emotion/react';
 
 import Color from '../Color';
 import BadgeBase, { BadgeBaseProps } from './BadgeBase';
@@ -9,42 +9,56 @@ export type BadgeOutlinedProps = BadgeBaseProps;
 
 type StyledProps = {
   readonly $color: Color;
+  readonly $background: Color;
+  readonly $clickable: boolean;
 };
 
 const StyledOutlinedBadge = styled(BadgeBase)<StyledProps>`
   color: ${({ $color }) => $color.darken(30).toString()};
-  border-color: ${({ $color }) => $color.toString()};
+  border-color: ${({ $background }) => $background.toString()};
   background-color: transparent;
   border-style: solid;
   border-width: 0.14em;
   &:hover {
-    background-color: ${({ $color }) => $color.darken(20).alpha(0.1).toString()};
+    background-color: ${({ $background }) => $background.darken(20).alpha(0.1).toString()};
   }
   &:focus-visible {
     outline-style: solid;
     outline-width: 0.14em;
-    outline-color: ${({ $color, theme }) =>
-      $color.rgbString() === theme.color.accentPrimary.rgbString()
-        ? theme.color.textPrimary.toString()
-        : theme.color.accentPrimary.toString()};
+    outline-color: ${({ $background }) => $background.rgbString()};
   }
+  ${({ $clickable }) =>
+    $clickable &&
+    css`
+      cursor: pointer;
+    `}
 `;
 
 const BadgeOutlined: React.ForwardRefRenderFunction<HTMLSpanElement, BadgeOutlinedProps> = (
   props,
   ref,
 ) => {
-  const { children, color, ...restProps } = props;
+  const { children, color, onClick, ...restProps } = props;
   const theme = useTheme();
-  const $color = React.useMemo(() => {
+  const clickable = React.useMemo(() => typeof onClick === 'function', [onClick]);
+  const { $background, $color } = React.useMemo(() => {
     switch (true) {
       case color === 'primary':
-        return theme.color.accentPrimary;
+        return {
+          $color: theme.color.accentPrimary,
+          $background: theme.color.accentPrimary,
+        };
       case color === 'secondary':
-        return theme.color.accentSecondary;
+        return {
+          $color: theme.color.accentSecondary,
+          $background: theme.color.accentSecondary,
+        };
       case typeof color === 'undefined':
       case color === 'default':
-        return theme.color.textPrimary.lighten(30);
+        return {
+          $color: new Color(theme.color.textPrimary),
+          $background: theme.color.textPrimary.lighten(100),
+        };
       case typeof color === 'string': {
         let c = theme.color.textPrimary;
 
@@ -56,15 +70,30 @@ const BadgeOutlined: React.ForwardRefRenderFunction<HTMLSpanElement, BadgeOutlin
           console.error(`invalid color value «${color}»`);
         }
 
-        return c;
+        return {
+          $color: c,
+          $background: c,
+        };
       }
       default:
-        return theme.color.textPrimary;
+        return {
+          $color: theme.color.textPrimary,
+          $background: theme.color.textPrimary,
+        };
     }
   }, [color, theme.color]);
 
   return (
-    <StyledOutlinedBadge $color={$color} color={color} variant="outlined" {...restProps} ref={ref}>
+    <StyledOutlinedBadge
+      $color={$color}
+      $background={$background}
+      $clickable={clickable}
+      color={color}
+      variant="outlined"
+      {...restProps}
+      tabIndex={clickable ? 0 : -1}
+      ref={ref}
+    >
       {children}
     </StyledOutlinedBadge>
   );
