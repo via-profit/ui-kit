@@ -10,7 +10,6 @@ export type BadgeContainerProps = React.HTMLAttributes<HTMLSpanElement> & {
 
 type StyledProps = {
   readonly color?: BadgeContainerProps['color'];
-  readonly clickable?: boolean;
 };
 
 const StyledBadge = styled.span<StyledProps>`
@@ -37,7 +36,7 @@ const BadgeContainer: React.ForwardRefRenderFunction<HTMLSpanElement, BadgeConta
   props,
   ref,
 ) => {
-  const { children, onClick, ...nativeProps } = props;
+  const { children, ...nativeProps } = props;
 
   return (
     <StyledBadge {...nativeProps} ref={ref}>
