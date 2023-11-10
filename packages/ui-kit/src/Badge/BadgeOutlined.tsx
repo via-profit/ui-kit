@@ -16,9 +16,9 @@ type StyledProps = {
 const StyledOutlinedBadge = styled(BadgeBase)<StyledProps>`
   color: ${({ $color }) => $color.darken(30).toString()};
   border-color: ${({ $background }) => $background.toString()};
-  background-color: transparent;
   border-style: solid;
   border-width: 0.14em;
+  background-color: transparent;
   &:hover {
     background-color: ${({ $background }) => $background.darken(20).alpha(0.1).toString()};
   }
@@ -88,6 +88,7 @@ const BadgeOutlined: React.ForwardRefRenderFunction<HTMLSpanElement, BadgeOutlin
       $color={$color}
       $background={$background}
       $clickable={clickable}
+      onClick={onClick}
       color={color}
       variant="outlined"
       {...restProps}

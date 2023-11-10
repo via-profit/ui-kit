@@ -15,6 +15,9 @@ type StyledProps = {
 
 const StyledStandardBadge = styled(BadgeBase)<StyledProps>`
   color: ${({ $color }) => $color.toString()};
+  border-color: ${({ $background }) => $background.toString()};
+  border-style: solid;
+  border-width: 0.14em;
   background-color: ${({ $background }) => $background.toString()};
   ${({ $background }) => {
     switch (true) {
@@ -26,6 +29,7 @@ const StyledStandardBadge = styled(BadgeBase)<StyledProps>`
   }};
   &:hover {
     background-color: ${({ $background }) => $background.darken(30).toString()};
+    border-color: ${({ $background }) => $background.darken(30).toString()};
   }
   &:focus-visible {
     outline-color: ${({ theme, $background }) =>
@@ -100,6 +104,7 @@ const BadgeStandard: React.ForwardRefRenderFunction<HTMLSpanElement, BadgeStanda
       $color={$color}
       $background={$background}
       color={color}
+      onClick={onClick}
       {...restProps}
       tabIndex={clickable ? 0 : -1}
       ref={ref}
