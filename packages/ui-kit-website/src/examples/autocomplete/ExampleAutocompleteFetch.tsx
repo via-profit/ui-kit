@@ -1,6 +1,5 @@
 import React from 'react';
-import Autocomplete from '@via-profit/ui-kit/src/Autocomplete';
-import MenuItem from '@via-profit/ui-kit/src/Menu/MenuItem';
+import Autocomplete, { AutocompleteItem } from '@via-profit/ui-kit/src/Autocomplete';
 import Button from '@via-profit/ui-kit/src/Button';
 import Highlighted from '@via-profit/ui-kit/src/Highlighted';
 
@@ -78,9 +77,9 @@ const ExampleAutocompleteFetch: React.FC = () => {
         onInputChange={onInputChange}
       >
         {({ item, inputValue }, itemProps) => (
-          <MenuItem {...itemProps} key={item.code}>
+          <AutocompleteItem {...itemProps} key={item.code}>
             <Highlighted text={item.name} highlight={inputValue} />
-          </MenuItem>
+          </AutocompleteItem>
         )}
       </Autocomplete>
     </>

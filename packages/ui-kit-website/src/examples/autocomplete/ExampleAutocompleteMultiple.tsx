@@ -1,6 +1,5 @@
 import React from 'react';
-import Autocomplete from '@via-profit/ui-kit/src/Autocomplete';
-import MenuItem from '@via-profit/ui-kit/src/Menu/MenuItem';
+import Autocomplete, { AutocompleteItem } from '@via-profit/ui-kit/src/Autocomplete';
 import Highlighted from '@via-profit/ui-kit/src/Highlighted';
 import Badge from '@via-profit/ui-kit/src/Badge';
 import styled from '@emotion/styled';
@@ -54,9 +53,9 @@ const ExampleAutocompleteMultiple: React.FC = () => {
         selectedItemToString={items => items.map(({ name }) => name).join(', ')}
       >
         {({ item, inputValue }, itemProps) => (
-          <MenuItem {...itemProps} key={item.code}>
+          <AutocompleteItem {...itemProps} key={item.code}>
             <Highlighted text={item.name} highlight={inputValue} />
-          </MenuItem>
+          </AutocompleteItem>
         )}
       </Autocomplete>
     </>

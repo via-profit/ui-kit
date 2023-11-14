@@ -12,8 +12,7 @@ _Пример использования:_
 
 ```tsx
 import React from 'react';
-import Autocomplete from '@via-profit/ui-kit/Autocomplete';
-import MenuItem from '@via-profit/ui-kit/Menu/MenuItem';
+import Autocomplete, { AutocompleteItem } from '@via-profit/ui-kit/Autocomplete';
 import Highlighted from '@via-profit/ui-kit/Highlighted';
 
 type Item = {
@@ -45,9 +44,9 @@ const Example: React.FC = () => {
       selectedItemToString={item => item.name}
     >
       {({ item, inputValue }, itemProps) => (
-        <MenuItem {...itemProps} key={item.code}>
+        <AutocompleteItem {...itemProps} key={item.code}>
           <Highlighted text={item.name} highlight={inputValue} />
-        </MenuItem>
+        </AutocompleteItem>
       )}
     </Autocomplete>
   )

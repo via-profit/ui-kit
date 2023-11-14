@@ -1,6 +1,5 @@
 import React from 'react';
-import Autocomplete from '@via-profit/ui-kit/src/Autocomplete';
-import MenuItem from '@via-profit/ui-kit/src/Menu/MenuItem';
+import Autocomplete, { AutocompleteItem } from '@via-profit/ui-kit/src/Autocomplete';
 import Highlighted from '@via-profit/ui-kit/src/Highlighted';
 
 import countries from './countries.json';
@@ -16,7 +15,7 @@ const ExampleAutocompleteOverview: React.FC = () => {
 
   return (
     <Autocomplete
-      value={value}
+      value={() => value}
       items={countries}
       isOpen={isOpen}
       filterItems={(items, { query }) =>
@@ -28,9 +27,9 @@ const ExampleAutocompleteOverview: React.FC = () => {
       selectedItemToString={item => item.name}
     >
       {({ item, inputValue }, itemProps) => (
-        <MenuItem {...itemProps} key={item.code}>
+        <AutocompleteItem {...itemProps} key={item.code}>
           <Highlighted text={item.name} highlight={inputValue} />
-        </MenuItem>
+        </AutocompleteItem>
       )}
     </Autocomplete>
   );

@@ -1,9 +1,11 @@
 import React from 'react';
 
+import AutocompleteItem from '../Menu/MenuItem';
 import AutocompleteContainer, { AutocompleteProps, AutocompleteRef } from './AutocompleteContainer';
 import { ContextProvider } from './context';
 
 export * from './AutocompleteContainer';
+export { AutocompleteItem };
 
 const Autocomplete = React.forwardRef(
   <T, Multiple extends boolean | undefined = undefined>(
