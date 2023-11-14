@@ -15,7 +15,7 @@ const ExampleAutocompleteOverview: React.FC = () => {
 
   return (
     <Autocomplete
-      value={() => value}
+      value={value}
       items={countries}
       isOpen={isOpen}
       filterItems={(items, { query }) =>

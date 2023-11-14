@@ -1,21 +1,16 @@
 import React from 'react';
 
 import Menu, { MenuRef, Value, OnRequestClose, GetOptionSelected } from '../Menu';
-import TextField, { TextFieldProps } from '../TextField';
+import TextField, { AutocompleteTextFieldProps } from './AutocompleteTextField';
 import Button from '../Button';
 import Spinner from '../LoadingIndicator/Spinner';
+import useContext, { actionSetPartial } from './context';
+import IconClear from './IconClear';
 import type { AnchorPos } from '../Popper';
 import type { MenuItemCommonProps } from '../Menu/MenuItem';
 
-import IconClear from './IconClear';
-
-import useContext, { actionSetPartial } from './context';
-
-type NativeInputProps = React.InputHTMLAttributes<HTMLInputElement>;
-type AutocompleteInputProps = Omit<NativeInputProps, 'onChange' | 'value' | 'children'>;
-
 export interface AutocompleteProps<T, Multiple extends boolean | undefined = undefined>
-  extends AutocompleteInputProps {
+  extends Omit<AutocompleteTextFieldProps, 'value' | 'onChange' | 'children' | 'overrides'> {
   readonly items: readonly T[];
 
   readonly value: Value<T, Multiple>;
@@ -57,53 +52,6 @@ export interface AutocompleteProps<T, Multiple extends boolean | undefined = und
    * items render function
    */
   readonly children: Children<T>;
-
-  /**
-   * Field placeholder
-   */
-  readonly placeholder?: string;
-
-  /**
-   * If is true then the asterisk will be displayed in label\
-   * If is ReactNode then ReactNode will be displayed in label
-   */
-  readonly requiredAsterisk?: boolean | React.ReactNode;
-
-  /**
-   * If true then TextField will be filled in full width on horizontal
-   */
-  readonly fullWidth?: boolean;
-
-  /**
-   * Native <input> element reference
-   */
-  readonly inputRef?:
-    | React.MutableRefObject<HTMLInputElement | null>
-    | React.RefCallback<HTMLInputElement>;
-
-  /**
-   * End icon component
-   */
-  readonly endIcon?: React.ReactElement;
-
-  /**
-   * Start icon component
-   */
-  readonly startIcon?: React.ReactElement;
-
-  /**
-   * Field label text or element
-   */
-  readonly label?: TextFieldProps['label'];
-  /**
-   * If true then `errorText` value will be displayed under the TextField element
-   */
-  readonly error?: TextFieldProps['error'];
-  /**
-   * Text or ReactNode to show in error element\
-   * Will be displaed only if `error` property is tru
-   */
-  readonly errorText?: TextFieldProps['errorText'];
   readonly filterItems?: FilterItems<T>;
   readonly onChange?: OnChange<T, Multiple>;
   readonly selectedItemToString: ItemToString<T, Multiple>;
@@ -116,6 +64,20 @@ export interface AutocompleteProps<T, Multiple extends boolean | undefined = und
       | React.MouseEvent<HTMLInputElement>
       | React.FocusEvent<HTMLInputElement, Element>,
   ) => void;
+
+  /**
+   * Overridable components map
+   */
+  readonly overrides?: AutocompleteOverrides;
+}
+
+export interface AutocompleteOverrides {
+  /**
+   * Element wrapper
+   */
+  readonly TextField?: React.ForwardRefExoticComponent<
+    AutocompleteTextFieldProps & React.RefAttributes<HTMLDivElement>
+  >;
 }
 
 export type Children<T> = (
@@ -176,6 +138,7 @@ const Autocomplete = React.forwardRef(
       getOptionSelected,
       onRequestOpen = () => undefined,
       onRequestClose = () => undefined,
+      overrides,
       ...nativeInputProps
     } = props;
     const menuRef = React.useRef<MenuRef | null>(null);
@@ -184,6 +147,14 @@ const Autocomplete = React.forwardRef(
     const { state, dispatch } = useContext();
     const { currentOpen, filteredItems, inputValue, currentValue, anchorElement, currentLoading } =
       state;
+
+    const overridesMap = React.useMemo(
+      () => ({
+        TextField,
+        ...overrides,
+      }),
+      [overrides],
+    );
 
     const clear = React.useCallback(() => {
       if (onChange) {
@@ -323,7 +294,7 @@ const Autocomplete = React.forwardRef(
       <div>
         {React.useMemo(
           () => (
-            <TextField
+            <overridesMap.TextField
               {...nativeInputProps}
               placeholder={placeholder}
               label={label}
@@ -332,6 +303,7 @@ const Autocomplete = React.forwardRef(
               errorText={errorText}
               fullWidth={fullWidth}
               startIcon={startIcon}
+              isLoading={currentLoading}
               endIcon={
                 <Button
                   iconOnly
@@ -417,6 +389,7 @@ const Autocomplete = React.forwardRef(
             inputKeydownEvent,
             inputValue,
             clear,
+            overridesMap,
             anchorElement,
             dispatch,
             inputRef,

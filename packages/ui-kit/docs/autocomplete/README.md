@@ -6,7 +6,7 @@
 
 ## Описание
 
-Компонент `<Autocomplete>` 
+Компонент `<Autocomplete>`
 
 _Пример использования:_
 
@@ -57,38 +57,33 @@ export default Example;
 
 <ExampleAutocompleteOverview />
 
-
 ### Fetch
 
 <ExampleAutocompleteFetch />
-
 
 ### Multiple
 
 <ExampleAutocompleteMultiple />
 
+### overrides
+
+<ExampleAutocompleteOverrides />
+Lorem ipsum
+
+Lorem ipsum
 
 Lorem ipsum
 
 Lorem ipsum
 
+Lorem ipsum
+
+Lorem ipsum
 
 Lorem ipsum
 
 Lorem ipsum
 
-
 Lorem ipsum
 
 Lorem ipsum
-
-
-Lorem ipsum
-
-Lorem ipsum
-
-
-Lorem ipsum
-
-Lorem ipsum
-

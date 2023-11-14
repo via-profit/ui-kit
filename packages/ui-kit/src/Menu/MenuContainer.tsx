@@ -264,8 +264,6 @@ const MenuContainer = React.forwardRef(
       getOptionSelected,
     } = props;
 
-    // const [] = React
-
     const overridesMap = React.useMemo(
       () => ({
         List,

@@ -55,6 +55,9 @@ export interface HighlightedOverrides {
     HighlightedTextProps & React.RefAttributes<HTMLSpanElement>
   >;
 }
+
+export const escapeRegex = (pattern: string) => pattern.replace(/[/\-\\^$*+?.()|[\]{}]/g, '\\$&');
+
 /**
  * The component allows you to highlight text matches in a string
  */
@@ -65,7 +68,10 @@ const Highlighted: React.ForwardRefRenderFunction<HTMLSpanElement, HighlightedPr
   const { text, highlight, overrides, ...nativeProps } = props;
 
   const patterns = React.useMemo(
-    () => (typeof highlight === 'string' ? [highlight] : highlight).filter(h => h.trim() !== ''),
+    () =>
+      (typeof highlight === 'string' ? [highlight] : highlight)
+        .filter(h => h.trim() !== '')
+        .map(escapeRegex),
     [highlight],
   );
 

@@ -48,7 +48,7 @@ const ExamplePhoneFieldOverview: React.FC = () => {
         templates={templates}
         label="Enter the phone number"
         value={phoneState?.value || ''}
-        onChange={payload => setPhoneState(payload)}
+        onChange={(_event, payload) => setPhoneState(payload)}
       />
     </>
   );

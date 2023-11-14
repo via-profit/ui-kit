@@ -11,7 +11,7 @@ export interface PhoneFieldProps extends Omit<TextFieldProps, 'value' | 'onChang
    */
   readonly value: string;
   readonly defaultCountry?: CountryCode | null;
-  readonly onChange: (payload: PhonePayload) => void;
+  readonly onChange: (event: React.ChangeEvent<HTMLInputElement>, payload: PhonePayload) => void;
   readonly templates: readonly PhoneTemplate[];
 }
 
@@ -114,17 +114,26 @@ const PhoneField: React.ForwardRefRenderFunction<HTMLDivElement, PhoneFieldProps
       isValid,
     } = formatParsedInput(parsed.text, parsed.caret);
 
-    onChange({
-      value: text,
-      placeholder,
-      CountryFlag,
-      template,
-      countryCode,
-      callingCode,
-      number,
-      isValid,
-      combined: `${callingCode}${number}`,
-    });
+    onChange(
+      {
+        ...event,
+        currentTarget: {
+          ...event.currentTarget,
+          value: text,
+        },
+      },
+      {
+        value: text,
+        placeholder,
+        CountryFlag,
+        template,
+        countryCode,
+        callingCode,
+        number,
+        isValid,
+        combined: `${callingCode ?? ''}${number}`,
+      },
+    );
 
     setState(prev => ({
       ...prev,
