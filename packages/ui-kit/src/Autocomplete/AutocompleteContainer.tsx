@@ -11,7 +11,11 @@ import IconClear from './IconClear';
 
 import useContext, { actionSetPartial } from './context';
 
-export interface AutocompleteProps<T, Multiple extends boolean | undefined = undefined> {
+type NativeInputProps = React.InputHTMLAttributes<HTMLInputElement>;
+type AutocompleteInputProps = Omit<NativeInputProps, 'onChange' | 'value' | 'children'>;
+
+export interface AutocompleteProps<T, Multiple extends boolean | undefined = undefined>
+  extends AutocompleteInputProps {
   readonly items: readonly T[];
 
   readonly value: Value<T, Multiple>;
@@ -60,10 +64,45 @@ export interface AutocompleteProps<T, Multiple extends boolean | undefined = und
   readonly placeholder?: string;
 
   /**
+   * If is true then the asterisk will be displayed in label\
+   * If is ReactNode then ReactNode will be displayed in label
+   */
+  readonly requiredAsterisk?: boolean | React.ReactNode;
+
+  /**
+   * If true then TextField will be filled in full width on horizontal
+   */
+  readonly fullWidth?: boolean;
+
+  /**
+   * Native <input> element reference
+   */
+  readonly inputRef?:
+    | React.MutableRefObject<HTMLInputElement | null>
+    | React.RefCallback<HTMLInputElement>;
+
+  /**
+   * End icon component
+   */
+  readonly endIcon?: React.ReactElement;
+
+  /**
+   * Start icon component
+   */
+  readonly startIcon?: React.ReactElement;
+
+  /**
    * Field label text or element
    */
   readonly label?: TextFieldProps['label'];
+  /**
+   * If true then `errorText` value will be displayed under the TextField element
+   */
   readonly error?: TextFieldProps['error'];
+  /**
+   * Text or ReactNode to show in error element\
+   * Will be displaed only if `error` property is tru
+   */
   readonly errorText?: TextFieldProps['errorText'];
   readonly filterItems?: FilterItems<T>;
   readonly onChange?: OnChange<T, Multiple>;
@@ -121,10 +160,14 @@ const Autocomplete = React.forwardRef(
       isLoading = false,
       clearIfNotSelected = true,
       anchorPos = 'auto-start-end',
+      requiredAsterisk,
+      startIcon,
+      fullWidth,
       placeholder,
       label,
       error,
       errorText,
+      inputRef,
       filterItems,
       children,
       onChange,
@@ -133,9 +176,10 @@ const Autocomplete = React.forwardRef(
       getOptionSelected,
       onRequestOpen = () => undefined,
       onRequestClose = () => undefined,
+      ...nativeInputProps
     } = props;
     const menuRef = React.useRef<MenuRef | null>(null);
-    const inputRef = React.useRef<HTMLInputElement | null>(null);
+    const fieldInputRef = React.useRef<HTMLInputElement | null>(null);
     const isFocusedRef = React.useRef(false);
     const { state, dispatch } = useContext();
     const { currentOpen, filteredItems, inputValue, currentValue, anchorElement, currentLoading } =
@@ -154,7 +198,7 @@ const Autocomplete = React.forwardRef(
       );
 
       setTimeout(() => {
-        inputRef.current?.focus();
+        fieldInputRef.current?.focus();
       }, 15);
     }, [dispatch, onChange, items, multiple]);
     /**
@@ -280,12 +324,20 @@ const Autocomplete = React.forwardRef(
         {React.useMemo(
           () => (
             <TextField
+              {...nativeInputProps}
               placeholder={placeholder}
               label={label}
               error={error}
+              requiredAsterisk={requiredAsterisk}
               errorText={errorText}
+              fullWidth={fullWidth}
+              startIcon={startIcon}
               endIcon={
-                <Button iconOnly onClick={() => (currentLoading ? 'undefined' : clear())}>
+                <Button
+                  iconOnly
+                  type="button"
+                  onClick={() => (currentLoading ? 'undefined' : clear())}
+                >
                   {currentLoading ? <Spinner /> : <IconClear />}
                 </Button>
               }
@@ -295,7 +347,15 @@ const Autocomplete = React.forwardRef(
                   dispatch(actionSetPartial({ anchorElement: el }));
                 }
               }}
-              inputRef={inputRef}
+              inputRef={el => {
+                fieldInputRef.current = el;
+                if (typeof inputRef === 'function') {
+                  inputRef(el);
+                }
+                if (inputRef && typeof inputRef === 'object') {
+                  inputRef.current = el;
+                }
+              }}
               value={inputValue}
               onBlur={() => {
                 isFocusedRef.current = false;
@@ -348,16 +408,21 @@ const Autocomplete = React.forwardRef(
           [
             placeholder,
             label,
-            multiple,
             error,
+            requiredAsterisk,
             errorText,
+            fullWidth,
+            startIcon,
             currentLoading,
             inputKeydownEvent,
             inputValue,
             clear,
             anchorElement,
             dispatch,
+            inputRef,
             clearIfNotSelected,
+            multiple,
+            nativeInputProps,
             value,
             selectedItemToString,
             onRequestOpen,
