@@ -34,7 +34,9 @@ export interface TextFieldProps extends React.InputHTMLAttributes<HTMLInputEleme
   /**
    * Native <input> element reference
    */
-  readonly inputRef?: React.Ref<HTMLInputElement>;
+  readonly inputRef?:
+    | React.MutableRefObject<HTMLInputElement | null>
+    | React.RefCallback<HTMLInputElement | null>;
 
   /**
    * Field label text or element

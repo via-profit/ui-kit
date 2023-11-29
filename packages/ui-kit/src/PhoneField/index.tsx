@@ -170,8 +170,12 @@ const PhoneField: React.ForwardRefRenderFunction<HTMLDivElement, PhoneFieldProps
       onChange={handleChange}
       inputRef={input => {
         textInputRef.current = input;
+
+        if (typeof inputRef === 'function') {
+          inputRef(input);
+        }
         if (inputRef && typeof inputRef === 'object') {
-          (inputRef as any).current = input;
+          inputRef.current = input;
         }
       }}
     />
