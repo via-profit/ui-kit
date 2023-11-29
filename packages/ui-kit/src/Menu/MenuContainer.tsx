@@ -224,6 +224,11 @@ export type MenuRef = {
    * Select highlighted item in list
    */
   selectHightlightedItem: () => void;
+
+  /**
+   * Returns the list HTML container
+   */
+  getListElement: () => HTMLDivElement | null;
 };
 
 export type Value<T, Multiple> = Multiple extends undefined | undefined ? T | null : readonly T[];
@@ -458,6 +463,7 @@ const MenuContainer = React.forwardRef(
         scrollToFirstSelected: () => scrollToFirstSelected(),
         selectHightlightedItem: () => selectHightlightedItem(),
         selectItem: (idx: number) => selectItem(idx),
+        getListElement: () => menuListRef.current,
       }),
       [
         scrollToIndex,
