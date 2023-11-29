@@ -8,6 +8,7 @@ import useContext, { actionSetPartial } from './context';
 import IconClear from './IconClear';
 import type { AnchorPos } from '../Popper';
 import type { MenuItemCommonProps } from '../Menu/MenuItem';
+import { mouseEventMap } from '../ClickOutside';
 
 export interface AutocompleteProps<T, Multiple extends boolean | undefined = undefined>
   extends Omit<AutocompleteTextFieldProps, 'value' | 'onChange' | 'children' | 'overrides'> {
@@ -290,12 +291,36 @@ const Autocomplete = React.forwardRef(
       );
     }, [isOpen, isLoading, items, dispatch]);
 
+    React.useEffect(() => {
+      const mouseDownEvent = (event: MouseEvent) => {
+        let parentElem = event.target as Node;
+        let needToClose = true;
+
+        while (parentElem && 'parentNode' in parentElem) {
+          if (parentElem === anchorElement || parentElem === menuRef.current?.getListElement()) {
+            needToClose = false;
+            break;
+          }
+          parentElem = parentElem.parentNode as Node;
+        }
+
+        if (needToClose) {
+          onRequestClose(event);
+        }
+      };
+
+      window.document.addEventListener(mouseEventMap.onMouseDown, mouseDownEvent);
+
+      return () => {
+        window.document.removeEventListener(mouseEventMap.onMouseDown, mouseDownEvent);
+      };
+    }, [onRequestClose, anchorElement]);
+
     return (
       <div>
         {React.useMemo(
           () => (
             <overridesMap.TextField
-              {...nativeInputProps}
               placeholder={placeholder}
               label={label}
               error={error}
@@ -313,7 +338,13 @@ const Autocomplete = React.forwardRef(
                   {currentLoading ? <Spinner /> : <IconClear />}
                 </Button>
               }
-              onKeyDown={inputKeydownEvent}
+              {...nativeInputProps}
+              onKeyDown={event => {
+                inputKeydownEvent(event);
+                if (typeof nativeInputProps.onKeyDown === 'function') {
+                  nativeInputProps.onKeyDown(event);
+                }
+              }}
               ref={el => {
                 if (anchorElement !== el) {
                   dispatch(actionSetPartial({ anchorElement: el }));
@@ -329,34 +360,31 @@ const Autocomplete = React.forwardRef(
                 }
               }}
               value={inputValue}
-              onBlur={() => {
+              onBlur={event => {
                 isFocusedRef.current = false;
 
-                if (clearIfNotSelected) {
-                  dispatch(
-                    actionSetPartial({
-                      inputValue: multiple
-                        ? ''
-                        : value !== null
-                        ? selectedItemToString(
-                            value as Multiple extends undefined ? T : readonly T[],
-                          )
-                        : '',
-                    }),
-                  );
+                if (typeof nativeInputProps.onBlur === 'function') {
+                  nativeInputProps.onBlur(event);
                 }
               }}
               onFocus={event => {
                 isFocusedRef.current = true;
                 onRequestOpen(event);
+
+                if (typeof nativeInputProps.onFocus === 'function') {
+                  nativeInputProps.onFocus(event);
+                }
               }}
               onClick={event => {
                 if (isFocusedRef.current) {
                   onRequestOpen(event);
                 }
+
+                if (typeof nativeInputProps.onClick === 'function') {
+                  nativeInputProps.onClick(event);
+                }
               }}
               onChange={event => {
-                dispatch(actionSetPartial({ inputValue: event.currentTarget.value }));
                 if (typeof onInputChange === 'function') {
                   onInputChange(event);
                 }
@@ -372,8 +400,11 @@ const Autocomplete = React.forwardRef(
                 dispatch(
                   actionSetPartial({
                     filteredItems: newItems,
+                    inputValue: event.currentTarget.value,
                   }),
                 );
+
+                // dispatch(actionSetPartial({ inputValue: event.currentTarget.value }));
               }}
             />
           ),
@@ -393,11 +424,7 @@ const Autocomplete = React.forwardRef(
             anchorElement,
             dispatch,
             inputRef,
-            clearIfNotSelected,
-            multiple,
             nativeInputProps,
-            value,
-            selectedItemToString,
             onRequestOpen,
             onInputChange,
             filterItems,
@@ -415,7 +442,7 @@ const Autocomplete = React.forwardRef(
               isOpen={currentOpen && filteredItems.length > 0}
               autofocus={false}
               anchorElement={anchorElement}
-              closeOutsideClick
+              closeOutsideClick={false}
               getOptionSelected={getOptionSelected}
               onSelectItem={item => {
                 if (typeof onChange === 'function') {
@@ -424,6 +451,20 @@ const Autocomplete = React.forwardRef(
               }}
               closeOnSelect={multiple ? false : true}
               onRequestClose={evt => {
+                if (clearIfNotSelected) {
+                  dispatch(
+                    actionSetPartial({
+                      inputValue: multiple
+                        ? ''
+                        : value !== null
+                        ? selectedItemToString(
+                            value as Multiple extends undefined ? T : readonly T[],
+                          )
+                        : '',
+                    }),
+                  );
+                }
+
                 if (evt?.target !== anchorElement) {
                   onRequestClose(evt);
                 }
@@ -435,17 +476,21 @@ const Autocomplete = React.forwardRef(
             </Menu>
           ),
           [
-            anchorElement,
-            currentOpen,
-            currentValue,
-            filteredItems,
-            inputValue,
-            multiple,
             anchorPos,
-            children,
-            onRequestClose,
-            onChange,
+            multiple,
+            filteredItems,
+            currentValue,
+            currentOpen,
+            anchorElement,
             getOptionSelected,
+            onChange,
+            clearIfNotSelected,
+            dispatch,
+            value,
+            selectedItemToString,
+            onRequestClose,
+            children,
+            inputValue,
           ],
         )}
       </div>

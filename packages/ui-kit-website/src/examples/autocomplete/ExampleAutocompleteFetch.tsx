@@ -75,6 +75,7 @@ const ExampleAutocompleteFetch: React.FC = () => {
         onChange={item => setValue(item)}
         selectedItemToString={item => item.name}
         onInputChange={onInputChange}
+        filterItems={items => items}
       >
         {({ item, inputValue }, itemProps) => (
           <AutocompleteItem {...itemProps} key={item.code}>
