@@ -29,6 +29,7 @@ export default Example;
 
 - `header` — Принимает заголовок карточки
 - `subheader` — Принимает подзаголовок карточки
+- `footer` — Принимает футер карточки
 - `inline` — Отображает карточку инлайново
 
 _Пример использования:_
@@ -47,16 +48,20 @@ const Example: React.FC = () => {
           <Flag /> Russian Federation
         </>
       }
+      footer={
+        <Button type="button" variant="outlined" color="primary">
+          Action button
+        </Button>
+      }
     >
       <Typography>
         Russia, or the Russian Federation, is a country spanning Eastern Europe and Northern Asia.
-        It is the largest country in the world by area, extends across eleven time zones,
-        and shares land boundaries with fourteen countries.
-        It is the world's ninth-most populous country and Europe's most populous country.
-        The country's capital and largest city is Moscow.
-        Saint Petersburg is Russia's second-largest city and "cultural capital".
-        Other major urban areas in the country include Novosibirsk, Yekaterinburg,
-        Nizhny Novgorod, Chelyabinsk, Krasnoyarsk, and Kazan.
+        It is the largest country in the world by area, extends across eleven time zones, and shares
+        land boundaries with fourteen countries. It is the world's ninth-most populous country and
+        Europe's most populous country. The country's capital and largest city is Moscow. Saint
+        Petersburg is Russia's second-largest city and "cultural capital". Other major urban areas
+        in the country include Novosibirsk, Yekaterinburg, Nizhny Novgorod, Chelyabinsk,
+        Krasnoyarsk, and Kazan.
       </Typography>
     </Surface>
   );
@@ -75,6 +80,7 @@ export default Example;
 - `<Header>` — Обёртка заголовка в случае её отображения
 - `<Subheader>` — Обёртка подзаголовка в случае её отображения
 - `<Content>` — Обёртка контентной части
+- `<Footer>` — Футер
 
 Используйте свойство `overrides` чтобы переопределить один или несколько компонентов:
 
@@ -122,3 +128,4 @@ export default Example;
 | **overrides .Header**    | `<React.Component>`        | `<SurfaceHeader>`    | Компонент обёртка заголовка в случае её отображения                                      |
 | **overrides .Subheader** | `<React.Component>`        | `<SurfaceSubheader>` | Компонент обёртка подзаголовка в случае её отображения                                   |
 | **overrides .Content**   | `<React.Component>`        | `<SurfaceContent>`   | Компонент обёртка контентной части                                                       |
+| **overrides .Footer**    | `<React.Component>`        | `<SurfaceFooter>`    | Компонент футер                                                                          |

@@ -3,6 +3,7 @@ import Surface from '@via-profit/ui-kit/src/Surface';
 import Typography from '@via-profit/ui-kit/src/Typography';
 import Strong from '@via-profit/ui-kit/src/Typography/Strong';
 import Flag from '@via-profit/ui-kit/src/CountryFlags/RU';
+import Button from '@via-profit/ui-kit/src/Button';
 
 const ExampleSurfaceCard: React.FC = () => (
   <Surface
@@ -12,6 +13,11 @@ const ExampleSurfaceCard: React.FC = () => (
       <>
         <Flag /> Russian Federation
       </>
+    }
+    footer={
+      <Button type="button" variant="outlined" color="primary">
+        Action button
+      </Button>
     }
   >
     <Typography>
