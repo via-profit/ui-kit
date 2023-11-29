@@ -22,7 +22,7 @@ export interface ClickOutsideProps {
 
 type OutsideMouseEventName = 'onClick' | 'onMouseDown' | 'onMouseUp';
 
-const mouseEventMap: Record<OutsideMouseEventName, 'click' | 'mousedown' | 'mouseup'> = {
+export const mouseEventMap: Record<OutsideMouseEventName, 'click' | 'mousedown' | 'mouseup'> = {
   onClick: 'click',
   onMouseDown: 'mousedown',
   onMouseUp: 'mouseup',
