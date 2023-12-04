@@ -23,7 +23,7 @@ const ModalWrapper: React.FC<ModalWrapperProps> = props => {
   const [alreadyMounted, setMountState] = React.useState(true);
   const { closeOnEsape, isMounted, isOpen, destroyTimeout, onRequestClose } = state;
   const containerRef = React.useRef<HTMLDivElement | null>(null);
-  const id = React.useMemo(() => PORTAL_ID + ':' + new Date().getTime().toString(), []);
+  const id = PORTAL_ID + React.useId();
 
   const getScrollWidth = React.useCallback(() => {
     const outer = window.document.createElement('div');
