@@ -28,6 +28,13 @@ export interface HighlightedProps extends React.HTMLAttributes<HTMLSpanElement> 
   readonly highlight: string | readonly string[];
 
   /**
+   * Case sensitive\
+   * **Default:** `false`
+   *
+   */
+  readonly caseSensitive?: boolean;
+
+  /**
    * Overridable components map
    */
   readonly overrides?: HighlightedOverrides;
@@ -49,7 +56,7 @@ export interface HighlightedOverrides {
   >;
 
   /**
-   * Text element (HTML <span>)
+   * Text element (HTML <span>)regex
    */
   readonly Text?: React.ForwardRefExoticComponent<
     HighlightedTextProps & React.RefAttributes<HTMLSpanElement>
@@ -65,7 +72,7 @@ const Highlighted: React.ForwardRefRenderFunction<HTMLSpanElement, HighlightedPr
   props,
   ref,
 ) => {
-  const { text, highlight, overrides, ...nativeProps } = props;
+  const { text, highlight, overrides, caseSensitive = false, ...nativeProps } = props;
 
   const patterns = React.useMemo(
     () =>
@@ -75,7 +82,10 @@ const Highlighted: React.ForwardRefRenderFunction<HTMLSpanElement, HighlightedPr
     [highlight],
   );
 
-  const regex = React.useMemo(() => new RegExp(`(${patterns.join('|')})`, 'gi'), [patterns]);
+  const regex = React.useMemo(
+    () => new RegExp(`(${patterns.join('|')})`, caseSensitive ? 'g' : 'gi'),
+    [patterns, caseSensitive],
+  );
 
   const overridesMap = React.useMemo(
     () => ({
