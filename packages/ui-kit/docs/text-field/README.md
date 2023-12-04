@@ -29,7 +29,7 @@
 
 ```tsx
 import React from 'react';
-import TextField from '@via-profit/ui-kit/src/TextField';
+import TextField from '@via-profit/ui-kit/TextField';
 
 const MyPage: React.FC = () => (
   <TextField
