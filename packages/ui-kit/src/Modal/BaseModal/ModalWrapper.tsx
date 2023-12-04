@@ -2,6 +2,7 @@ import React from 'react';
 import { Global, css } from '@emotion/react';
 
 import { useContext, actionSetState, PORTAL_ID } from './context';
+import TabManager from '../../utils/TabManager';
 
 export type ModalWrapperProps = {
   /**
@@ -24,6 +25,19 @@ const ModalWrapper: React.FC<ModalWrapperProps> = props => {
   const { closeOnEsape, isMounted, isOpen, destroyTimeout, onRequestClose } = state;
   const containerRef = React.useRef<HTMLDivElement | null>(null);
   const id = PORTAL_ID + React.useId();
+
+  React.useEffect(() => {
+    const c = containerRef.current;
+    if (isOpen && c) {
+      TabManager.registerContainer(c);
+    }
+
+    return () => {
+      if (c) {
+        TabManager.unregisterContainer(c);
+      }
+    };
+  }, [isOpen]);
 
   const getScrollWidth = React.useCallback(() => {
     const outer = window.document.createElement('div');
@@ -60,88 +74,6 @@ const ModalWrapper: React.FC<ModalWrapperProps> = props => {
   }, []);
 
   /**
-   * Set focus to the next or prev element
-   */
-  const lastIndex = React.useRef(-1);
-  const nextFocus = React.useCallback((reverse?: boolean) => {
-    if (!containerRef.current) {
-      return;
-    }
-
-    const universe = containerRef.current.querySelectorAll(
-      'input, button, select, textarea, a[href]',
-    );
-    const list: HTMLElement[] = Array.prototype.filter.call(universe, function (item) {
-      return item.tabIndex >= '0';
-    });
-
-    if (!reverse) {
-      const nextIndex = lastIndex.current + 1;
-      if (list[nextIndex]) {
-        list[nextIndex].focus();
-        lastIndex.current = nextIndex;
-
-        return;
-      }
-
-      // othrwise
-      const nextEl = list[0];
-      if (nextEl) {
-        lastIndex.current = 0;
-
-        nextEl.focus();
-
-        return;
-      }
-    }
-
-    if (reverse) {
-      const nextIndex = lastIndex.current - 1;
-      if (list[nextIndex]) {
-        list[nextIndex].focus();
-        lastIndex.current = nextIndex;
-
-        return;
-      }
-
-      // othrwise
-      const nextEl = list[list.length - 1];
-      if (nextEl) {
-        lastIndex.current = list.length - 1;
-
-        nextEl.focus();
-
-        return;
-      }
-    }
-  }, []);
-
-  React.useEffect(() => {
-    if (isOpenProp && containerRef.current) {
-      containerRef.current.focus();
-    }
-
-    const keydown = (event: KeyboardEvent) => {
-      if (event.key.toLowerCase() !== 'tab' || !isOpenProp) {
-        return;
-      }
-
-      event.preventDefault();
-      nextFocus(event.shiftKey);
-    };
-
-    const lastFocused = document.activeElement;
-    window.document.addEventListener('keydown', keydown);
-
-    return () => {
-      if (lastFocused) {
-        (lastFocused as HTMLElement).focus();
-      }
-      window.document.removeEventListener('keydown', keydown);
-    };
-  }, [nextFocus, isOpenProp]);
-
-  /**
    * Component will unmount
    * Mark component as unmounted
    */
@@ -153,6 +85,10 @@ const ModalWrapper: React.FC<ModalWrapperProps> = props => {
   );
 
   React.useEffect(() => {
+    if (isOpenProp && containerRef.current) {
+      containerRef.current.focus();
+    }
+
     /**
      * The last dialog will be found and closed
      */
@@ -164,14 +100,33 @@ const ModalWrapper: React.FC<ModalWrapperProps> = props => {
           onRequestClose();
         }
       }
+
+      if (
+        event.key.toLowerCase() === 'tab' &&
+        isOpenProp &&
+        TabManager.isCurrentContainer(containerRef.current)
+      ) {
+        event.preventDefault();
+        if (event.shiftKey) {
+          TabManager.focusPrev();
+        } else {
+          TabManager.focusNext();
+        }
+      }
     };
+
+    const lastFocused = document.activeElement;
 
     window.document.addEventListener('keydown', keyDown);
 
     return () => {
+      if (lastFocused) {
+        (lastFocused as HTMLElement).focus();
+      }
+
       window.document.removeEventListener('keydown', keyDown);
     };
-  }, [onRequestClose, closeOnEsape, id]);
+  }, [onRequestClose, closeOnEsape, id, isOpenProp]);
 
   /**
    * Controller for visibility state.

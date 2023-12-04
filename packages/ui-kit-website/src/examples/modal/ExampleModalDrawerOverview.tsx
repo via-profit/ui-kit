@@ -63,8 +63,6 @@ const ExampleModalDrawerOverview: React.FC = () => {
         toolbar={
           <Toolbar>
             <ToolbarTitle>Toolbar</ToolbarTitle>
-            <Button>Button 1</Button>
-            <Button>Button 2</Button>
             <Button onClick={() => setOpenDrawer2(true)}>Open simple drawer</Button>
           </Toolbar>
         }
