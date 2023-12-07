@@ -13,7 +13,7 @@ type StyledProps = {
 };
 
 const StyledParagraph = styled.p<StyledProps>`
-  font-size: 1rem;
+  font-size: 1em;
   font-weight: 300;
   margin: ${({ $noMargin }) => ($noMargin ? 0 : '0 0 0.8em 0')};
   color: currentColor;

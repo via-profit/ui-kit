@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 
 const Blockquote = styled.blockquote`
-  font-size: 1rem;
+  font-size: 1em;
   font-weight: 400;
   font-style: italic;
   position: relative;
