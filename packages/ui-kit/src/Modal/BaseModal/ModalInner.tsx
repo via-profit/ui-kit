@@ -37,7 +37,7 @@ const StyledModalInner = styled.div<StyledProps>`
     css`
       opacity: 1;
       transform: translate(-50%, -50%);
-      ransition:
+      transition:
         transform 240ms ease-out,
         opacity 100ms ease-out;
     `}
