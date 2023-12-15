@@ -10,6 +10,7 @@ export interface TextFieldErrorTextProps extends React.HTMLAttributes<HTMLDivEle
 
 const ErrorTextContainer = styled.div<{ $maxHeight: 'auto' | number; $focused?: boolean }>`
   margin-left: 0.5em;
+  max-height: 0;
   max-height: ${({ $maxHeight }) =>
     typeof $maxHeight === 'number' ? `${$maxHeight}px` : $maxHeight};
   transition: max-height 240ms cubic-bezier(0.22, 0.61, 0.36, 1);

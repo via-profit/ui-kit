@@ -4,6 +4,7 @@
 
 - [Кнопка](./button/README.md)
 - [Текстовое поле](./text-field/README.md)
+- [Текстовое поле textarea](./text-area/README.md)
 - [Поверхность](./surface/README.md)
 - [Темы оформления](./theming/README.md)
 - [Флаги стран](./country-flags/README.md)

@@ -51,6 +51,9 @@ const Sidebar: React.ForwardRefRenderFunction<
         <Item $isActive={matchPath('/docs/text-field/*', pathname) !== null} to="/docs/text-field">
           <FormattedMessage defaultMessage="Текстовое поле" />
         </Item>
+        <Item $isActive={matchPath('/docs/text-area/*', pathname) !== null} to="/docs/text-area">
+          <FormattedMessage defaultMessage="Текстовое поле textarea" />
+        </Item>
         <Item $isActive={matchPath('/docs/table/*', pathname) !== null} to="/docs/table">
           <FormattedMessage defaultMessage="Таблица" /> Draft
         </Item>
