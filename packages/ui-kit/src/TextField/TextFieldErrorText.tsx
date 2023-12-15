@@ -8,7 +8,7 @@ export interface TextFieldErrorTextProps extends React.HTMLAttributes<HTMLDivEle
   readonly focused?: boolean;
 }
 
-const ErrorTextContainer = styled.div<{ $maxHeight: 'auto' | number; $focused?: boolean }>`
+const ErrorTextContainer = styled.div<{ $maxHeight: 'initial' | number; $focused?: boolean }>`
   margin-left: 0.5em;
   max-height: 0;
   max-height: ${({ $maxHeight }) =>
@@ -32,7 +32,7 @@ const TextFieldErrorText: React.ForwardRefRenderFunction<
   const { children, error, focused, ...nativeProps } = props;
 
   const innerRef = React.useRef<HTMLDivElement | null>(null);
-  const [maxHeight, setMaxHeight] = React.useState<'auto' | number>('auto');
+  const [maxHeight, setMaxHeight] = React.useState<'initial' | number>('initial');
 
   React.useEffect(() => {
     const updateMaxHeight = () => {
