@@ -17,27 +17,33 @@ const Wrapper = styled.div`
 
 const Content = styled.div`
   flex: 1;
-  padding: 0 1em 1em;
-  width: 70%;
-  box-sizing: border-box;
+  margin: 1em;
 `;
 
 const StyledSidebar = styled(Sidebar)`
-  top: 4.8rem;
+  top: 0;
   width: 14rem;
+`;
+
+const Main = styled.div`
+  flex: 1;
+  margin-left: 14rem;
+  box-sizing: border-box;
 `;
 
 const TemplateDocs: React.FC = () => (
   <>
     <GlobalStyles />
     <PageWrapper>
-      <Header />
       <Wrapper>
         <StyledSidebar />
-        <Content>
-          <Outlet />
+        <Main>
+          <Header title="UI Kit Docs" />
+          <Content>
+            <Outlet />
+          </Content>
           <ScrollRestoration />
-        </Content>
+        </Main>
       </Wrapper>
       <Footer />
     </PageWrapper>

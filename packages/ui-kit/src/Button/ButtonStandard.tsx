@@ -29,7 +29,6 @@ const StyledStandardButton = styled(ButtonBase)<StyledProps>`
         return $background.toString();
     }
   }};
-  box-shadow: 0 0.125em 0.25em ${({ $background }) => $background.darken(100).alpha(0.5).toString()};
   ${({ $background }) => {
     switch (true) {
       case $background.luminance() > 0.49:

@@ -7,13 +7,17 @@ const dark: UIThemeOverrides = {
   isDark: true,
   color: {
     ...light.color,
-    backgroundPrimary: '#1e1e2e',
+    backgroundPrimary: '#130a10',
     backgroundSecondary: '#262739',
-    accentPrimary: '#e77b00',
-    accentPrimaryContrast: '#f1f1f1',
-    textPrimary: '#c4c4d8',
+    accentPrimary: '#ff3d3d',
+    accentPrimaryContrast: '#fee0e0',
+    accentSecondary: '#6d07b3',
+    accentSecondaryContrast: '#FFFFFF',
+    textPrimary: '#e8cece',
     textSecondary: '#717275',
-    surface: '#262739',
+    surface: '#131213 ',
+    mainSidebar: '#130f1d',
+    mainSidebarContrast: '#e0f2ea',
   },
 };
 

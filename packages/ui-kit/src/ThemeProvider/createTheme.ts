@@ -23,22 +23,24 @@ export const createTheme: CreateTheme = overrides => {
     },
     color: {},
     shape: {
-      radiusFactor: 0.5,
+      radiusFactor: 0.3,
       ...shape,
     },
   };
 
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  /* @ts-ignore */
   const defaultColors: Required<UIThemeOverrides['color']> = {
-    backgroundPrimary: '#FFFFFF',
-    backgroundSecondary: '#F9F9F9',
-    textPrimary: '#212121',
-    surface: '#FFFFFF',
-    textSecondary: '#343434',
-    accentPrimary: '#FFA800',
-    accentPrimaryContrast: '#FFFFFF',
-    accentSecondary: '#bd00ff',
+    backgroundPrimary: '#fafafa',
+    backgroundSecondary: '#0e1200',
+    textPrimary: '#0b1643',
+    textSecondary: '#525252',
+    accentPrimary: '#009900',
+    accentPrimaryContrast: '#e0f2ea',
+    accentSecondary: '#0b1643',
     accentSecondaryContrast: '#FFFFFF',
     error: '#ff2b2b',
+    surface: '#fff',
     errorContrast: '#ffffff',
     warning: '#fcbf03',
     warningContrast: '#ffffff',

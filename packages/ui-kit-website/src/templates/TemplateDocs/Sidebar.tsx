@@ -4,9 +4,13 @@ import { css } from '@emotion/react';
 import { Link, matchPath, useLocation } from 'react-router-dom';
 import { FormattedMessage } from 'react-intl';
 
+import Logo from '~/components/Logo';
+
 const Container = styled.div`
-  background-color: ${({ theme }) => theme.color.backgroundSecondary.toString()};
-  color: ${({ theme }) => theme.color.accentPrimaryContrast.toString()};
+  background-color: ${({ theme }) => theme.color.mainSidebar.toString()};
+  color: ${({ theme }) => theme.color.mainSidebarContrast.toString()};
+  z-index: ${({ theme }) => theme.zIndex.header};
+  position: fixed;
 `;
 
 const ItemsList = styled.nav`
@@ -14,8 +18,8 @@ const ItemsList = styled.nav`
   flex-direction: column;
   overflow-y: auto;
   position: sticky;
-  top: 5rem;
-  max-height: calc(100vh - 5rem);
+  top: 0;
+  max-height: 100vh;
 `;
 
 type ItemStyle = {
@@ -36,6 +40,17 @@ const Item = styled(Link, { shouldForwardProp: p => p.match(/^\$/) === null })<I
     `};
 `;
 
+const LogoBlock = styled.div`
+  height: 5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const StyledLogo = styled(Logo)`
+  font-size: 1.8em;
+`;
+
 const Sidebar: React.ForwardRefRenderFunction<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
@@ -44,6 +59,9 @@ const Sidebar: React.ForwardRefRenderFunction<
 
   return (
     <Container {...props} ref={ref}>
+      <LogoBlock>
+        <StyledLogo />
+      </LogoBlock>
       <ItemsList>
         <Item $isActive={matchPath('/docs/button/*', pathname) !== null} to="/docs/button">
           <FormattedMessage defaultMessage="Кнопка" />

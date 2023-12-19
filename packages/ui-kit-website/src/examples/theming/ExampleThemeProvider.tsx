@@ -15,6 +15,8 @@ const ExampleThemeProvider: React.FC = () => {
     () =>
       createTheme({
         isDark: false,
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        /* @ts-ignore */
         color: {
           accentPrimary: '#66b13d',
           accentPrimaryContrast: '#FFFFFF',

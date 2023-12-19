@@ -80,6 +80,10 @@ const CodeInline = styled.code`
   font-weight: 500;
 `;
 
+const Heading = styled(H1)`
+  margin-top: 0;
+`;
+
 const relativeToAbsolute = (base: string, rel: string): string => {
   const resultArray = base.split('/');
 
@@ -122,10 +126,10 @@ const MarkdownRender: React.FC<Props> = props => {
         forceInline: false,
         overrides: {
           h1: p => (
-            <H1>
+            <Heading>
               <Anchor aria-hidden="true" tabIndex={-1} id={titleToAnchor(p.children)} />
               {p.children}
-            </H1>
+            </Heading>
           ),
           h2: p => (
             <H2>

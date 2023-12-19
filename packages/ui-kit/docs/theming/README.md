@@ -157,16 +157,12 @@ _Примечание: Более детально ознакомиться с �
 В данном примере будет использоваться файл `ui-kit.d.ts` размещённый в директории `@types`:
 
 ```ts
-import '@via-profit/ui-kit';
+import { UIThemeOverrideColor as Colors } from '@via-profit/ui-kit';
 
-declare module '@via-profit/ui-kit/ThemeProvider' {
-  export interface UIThemeOverrideColor {
-    myColorPrimary: string; // <-- Your color value
-    myColorSecondary: string; // <-- Your another color value
-  }
-
-  export interface UIThemeOverrideZIndex {
-    myModalDialog: number; // <-- Your z-index value
+declare module '@via-profit/ui-kit' {
+  export interface UIThemeOverrideColor extends Colors {
+    readonly mainSidebar: string; // <-- Your color name
+    readonly mainSidebarContrast: string;  // <-- Your color name
   }
 }
 ```
@@ -181,11 +177,8 @@ const myTheme = createTheme({
   colors: {
     accentPrimary: '#66b13d', // <-- Color definition in the base theme
     accentPrimaryContrast: '#FFFFFF', // <-- Color definition in the base theme
-    myColorPrimary: 'red', // <-- Color definition for the extended theme
-    myColorSecondary: 'blue', // <-- Color definition for the extended theme
-  },
-  zIndex: {
-    myModalDialog: 9, // <-- Z-index definition for the extended theme
+    mainSidebar: 'red', // <-- Color definition for the extended theme
+    mainSidebarContrast: 'blue', // <-- Color definition for the extended theme
   },
 });
 ```

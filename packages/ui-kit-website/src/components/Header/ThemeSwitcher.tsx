@@ -1,11 +1,10 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from '@emotion/styled';
-import { FormattedMessage } from 'react-intl';
+import { useIntl } from 'react-intl';
 import { createStructuredSelector } from 'reselect';
 
-import Menu from '@via-profit/ui-kit/src/Menu';
-import MenuItem from '@via-profit/ui-kit/src/Menu/MenuItem';
+import Icon from '~/components/Icons/PaletteOutline';
 import Button from '@via-profit/ui-kit/src/Button';
 import { uiActions } from '~/redux/ui';
 
@@ -17,42 +16,30 @@ const Container = styled.div`
     margin-right: 0;
   }
 `;
+
 const selector = createStructuredSelector({
   currentThemeName: (store: ReduxStore) => store.ui.theme,
 });
 
 const ThemeSwitcher: React.FC = () => {
   const dispatch = useDispatch();
+  const intl = useIntl();
   const { currentThemeName } = useSelector(selector);
-  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
-  const themeVariants: (typeof currentThemeName)[] = React.useMemo(
-    () => ['light', 'dark', 'green', 'greenDark', 'blue', 'blueDark'],
-    [],
-  );
+
+  const switchTheme = React.useCallback(() => {
+    dispatch(uiActions.theme(currentThemeName === 'dark' ? 'light' : 'dark'));
+  }, [currentThemeName, dispatch]);
 
   return (
     <Container>
-      <Button type="button" onClick={event => setAnchorEl(anchorEl ? null : event.currentTarget)}>
-        <FormattedMessage defaultMessage="Сменить тему" />
-      </Button>
-
-      <Menu
-        value={currentThemeName}
-        items={themeVariants}
-        anchorElement={anchorEl}
-        isOpen={Boolean(anchorEl)}
-        onRequestClose={() => setAnchorEl(null)}
-        getOptionSelected={({ item, value }) => item === value}
-        onSelectItem={item => {
-          dispatch(uiActions.theme(item));
-        }}
+      <Button
+        iconOnly
+        title={intl.formatMessage({ defaultMessage: 'Сменить тему' })}
+        type="button"
+        onClick={() => switchTheme()}
       >
-        {({ item, index }, menuProps) => (
-          <MenuItem {...menuProps} key={index}>
-            {item}
-          </MenuItem>
-        )}
-      </Menu>
+        <Icon />
+      </Button>
     </Container>
   );
 };
