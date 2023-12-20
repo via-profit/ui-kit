@@ -2,14 +2,12 @@ import styled from '@emotion/styled';
 
 const CalendarPaper = styled.div`
   position: relative;
-  display: flex;
+  display: inline-flex;
   flex-direction: column;
   justify-content: stretch;
+  max-width: 18em;
   background-color: ${({ theme }) => theme.color.surface.toString()};
   border-radius: ${({ theme }) => theme.shape.radiusFactor}em;
-  padding: 0.4em;
-  max-width: 17.6em;
-  max-height: 20.4em;
   box-shadow: 0 4px 24px ${({ theme }) => theme.color.surface.darken(50).alpha(0.6).toString()};
 `;
 

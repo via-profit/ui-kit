@@ -1,6 +1,8 @@
 import React from 'react';
 import styled from '@emotion/styled';
+import { css } from '@emotion/react';
 
+import Button from '../Button';
 import IconPrev from './IconChevronLeft';
 import IconNext from './IconChevronRight';
 
@@ -8,29 +10,20 @@ export interface CalendarMonthControlProps extends React.ButtonHTMLAttributes<HT
   readonly displayIcon: 'prev' | 'next';
 }
 
-const Btn = styled.button`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1em;
-  width: 2.25em;
-  height: 2.25em;
-  padding: 0;
-  margin: 0;
-  min-width: 0;
-  outline: none;
-  cursor: pointer;
-  border: 1px solid transparent;
-  background-color: ${({ theme }) => theme.color.surface.toString()};
-  border-radius: ${({ theme }) => theme.shape.radiusFactor * 3}em;
-  color: ${({ theme }) => theme.color.textPrimary.toString()};
+const StyledButton = styled(Button)`
+  color: ${({ theme }) => theme.color.accentSecondaryContrast.toString()};
   &:hover {
-    background-color: ${({ theme }) => theme.color.surface.darken(0.1).toString()};
+    color: ${({ theme }) => theme.color.accentSecondaryContrast.alpha(0.5).toString()};
+    background-color: ${({ theme }) => theme.color.accentSecondary.lighten(10).toString()};
   }
-  &:focus-visible {
-    border-color: ${({ theme }) => theme.color.accentPrimary.toString()};
+  &:active {
+    color: ${({ theme }) => theme.color.accentSecondaryContrast.alpha(0.9).toString()};
   }
-  opacity: ${({ disabled }) => (disabled ? 0.4 : 1)};
+  ${({ disabled }) =>
+    disabled &&
+    css`
+      opacity: 0.5;
+    `};
 `;
 
 const CalendarMonthControl: React.ForwardRefRenderFunction<
@@ -40,9 +33,9 @@ const CalendarMonthControl: React.ForwardRefRenderFunction<
   const { displayIcon, ...restProps } = props;
 
   return (
-    <Btn type="button" {...restProps} ref={ref}>
+    <StyledButton variant="plain" iconOnly type="button" {...restProps} ref={ref}>
       {displayIcon === 'next' ? <IconNext /> : <IconPrev />}
-    </Btn>
+    </StyledButton>
   );
 };
 
