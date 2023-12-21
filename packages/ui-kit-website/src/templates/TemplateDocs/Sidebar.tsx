@@ -51,6 +51,17 @@ const StyledLogo = styled(Logo)`
   font-size: 1.8em;
 `;
 
+const StyledDraft = styled.span`
+  background-color: ${({ theme }) => theme.color.accentPrimary.toString()};
+  color: ${({ theme }) => theme.color.accentPrimaryContrast.toString()};
+  padding: 0.2em 0.24em;
+  font-size: 0.7em;
+  border-radius: ${({ theme }) => theme.shape.radiusFactor}em;
+  margin-left: 0.4em;
+`;
+
+const Draft: React.FC = () => <StyledDraft>Draft</StyledDraft>;
+
 const Sidebar: React.ForwardRefRenderFunction<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
@@ -73,7 +84,8 @@ const Sidebar: React.ForwardRefRenderFunction<
           <FormattedMessage defaultMessage="Текстовое поле textarea" />
         </Item>
         <Item $isActive={matchPath('/docs/table/*', pathname) !== null} to="/docs/table">
-          <FormattedMessage defaultMessage="Таблица" /> Draft
+          <FormattedMessage defaultMessage="Таблица" />
+          <Draft />
         </Item>
         <Item $isActive={matchPath('/docs/theming/*', pathname) !== null} to="/docs/theming">
           <FormattedMessage defaultMessage="Темы оформления" />
@@ -88,25 +100,30 @@ const Sidebar: React.ForwardRefRenderFunction<
           $isActive={matchPath('/docs/masked-field/*', pathname) !== null}
           to="/docs/masked-field"
         >
-          <FormattedMessage defaultMessage="Маскированное поле" /> Draft
+          <FormattedMessage defaultMessage="Маскированное поле" />
+          <Draft />
         </Item>
         <Item $isActive={matchPath('/docs/typography/*', pathname) !== null} to="/docs/typography">
-          <FormattedMessage defaultMessage="Типографика" /> Draft
+          <FormattedMessage defaultMessage="Типографика" />
+          <Draft />
         </Item>
         <Item
           $isActive={matchPath('/docs/phone-field/*', pathname) !== null}
           to="/docs/phone-field"
         >
-          <FormattedMessage defaultMessage="Поле ввода телефона" /> Draft
+          <FormattedMessage defaultMessage="Поле ввода телефона" />
+          <Draft />
         </Item>
         <Item $isActive={matchPath('/docs/menu/*', pathname) !== null} to="/docs/menu">
           <FormattedMessage defaultMessage="Меню" />
+          <Draft />
         </Item>
         <Item
           $isActive={matchPath('/docs/autocomplete/*', pathname) !== null}
           to="/docs/autocomplete"
         >
-          <FormattedMessage defaultMessage="Автокомплит" /> Draft
+          <FormattedMessage defaultMessage="Автокомплит" />
+          <Draft />
         </Item>
         <Item $isActive={matchPath('/docs/selectbox/*', pathname) !== null} to="/docs/selectbox">
           <FormattedMessage defaultMessage="Селектбокс" /> Draft
@@ -115,13 +132,22 @@ const Sidebar: React.ForwardRefRenderFunction<
           $isActive={matchPath('/docs/country-flags/*', pathname) !== null}
           to="/docs/country-flags"
         >
-          <FormattedMessage defaultMessage="Флаги стран" /> Draft
+          <FormattedMessage defaultMessage="Флаги стран" />
+          <Draft />
         </Item>
         <Item $isActive={matchPath('/docs/modal/*', pathname) !== null} to="/docs/modal">
           <FormattedMessage defaultMessage="Модальные окна" />
         </Item>
         <Item $isActive={matchPath('/docs/calendar/*', pathname) !== null} to="/docs/calendar">
-          <FormattedMessage defaultMessage="Календарь" /> Draft
+          <FormattedMessage defaultMessage="Календарь" />
+          <Draft />
+        </Item>
+        <Item
+          $isActive={matchPath('/docs/date-picker/*', pathname) !== null}
+          to="/docs/date-picker"
+        >
+          <FormattedMessage defaultMessage="Date Picker" />
+          <Draft />
         </Item>
         <Item
           $isActive={matchPath('/docs/highlighted/*', pathname) !== null}
@@ -133,10 +159,12 @@ const Sidebar: React.ForwardRefRenderFunction<
           $isActive={matchPath('/docs/loading-indicator/*', pathname) !== null}
           to="/docs/loading-indicator"
         >
-          <FormattedMessage defaultMessage="Индикатор загрузки" /> Draft
+          <FormattedMessage defaultMessage="Индикатор загрузки" />
+          <Draft />
         </Item>
         <Item $isActive={matchPath('/docs/badge/*', pathname) !== null} to="/docs/badge">
-          <FormattedMessage defaultMessage="Бейдж" /> Draft
+          <FormattedMessage defaultMessage="Бейдж" />
+          <Draft />
         </Item>
         <Item $isActive={matchPath('/docs/popper/*', pathname) !== null} to="/docs/popper">
           <FormattedMessage defaultMessage="Popper" />

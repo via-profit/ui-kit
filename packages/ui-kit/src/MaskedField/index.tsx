@@ -5,12 +5,6 @@ import TextField, { TextFieldProps } from '../TextField';
 
 export type GetMask = (input: string) => Mask;
 
-export interface Payload {
-  readonly text: string;
-  readonly caret: number;
-  readonly isValid: boolean;
-}
-
 export interface MaskedFieldProps extends Omit<TextFieldProps, 'value' | 'onChange'> {
   /**
    * Field value

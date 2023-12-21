@@ -6,18 +6,16 @@ const ExampleDatePickerOverview: React.FC = () => {
 
   return (
     <DatePicker
-      label={
-        value
-          ? new Intl.DateTimeFormat('ru-RU', {
-              day: '2-digit',
-              month: '2-digit',
-              year: 'numeric',
-            }).format(value)
-          : 'not set'
-      }
-      template="yyyy/mm/dd"
+      template="dd.mm.yyyy"
+      calendarButtonTooltip="Open calendar"
       value={value}
-      onChange={date => setValue(date)}
+      readOnly
+      onChange={setValue}
+      calendarProps={{
+        locale: 'ru-RU',
+        heading: 'Calendar',
+        toodayButtonLabel: 'Today',
+      }}
     />
   );
 };
