@@ -1,4 +1,7 @@
 {
+  "+glFq7": {
+    "defaultMessage": "Сегодня"
+  },
   "+mqMMV": {
     "defaultMessage": "Цвета"
   },
@@ -7,6 +10,9 @@
   },
   "44pMfw": {
     "defaultMessage": "Скрыть"
+  },
+  "4IywCD": {
+    "defaultMessage": "Дата не выбрана"
   },
   "4SjODy": {
     "defaultMessage": "Флаги стран"
@@ -22,6 +28,9 @@
   },
   "DHVnVh": {
     "defaultMessage": "закрыть диалог"
+  },
+  "Ewp5W2": {
+    "defaultMessage": "Контроллируемый"
   },
   "Fm08lU": {
     "defaultMessage": "Сменить тему"
@@ -98,8 +107,14 @@
   "tfwWYu": {
     "defaultMessage": "Click outside"
   },
+  "vfmGvM": {
+    "defaultMessage": "Выбрана дата: {date}"
+  },
   "whQBin": {
     "defaultMessage": "Календарь"
+  },
+  "YTTz6q": {
+    "defaultMessage": "Контролли руемый"
   },
   "hRe4Lb": {
     "defaultMessage": "Открыть/Закрыть Popper"

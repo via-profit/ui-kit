@@ -7,7 +7,9 @@ const StyledCalendarToolbar = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 100%;
+  min-width: 100%;
+  margin-left: -0.8em;
+  margin-right: -0.8em;
 `;
 
 const CalendarToolbar: React.ForwardRefRenderFunction<HTMLDivElement, CalendarToolbarProps> = (

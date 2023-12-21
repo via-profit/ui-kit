@@ -5,7 +5,7 @@ const CalendarBody = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: stretch;
-  max-height: 14em;
+  height: 15em;
 `;
 
 export default CalendarBody;

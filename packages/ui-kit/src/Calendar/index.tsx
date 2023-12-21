@@ -8,8 +8,6 @@ import CalendarWeekRow from './CalendarWeekRow';
 import CalendarDateContainer from './CalendarDateContainer';
 import CalendarToolbar from './CalendarToolbar';
 import CalendarMonthControl from './CalendarMonthControl';
-import CalendarMonthButton from './CalendarMonthButton';
-import CalendarYearButton from './CalendarYearButton';
 import CalendarWeekDaysBar, { WeekNameLabelFormat } from './CalendarWeekDaysBar';
 import CalendarYearsSelector from './CalendarYearsSelector';
 import CalendarMonthesSelector from './CalendarMonthesSelector';
@@ -17,14 +15,19 @@ import CalendarMonthCell from './CalendarMonthCell';
 import CalendarYearCell from './CalendarYearCell';
 import CalendarDayBadge from './CalendarDayBadge';
 import CalendarBody from './CalendarBody';
+import CalendarFooter from './CalendarFooter';
 import { useCalendar, WeekDayName } from './use-calendar';
+import CalendarControlButton from './CalendarControlButton';
+import CalendarHeading from './CalendarHeading';
+import CalendarSubheading from './CalendarSubheading';
 
 export type CalendarProps = {
   readonly value?: Date;
   readonly onChange?: (date: Date) => void;
-  readonly onDateSelect?: (date: Date) => void;
+  readonly onDateSelect?: (date: readonly Date[]) => void;
   readonly locale?: string;
   readonly selected?: readonly Date[];
+  readonly selectMultiple?: boolean;
   readonly badges?: readonly CalendarDadge[];
   readonly maxDate?: Date;
   readonly minDate?: Date;
@@ -37,8 +40,13 @@ export type CalendarProps = {
   readonly nextMonthButtonTooltip?: string;
   readonly changeMonthButtonTooltip?: string;
   readonly changeYearButtonTooltip?: string;
+  readonly resetButtonLabel?: string;
+  readonly toodayButtonLabel?: string;
+  readonly heading?: React.ReactNode;
+  readonly subheading?: React.ReactNode;
   readonly views?: readonly CalendarView[];
   readonly initialView?: CalendarView;
+  readonly footer?: JSX.Element;
 };
 
 export type CalendarDadge = {
@@ -90,6 +98,7 @@ const Calendar: React.FC<CalendarProps> = props => {
     onChange,
     selected = [],
     badges = [],
+    selectMultiple = false,
     value,
     markToday,
     weekDayLabelFormat = 'short',
@@ -100,7 +109,14 @@ const Calendar: React.FC<CalendarProps> = props => {
     changeYearButtonTooltip,
     views = defaultState.calendarViewVariants,
     initialView = defaultState.calendarCurrentView,
+    resetButtonLabel,
+    toodayButtonLabel,
+    heading,
+    subheading,
+    footer,
   } = props;
+
+  const initialProps = React.useRef({ value, selected, badges, initialView });
 
   const [state, dispatch] = React.useReducer(reducer, {
     ...defaultState,
@@ -152,10 +168,23 @@ const Calendar: React.FC<CalendarProps> = props => {
   const handleCellDateClick = React.useCallback(
     (selectedDate: Date) => () => {
       if (typeof onDateSelect === 'function') {
-        onDateSelect(selectedDate);
+        if (selectMultiple) {
+          const selectedAsTime = selectedDate.getTime();
+          const selectedSet = new Set(selected.map(s => s.getTime()));
+
+          if (selectedSet.has(selectedAsTime)) {
+            selectedSet.delete(selectedAsTime);
+          } else {
+            selectedSet.add(selectedAsTime);
+          }
+
+          onDateSelect([...selectedSet].map(s => new Date(s)));
+        } else {
+          onDateSelect([selectedDate]);
+        }
       }
     },
-    [onDateSelect],
+    [onDateSelect, selected, selectMultiple],
   );
 
   const getNextPossibleView = React.useCallback(() => {
@@ -241,17 +270,57 @@ const Calendar: React.FC<CalendarProps> = props => {
     [],
   );
 
+  const handleReset = React.useCallback(() => {
+    dispatch({
+      type: 'setPartial',
+      payload: {
+        calendarCurrentView: initialProps.current.initialView,
+        calendarDate: initialProps.current.value,
+      },
+    });
+    if (typeof onChange === 'function' && initialProps.current.value instanceof Date) {
+      onChange(initialProps.current.value);
+    }
+    if (typeof onDateSelect === 'function') {
+      onDateSelect(initialProps.current.selected);
+    }
+  }, [onChange, onDateSelect]);
+
+  const handleToday = React.useCallback(() => {
+    const today = new Date();
+    today.setHours(0);
+    today.setMinutes(0);
+    today.setSeconds(0);
+    today.setMilliseconds(0);
+
+    dispatch({
+      type: 'setPartial',
+      payload: {
+        // calendarCurrentView: initialProps.current.initialView,
+        calendarDate: today,
+      },
+    });
+    if (typeof onChange === 'function') {
+      onChange(today);
+    }
+    if (typeof onDateSelect === 'function' && !selectMultiple) {
+      onDateSelect([today]);
+    }
+  }, [onChange, onDateSelect, selectMultiple]);
+
   return (
     <CalendarPaper>
       <CalendarHeader>
+        {typeof heading !== 'undefined' && <CalendarHeading>{heading}</CalendarHeading>}
+        {typeof subheading !== 'undefined' && <CalendarSubheading>{subheading}</CalendarSubheading>}
         <CalendarToolbar>
           <CalendarMonthControl
             displayIcon="prev"
             onClick={handleChangeMonthClick('prev')}
             title={prevMonthButtonTooltip}
-            disabled={!calendarViewVariants.includes('monthes') || calendarCurrentView !== 'days'}
+            disabled={calendarCurrentView !== 'days'}
           />
-          <CalendarMonthButton
+          <CalendarControlButton
             title={changeMonthButtonTooltip}
             disabled={!calendarViewVariants.includes('monthes')}
             onClick={handleChangeView(
@@ -259,8 +328,8 @@ const Calendar: React.FC<CalendarProps> = props => {
             )}
           >
             {getMonthLabel(calendarDate)}
-          </CalendarMonthButton>
-          <CalendarYearButton
+          </CalendarControlButton>
+          <CalendarControlButton
             disabled={!calendarViewVariants.includes('years')}
             title={changeYearButtonTooltip}
             onClick={handleChangeView(
@@ -268,12 +337,12 @@ const Calendar: React.FC<CalendarProps> = props => {
             )}
           >
             {getYearLabel(calendarDate)}
-          </CalendarYearButton>
+          </CalendarControlButton>
           <CalendarMonthControl
             displayIcon="next"
             onClick={handleChangeMonthClick('next')}
             title={nextMonthButtonTooltip}
-            disabled={!calendarViewVariants.includes('monthes') || calendarCurrentView !== 'days'}
+            disabled={calendarCurrentView !== 'days'}
           />
         </CalendarToolbar>
       </CalendarHeader>
@@ -352,6 +421,19 @@ const Calendar: React.FC<CalendarProps> = props => {
           </CalendarDateContainer>
         )}
       </CalendarBody>
+      {(typeof resetButtonLabel !== 'undefined' ||
+        typeof toodayButtonLabel !== 'undefined' ||
+        typeof footer !== 'undefined') && (
+        <CalendarFooter>
+          {typeof footer !== 'undefined' && <>{footer}</>}
+          {typeof toodayButtonLabel !== 'undefined' && (
+            <CalendarControlButton onClick={handleToday}>{toodayButtonLabel}</CalendarControlButton>
+          )}
+          {typeof resetButtonLabel !== 'undefined' && (
+            <CalendarControlButton onClick={handleReset}>{resetButtonLabel}</CalendarControlButton>
+          )}
+        </CalendarFooter>
+      )}
     </CalendarPaper>
   );
 };

@@ -78,7 +78,7 @@ const ButtonBase: React.ForwardRefRenderFunction<HTMLButtonElement, ButtonBasePr
   props,
   ref,
 ) => {
-  const { children, startIcon, endIcon, color, overrides, iconOnly, ...nativeProps } = props;
+  const { children, startIcon, endIcon, color, overrides, iconOnly, type, ...nativeProps } = props;
   const overridesMap = React.useMemo(
     () => ({
       TextWrapper,
@@ -100,7 +100,13 @@ const ButtonBase: React.ForwardRefRenderFunction<HTMLButtonElement, ButtonBasePr
   }
 
   return (
-    <overridesMap.Container {...nativeProps} color={color} iconOnly={iconOnly} ref={ref}>
+    <overridesMap.Container
+      type={typeof type === 'undefined' ? 'button' : type}
+      {...nativeProps}
+      color={color}
+      iconOnly={iconOnly}
+      ref={ref}
+    >
       {typeof startIcon !== 'undefined' && startIcon !== null && (
         <overridesMap.IconWrapper position="start">{startIcon}</overridesMap.IconWrapper>
       )}

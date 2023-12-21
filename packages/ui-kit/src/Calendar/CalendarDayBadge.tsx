@@ -32,6 +32,7 @@ const StyledBadge = styled.span<BadgeContentStyles>`
   max-width: 4em;
   overflow: hidden;
   pointer-events: none;
+  z-index: 1;
 `;
 
 const CalendarDayBadge: React.ForwardRefRenderFunction<HTMLButtonElement, CalendarDayBadgeProps> = (

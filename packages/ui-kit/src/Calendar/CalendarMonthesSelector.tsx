@@ -6,6 +6,7 @@ const SelectorContainer = styled.div`
   display: flex;
   flex-wrap: wrap;
   overflow-y: auto;
+  padding: 0.8em;
 `;
 
 export type CalendarMonthesSelectorProps = React.HTMLAttributes<HTMLDivElement>;

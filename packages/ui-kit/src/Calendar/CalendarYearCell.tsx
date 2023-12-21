@@ -16,7 +16,7 @@ const Btn = styled(Button)`
   margin: 0;
   min-width: 0;
   outline: none;
-  flex-basis: 25%;
+  flex-basis: 33%;
 `;
 
 const CalendarYearCell: React.ForwardRefRenderFunction<HTMLButtonElement, CalendarYearCellProps> = (

@@ -12,7 +12,7 @@ const Btn = styled(Button)`
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.9em;
+  font-size: 0.8em;
   margin: 0;
   min-width: 0;
   outline: none;

@@ -39,6 +39,7 @@ const CalendarCell: React.ForwardRefRenderFunction<HTMLButtonElement, CalendarCe
       ref={ref}
       color={isSelected || isToday ? accentColor : 'default'}
       tabIndex={isDisabled ? -1 : restProps.tabIndex}
+      disabled={isDisabled}
     >
       {children}
     </Btn>

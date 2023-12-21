@@ -1,8 +1,6 @@
 import React from 'react';
 import styled from '@emotion/styled';
 
-import Paragraph from '../Typography/Paragraph';
-
 export type CalendarHeaderProps = React.HTMLAttributes<HTMLDivElement>;
 
 const StyledCalendarHeader = styled.div`
@@ -17,19 +15,6 @@ const StyledCalendarHeader = styled.div`
   color: ${({ theme }) => theme.color.accentSecondaryContrast.toString()};
 `;
 
-const StyledHeading = styled(Paragraph)`
-  font-weight: 600;
-  font-size: 1.8em;
-  margin: 0 0 0.2em 0;
-`;
-
-const StyledSubheading = styled(Paragraph)`
-  font-weight: 200;
-  font-size: 1em;
-  opacity: 0.6;
-  margin-bottom: 1em;
-`;
-
 const CalendarHeader: React.ForwardRefRenderFunction<HTMLDivElement, CalendarHeaderProps> = (
   props,
   ref,
@@ -38,8 +23,6 @@ const CalendarHeader: React.ForwardRefRenderFunction<HTMLDivElement, CalendarHea
 
   return (
     <StyledCalendarHeader {...restProps} ref={ref}>
-      <StyledHeading>Lorem ipsum</StyledHeading>
-      <StyledSubheading>Lorem ipsum dolor set amet</StyledSubheading>
       {children}
     </StyledCalendarHeader>
   );
