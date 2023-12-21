@@ -1,6 +1,6 @@
 import React from 'react';
 import MaskedField from '@via-profit/ui-kit/src/MaskedField';
-import {ogrn} from '@via-profit/ui-kit/src/MaskedField/templates';
+import { ogrn } from '@via-profit/ui-kit/src/MaskedField/templates';
 
 const letters = /[АВЕКМНОРСТУХавекмнорстух]/;
 
