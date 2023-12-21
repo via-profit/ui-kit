@@ -29,8 +29,9 @@ export const useMasked = () => {
       .forEach((character, charIndex) => {
         const isMatch = mask.some(pattern => {
           if (typeof pattern === 'string') {
-            // return false;
-            return character === pattern && character;
+            return false;
+
+            // return character === pattern && character;
           }
 
           if (pattern instanceof RegExp) {
@@ -82,7 +83,6 @@ export const useMasked = () => {
       if (pattern instanceof RegExp && new RegExp(pattern).test(char)) {
         data.text = `${data.text}${char}`;
         data.charIndex += 1;
-        data.caret += 1;
       }
 
       // If char is correct (equal with pattern string)
@@ -90,8 +90,9 @@ export const useMasked = () => {
       // and increment the charIndex and caret
       if (typeof pattern === 'string' && pattern === char) {
         data.text = `${data.text}${char}`;
-        data.charIndex += 1;
+
         data.caret += 1;
+        data.charIndex += 1;
       }
 
       // If pattern is a string and char is not correct
@@ -99,7 +100,9 @@ export const useMasked = () => {
       // then accept pattern string into text and increment caret
       if (typeof pattern === 'string' && pattern !== char) {
         data.text = `${data.text}${pattern}`;
-        data.caret += 1;
+        if (data.charIndex < (caret || 0)) {
+          data.caret += 1;
+        }
       }
     }
 
