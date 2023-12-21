@@ -2,15 +2,15 @@ import React from 'react';
 import { useIntl } from 'react-intl';
 
 import Calendar from '@via-profit/ui-kit/src/Calendar';
+import Button from '@via-profit/ui-kit/src/Button';
 
 const locale = 'ru-RU';
 const ExampleCalendarControlled: React.FC = () => {
   const intl = useIntl();
-  const [date, setDate] = React.useState(new Date());
-  const [selected, setSelected] = React.useState<readonly Date[]>([]);
+  const [date, setDate] = React.useState<Date>(new Date(2024, 5, 16));
 
   const subheading = React.useMemo(() => {
-    if (selected.length) {
+    if (date) {
       return intl.formatMessage(
         { defaultMessage: 'Выбрана дата: {date}' },
         {
@@ -18,28 +18,30 @@ const ExampleCalendarControlled: React.FC = () => {
             day: 'numeric',
             month: 'long',
             year: 'numeric',
-          }).format(selected[0]),
+          }).format(date),
         },
       );
     }
 
     return intl.formatMessage({ defaultMessage: 'Дата не выбрана' });
-  }, [intl, selected]);
+  }, [intl, date]);
 
   return (
     <>
       <div>
         <Calendar
-          // value={date}
-          // onChange={setDate}
+          value={date}
+          onChange={setDate}
           toodayButtonLabel={intl.formatMessage({ defaultMessage: 'Сегодня' })}
+          resetButtonLabel={intl.formatMessage({ defaultMessage: 'Сбросить' })}
           locale={locale}
           heading={intl.formatMessage({ defaultMessage: 'Контроллируемый' })}
           subheading={subheading}
-          onDateSelect={setSelected}
-          selected={selected}
           markToday
         />
+        <Button onClick={() => setDate(new Date(2024, 11, 31))}>
+          Set Date as 2024 december 31
+        </Button>
       </div>
     </>
   );

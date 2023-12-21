@@ -14,39 +14,27 @@ const ExampleCalendarOverivew: React.FC = () => {
   const [isOpen, setOpenSate] = React.useState(false);
   const [markToday, setmarkToday] = React.useState(true);
   const [dateConstraint, setDateConstraint] = React.useState([
-    new Date(2023, 10, 5),
+    new Date(2023, 9, 5),
     new Date(2024, 0, 25),
   ]);
-
-  // const onSelectDate = React.useCallback(
-  //   (d: Date) => setSelected([d.getFullYear(), d.getMonth(), d.getDate()]),
-  //   [],
-  // );
 
   return (
     <>
       <div>
         <Calendar
-          value={date}
-          onChange={d => setDate(d)}
-          // views={['days', 'years']}
-          // initialView="years"
-          // footer={<>The footer</>}
+          resetButtonLabel="Reset"
           toodayButtonLabel="Today"
-          // resetButtonLabel="Reset"
-          // views={['days']}
           heading="Calendar"
-          subheading="Lorem ipsum dolor set amet"
+          subheading="Uncontrolled"
           minDate={dateConstraint[0]}
           maxDate={dateConstraint[1]}
           markToday={markToday}
+          onChange={setDate}
           badges={[
             { date: new Date(2023, 11, 31), badgeContent: '1' },
             { date: new Date(2023, 11, 7), badgeContent: '88+' },
             { date: new Date(2023, 11, 12), badgeContent: '396+', accentColor: 'primary' },
           ]}
-          onDateSelect={setSelected}
-          selected={selected}
         />
       </div>
       <p>Current dat: {date.toISOString()}</p>

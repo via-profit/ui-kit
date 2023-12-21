@@ -23,11 +23,9 @@ import CalendarSubheading from './CalendarSubheading';
 
 export type CalendarProps = {
   readonly value?: Date;
-  readonly onChange?: (date: Date) => void;
-  readonly onDateSelect?: (date: readonly Date[]) => void;
+  readonly defaultValue?: Date;
+  readonly onChange: (dates: Date) => void;
   readonly locale?: string;
-  readonly selected?: readonly Date[];
-  readonly selectMultiple?: boolean;
   readonly badges?: readonly CalendarDadge[];
   readonly maxDate?: Date;
   readonly minDate?: Date;
@@ -58,12 +56,14 @@ export type CalendarDadge = {
 export type CalendarView = 'days' | 'monthes' | 'years';
 
 type State = {
+  readonly calendarValue: Date;
   readonly calendarDate: Date;
   readonly calendarCurrentView: CalendarView;
   readonly calendarViewVariants: readonly CalendarView[];
 };
 
 const defaultState: State = {
+  calendarValue: new Date(),
   calendarDate: new Date(),
   calendarCurrentView: 'days',
   calendarViewVariants: ['years', 'monthes', 'days'],
@@ -94,12 +94,12 @@ const Calendar: React.FC<CalendarProps> = props => {
     weekStartDay = 'monday',
     locale = 'ru-RU',
     displayLeadingZero = false,
-    onDateSelect,
     onChange,
-    selected = [],
+    // selected = [],
     badges = [],
-    selectMultiple = false,
+    // selectMultiple = false,
     value,
+    defaultValue,
     markToday,
     weekDayLabelFormat = 'short',
     accentColor = 'primary',
@@ -116,12 +116,27 @@ const Calendar: React.FC<CalendarProps> = props => {
     footer,
   } = props;
 
-  const initialProps = React.useRef({ value, selected, badges, initialView });
+  const realValue = React.useMemo(
+    () =>
+      typeof value !== 'undefined'
+        ? value
+        : typeof defaultValue !== 'undefined'
+        ? defaultValue
+        : new Date(),
+    [value, defaultValue],
+  );
+
+  const initialProps = React.useRef({
+    value: realValue,
+    badges,
+    initialView,
+  });
 
   const [state, dispatch] = React.useReducer(reducer, {
     ...defaultState,
-    calendarDate: typeof value === 'undefined' ? new Date() : value,
+    calendarValue: realValue,
     calendarViewVariants: views,
+    calendarDate: realValue,
     calendarCurrentView: initialView,
   });
   const {
@@ -140,7 +155,11 @@ const Calendar: React.FC<CalendarProps> = props => {
     displayLeadingZero,
   });
 
-  const { calendarCurrentView, calendarViewVariants, calendarDate } = state;
+  const { calendarCurrentView, calendarViewVariants, calendarValue, calendarDate } = state;
+
+  /**
+   * Prev and next month buttons
+   */
   const handleChangeMonthClick = React.useCallback(
     (type: 'prev' | 'next') => () => {
       const newDate =
@@ -148,43 +167,58 @@ const Calendar: React.FC<CalendarProps> = props => {
           ? new Date(calendarDate.getFullYear(), calendarDate.getMonth() - 1, 1)
           : new Date(calendarDate.getFullYear(), calendarDate.getMonth() + 1, 1);
 
-      if (!isSameDay(newDate, calendarDate)) {
-        dispatch({ type: 'setPartial', payload: { calendarDate: newDate } });
-        if (typeof onChange === 'function') {
-          onChange(newDate);
-        }
-      }
+      dispatch({ type: 'setPartial', payload: { calendarDate: newDate } });
     },
-    [calendarDate, isSameDay, onChange],
+    [calendarDate],
   );
 
-  // Date props was changed
+  /**
+   * Date props was changed
+   */
   React.useEffect(() => {
-    if (typeof value !== 'undefined' && !isSameDay(value, calendarDate)) {
-      dispatch({ type: 'setPartial', payload: { calendarDate: value } });
+    if (typeof value !== 'undefined' && !isSameDay(value, calendarValue)) {
+      dispatch({
+        type: 'setPartial',
+        payload: {
+          calendarValue: value,
+          calendarDate: value,
+        },
+      });
     }
-  }, [value, calendarDate, isSameDay, dispatch]);
+  }, [value, calendarValue, isSameDay, dispatch]);
 
+  /**
+   * Handle click on Day button
+   */
   const handleCellDateClick = React.useCallback(
     (selectedDate: Date) => () => {
-      if (typeof onDateSelect === 'function') {
-        if (selectMultiple) {
-          const selectedAsTime = selectedDate.getTime();
-          const selectedSet = new Set(selected.map(s => s.getTime()));
+      if (typeof onChange === 'function') {
+        // if (selectMultiple) {
+        //   const selectedAsTime = selectedDate.getTime();
+        //   const selectedSet = new Set(selected.map(s => s.getTime()));
 
-          if (selectedSet.has(selectedAsTime)) {
-            selectedSet.delete(selectedAsTime);
-          } else {
-            selectedSet.add(selectedAsTime);
-          }
+        //   if (selectedSet.has(selectedAsTime)) {
+        //     selectedSet.delete(selectedAsTime);
+        //   } else {
+        //     selectedSet.add(selectedAsTime);
+        //   }
 
-          onDateSelect([...selectedSet].map(s => new Date(s)));
-        } else {
-          onDateSelect([selectedDate]);
-        }
+        //   onChange([...selectedSet].map(s => new Date(s)));
+        // } else {
+        // }
+        onChange(selectedDate);
+      }
+
+      if (!value) {
+        dispatch({
+          type: 'setPartial',
+          payload: {
+            calendarValue: selectedDate,
+          },
+        });
       }
     },
-    [onDateSelect, selected, selectMultiple],
+    [onChange, value],
   );
 
   const getNextPossibleView = React.useCallback(() => {
@@ -205,6 +239,9 @@ const Calendar: React.FC<CalendarProps> = props => {
     return calendarViewVariants[calendarViewVariants.length - 1];
   }, [calendarCurrentView, calendarViewVariants]);
 
+  /**
+   * Handle of click on year item
+   */
   const handleYearSelected = React.useCallback(
     (selectedYear: number) => () => {
       const newDate = new Date(calendarDate);
@@ -224,14 +261,14 @@ const Calendar: React.FC<CalendarProps> = props => {
             calendarCurrentView: nextView,
           },
         });
-
-        if (typeof onChange === 'function') {
-          onChange(newDate);
-        }
       }
     },
-    [calendarDate, getNextPossibleView, onChange],
+    [calendarDate, getNextPossibleView],
   );
+
+  /**
+   * Handle of click on month item
+   */
   const handleMonthSelected = React.useCallback(
     (monthIndex: number) => () => {
       const newDate = new Date(calendarDate);
@@ -249,15 +286,14 @@ const Calendar: React.FC<CalendarProps> = props => {
             calendarCurrentView: getNextPossibleView(),
           },
         });
-
-        if (typeof onChange === 'function') {
-          onChange(newDate);
-        }
       }
     },
-    [calendarDate, getNextPossibleView, onChange],
+    [calendarDate, getNextPossibleView],
   );
 
+  /**
+   * Manual view changing
+   */
   const handleChangeView = React.useCallback(
     (selectedView: CalendarView) => () => {
       dispatch({
@@ -270,22 +306,27 @@ const Calendar: React.FC<CalendarProps> = props => {
     [],
   );
 
+  /**
+   * Handle click on «Reset» button
+   */
   const handleReset = React.useCallback(() => {
     dispatch({
       type: 'setPartial',
       payload: {
         calendarCurrentView: initialProps.current.initialView,
         calendarDate: initialProps.current.value,
+        calendarValue: initialProps.current.value,
       },
     });
-    if (typeof onChange === 'function' && initialProps.current.value instanceof Date) {
+
+    if (typeof onChange === 'function') {
       onChange(initialProps.current.value);
     }
-    if (typeof onDateSelect === 'function') {
-      onDateSelect(initialProps.current.selected);
-    }
-  }, [onChange, onDateSelect]);
+  }, [onChange]);
 
+  /**
+   * Handle click on «Today» button
+   */
   const handleToday = React.useCallback(() => {
     const today = new Date();
     today.setHours(0);
@@ -296,17 +337,10 @@ const Calendar: React.FC<CalendarProps> = props => {
     dispatch({
       type: 'setPartial',
       payload: {
-        // calendarCurrentView: initialProps.current.initialView,
         calendarDate: today,
       },
     });
-    if (typeof onChange === 'function') {
-      onChange(today);
-    }
-    if (typeof onDateSelect === 'function' && !selectMultiple) {
-      onDateSelect([today]);
-    }
-  }, [onChange, onDateSelect, selectMultiple]);
+  }, []);
 
   return (
     <CalendarPaper>
@@ -360,7 +394,7 @@ const Calendar: React.FC<CalendarProps> = props => {
               <CalendarYearCell
                 key={year}
                 accentColor={accentColor}
-                isSelected={year === calendarDate.getFullYear()}
+                isSelected={year === calendarValue.getFullYear()}
                 onClick={handleYearSelected(year)}
               >
                 {getYearLabel(
@@ -377,7 +411,7 @@ const Calendar: React.FC<CalendarProps> = props => {
               <CalendarMonthCell
                 key={monthIndex}
                 accentColor={accentColor}
-                isSelected={monthIndex === calendarDate.getMonth()}
+                isSelected={monthIndex === calendarValue.getMonth()}
                 onClick={handleMonthSelected(monthIndex)}
               >
                 {getMonthLabel(new Date(calendarDate.getFullYear(), monthIndex, 1, 0, 0, 0, 0))}
@@ -399,7 +433,7 @@ const Calendar: React.FC<CalendarProps> = props => {
                         isToday={markToday && day.isToday}
                         isDisabled={day.isDisabled}
                         accentColor={accentColor}
-                        isSelected={selected.find(s => isSameDay(s, day.date)) !== undefined}
+                        isSelected={isSameDay(calendarValue, day.date)}
                         onClick={handleCellDateClick(day.date)}
                       >
                         {getDayLabel(day.date)}
