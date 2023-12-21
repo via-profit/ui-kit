@@ -36,6 +36,7 @@ const PopperOverview = loadable(() => import('~/pages/Docs/Popper/PopperOverview
 const ClickOutsideOverview = loadable(
   () => import('~/pages/Docs/ClickOutside/ClickOutsideOverview'),
 );
+const DatePickerOverview = loadable(() => import('~/pages/Docs/DatePicker/DatePickerOverview'));
 
 const docsRouter: RouteObject = {
   path: 'docs',
@@ -228,6 +229,15 @@ const docsRouter: RouteObject = {
       element: (
         <React.Suspense fallback={<LoadingIndicator />}>
           <ClickOutsideOverview />
+        </React.Suspense>
+      ),
+    },
+    {
+      path: 'date-picker',
+      caseSensitive: true,
+      element: (
+        <React.Suspense fallback={<LoadingIndicator />}>
+          <DatePickerOverview />
         </React.Suspense>
       ),
     },

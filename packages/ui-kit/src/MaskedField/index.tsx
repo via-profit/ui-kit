@@ -43,11 +43,12 @@ const MaskedField: React.ForwardRefRenderFunction<HTMLDivElement, MaskedFieldPro
   ref,
 ) => {
   const { value: propValue, mask, parseInput, onChange, transform, ...nativeProps } = props;
+  const propValueRef = React.useRef(propValue);
   const textInputRef = React.useRef<HTMLInputElement | null>(null);
   const decoratorsErrorDisplayed = React.useRef(false);
-
   const masked = useMasked();
   const parseInputFn = parseInput || masked.parseInput;
+
   const getMask = React.useCallback(
     (input: string) => {
       const currentMask = typeof mask === 'function' ? mask(input) : mask;
@@ -71,15 +72,26 @@ const MaskedField: React.ForwardRefRenderFunction<HTMLDivElement, MaskedFieldPro
     [mask, parseInput],
   );
 
-  const [inputValue, setInputValue] = React.useState(() => {
-    const mask = getMask(propValue || '');
+  const getInputValue = React.useCallback(
+    (v: string) => {
+      const mask = getMask(v || '');
+      const parsed = parseInputFn(v || '', mask, textInputRef.current?.selectionStart || 0);
+      const { text } = masked.formatParsedInput(parsed.text, mask, parsed.caret);
 
-    const parsed = parseInputFn(propValue || '', mask, textInputRef.current?.selectionStart || 0);
+      return text;
+    },
+    [getMask, masked, parseInputFn],
+  );
 
-    const { text } = masked.formatParsedInput(parsed.text, mask, parsed.caret);
+  const [inputValue, setInputValue] = React.useState(getInputValue(propValue || ''));
 
-    return text;
-  });
+  React.useEffect(() => {
+    if (propValueRef.current !== propValue) {
+      propValueRef.current = propValue;
+
+      setInputValue(getInputValue(propValue || ''));
+    }
+  }, [getInputValue, getMask, parseInputFn, masked, propValue]);
 
   const handleOnChange: React.ChangeEventHandler<HTMLInputElement> = React.useCallback(
     event => {

@@ -28,6 +28,8 @@ export interface UseCalendarProps {
   readonly maxDate: Date;
 }
 
+const WHITESPACE = '\u{0020}';
+
 export const useCalendar = (props: UseCalendarProps) => {
   const { minDate, maxDate, weekStartDay, displayLeadingZero, locale } = props;
   const isSameDay = React.useCallback(
@@ -96,11 +98,12 @@ export const useCalendar = (props: UseCalendarProps) => {
 
   const getMonthLabel = React.useCallback(
     (dateValue: Date) => {
-      const intl = new Intl.DateTimeFormat(locale, {
-        month: 'long',
-      });
-
-      const title = intl.format(dateValue);
+      const title =
+        typeof Intl !== 'undefined'
+          ? new Intl.DateTimeFormat(locale, {
+              month: 'long',
+            }).format(dateValue)
+          : WHITESPACE;
 
       return title.charAt(0).toUpperCase() + title.slice(1);
     },
@@ -108,13 +111,12 @@ export const useCalendar = (props: UseCalendarProps) => {
   );
 
   const getYearLabel = React.useCallback(
-    (dateValue: Date) => {
-      const intl = new Intl.DateTimeFormat(locale, {
-        year: 'numeric',
-      });
-
-      return intl.format(dateValue);
-    },
+    (dateValue: Date) =>
+      typeof Intl !== 'undefined'
+        ? new Intl.DateTimeFormat(locale, {
+            year: 'numeric',
+          }).format(dateValue)
+        : WHITESPACE,
     [locale],
   );
 

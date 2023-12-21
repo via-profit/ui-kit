@@ -25,10 +25,13 @@ const CalendarWeekDaysBar: React.ForwardRefRenderFunction<HTMLDivElement, Calend
 
   const weekDayLabels = React.useMemo(
     () =>
-      week.days.map(day =>
-        new Intl.DateTimeFormat(locale, {
-          weekday: format,
-        }).format(day.date),
+      week.days.map(
+        day =>
+          typeof Intl !== 'undefined'
+            ? new Intl.DateTimeFormat(locale, {
+                weekday: format,
+              }).format(day.date)
+            : '\u{0020}', // space,
       ),
     [format, locale, week],
   );
