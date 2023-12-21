@@ -24,6 +24,7 @@ const CalendarOverview = loadable(() => import('~/pages/Docs/Calendar/CalendarOv
 const AutocompleteOverview = loadable(
   () => import('~/pages/Docs/Autocomplete/AutocompleteOverview'),
 );
+const SelectboxOverview = loadable(() => import('~/pages/Docs/Selectbox/SelectboxOverview'));
 const CountryFlagsOverview = loadable(
   () => import('~/pages/Docs/CountryFlags/CountryFlagsOverview'),
 );
@@ -157,6 +158,15 @@ const docsRouter: RouteObject = {
       element: (
         <React.Suspense fallback={<LoadingIndicator />}>
           <AutocompleteOverview />
+        </React.Suspense>
+      ),
+    },
+    {
+      path: 'selectbox',
+      caseSensitive: true,
+      element: (
+        <React.Suspense fallback={<LoadingIndicator />}>
+          <SelectboxOverview />
         </React.Suspense>
       ),
     },

@@ -17,9 +17,9 @@ export interface AutocompleteTextFieldProps extends TextFieldProps {
     | React.RefCallback<HTMLInputElement>;
 }
 
-const AutocompletetextField: React.ForwardRefRenderFunction<
+const AutocompleteTextField: React.ForwardRefRenderFunction<
   HTMLDivElement,
   AutocompleteTextFieldProps
 > = (props, ref) => <TextField {...props} ref={ref} />;
 
-export default React.forwardRef(AutocompletetextField);
+export default React.forwardRef(AutocompleteTextField);

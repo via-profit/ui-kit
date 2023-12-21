@@ -50,6 +50,11 @@ export interface AutocompleteProps<T, Multiple extends boolean | undefined = und
   readonly clearIfNotSelected?: boolean;
 
   /**
+   * Show clear button if clearable is true
+   */
+  readonly clearable?: boolean;
+
+  /**
    * items render function
    */
   readonly children: Children<T>;
@@ -61,8 +66,8 @@ export interface AutocompleteProps<T, Multiple extends boolean | undefined = und
   readonly onInputChange?: React.ChangeEventHandler<HTMLInputElement>;
   readonly onRequestOpen?: (
     event:
-      | React.KeyboardEvent<HTMLInputElement>
-      | React.MouseEvent<HTMLInputElement>
+      | React.KeyboardEvent<HTMLElement>
+      | React.MouseEvent<HTMLElement>
       | React.FocusEvent<HTMLInputElement, Element>,
   ) => void;
 
@@ -135,6 +140,7 @@ const Autocomplete = React.forwardRef(
       children,
       onChange,
       selectedItemToString,
+      clearable = true,
       onInputChange,
       getOptionSelected,
       onRequestOpen = () => undefined,
@@ -330,13 +336,15 @@ const Autocomplete = React.forwardRef(
               startIcon={startIcon}
               isLoading={currentLoading}
               endIcon={
-                <Button
-                  iconOnly
-                  type="button"
-                  onClick={() => (currentLoading ? 'undefined' : clear())}
-                >
-                  {currentLoading ? <Spinner /> : <IconClear />}
-                </Button>
+                clearable ? (
+                  <Button
+                    iconOnly
+                    type="button"
+                    onClick={() => (currentLoading ? 'undefined' : clear())}
+                  >
+                    {currentLoading ? <Spinner /> : <IconClear />}
+                  </Button>
+                ) : undefined
               }
               {...nativeInputProps}
               onKeyDown={event => {
@@ -409,6 +417,7 @@ const Autocomplete = React.forwardRef(
             />
           ),
           [
+            overridesMap,
             placeholder,
             label,
             error,
@@ -417,14 +426,14 @@ const Autocomplete = React.forwardRef(
             fullWidth,
             startIcon,
             currentLoading,
-            inputKeydownEvent,
+            clearable,
+            nativeInputProps,
             inputValue,
             clear,
-            overridesMap,
+            inputKeydownEvent,
             anchorElement,
             dispatch,
             inputRef,
-            nativeInputProps,
             onRequestOpen,
             onInputChange,
             filterItems,

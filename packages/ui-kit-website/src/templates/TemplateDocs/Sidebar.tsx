@@ -108,6 +108,9 @@ const Sidebar: React.ForwardRefRenderFunction<
         >
           <FormattedMessage defaultMessage="Автокомплит" /> Draft
         </Item>
+        <Item $isActive={matchPath('/docs/selectbox/*', pathname) !== null} to="/docs/selectbox">
+          <FormattedMessage defaultMessage="Селектбокс" /> Draft
+        </Item>
         <Item
           $isActive={matchPath('/docs/country-flags/*', pathname) !== null}
           to="/docs/country-flags"
