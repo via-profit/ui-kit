@@ -35,7 +35,7 @@ const ExampleAutocompleteOverview: React.FC = () => {
         value={value}
         items={items}
         isOpen={isOpen}
-        openOnFocus
+        openOnFocus={false}
         filterItems={(items, { query }) =>
           items.filter(item => item.name.toLocaleLowerCase().indexOf(query) !== -1)
         }

@@ -222,9 +222,12 @@ const Autocomplete = React.forwardRef(
           case 'ArrowDown':
             {
               event.preventDefault();
-              menuRef.current?.hightlightNextItem();
               if (!currentOpen) {
                 onRequestOpen(event);
+              }
+
+              if (currentOpen) {
+                menuRef.current?.hightlightNextItem();
               }
             }
 
