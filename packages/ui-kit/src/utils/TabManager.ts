@@ -1,6 +1,7 @@
 type Stack = {
   container: HTMLElement;
   lastIndex: number;
+  lastFocused: HTMLElement | Element | null;
 }[];
 
 /**
@@ -61,11 +62,22 @@ class TabManager {
   }
 
   registerContainer(container: HTMLElement) {
-    this.#stack.push({ container, lastIndex: -1 });
+    this.#stack.push({
+      container,
+      lastIndex: -1,
+      lastFocused: document.activeElement,
+    });
   }
 
-  unregisterContainer(container: HTMLElement) {
-    this.#stack = this.#stack.filter(stackElem => stackElem.container !== container);
+  unregisterContainer(container: HTMLElement, revertBackFocus?: boolean) {
+    this.#stack = this.#stack.filter(stackElem => {
+      const founded = stackElem.container === container;
+      if (founded && revertBackFocus && stackElem.lastFocused instanceof HTMLElement) {
+        stackElem.lastFocused.focus();
+      }
+
+      return !founded;
+    });
   }
 
   getElementsList() {
