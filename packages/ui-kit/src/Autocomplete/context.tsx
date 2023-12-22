@@ -56,11 +56,15 @@ const context = React.createContext<Context>({
 
 interface ContextProviderProps {
   readonly children: React.ReactNode | readonly React.ReactNode[];
+  readonly initialState?: Partial<State>;
 }
 
 export const ContextProvider: React.FC<ContextProviderProps> = props => {
-  const { children } = props;
-  const [state, dispatch] = React.useReducer(reducer, defaultState);
+  const { children, initialState } = props;
+  const [state, dispatch] = React.useReducer(reducer, {
+    ...defaultState,
+    ...initialState,
+  });
 
   return <context.Provider value={{ state, dispatch }}>{children}</context.Provider>;
 };

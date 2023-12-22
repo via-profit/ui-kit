@@ -55,6 +55,12 @@ export interface AutocompleteProps<T, Multiple extends boolean | undefined = und
   readonly clearable?: boolean;
 
   /**
+   * should the Menu component opening when input focused\
+   * **Default:** `true`
+   */
+  readonly openOnFocus?: boolean;
+
+  /**
    * items render function
    */
   readonly children: Children<T>;
@@ -68,7 +74,8 @@ export interface AutocompleteProps<T, Multiple extends boolean | undefined = und
     event:
       | React.KeyboardEvent<HTMLElement>
       | React.MouseEvent<HTMLElement>
-      | React.FocusEvent<HTMLInputElement, Element>,
+      | React.FocusEvent<HTMLInputElement, Element>
+      | React.ChangeEvent<HTMLInputElement>,
   ) => void;
 
   /**
@@ -128,6 +135,7 @@ const Autocomplete = React.forwardRef(
       isLoading = false,
       clearIfNotSelected = true,
       anchorPos = 'auto-start-end',
+      openOnFocus = false,
       requiredAsterisk,
       startIcon,
       fullWidth,
@@ -151,6 +159,7 @@ const Autocomplete = React.forwardRef(
     const menuRef = React.useRef<MenuRef | null>(null);
     const fieldInputRef = React.useRef<HTMLInputElement | null>(null);
     const isFocusedRef = React.useRef(false);
+    const itemsRef = React.useRef(items);
     const { state, dispatch } = useContext();
     const { currentOpen, filteredItems, inputValue, currentValue, anchorElement, currentLoading } =
       state;
@@ -259,6 +268,21 @@ const Autocomplete = React.forwardRef(
       [currentOpen, onRequestClose, onRequestOpen],
     );
 
+    const applyFilterForItems = React.useCallback(
+      (inputValue: string, itemList: readonly T[]) => {
+        const query = inputValue.toLowerCase().trim();
+
+        // Apply filter
+        const newItems =
+          typeof filterItems !== 'function' || query.length === 0
+            ? itemList
+            : filterItems(itemList, { query, inputValue });
+
+        return newItems;
+      },
+      [filterItems],
+    );
+
     /**
      * Only affected value change action
      */
@@ -292,10 +316,19 @@ const Autocomplete = React.forwardRef(
     }, [filteredItems]);
 
     React.useEffect(() => {
-      dispatch(
-        actionSetPartial({ currentOpen: isOpen, currentLoading: isLoading, filteredItems: items }),
-      );
-    }, [isOpen, isLoading, items, dispatch]);
+      if (currentOpen !== isOpen || currentLoading !== isLoading) {
+        // console.debug('Use effect 1', { currentOpen: isOpen, currentLoading: isLoading });
+        dispatch(actionSetPartial({ currentOpen: isOpen, currentLoading: isLoading }));
+      }
+    }, [isOpen, isLoading, dispatch, currentOpen, currentLoading]);
+
+    React.useEffect(() => {
+      if (JSON.stringify(items) !== JSON.stringify(itemsRef.current)) {
+        // console.debug('Use effect 2', { filteredItems: applyFilterForItems(inputValue, items) });
+        itemsRef.current = items;
+        dispatch(actionSetPartial({ filteredItems: applyFilterForItems(inputValue, items) }));
+      }
+    }, [items, inputValue, applyFilterForItems, dispatch]);
 
     React.useEffect(() => {
       const mouseDownEvent = (event: MouseEvent) => {
@@ -377,16 +410,23 @@ const Autocomplete = React.forwardRef(
               }}
               onFocus={event => {
                 isFocusedRef.current = true;
-                onRequestOpen(event);
+
+                if (openOnFocus) {
+                  onRequestOpen(event);
+                }
+
+                if (!openOnFocus && !currentOpen && inputValue !== '') {
+                  onRequestOpen(event);
+                }
 
                 if (typeof nativeInputProps.onFocus === 'function') {
                   nativeInputProps.onFocus(event);
                 }
               }}
               onClick={event => {
-                if (isFocusedRef.current) {
-                  onRequestOpen(event);
-                }
+                // if (isFocusedRef.current) {
+                //   onRequestOpen(event);
+                // }
 
                 if (typeof nativeInputProps.onClick === 'function') {
                   nativeInputProps.onClick(event);
@@ -397,22 +437,19 @@ const Autocomplete = React.forwardRef(
                   onInputChange(event);
                 }
 
-                const query = event.currentTarget.value.toLowerCase().trim();
+                // If openOnFocus is false, but value is not empty
+                // we should open menu list if is not opened
+                if (!openOnFocus && isFocusedRef.current && !currentOpen) {
+                  onRequestOpen(event);
+                }
 
-                // Apply filter
-                const newItems =
-                  typeof filterItems !== 'function' || query.length === 0
-                    ? items
-                    : filterItems(items, { query, inputValue });
-
+                // console.debug('set filteredItems');
                 dispatch(
                   actionSetPartial({
-                    filteredItems: newItems,
+                    filteredItems: applyFilterForItems(event.currentTarget.value, items),
                     inputValue: event.currentTarget.value,
                   }),
                 );
-
-                // dispatch(actionSetPartial({ inputValue: event.currentTarget.value }));
               }}
             />
           ),
@@ -434,9 +471,11 @@ const Autocomplete = React.forwardRef(
             anchorElement,
             dispatch,
             inputRef,
+            openOnFocus,
+            currentOpen,
             onRequestOpen,
             onInputChange,
-            filterItems,
+            applyFilterForItems,
             items,
           ],
         )}
