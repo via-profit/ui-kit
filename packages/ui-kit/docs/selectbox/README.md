@@ -67,7 +67,6 @@ export default Example;
 
 ### overrides
 
-<ExampleSelectboxOverrides />
 Lorem ipsum
 
 Lorem ipsum
