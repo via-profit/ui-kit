@@ -90,7 +90,6 @@ const ConfirmBox: React.FC<ConfirmBoxProps> = props => {
     ...otherProps
   } = props;
   const dialogID = React.useMemo(() => `dialog-confirm-${new Date().getTime()}`, []);
-  const buttonRef = React.useRef<HTMLButtonElement | null>(null);
 
   const overridesMap = React.useMemo(
     () => ({
@@ -103,15 +102,6 @@ const ConfirmBox: React.FC<ConfirmBoxProps> = props => {
     }),
     [overrides],
   );
-
-  // React.useEffect(() => {
-  //   setTimeout(() => {
-  //     if (isOpen && buttonRef.current) {
-  //       console.log('ddd')
-  //       // buttonRef.current.focus();
-  //     }
-  //   }, 15);
-  // }, [isOpen]);
 
   return (
     <>

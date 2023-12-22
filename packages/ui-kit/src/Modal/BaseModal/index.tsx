@@ -46,6 +46,12 @@ export interface BaseModalProps {
   readonly closeOnOverlayClick?: boolean;
 
   /**
+   * should the modal component grab focus when opening and return it back when closing?\
+   * **Default:** `true`
+   */
+  readonly autofocus?: boolean;
+
+  /**
    * Overridable components map
    */
   readonly overrides?: BaseModalOverrides;
@@ -65,10 +71,11 @@ const BaseModal: React.FC<BaseModalProps> = props => {
     isOpen,
     children,
     overrides,
-    onRequestClose,
+    autofocus = true,
     closeOnOverlayClick = defaultState.closeOnOverlayClick,
     closeOnEscape = defaultState.closeOnEscape,
     destroyTimeout = defaultState.destroyTimeout,
+    onRequestClose,
   } = props;
   const destroyTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
   const [domLoaded, setDomLoaded] = React.useState(false);
@@ -116,18 +123,6 @@ const BaseModal: React.FC<BaseModalProps> = props => {
     return newNode;
   }, []);
 
-  // React.useEffect(
-  //   () => () => {
-  //     if (typeof window !== 'undefined') {
-  //       const node = window.document.body.querySelector(`#${PORTAL_ID}`);
-  //       if (node) {
-  //         node.remove();
-  //       }
-  //     }
-  //   },
-  //   [],
-  // );
-
   return (
     <NoSSR>
       {domLoaded &&
@@ -142,7 +137,7 @@ const BaseModal: React.FC<BaseModalProps> = props => {
               onRequestClose,
             }}
           >
-            <ModalWrapper isOpen={isOpen} destroyTimeout={destroyTimeout}>
+            <ModalWrapper isOpen={isOpen} autofocus={autofocus} destroyTimeout={destroyTimeout}>
               <RenderModal overrides={overridesMap}>{children}</RenderModal>
             </ModalWrapper>
           </ContextProvider>,

@@ -59,22 +59,15 @@ const ConfirmBoxFooter: React.ForwardRefRenderFunction<HTMLDivElement, ConfirmBo
   props,
   ref,
 ) => {
-  const commitBtnRef = React.useRef<HTMLButtonElement | null>(null);
   const { onRequestClose, onRequestYes, dismissButtonLabel, confirmButtonLabel, ...nativeProps } =
     props;
 
-  React.useEffect(() => {
-    if (commitBtnRef.current) {
-      commitBtnRef.current.focus();
-    }
-  }, []);
-
   return (
     <StyledConfirmBoxFooter {...nativeProps} ref={ref}>
-      <Button onClick={onRequestClose}>
+      <Button onClick={onRequestClose} tabIndex={2}>
         {typeof dismissButtonLabel === 'undefined' ? 'Dismiss' : dismissButtonLabel}
       </Button>
-      <Button color="primary" onClick={onRequestYes} ref={commitBtnRef}>
+      <Button color="primary" onClick={onRequestYes} tabIndex={1}>
         {typeof confirmButtonLabel === 'undefined' ? 'Confirm' : confirmButtonLabel}
       </Button>
     </StyledConfirmBoxFooter>

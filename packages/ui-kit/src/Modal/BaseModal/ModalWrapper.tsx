@@ -15,11 +15,17 @@ export type ModalWrapperProps = {
    */
   readonly destroyTimeout: number;
 
+  /**
+   * should the modal component grab focus when opening and return it back when closing?\
+   * **Default:** `true`
+   */
+  readonly autofocus?: boolean;
+
   readonly children: React.ReactNode | readonly React.ReactNode[];
 };
 
 const ModalWrapper: React.FC<ModalWrapperProps> = props => {
-  const { children, isOpen: isOpenProp } = props;
+  const { children, isOpen: isOpenProp, autofocus = true } = props;
   const { state, dispatch } = useContext();
   const [alreadyMounted, setMountState] = React.useState(true);
   const { closeOnEscape, isMounted, isOpen, destroyTimeout, onRequestClose } = state;
@@ -27,17 +33,20 @@ const ModalWrapper: React.FC<ModalWrapperProps> = props => {
   const id = PORTAL_ID + React.useId();
 
   React.useEffect(() => {
-    const c = containerRef.current;
-    if (isOpen && c) {
-      TabManager.registerContainer(c);
+    const container = containerRef.current;
+    if (isOpen && container) {
+      TabManager.registerContainer(container);
+      if (autofocus) {
+        TabManager.focusNext();
+      }
     }
 
     return () => {
-      if (c) {
-        TabManager.unregisterContainer(c, true);
+      if (container) {
+        TabManager.unregisterContainer(container, autofocus);
       }
     };
-  }, [isOpen]);
+  }, [isOpen, autofocus]);
 
   const getScrollWidth = React.useCallback(() => {
     const outer = window.document.createElement('div');
@@ -85,11 +94,6 @@ const ModalWrapper: React.FC<ModalWrapperProps> = props => {
   );
 
   React.useEffect(() => {
-    if (isOpenProp && containerRef.current) {
-      // console.log('focus');
-      // containerRef.current.focus();
-    }
-
     /**
      * The last dialog will be found and closed
      */
