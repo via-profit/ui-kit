@@ -9,13 +9,9 @@ const ExampleDatePickerOverview: React.FC = () => {
       template="dd.mm.yyyy"
       calendarButtonTooltip="Open calendar"
       value={value}
-      readOnly
       onChange={setValue}
-      calendarProps={{
-        locale: 'ru-RU',
-        heading: 'Calendar',
-        toodayButtonLabel: 'Today',
-      }}
+      minDate={new Date(2003, 1, 22)}
+      maxDate={new Date(2023, 11, 31)}
     />
   );
 };

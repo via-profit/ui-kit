@@ -2,7 +2,12 @@ import React from 'react';
 import styled from '@emotion/styled';
 import { css } from '@emotion/react';
 
-import Calendar, { CalendarProps } from '../Calendar';
+import Calendar, {
+  CalendarProps,
+  WeekDayName,
+  WeekNameLabelFormat,
+  CalendarBadge,
+} from '../Calendar';
 import Button from '../Button';
 import Popper from '../Popper';
 import ClickOutside from '../ClickOutside';
@@ -35,9 +40,47 @@ export type DatePickerProps = Omit<TextFieldProps, 'value' | 'onChange'> &
     readonly calendarButtonTooltip?: string;
 
     /**
-     * Calendar properties
+     * Minimum date limit
      */
-    readonly calendarProps?: Omit<CalendarProps, 'value' | 'defaultValue' | 'onChange'>;
+    readonly minDate?: Date;
+
+    /**
+     * Maximum date limit
+     */
+    readonly maxDate?: Date;
+
+    /**
+     * calendar locale\
+     * **Default:** `ru-RU`
+     */
+    readonly locale?: string;
+
+    /**
+     * The day the week starts from\
+     * **Default:** `monday`
+     */
+    readonly weekStartDay?: WeekDayName;
+
+    /**
+     * Int weekday format\
+     * **Default:** `short`
+     */
+    readonly weekDayLabelFormat?: WeekNameLabelFormat;
+
+    /**
+     * Display days with leading zero
+     */
+    readonly displayLeadingZero?: boolean;
+
+    /**
+     * Mark current day cell
+     */
+    readonly markToday?: boolean;
+
+    /**
+     * array of badges
+     */
+    readonly badges?: readonly CalendarBadge[];
   };
 
 const StyledMaskedField = styled(MaskedField)`
@@ -56,11 +99,16 @@ const DatePicker: React.FC<DatePickerProps> = props => {
     value,
     template,
     onChange,
-    calendarProps,
     calendarButtonTooltip,
     readOnly,
     disabled,
-    ...restProps
+    minDate = new Date(new Date().getFullYear() - 100, 0, 1, 0, 0, 0),
+    maxDate = new Date(new Date().getFullYear() + 100, 0, 1, 0, 0, 0),
+    weekStartDay = 'monday',
+    locale = 'ru-RU',
+    badges = [],
+    displayLeadingZero = false,
+    ...restInputProps
   } = props;
   const [currentValue, setCurrentValue] = React.useState(value);
   const valueRef = React.useRef(value);
@@ -81,6 +129,26 @@ const DatePicker: React.FC<DatePickerProps> = props => {
       setCurrentValue(value);
     }
   }, [value]);
+
+  const isGreatherThenMinDate = React.useCallback(
+    (date: Date): boolean => {
+      const a = new Date(minDate.getFullYear(), minDate.getMonth(), minDate.getDate(), 0, 0, 0, 0);
+      const b = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0, 0);
+
+      return b.getTime() >= a.getTime();
+    },
+    [minDate],
+  );
+
+  const isLessThenMaxDate = React.useCallback(
+    (date: Date): boolean => {
+      const a = new Date(maxDate.getFullYear(), maxDate.getMonth(), maxDate.getDate(), 0, 0, 0, 0);
+      const b = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0, 0);
+
+      return b.getTime() <= a.getTime();
+    },
+    [maxDate],
+  );
 
   return (
     <>
@@ -105,14 +173,30 @@ const DatePicker: React.FC<DatePickerProps> = props => {
             <DatePickerIcon />
           </Button>
         }
-        {...restProps}
+        {...restInputProps}
         value={currentValue ? formatInputByTemplate(currentValue, template) : ''}
         onChange={({ isValid, text }) => {
           if (isValid) {
             const parsedDate = parseInputByTemplate(text, template);
 
+            // Trying to parse the input date value
             if (parsedDate instanceof Date && !isNaN(parsedDate.getTime())) {
-              onChange(parsedDate);
+              // if the date satisfies the restrictions
+              if (isGreatherThenMinDate(parsedDate) && isLessThenMaxDate(parsedDate)) {
+                onChange(parsedDate);
+
+                // if the date violates the restrictions
+              } else {
+                // set as minDate if parsed date less then minDate value constraint
+                if (!isGreatherThenMinDate(parsedDate)) {
+                  onChange(minDate);
+                }
+
+                // set as maxDate if parsed date greather then maxDate value constraint
+                if (!isLessThenMaxDate(parsedDate)) {
+                  onChange(maxDate);
+                }
+              }
             }
           }
         }}
@@ -121,7 +205,12 @@ const DatePicker: React.FC<DatePickerProps> = props => {
       <ClickOutside onOutsideClick={() => setOpenSate(false)} mouseEvent="onMouseDown">
         <Popper isOpen={isOpen} anchorElement={textFieldRef}>
           <Calendar
-            {...calendarProps}
+            minDate={minDate}
+            maxDate={maxDate}
+            weekStartDay={weekStartDay}
+            locale={locale}
+            badges={badges}
+            displayLeadingZero={displayLeadingZero}
             value={currentValue || new Date()}
             onChange={date => {
               onChange(date);

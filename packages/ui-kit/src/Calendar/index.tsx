@@ -23,6 +23,9 @@ import WeekDaysBar, { CalendarWeekDaysBarProps, WeekNameLabelFormat } from './Ca
 import { useCalendar, WeekDayName } from './use-calendar';
 import { CalendarView, reducer, defaultState } from './reducer';
 
+export * from './use-calendar';
+export * from './CalendarWeekDaysBar';
+
 export type CalendarProps = {
   /**
    * Selected date
@@ -49,8 +52,16 @@ export type CalendarProps = {
    * array of badges
    */
   readonly badges?: readonly CalendarBadge[];
-  readonly maxDate?: Date;
+
+  /**
+   * Minimum date limit
+   */
   readonly minDate?: Date;
+
+  /**
+   * Maximum date limit
+   */
+  readonly maxDate?: Date;
 
   /**
    * The day the week starts from\
