@@ -5,10 +5,10 @@
       "name": "Website Launch and Debug",
       "type": "chrome",
       "request": "launch",
-      "port": 9228,
+      "port": 9227,
       "webRoot": "${workspaceFolder}",
       "sourceMaps": true,
-      "url": "http://localhost:8080",
+      "url": "http://localhost:8087",
       "sourceMapPathOverrides": {
         "webpack://@via-profit/ui-kit-website/*": "${webRoot}/packages/ui-kit-website/*",
       }

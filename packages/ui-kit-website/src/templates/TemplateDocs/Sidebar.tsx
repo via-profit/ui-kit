@@ -166,6 +166,10 @@ const Sidebar: React.ForwardRefRenderFunction<
           <FormattedMessage defaultMessage="Бейдж" />
           <Draft />
         </Item>
+        <Item $isActive={matchPath('/docs/avatar/*', pathname) !== null} to="/docs/avatar">
+          <FormattedMessage defaultMessage="Аватар" />
+          <Draft />
+        </Item>
         <Item $isActive={matchPath('/docs/popper/*', pathname) !== null} to="/docs/popper">
           <FormattedMessage defaultMessage="Popper" />
         </Item>
