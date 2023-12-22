@@ -1,7 +1,9 @@
 import React from 'react';
 import Selectbox, { SelectboxItem } from '@via-profit/ui-kit/src/Selectbox';
-import Highlighted from '@via-profit/ui-kit/src/Highlighted';
+import SelectboxButton from '@via-profit/ui-kit/src/Selectbox/SelectboxButton';
+import TextField from '@via-profit/ui-kit/src/TextField';
 
+import IconBell from '../../components/Icons/IconBell';
 import countries from './countries.json';
 
 type Item = {
@@ -14,24 +16,40 @@ const ExampleSelectboxOverview: React.FC = () => {
   const [isOpen, setIsOpen] = React.useState(false);
 
   return (
-    <Selectbox
-      value={value}
-      items={countries}
-      isOpen={isOpen}
-      filterItems={(items, { query }) =>
-        items.filter(item => item.name.toLocaleLowerCase().indexOf(query) !== -1)
-      }
-      onRequestClose={() => setIsOpen(false)}
-      onRequestOpen={() => setIsOpen(true)}
-      onChange={item => setValue(item)}
-      selectedItemToString={item => item.name}
-    >
-      {({ item, inputValue }, itemProps) => (
-        <SelectboxItem {...itemProps} key={item.code}>
-          <Highlighted text={item.name} highlight={inputValue} />
-        </SelectboxItem>
-      )}
-    </Selectbox>
+    <>
+      <TextField
+        value="Lorem ipsum"
+        label="Field label"
+        error
+        errorText="Some error"
+        endIcon={<IconBell />}
+      />
+      <Selectbox
+        value={value}
+        startIcon={<IconBell />}
+        items={countries}
+        isOpen={isOpen}
+        error
+        label="Field label"
+        errorText="Some error"
+        requiredAsterisk
+        onRequestClose={() => setIsOpen(false)}
+        onRequestOpen={() => setIsOpen(true)}
+        onChange={item => setValue(item)}
+        selectedItemToString={item => item.name}
+        overrides={{
+          Button: React.forwardRef(function OverridedButton(props, ref) {
+            return <SelectboxButton ref={ref} {...props} />;
+          }),
+        }}
+      >
+        {({ item }, itemProps) => (
+          <SelectboxItem {...itemProps} key={item.code}>
+            {item.name}
+          </SelectboxItem>
+        )}
+      </Selectbox>
+    </>
   );
 };
 

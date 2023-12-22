@@ -35,9 +35,6 @@ const Example: React.FC = () => {
       value={value}
       items={items}
       isOpen={isOpen}
-      filterItems={(items, { query }) =>
-        items.filter(item => item.name.toLocaleLowerCase().indexOf(query) !== -1)
-      }
       onRequestClose={() => setIsOpen(false)}
       onRequestOpen={() => setIsOpen(true)}
       onSelectItem={item => setValue(item)}
@@ -57,9 +54,6 @@ export default Example;
 
 <ExampleSelectboxOverview />
 
-### Fetch
-
-<ExampleSelectboxFetch />
 
 ### Multiple
 

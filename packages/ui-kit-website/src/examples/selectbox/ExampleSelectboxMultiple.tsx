@@ -40,21 +40,19 @@ const ExampleSelectboxMultiple: React.FC = () => {
         ))}
       </BadgeContainer>
       <Selectbox
+      overrides={{}}
         multiple
         value={value}
         items={countries}
         isOpen={isOpen}
-        filterItems={(items, { query }) =>
-          items.filter(item => item.name.toLocaleLowerCase().indexOf(query) !== -1)
-        }
         onRequestClose={() => setIsOpen(false)}
         onRequestOpen={() => setIsOpen(true)}
         onChange={items => setValue(items)}
         selectedItemToString={items => items.map(({ name }) => name).join(', ')}
       >
-        {({ item, inputValue }, itemProps) => (
+        {({ item }, itemProps) => (
           <SelectboxItem {...itemProps} key={item.code}>
-            <Highlighted text={item.name} highlight={inputValue} />
+            {item.name}
           </SelectboxItem>
         )}
       </Selectbox>

@@ -2,31 +2,32 @@ import * as React from 'react';
 import styled from '@emotion/styled';
 import { css } from '@emotion/react';
 
-export type TextFieldInputWrapperProps = React.HTMLAttributes<HTMLDivElement> & {
-  readonly error?: boolean;
+import Button, { ButtonProps } from '../Button';
+import ButtonTextWrapper from '../Button/ButtonTextWrapper';
+
+export type SelectboxButtonProps = Omit<ButtonProps, 'type'> & {
   readonly fullWidth?: boolean;
-  readonly readOnly?: boolean;
-  readonly focused?: boolean;
+  readonly error?: boolean;
 };
 
-const Wrapper = styled.div<{
-  $error?: boolean;
-  $readOnly?: boolean;
-  $fullWidth?: boolean;
-  $focused?: boolean;
-}>`
-  display: flex;
-  align-items: stretch;
-  border-radius: ${({ theme }) => theme.shape.radiusFactor * 2}em;
+type StyleProps = {
+  readonly $fullWidth?: boolean;
+  readonly $focused?: boolean;
+  readonly $error?: boolean;
+};
+
+const StyledSelectboxButton = styled(Button)<StyleProps>`
+  width: 100%;
+  flex: 1;
   border: 1px solid;
   outline: 1px solid transparent;
+  padding: 1em 1.2em;
   border-color: ${({ theme }) =>
     theme.isDark
       ? theme.color.textPrimary.darken(100).toString()
       : theme.color.textPrimary.lighten(150).toString()};
   width: ${({ $fullWidth }) => ($fullWidth ? '100%' : 'auto')};
-  min-width: 16em;
-  font-size: 0.9em;
+  font-size: 1em;
   background-color: ${({ theme }) => theme.color.surface.toString()};
   color: ${({ theme }) => theme.color.textPrimary.toString()};
   transition: all 180ms ease-out 0s;
@@ -48,24 +49,31 @@ const Wrapper = styled.div<{
     `}
 `;
 
-const TextFieldInputWrapper: React.ForwardRefRenderFunction<
-  HTMLDivElement,
-  TextFieldInputWrapperProps
-> = (props, ref) => {
-  const { focused, error, readOnly, fullWidth, children, ...nativeProps } = props;
+const StyledButtonTextWrapper = styled(ButtonTextWrapper)`
+  flex: 1;
+`;
+
+const SelectboxButton: React.ForwardRefRenderFunction<HTMLButtonElement, SelectboxButtonProps> = (
+  props,
+  ref,
+) => {
+  const { children, fullWidth, error, ...nativeProps } = props;
 
   return (
-    <Wrapper
-      {...nativeProps}
+    <StyledSelectboxButton
+      $fullWidth={fullWidth}
       $error={error}
-      $focused={focused}
-      $readOnly={readOnly}
-      $fullWidth={Boolean(fullWidth)}
+      {...nativeProps}
+      overrides={{
+        TextWrapper: React.forwardRef(function SelectboxButtonTextWrapper(p, r) {
+          return <StyledButtonTextWrapper {...p} ref={r} />;
+        }),
+      }}
       ref={ref}
     >
       {children}
-    </Wrapper>
+    </StyledSelectboxButton>
   );
 };
 
-export default React.forwardRef(TextFieldInputWrapper);
+export default React.forwardRef(SelectboxButton);

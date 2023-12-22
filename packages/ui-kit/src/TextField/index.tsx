@@ -237,9 +237,7 @@ const TextField: React.ForwardRefRenderFunction<HTMLDivElement, TextFieldProps> 
           <overridesMap.IconWrapper position="end">{endIcon}</overridesMap.IconWrapper>
         )}
       </overridesMap.InputWrapper>
-      <overridesMap.ErrorText error={error} focused={focused}>
-        {errorText}
-      </overridesMap.ErrorText>
+      <overridesMap.ErrorText error={error}>{errorText}</overridesMap.ErrorText>
     </overridesMap.Container>
   );
 };

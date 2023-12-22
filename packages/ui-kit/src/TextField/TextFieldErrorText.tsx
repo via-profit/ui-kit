@@ -5,10 +5,9 @@ import NoSSR from '../NoSSR';
 
 export interface TextFieldErrorTextProps extends React.HTMLAttributes<HTMLDivElement> {
   readonly error?: boolean;
-  readonly focused?: boolean;
 }
 
-const ErrorTextContainer = styled.div<{ $maxHeight: 'initial' | number; $focused?: boolean }>`
+const ErrorTextContainer = styled.div<{ $maxHeight: 'initial' | number }>`
   margin-left: 0.5em;
   max-height: 0;
   max-height: ${({ $maxHeight }) =>
@@ -29,7 +28,7 @@ const TextFieldErrorText: React.ForwardRefRenderFunction<
   HTMLDivElement,
   TextFieldErrorTextProps
 > = (props, ref) => {
-  const { children, error, focused, ...nativeProps } = props;
+  const { children, error, ...nativeProps } = props;
 
   const innerRef = React.useRef<HTMLDivElement | null>(null);
   const [maxHeight, setMaxHeight] = React.useState<'initial' | number>('initial');
@@ -50,12 +49,7 @@ const TextFieldErrorText: React.ForwardRefRenderFunction<
   }, [children]);
 
   return (
-    <ErrorTextContainer
-      {...nativeProps}
-      $maxHeight={error ? maxHeight : 0}
-      $focused={focused}
-      ref={ref}
-    >
+    <ErrorTextContainer {...nativeProps} $maxHeight={error ? maxHeight : 0} ref={ref}>
       <ErrorTextInner ref={innerRef} $error={Boolean(error)}>
         {children ? <NoSSR>{children}</NoSSR> : <>&nbsp;</>}
       </ErrorTextInner>
