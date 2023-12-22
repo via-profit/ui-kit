@@ -135,7 +135,7 @@ const Autocomplete = React.forwardRef(
       isLoading = false,
       clearIfNotSelected = true,
       anchorPos = 'auto-start-end',
-      openOnFocus = false,
+      openOnFocus = true,
       requiredAsterisk,
       startIcon,
       fullWidth,
