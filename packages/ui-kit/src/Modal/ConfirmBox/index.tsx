@@ -104,13 +104,14 @@ const ConfirmBox: React.FC<ConfirmBoxProps> = props => {
     [overrides],
   );
 
-  React.useEffect(() => {
-    setTimeout(() => {
-      if (isOpen && buttonRef.current) {
-        buttonRef.current.focus();
-      }
-    }, 15);
-  }, [isOpen]);
+  // React.useEffect(() => {
+  //   setTimeout(() => {
+  //     if (isOpen && buttonRef.current) {
+  //       console.log('ddd')
+  //       // buttonRef.current.focus();
+  //     }
+  //   }, 15);
+  // }, [isOpen]);
 
   return (
     <>

@@ -34,7 +34,7 @@ const ModalWrapper: React.FC<ModalWrapperProps> = props => {
 
     return () => {
       if (c) {
-        TabManager.unregisterContainer(c);
+        TabManager.unregisterContainer(c, true);
       }
     };
   }, [isOpen]);
@@ -86,7 +86,8 @@ const ModalWrapper: React.FC<ModalWrapperProps> = props => {
 
   React.useEffect(() => {
     if (isOpenProp && containerRef.current) {
-      containerRef.current.focus();
+      // console.log('focus');
+      // containerRef.current.focus();
     }
 
     /**
@@ -115,14 +116,12 @@ const ModalWrapper: React.FC<ModalWrapperProps> = props => {
       }
     };
 
-    const lastFocused = document.activeElement;
-
     window.document.addEventListener('keydown', keyDown);
 
     return () => {
-      if (lastFocused) {
-        (lastFocused as HTMLElement).focus();
-      }
+      // if (lastFocusedRef.current) {
+      //   (lastFocusedRef.current as HTMLElement).focus();
+      // }
 
       window.document.removeEventListener('keydown', keyDown);
     };
