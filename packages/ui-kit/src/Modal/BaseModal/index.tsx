@@ -36,7 +36,7 @@ export interface BaseModalProps {
    * \
    * **Default**: `true`
    */
-  readonly closeOnEsape?: boolean;
+  readonly closeOnEscape?: boolean;
 
   /**
    * Should the dialog close when overlay mouse click\
@@ -67,7 +67,7 @@ const BaseModal: React.FC<BaseModalProps> = props => {
     overrides,
     onRequestClose,
     closeOnOverlayClick = defaultState.closeOnOverlayClick,
-    closeOnEsape = defaultState.closeOnEsape,
+    closeOnEscape = defaultState.closeOnEscape,
     destroyTimeout = defaultState.destroyTimeout,
   } = props;
   const destroyTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
@@ -137,7 +137,7 @@ const BaseModal: React.FC<BaseModalProps> = props => {
             initialState={{
               isOpen,
               destroyTimeout,
-              closeOnEsape,
+              closeOnEscape,
               closeOnOverlayClick,
               onRequestClose,
             }}

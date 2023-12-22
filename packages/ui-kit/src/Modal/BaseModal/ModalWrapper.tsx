@@ -22,7 +22,7 @@ const ModalWrapper: React.FC<ModalWrapperProps> = props => {
   const { children, isOpen: isOpenProp } = props;
   const { state, dispatch } = useContext();
   const [alreadyMounted, setMountState] = React.useState(true);
-  const { closeOnEsape, isMounted, isOpen, destroyTimeout, onRequestClose } = state;
+  const { closeOnEscape, isMounted, isOpen, destroyTimeout, onRequestClose } = state;
   const containerRef = React.useRef<HTMLDivElement | null>(null);
   const id = PORTAL_ID + React.useId();
 
@@ -94,7 +94,7 @@ const ModalWrapper: React.FC<ModalWrapperProps> = props => {
      * The last dialog will be found and closed
      */
     const keyDown = (event: KeyboardEvent) => {
-      if (event.key.toLocaleLowerCase() === 'escape' && closeOnEsape) {
+      if (event.key.toLocaleLowerCase() === 'escape' && closeOnEscape) {
         const portal = window.document.querySelector(`#${PORTAL_ID}`);
         const lastID = portal?.children?.[portal?.childNodes?.length - 1]?.id;
         if (lastID === id) {
@@ -125,7 +125,7 @@ const ModalWrapper: React.FC<ModalWrapperProps> = props => {
 
       window.document.removeEventListener('keydown', keyDown);
     };
-  }, [onRequestClose, closeOnEsape, id, isOpenProp]);
+  }, [onRequestClose, closeOnEscape, id, isOpenProp]);
 
   /**
    * Controller for visibility state.

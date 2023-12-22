@@ -7,7 +7,7 @@ export type State = {
   readonly isMounted: boolean;
   readonly destroyTimeout: number;
   readonly onRequestClose: () => void;
-  readonly closeOnEsape: boolean;
+  readonly closeOnEscape: boolean;
   readonly closeOnOverlayClick: boolean;
 };
 
@@ -27,7 +27,7 @@ export const defaultState: State = {
   isOpen: false,
   isMounted: false,
   destroyTimeout: 240,
-  closeOnEsape: true,
+  closeOnEscape: true,
   closeOnOverlayClick: true,
   onRequestClose: () => undefined,
 };
