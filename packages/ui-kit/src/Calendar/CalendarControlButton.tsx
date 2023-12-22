@@ -1,27 +1,46 @@
 import React from 'react';
-import { useTheme } from '@emotion/react';
+import styled from '@emotion/styled';
 
 import Button, { ButtonProps } from '../Button';
 
-export type CalendarControlButtonProps = ButtonProps;
+export type CalendarControlButtonProps = ButtonProps & {
+  readonly isActive?: boolean;
+};
+
+type StyledCalendarControlButtonProps = {
+  readonly $isActive?: boolean;
+};
+
+const StyledCalendarControlButton = styled(Button)<StyledCalendarControlButtonProps>`
+  color: ${({ theme }) => theme.color.accentSecondaryContrast.toString()};
+  background-color: ${({ theme }) => theme.color.accentSecondaryContrast.alpha(0).toString()};
+  cursor: pointer;
+  &:hover {
+    color: ${({ theme }) => theme.color.accentSecondaryContrast.toString()};
+    background-color: ${({ theme }) => theme.color.accentSecondaryContrast.alpha(0.2).toString()};
+  }
+  &:active {
+    color: ${({ theme }) => theme.color.accentSecondaryContrast.toString()};
+    background-color: ${({ theme }) => theme.color.accentSecondaryContrast.alpha(0.5).toString()};
+  }
+`;
 
 const CalendarControlButton: React.ForwardRefRenderFunction<
   HTMLButtonElement,
   CalendarControlButtonProps
 > = (props, ref) => {
-  const { children, ...restProps } = props;
-  const { color } = useTheme();
+  const { children, isActive, ...restProps } = props;
 
   return (
-    <Button
+    <StyledCalendarControlButton
       type="button"
       variant="plain"
-      color={color.accentSecondaryContrast.toString()}
+      $isActive={isActive}
       {...restProps}
       ref={ref}
     >
       {children}
-    </Button>
+    </StyledCalendarControlButton>
   );
 };
 
