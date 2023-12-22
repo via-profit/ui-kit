@@ -18,6 +18,7 @@ const StyledTextFieldContainer = styled.div<StyleProps>`
   flex-flow: column;
   width: 100%;
   max-width: ${({ $fullWidth }) => ($fullWidth ? '100%' : '16em')};
+  vertical-align: top;
 `;
 
 const TextFieldContainer: React.ForwardRefRenderFunction<
