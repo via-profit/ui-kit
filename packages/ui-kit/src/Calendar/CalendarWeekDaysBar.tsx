@@ -5,9 +5,22 @@ import CalendarWeekDayLabel from './CalendarWeekDayLabel';
 import type { Week } from './use-calendar';
 
 export type WeekNameLabelFormat = 'short' | 'long' | 'narrow';
-export interface CalendarTopBarProps extends React.HTMLAttributes<HTMLDivElement> {
+
+export interface CalendarWeekDaysBarProps extends React.HTMLAttributes<HTMLDivElement> {
+  /**
+   * Data of the weak
+   */
   readonly week: Week;
+
+  /**
+   * Int weekday format\
+   * **Default:** `short`
+   */
   readonly format: WeekNameLabelFormat;
+
+  /**
+   * Intl locale
+   */
   readonly locale?: string;
 }
 
@@ -17,10 +30,10 @@ const Container = styled.div`
   align-items: center;
 `;
 
-const CalendarWeekDaysBar: React.ForwardRefRenderFunction<HTMLDivElement, CalendarTopBarProps> = (
-  props,
-  ref,
-) => {
+const CalendarWeekDaysBar: React.ForwardRefRenderFunction<
+  HTMLDivElement,
+  CalendarWeekDaysBarProps
+> = (props, ref) => {
   const { locale, week, format, ...restProps } = props;
 
   const weekDayLabels = React.useMemo(

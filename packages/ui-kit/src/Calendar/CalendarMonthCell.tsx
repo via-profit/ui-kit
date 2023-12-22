@@ -4,7 +4,14 @@ import styled from '@emotion/styled';
 import Button from '../Button';
 
 export interface CalendarMonthCellProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  /**
+   * If month selected, then property will be true
+   */
   readonly isSelected?: boolean;
+
+  /**
+   * accent color
+   */
   readonly accentColor?: 'primary' | 'secondary' | string;
 }
 

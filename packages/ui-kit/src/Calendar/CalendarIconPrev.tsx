@@ -1,9 +1,11 @@
 import React from 'react';
 
-const IconChevronLeft: React.ForwardRefRenderFunction<
-  SVGSVGElement,
-  React.SVGProps<SVGSVGElement>
-> = (props, ref) => (
+export type CalendarIconPrevProps = React.SVGProps<SVGSVGElement>;
+
+const CalendarIconPrev: React.ForwardRefRenderFunction<SVGSVGElement, CalendarIconPrevProps> = (
+  props,
+  ref,
+) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 512 512"
@@ -23,4 +25,4 @@ const IconChevronLeft: React.ForwardRefRenderFunction<
   </svg>
 );
 
-export default React.forwardRef(IconChevronLeft);
+export default React.forwardRef(CalendarIconPrev);

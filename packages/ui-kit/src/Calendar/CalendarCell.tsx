@@ -4,9 +4,25 @@ import styled from '@emotion/styled';
 import Button from '../Button';
 
 export interface CalendarCellProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  /**
+   * if cell day is today, then property will be true
+   */
   readonly isToday?: boolean;
+
+  /**
+   * if cell day is selected, then property will be true
+   */
   readonly isSelected?: boolean;
+
+  /**
+   * if cell day is disabled, then property will be true
+   */
   readonly isDisabled?: boolean;
+
+  /**
+   * Cell accent color\
+   * Possibility variants: `primary` `secondary` or custom color string like hex or rgb format
+   */
   readonly accentColor?: 'primary' | 'secondary' | string;
 }
 
@@ -32,14 +48,14 @@ const CalendarCell: React.ForwardRefRenderFunction<HTMLButtonElement, CalendarCe
 
   return (
     <Btn
-      {...restProps}
       iconOnly
       type="button"
       variant={isSelected ? 'standard' : isToday ? 'outlined' : 'plain'}
-      ref={ref}
       color={isSelected || isToday ? accentColor : 'default'}
       tabIndex={isDisabled ? -1 : restProps.tabIndex}
       disabled={isDisabled}
+      {...restProps}
+      ref={ref}
     >
       {children}
     </Btn>

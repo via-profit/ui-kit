@@ -1,17 +1,9 @@
 import React from 'react';
 import Calendar from '@via-profit/ui-kit/src/Calendar';
 
-import TextField from '@via-profit/ui-kit/src/TextField';
-import Button from '@via-profit/ui-kit/src/Button';
-import Popper from '@via-profit/ui-kit/src/Popper';
-import ClickOutside from '@via-profit/ui-kit/src/ClickOutside';
-import MaskedField from '@via-profit/ui-kit/src/MaskedField';
-
 const ExampleCalendarOverivew: React.FC = () => {
   const [date, setDate] = React.useState(new Date());
-  const [textFieldRef, setTextFieldRef] = React.useState<HTMLDivElement | null>(null);
-  const [selected, setSelected] = React.useState<readonly Date[]>([new Date(2023, 11, 31)]);
-  const [isOpen, setOpenSate] = React.useState(false);
+  const [selected] = React.useState<readonly Date[]>([new Date(2023, 11, 31)]);
   const [markToday, setmarkToday] = React.useState(true);
   const [dateConstraint, setDateConstraint] = React.useState([
     new Date(2023, 9, 5),
