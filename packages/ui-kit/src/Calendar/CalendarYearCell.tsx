@@ -4,6 +4,9 @@ import styled from '@emotion/styled';
 import Button from '../Button';
 
 export interface CalendarYearCellProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  /**
+   * If year selected, then property will be true
+   */
   readonly isSelected?: boolean;
   readonly accentColor?: 'primary' | 'secondary' | string;
 }

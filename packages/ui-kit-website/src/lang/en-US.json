@@ -11,11 +11,11 @@
   "2fINQ9": {
     "defaultMessage": "Темы оформления"
   },
+  "3NyjbW": {
+    "defaultMessage": "Выбрана дата: {value}"
+  },
   "44pMfw": {
     "defaultMessage": "Скрыть"
-  },
-  "4IywCD": {
-    "defaultMessage": "Дата не выбрана"
   },
   "4SjODy": {
     "defaultMessage": "Флаги стран"
@@ -32,8 +32,8 @@
   "DHVnVh": {
     "defaultMessage": "закрыть диалог"
   },
-  "Ewp5W2": {
-    "defaultMessage": "Контроллируемый"
+  "DtpCdE": {
+    "defaultMessage": "к 9 Мая"
   },
   "Fm08lU": {
     "defaultMessage": "Сменить тему"
@@ -80,6 +80,9 @@
   "Y2i5Fd": {
     "defaultMessage": "Popper"
   },
+  "YHFvoS": {
+    "defaultMessage": "Открыть календарь"
+  },
   "YaMZGV": {
     "defaultMessage": "Меню"
   },
@@ -101,9 +104,6 @@
   "l775qE": {
     "defaultMessage": "Открыть Popper"
   },
-  "lnCJFM": {
-    "defaultMessage": "Сбросить"
-  },
   "n48pl/": {
     "defaultMessage": "Маскированное поле"
   },
@@ -116,14 +116,35 @@
   "tfwWYu": {
     "defaultMessage": "Click outside"
   },
-  "vfmGvM": {
-    "defaultMessage": "Выбрана дата: {date}"
+  "wBODsZ": {
+    "defaultMessage": "Текущая дата в шаблоном {template} — {result}"
   },
   "whQBin": {
     "defaultMessage": "Календарь"
   },
+  "yeuMJs": {
+    "defaultMessage": "Строка 22.02.2003 распарсенная с шаблоном {template} — {result}"
+  },
   "zuByI+": {
     "defaultMessage": "Date Picker"
+  },
+  "RZ1xzS": {
+    "defaultMessage": "Current date with template {template} — {result}"
+  },
+  "iuBei9": {
+    "defaultMessage": "String 22.02.2003 parsed with template {template} — {result}"
+  },
+  "4IywCD": {
+    "defaultMessage": "Дата не выбрана"
+  },
+  "Ewp5W2": {
+    "defaultMessage": "Контроллируемый"
+  },
+  "lnCJFM": {
+    "defaultMessage": "Сбросить"
+  },
+  "vfmGvM": {
+    "defaultMessage": "Выбрана дата: {date}"
   },
   "YTTz6q": {
     "defaultMessage": "Контролли руемый"

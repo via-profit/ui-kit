@@ -12,6 +12,7 @@ import Label, { TextFieldLabelProps } from '../TextField/TextFieldLabel';
 import Asterisk, { TextFieldLabelAsteriskProps } from '../TextField/TextFieldLabelAsterisk';
 import ErrorText, { TextFieldErrorTextProps } from '../TextField/TextFieldErrorText';
 import ButtonWrapper, { SelectboxButtonWrapperProps } from './SelectboxButtonWrapper';
+import Container, { SelectboxContainerProps } from './SelectboxContainer';
 
 export { SelectboxItem };
 
@@ -110,6 +111,12 @@ export interface SelectboxProps<T, Multiple extends boolean | undefined = undefi
 
 export interface SelectboxOverrides {
   /**
+   * Container element
+   */
+  readonly Container?: React.ForwardRefExoticComponent<
+    SelectboxContainerProps & React.RefAttributes<HTMLDivElement>
+  >;
+  /**
    * Base element
    */
   readonly Button?: React.ForwardRefExoticComponent<
@@ -199,13 +206,13 @@ const Selectbox = React.forwardRef(
     const menuRef = React.useRef<MenuRef | null>(null);
     const overridesMap = React.useMemo(
       () => ({
-        Button,
-        Icon,
-        Label,
-        Asterisk,
-        ErrorText,
-        ButtonWrapper,
-        ...overrides,
+        Button: overrides?.Button || Button,
+        Icon: overrides?.Icon || Icon,
+        Label: overrides?.Label || Label,
+        Asterisk: overrides?.Asterisk || Asterisk,
+        ErrorText: overrides?.ErrorText || ErrorText,
+        ButtonWrapper: overrides?.ButtonWrapper || ButtonWrapper,
+        Container: overrides?.Container || Container,
       }),
       [overrides],
     );
@@ -267,7 +274,7 @@ const Selectbox = React.forwardRef(
     }, [id]);
 
     return (
-      <div>
+      <overridesMap.Container>
         {typeof label !== 'undefined' && label !== null && (
           <overridesMap.Label htmlFor={inputID} error={error}>
             {label}
@@ -353,7 +360,7 @@ const Selectbox = React.forwardRef(
             anchorElement,
           ],
         )}
-      </div>
+      </overridesMap.Container>
     );
   },
 );

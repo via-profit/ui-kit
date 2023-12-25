@@ -1,6 +1,9 @@
+import React from 'react';
 import styled from '@emotion/styled';
 
-const CalendarBody = styled.div`
+export type CalendarBodyProps = React.HTMLAttributes<HTMLDivElement>;
+
+const StyledCalendarBody = styled.div`
   position: relative;
   display: flex;
   flex-direction: column;
@@ -8,4 +11,17 @@ const CalendarBody = styled.div`
   height: 15em;
 `;
 
-export default CalendarBody;
+const CalendarBody: React.ForwardRefRenderFunction<HTMLDivElement, CalendarBodyProps> = (
+  props,
+  ref,
+) => {
+  const { children, ...restProps } = props;
+
+  return (
+    <StyledCalendarBody {...restProps} ref={ref}>
+      {children}
+    </StyledCalendarBody>
+  );
+};
+
+export default React.forwardRef(CalendarBody);

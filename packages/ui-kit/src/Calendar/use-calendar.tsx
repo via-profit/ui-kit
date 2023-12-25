@@ -21,16 +21,77 @@ export type Week = {
 };
 
 export interface UseCalendarProps {
+  /**
+   * Intl locale
+   */
   readonly locale: string;
+
+  /**
+   * The day the week starts from
+   */
   readonly weekStartDay: WeekDayName;
+
+  /**
+   * Display days with leading zero
+   */
   readonly displayLeadingZero: boolean;
+
+  /**
+   * Minimum date limit
+   */
   readonly minDate: Date;
+
+  /**
+   * Maximum date limit
+   */
   readonly maxDate: Date;
 }
 
+export type UseCalendarPayload = {
+  /**
+   * Returns `true` if the dateA and the dateB is a same day
+   */
+  isSameDay: (dateA: Date, dateB: Date) => boolean;
+
+  /**
+   * Returns `true` if the passed date is a current day
+   */
+  isToday: (date: Date) => boolean;
+
+  /**
+   * Returns array of weeks (with days in) for the passed date
+   */
+  getWeeks: (needleDate: Date) => Week[];
+
+  /**
+   * Returns Day label for the current locale
+   */
+  getDayLabel: (date: Date) => string;
+
+  /**
+   * Returns Month name for the current locale
+   */
+  getMonthLabel: (date: Date) => string;
+
+  /**
+   * Returns Year label for the current locale
+   */
+  getYearLabel: (date: Date) => string;
+
+  /**
+   * Returns range of years (array of years) between passed dates
+   */
+  getYearsRange: (minDate: Date, maxDate: Date) => number[];
+
+  /**
+   * Returns range of monthes (array of month indexes) between passed dates
+   */
+  getMonthesRange: (minDate: Date, maxDate: Date) => number[];
+};
+
 const WHITESPACE = '\u{0020}';
 
-export const useCalendar = (props: UseCalendarProps) => {
+export const useCalendar = (props: UseCalendarProps): UseCalendarPayload => {
   const { minDate, maxDate, weekStartDay, displayLeadingZero, locale } = props;
   const isSameDay = React.useCallback(
     (a: Date, b: Date) =>
@@ -311,13 +372,6 @@ export const useCalendar = (props: UseCalendarProps) => {
     },
     [weekDaysMap, weekStartDay, isToday, isDisabled, calculateWeekNumber],
   );
-
-  // const setDate = React.useCallback((value: Date) => {
-  //   dispatch({
-  //     type: 'date',
-  //     payload: value,
-  //   });
-  // }, []);
 
   return {
     isSameDay,

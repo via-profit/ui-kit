@@ -1,7 +1,6 @@
 import React from 'react';
 import Selectbox, { SelectboxItem } from '@via-profit/ui-kit/src/Selectbox';
 import SelectboxButton from '@via-profit/ui-kit/src/Selectbox/SelectboxButton';
-import TextField from '@via-profit/ui-kit/src/TextField';
 
 import IconBell from '../../components/Icons/IconBell';
 import countries from './countries.json';
@@ -17,13 +16,6 @@ const ExampleSelectboxOverview: React.FC = () => {
 
   return (
     <>
-      <TextField
-        value="Lorem ipsum"
-        label="Field label"
-        error
-        errorText="Some error"
-        endIcon={<IconBell />}
-      />
       <Selectbox
         value={value}
         startIcon={<IconBell />}

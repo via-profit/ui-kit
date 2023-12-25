@@ -66,8 +66,7 @@ const Popper: React.ForwardRefRenderFunction<HTMLDivElement, PopperProps> = (pro
 
   const overridesMap = React.useMemo(
     () => ({
-      Container,
-      ...overrides,
+      Container: overrides?.Container || Container,
     }),
     [overrides],
   );

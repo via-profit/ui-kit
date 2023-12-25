@@ -89,10 +89,9 @@ const Highlighted: React.ForwardRefRenderFunction<HTMLSpanElement, HighlightedPr
 
   const overridesMap = React.useMemo(
     () => ({
-      Container,
-      Mark,
-      Text,
-      ...overrides,
+      Container: overrides?.Container || Container,
+      Mark: overrides?.Mark || Mark,
+      Text: overrides?.Text || Text,
     }),
     [overrides],
   );

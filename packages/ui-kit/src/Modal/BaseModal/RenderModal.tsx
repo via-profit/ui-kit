@@ -23,9 +23,8 @@ const RenderModal: React.FC<RenderModalProps> = props => {
 
   const overridesMap = React.useMemo(
     () => ({
-      Overlay,
-      Inner,
-      ...overrides,
+      Overlay: overrides?.Overlay || Overlay,
+      Inner: overrides?.Inner || Inner,
     }),
     [overrides],
   );

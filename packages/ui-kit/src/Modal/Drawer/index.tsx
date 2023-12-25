@@ -108,12 +108,11 @@ const Drawer: React.FC<DrawerProps> = props => {
 
   const overridesMap = React.useMemo(
     () => ({
-      Container,
-      Header,
-      Content,
-      Footer,
-      Overlay,
-      ...overrides,
+      Container: overrides?.Container || Container,
+      Header: overrides?.Header || Header,
+      Content: overrides?.Content || Content,
+      Footer: overrides?.Footer || Footer,
+      Overlay: overrides?.Overlay || Overlay,
     }),
     [overrides],
   );

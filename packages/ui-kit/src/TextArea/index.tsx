@@ -187,14 +187,13 @@ const TextArea: React.ForwardRefRenderFunction<HTMLDivElement, TextAreaProps> = 
 
   const overridesMap = React.useMemo(
     () => ({
-      Label,
-      Input,
-      Asterisk,
-      Container,
-      ErrorText,
-      IconWrapper,
-      InputWrapper,
-      ...overrides,
+      Label: overrides?.Label || Label,
+      Input: overrides?.Input || Input,
+      Asterisk: overrides?.Asterisk || Asterisk,
+      Container: overrides?.Container || Container,
+      ErrorText: overrides?.ErrorText || ErrorText,
+      IconWrapper: overrides?.IconWrapper || IconWrapper,
+      InputWrapper: overrides?.InputWrapper || InputWrapper,
     }),
     [overrides],
   );

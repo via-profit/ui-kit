@@ -1,6 +1,38 @@
 import React from 'react';
 
-export const useDatePickerFormat = () => {
+export type UseDatePickerFormatPayload = {
+  /**
+   * Returns `true` if template are valid
+   */
+  readonly isValidTemplate: (template: string) => boolean;
+
+  /**
+   * Validate template and throw exception if template is not valid
+   */
+  readonly validateTemplate: (template: string) => void | never;
+
+  /**
+   * Returns validation mask (array of RegExp or/and string) by template
+   */
+  readonly getMaskByTemplate: (template: string) => (string | RegExp)[];
+
+  /**
+   * parse the input string according to the template and returns the date if it was recognized or null in other cases
+   */
+  readonly parseInputByTemplate: (input: string, template: string) => Date | null;
+
+  /**
+   * Format date to string by template
+   */
+  readonly formatInputByTemplate: (date: Date, template: string) => string;
+
+  /**
+   * Returns template valid characters list
+   */
+  readonly templateValidChars: readonly string[];
+};
+
+export const useDatePickerFormat = (): UseDatePickerFormatPayload => {
   const templateValidChars = React.useMemo(
     () => ['y', 'Y', 'yy', 'yyyy', 'd', 'dd', 'D', 'm', 'mm', 'M'],
     [],
