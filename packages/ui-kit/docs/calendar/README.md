@@ -132,11 +132,11 @@ const Example: React.FC = () => {
     <div>
       {getWeeks(currentDate).map(week => {
         return (
-          <Week key={week.weekNumber}>
+          <div key={week.weekNumber}>
             {week.days.map(day => (
               <span key={date.getTime()}>{getDayLabel(day.date)}</span>
             ))}
-          </Week>
+          </div>
         );
       })}
     </div>
@@ -176,7 +176,7 @@ const Example: React.FC = () => {
 
         // Рендерим каждую неделю в которой будем перебирать вложенные дни
         return (
-          <Week key={weekNumber}>
+          <div key={weekNumber}>
             {/* Перебираем массив дней */}
             {days.map(day => {
               const {
@@ -201,7 +201,7 @@ const Example: React.FC = () => {
               // Если это день предыдущего или следующего месяца
               return <DayOfAnotherMonth key={key}>{dayLabel}</DayOfAnotherMonth>;
             })}
-          </Week>
+          </div>
         );
       })}
     </div>
