@@ -3,7 +3,6 @@ import styled from '@emotion/styled';
 import { css } from '@emotion/react';
 
 import Calendar, {
-  CalendarProps,
   CalendarOverrides,
   WeekDayName,
   WeekNameLabelFormat,
@@ -18,127 +17,128 @@ import type { TextFieldProps, TextFieldOverrides } from '../TextField';
 import DatePickerIcon from './DatePickerIcon';
 import useDatePickerFormat from './useDatePickerFormat';
 
-export type DatePickerProps = Omit<TextFieldProps, 'value' | 'onChange' | 'overrides'> &
-  Omit<CalendarProps, 'defaultValue' | 'value' | 'onChange' | 'overrides'> & {
-    /**
-     * Current date
-     */
-    readonly value: Date | null;
+export * from './useDatePickerFormat';
 
-    /**
-     * Will be invoked when date would be changed
-     */
-    readonly onChange: (date: Date) => void;
-    /**
-     * Date template like one of format: \
-     * `dd.mm.yyyy` or `yyyy/mm/dd`, etc.\
-     * Posibility chars: `y`, `Y`, `yy`, `yyyy`, `d`, `dd`, `D`, `m`, `mm`, `M`
-     */
-    readonly template: string;
+export type DatePickerProps = Omit<TextFieldProps, 'value' | 'onChange' | 'overrides'> & {
+  /**
+   * Current date
+   */
+  readonly value: Date | null;
 
-    /**
-     * Tooltip text for a calendar button
-     */
-    readonly calendarButtonTooltip?: string;
+  /**
+   * Will be invoked when date would be changed
+   */
+  readonly onChange: (date: Date) => void;
+  /**
+   * Date template like one of format: \
+   * `dd.mm.yyyy` or `yyyy/mm/dd`, etc.\
+   * Posibility chars: `y`, `Y`, `yy`, `yyyy`, `d`, `dd`, `D`, `m`, `mm`, `M`
+   */
+  readonly template: string;
 
-    /**
-     * Minimum date limit
-     */
-    readonly minDate?: Date;
+  /**
+   * Tooltip text for a calendar button
+   */
+  readonly calendarButtonTooltip?: string;
 
-    /**
-     * Maximum date limit
-     */
-    readonly maxDate?: Date;
+  /**
+   * Minimum date limit
+   */
+  readonly minDate?: Date;
 
-    /**
-     * calendar locale\
-     * **Default:** `ru-RU`
-     */
-    readonly locale?: string;
+  /**
+   * Maximum date limit
+   */
+  readonly maxDate?: Date;
 
-    /**
-     * The day the week starts from\
-     * **Default:** `monday`
-     */
-    readonly weekStartDay?: WeekDayName;
+  /**
+   * calendar locale\
+   * **Default:** `ru-RU`
+   */
+  readonly locale?: string;
 
-    /**
-     * Int weekday format\
-     * **Default:** `short`
-     */
-    readonly weekDayLabelFormat?: WeekNameLabelFormat;
+  /**
+   * The day the week starts from\
+   * **Default:** `monday`
+   */
+  readonly weekStartDay?: WeekDayName;
 
-    /**
-     * Display days with leading zero
-     */
-    readonly displayLeadingZero?: boolean;
+  /**
+   * Int weekday format\
+   * **Default:** `short`
+   */
+  readonly weekDayLabelFormat?: WeekNameLabelFormat;
 
-    /**
-     * Mark current day cell
-     */
-    readonly markToday?: boolean;
+  /**
+   * Display days with leading zero
+   */
+  readonly displayLeadingZero?: boolean;
 
-    /**
-     * array of badges
-     */
-    readonly badges?: readonly CalendarBadge[];
+  /**
+   * Mark current day cell
+   */
+  readonly markToday?: boolean;
 
-    /**
-     * Tooltip for the Prev month button
-     */
-    readonly prevMonthButtonTooltip?: string;
+  /**
+   * array of badges
+   */
+  readonly badges?: readonly CalendarBadge[];
 
-    /**
-     * Tooltip for the Next month button
-     */
-    readonly nextMonthButtonTooltip?: string;
+  /**
+   * Tooltip for the Prev month button
+   */
+  readonly prevMonthButtonTooltip?: string;
 
-    /**
-     * Tooltip for tne month selector button
-     */
-    readonly changeMonthButtonTooltip?: string;
+  /**
+   * Tooltip for the Next month button
+   */
+  readonly nextMonthButtonTooltip?: string;
 
-    /**
-     * Tooltip for the year selector button
-     */
-    readonly changeYearButtonTooltip?: string;
+  /**
+   * Tooltip for tne month selector button
+   */
+  readonly changeMonthButtonTooltip?: string;
 
-    /**
-     * Label for the Reset button. If label passed, then button will be rendered
-     */
-    readonly resetButtonLabel?: string;
+  /**
+   * Tooltip for the year selector button
+   */
+  readonly changeYearButtonTooltip?: string;
 
-    /**
-     * Label for the Today button. If label passed, then button will be rendered
-     */
-    readonly toodayButtonLabel?: string;
+  /**
+   * Label for the Reset button. If label passed, then button will be rendered
+   */
+  readonly resetButtonLabel?: string;
 
-    /**
-     * Heading
-     */
-    readonly heading?: React.ReactNode;
+  /**
+   * Label for the Today button. If label passed, then button will be rendered
+   */
+  readonly toodayButtonLabel?: string;
 
-    /**
-     * Subheading
-     */
-    readonly subheading?: React.ReactNode;
+  /**
+   * Heading
+   */
+  readonly heading?: React.ReactNode;
 
-    /**
-     * Initial name of the view
-     */
-    readonly initialView?: CalendarView;
+  /**
+   * Subheading
+   */
+  readonly subheading?: React.ReactNode;
 
-    /**
-     * Custom footer elements
-     */
-    readonly footer?: JSX.Element;
+  /**
+   * Initial name of the view
+   */
+  readonly initialView?: CalendarView;
 
-    /**
-     * Overridable components map
-     */
-    readonly overrides?: CalendarOverrides & TextFieldOverrides;
-  };
+  /**
+   * Custom footer elements
+   */
+  readonly footer?: JSX.Element;
+
+  /**
+   * Overridable components map
+   */
+  readonly overrides?: CalendarOverrides & TextFieldOverrides;
+};
 
 const StyledMaskedField = styled(MaskedField)`
   ${({ readOnly, disabled }) =>

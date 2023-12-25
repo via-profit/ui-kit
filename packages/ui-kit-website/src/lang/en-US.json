@@ -113,11 +113,23 @@
   "tfwWYu": {
     "defaultMessage": "Click outside"
   },
+  "wBODsZ": {
+    "defaultMessage": "Текущая дата в шаблоном {template} — {result}"
+  },
   "whQBin": {
     "defaultMessage": "Календарь"
   },
+  "yeuMJs": {
+    "defaultMessage": "Строка 22.02.2003 распарсенная с шаблоном {template} — {result}"
+  },
   "zuByI+": {
     "defaultMessage": "Date Picker"
+  },
+  "RZ1xzS": {
+    "defaultMessage": "Current date with template {template} — {result}"
+  },
+  "iuBei9": {
+    "defaultMessage": "String 22.02.2003 parsed with template {template} — {result}"
   },
   "4IywCD": {
     "defaultMessage": "Дата не выбрана"
