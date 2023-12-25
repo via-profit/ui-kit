@@ -23,6 +23,9 @@ const Content = styled.div`
 const StyledSidebar = styled(Sidebar)`
   top: 0;
   width: 14rem;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
 `;
 
 const Main = styled.div`

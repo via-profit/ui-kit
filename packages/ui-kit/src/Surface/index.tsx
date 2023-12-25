@@ -77,12 +77,11 @@ const Surface: React.ForwardRefRenderFunction<HTMLDivElement, SurfaceProps> = (p
 
   const overridesMap = React.useMemo(
     () => ({
-      Container,
-      Header,
-      Subheader,
-      Content,
-      Footer,
-      ...overrides,
+      Container: overrides?.Container || Container,
+      Header: overrides?.Header || Header,
+      Subheader: overrides?.Subheader || Subheader,
+      Content: overrides?.Content || Content,
+      Footer: overrides?.Footer || Footer,
     }),
     [overrides],
   );

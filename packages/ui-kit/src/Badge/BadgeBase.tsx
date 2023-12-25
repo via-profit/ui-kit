@@ -73,11 +73,10 @@ const BadgeBase: React.ForwardRefRenderFunction<HTMLSpanElement, BadgeBaseProps>
   const { children, startIcon, color, variant, overrides, onDelete, ...nativeProps } = props;
   const overridesMap = React.useMemo(
     () => ({
-      TextWrapper,
-      IconWrapper,
-      Container,
-      ButtonDelete,
-      ...overrides,
+      TextWrapper: overrides?.TextWrapper || TextWrapper,
+      IconWrapper: overrides?.IconWrapper || IconWrapper,
+      Container: overrides?.Container || Container,
+      ButtonDelete: overrides?.ButtonDelete || ButtonDelete,
     }),
     [overrides],
   );

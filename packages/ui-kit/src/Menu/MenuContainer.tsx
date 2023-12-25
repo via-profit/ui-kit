@@ -2,7 +2,7 @@ import React from 'react';
 
 import useContext, { actionSetmenuState } from './context';
 import List, { MenuListProps } from './MenuList';
-import Popper, { AnchorPos } from '../Popper';
+import Popper, { AnchorPos, PopperProps } from '../Popper';
 import type { MenuItemCommonProps } from './MenuItem';
 import ClickOutside from '../ClickOutside';
 
@@ -174,6 +174,13 @@ export interface MenuOverrides {
   readonly List?: React.ForwardRefExoticComponent<
     MenuListProps & React.RefAttributes<HTMLDivElement>
   >;
+
+  /**
+   * Popper wrapper
+   */
+  readonly Popper?: React.ForwardRefExoticComponent<
+    PopperProps & React.RefAttributes<HTMLDivElement>
+  >;
 }
 
 export type MenuRef = {
@@ -271,9 +278,8 @@ const MenuContainer = React.forwardRef(
 
     const overridesMap = React.useMemo(
       () => ({
-        List,
-        Popper,
-        ...overrides,
+        List: overrides?.List || List,
+        Popper: overrides?.Popper || Popper,
       }),
       [overrides],
     );
@@ -674,7 +680,7 @@ const MenuContainer = React.forwardRef(
         onOutsideClick={onRequestClose}
         mouseEvent={closeOutsideClick ? 'onMouseDown' : false}
       >
-        <Popper
+        <overridesMap.Popper
           isOpen={Boolean(isOpen)}
           ref={menuPopperRef}
           zindex={zIndex}
@@ -703,7 +709,7 @@ const MenuContainer = React.forwardRef(
               ),
             )}
           </overridesMap.List>
-        </Popper>
+        </overridesMap.Popper>
       </ClickOutside>
     );
   },

@@ -206,14 +206,13 @@ const Selectbox = React.forwardRef(
     const menuRef = React.useRef<MenuRef | null>(null);
     const overridesMap = React.useMemo(
       () => ({
-        Button,
-        Icon,
-        Label,
-        Asterisk,
-        ErrorText,
-        ButtonWrapper,
-        Container,
-        ...overrides,
+        Button: overrides?.Button || Button,
+        Icon: overrides?.Icon || Icon,
+        Label: overrides?.Label || Label,
+        Asterisk: overrides?.Asterisk || Asterisk,
+        ErrorText: overrides?.ErrorText || ErrorText,
+        ButtonWrapper: overrides?.ButtonWrapper || ButtonWrapper,
+        Container: overrides?.Container || Container,
       }),
       [overrides],
     );

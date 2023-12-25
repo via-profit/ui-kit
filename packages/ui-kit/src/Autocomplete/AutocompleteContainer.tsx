@@ -166,8 +166,7 @@ const Autocomplete = React.forwardRef(
 
     const overridesMap = React.useMemo(
       () => ({
-        TextField,
-        ...overrides,
+        TextField: overrides?.TextField || TextField,
       }),
       [overrides],
     );

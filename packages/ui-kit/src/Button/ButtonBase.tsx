@@ -81,10 +81,9 @@ const ButtonBase: React.ForwardRefRenderFunction<HTMLButtonElement, ButtonBasePr
   const { children, startIcon, endIcon, color, overrides, iconOnly, type, ...nativeProps } = props;
   const overridesMap = React.useMemo(
     () => ({
-      TextWrapper,
-      IconWrapper,
-      Container,
-      ...overrides,
+      TextWrapper: overrides?.TextWrapper || TextWrapper,
+      IconWrapper: overrides?.IconWrapper || IconWrapper,
+      Container: overrides?.Container || Container,
     }),
     [overrides],
   );

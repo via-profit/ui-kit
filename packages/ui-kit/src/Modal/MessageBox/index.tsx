@@ -82,12 +82,11 @@ const MessageBox: React.FC<MessageBoxProps> = props => {
 
   const overridesMap = React.useMemo(
     () => ({
-      Container,
-      Content,
-      Footer,
-      Header,
-      Overlay,
-      ...overrides,
+      Container: overrides?.Container || Container,
+      Content: overrides?.Content || Content,
+      Footer: overrides?.Footer || Footer,
+      Header: overrides?.Header || Header,
+      Overlay: overrides?.Overlay || Overlay,
     }),
     [overrides],
   );

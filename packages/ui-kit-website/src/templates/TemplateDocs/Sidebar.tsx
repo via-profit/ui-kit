@@ -126,7 +126,7 @@ const Sidebar: React.ForwardRefRenderFunction<
           <Draft />
         </Item>
         <Item $isActive={matchPath('/docs/selectbox/*', pathname) !== null} to="/docs/selectbox">
-          <FormattedMessage defaultMessage="Селектбокс" /> Draft
+          <FormattedMessage defaultMessage="Селектбокс" /> <Draft />
         </Item>
         <Item
           $isActive={matchPath('/docs/country-flags/*', pathname) !== null}
@@ -136,7 +136,7 @@ const Sidebar: React.ForwardRefRenderFunction<
           <Draft />
         </Item>
         <Item $isActive={matchPath('/docs/modal/*', pathname) !== null} to="/docs/modal">
-          <FormattedMessage defaultMessage="Модальные окна" />
+          <FormattedMessage defaultMessage="Модальные окна" /> <Draft />
         </Item>
         <Item $isActive={matchPath('/docs/calendar/*', pathname) !== null} to="/docs/calendar">
           <FormattedMessage defaultMessage="Календарь" />

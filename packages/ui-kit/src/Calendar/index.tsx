@@ -21,10 +21,11 @@ import IconPrev, { CalendarIconPrevProps } from './CalendarIconPrev';
 import IconNext, { CalendarIconNextProps } from './IconChevronRight';
 import WeekDaysBar, { CalendarWeekDaysBarProps, WeekNameLabelFormat } from './CalendarWeekDaysBar';
 import { useCalendar, WeekDayName } from './use-calendar';
-import { CalendarView, reducer, defaultState } from './reducer';
+import { CalendarView as CalendarViewName, reducer, defaultState } from './reducer';
 
 export * from './use-calendar';
 export * from './CalendarWeekDaysBar';
+export type CalendarView = CalendarViewName;
 
 export type CalendarProps = {
   /**
@@ -329,27 +330,26 @@ const Calendar: React.FC<CalendarProps> = props => {
 
   const overridesMap = React.useMemo(
     () => ({
-      Body,
-      Cell,
-      EmptyCell,
-      Paper,
-      Header,
-      WeekRow,
-      DateContainer,
-      Toolbar,
-      YearsSelector,
-      MonthesSelector,
-      MonthCell,
-      YearCell,
-      DayBadge,
-      Footer,
-      ControlButton,
-      Heading,
-      Subheading,
-      IconPrev,
-      IconNext,
-      WeekDaysBar,
-      ...overrides,
+      Body: overrides?.Body || Body,
+      Cell: overrides?.Cell || Cell,
+      EmptyCell: overrides?.EmptyCell || EmptyCell,
+      Paper: overrides?.Paper || Paper,
+      Header: overrides?.Header || Header,
+      WeekRow: overrides?.WeekRow || WeekRow,
+      DateContainer: overrides?.DateContainer || DateContainer,
+      Toolbar: overrides?.Toolbar || Toolbar,
+      YearsSelector: overrides?.YearsSelector || YearsSelector,
+      MonthesSelector: overrides?.MonthesSelector || MonthesSelector,
+      MonthCell: overrides?.MonthCell || MonthCell,
+      YearCell: overrides?.YearCell || YearCell,
+      DayBadge: overrides?.DayBadge || DayBadge,
+      Footer: overrides?.Footer || Footer,
+      ControlButton: overrides?.ControlButton || ControlButton,
+      Heading: overrides?.Heading || Heading,
+      Subheading: overrides?.Subheading || Subheading,
+      IconPrev: overrides?.IconPrev || IconPrev,
+      IconNext: overrides?.IconNext || IconNext,
+      WeekDaysBar: overrides?.WeekDaysBar || WeekDaysBar,
     }),
     [overrides],
   );
