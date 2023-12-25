@@ -56,11 +56,14 @@ export type CalendarProps = {
 
   /**
    * Minimum date limit
+   * **Default:** -100 year
+
    */
   readonly minDate?: Date;
 
   /**
-   * Maximum date limit
+   * Maximum date limit\
+   * **Default:** +100 year
    */
   readonly maxDate?: Date;
 
@@ -78,16 +81,19 @@ export type CalendarProps = {
 
   /**
    * Display days with leading zero
+   * **Default:** `false`
    */
   readonly displayLeadingZero?: boolean;
 
   /**
-   * Mark current day cell
+   * Mark current day cell\
+   * **Default:** `true`
    */
   readonly markToday?: boolean;
 
   /**
-   * Cell accent color
+   * Cell accent color\
+   * **Default:** `primary`
    */
   readonly accentColor?: 'primary' | 'secondary' | string;
 
@@ -132,7 +138,8 @@ export type CalendarProps = {
   readonly subheading?: React.ReactNode;
 
   /**
-   * Initial name of the view
+   * Initial name of the view\
+   * **Default:** `days`
    */
   readonly initialView?: CalendarView;
 

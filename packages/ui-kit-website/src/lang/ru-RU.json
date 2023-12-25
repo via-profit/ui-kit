@@ -11,11 +11,11 @@
   "2fINQ9": {
     "defaultMessage": "Темы оформления"
   },
+  "3NyjbW": {
+    "defaultMessage": "Выбрана дата: {value}"
+  },
   "44pMfw": {
     "defaultMessage": "Скрыть"
-  },
-  "4IywCD": {
-    "defaultMessage": "Дата не выбрана"
   },
   "4SjODy": {
     "defaultMessage": "Флаги стран"
@@ -32,8 +32,8 @@
   "DHVnVh": {
     "defaultMessage": "закрыть диалог"
   },
-  "Ewp5W2": {
-    "defaultMessage": "Контроллируемый"
+  "DtpCdE": {
+    "defaultMessage": "к 9 Мая"
   },
   "Fm08lU": {
     "defaultMessage": "Сменить тему"
@@ -98,9 +98,6 @@
   "l775qE": {
     "defaultMessage": "Открыть Popper"
   },
-  "lnCJFM": {
-    "defaultMessage": "Сбросить"
-  },
   "n48pl/": {
     "defaultMessage": "Маскированное поле"
   },
@@ -112,9 +109,6 @@
   },
   "tfwWYu": {
     "defaultMessage": "Click outside"
-  },
-  "vfmGvM": {
-    "defaultMessage": "Выбрана дата: {date}"
   },
   "whQBin": {
     "defaultMessage": "Календарь"

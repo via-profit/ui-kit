@@ -8,6 +8,9 @@ const Elem = styled.span`
   width: 3em;
   height: 3em;
   min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
 
 const CalendarEmptyCell: React.ForwardRefRenderFunction<
