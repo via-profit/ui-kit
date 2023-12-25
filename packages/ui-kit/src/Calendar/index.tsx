@@ -55,7 +55,7 @@ export type CalendarProps = {
   readonly badges?: readonly CalendarBadge[];
 
   /**
-   * Minimum date limit
+   * Minimum date limit\
    * **Default:** -100 year
 
    */

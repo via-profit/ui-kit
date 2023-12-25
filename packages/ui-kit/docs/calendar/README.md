@@ -4,12 +4,13 @@
 
 - [Описание](#описание)
 - [Дополнительные кнопки](#дополнительные-кнопки)
+- [Хуки](#хуки)
 - [Переопределение](#переопределение)
 - [Свойства](#свойства)
 
 ## Описание
 
-Компонент `<Calendar>` создаёт и интерактивный календарь с возможностью выбора даты, переключения месяцев и прочее.
+Компонент `<Calendar>` создаёт интерактивный календарь с возможностью выбора даты, переключения месяцев и прочее.
 
 _Пример использования:_
 
@@ -47,7 +48,7 @@ export default ExampleCalendarOverivew;
 
 Календарь может содержать футер как с определёнными кнопками, такими как: кнопка сброса; кнопка перехода на текущий день, так и с кастомными элементами управления, которые возможно передать дополнительно. Для отображения заранее заготовленных кнопок используйте следующие параметры:
 
-- **resetButtonLabel** — если передан, то в футере календаря будет отображена кнопка сброса, где в качестве текста будет использовано переданное значение. 
+- **resetButtonLabel** — если передан, то в футере календаря будет отображена кнопка сброса, где в качестве текста будет использовано переданное значение.
 - **toodayButtonLabel** — если передан, то в футере календаря будет отображена кнопка перехода к текущему дню, где в качестве текста будет использовано переданное значение.
 
 Для отображения собственных элементов управления следует использовать свойство `footer`, где в качестве значения снеобходимо передать `JSX` элемент с необходимым вам набором кнопок и прочих элементов управления.
@@ -70,9 +71,7 @@ const ExampleCalendarCustomControls: React.FC = () => {
         onChange={onChange}
         footer={
           <>
-            <Button onClick={() => onChange(new Date(value.getFullYear(), 4, 9))}>
-              к 9 Мая
-            </Button>
+            <Button onClick={() => onChange(new Date(value.getFullYear(), 4, 9))}>к 9 Мая</Button>
           </>
         }
       />
@@ -81,10 +80,138 @@ const ExampleCalendarCustomControls: React.FC = () => {
 };
 
 export default ExampleCalendarCustomControls;
-
 ```
 
 <ExampleCalendarCustomControls />
+
+## Хуки
+
+Компонент реализован по средствам набора свойств и методов, доступных в хуке `useCalendar`. Данный хук позволяет реализовывать собственные календари.
+
+_Использование хука:_
+
+```tsx
+const paylaod = useCalendar({
+  locale: 'ru-RU', // Локаль календаря
+  weekStartDay: 'monday', // День недели начинается с понедельника
+  displayLeadingZero: false, // Отображать дни без ведущего нуля
+  minDate: new Date(), //Минимальная доступная дата
+  maxDate: new Date(), // Максимальная доступная дата
+});
+```
+
+Хук `useCalendar` возвращает следующий набор данных:
+
+- `isToday` — Функция, принимающая один аргумент типа `Date` и возвращающая `true` в случае, если переданная дата совпадает с сегодняшним числом. **Важно: Сравнивается только год, месяц и день**
+- `isSameDay` — Функция, принимающая два аргумента типа `Date` и возвращающая `true` в случае, если переданные даты совпадают по году, месяцу и дню.
+- `getWeeks` — Функция, принимающая один аргумент типа `Date` и возвращающая массив недель. Каждый элемент массива представляет собой объект содержащий сведения о текущей неделе и список дней недели
+- `getDayLabel` — Функция, принимающая один аргумент типа `Date` и возвращающая строку, сформированную при помощи [Intl](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl) согласно установленноу локали
+- `getMonthLabel` — Функция, принимающая один аргумент типа `Date` и возвращающая строку, сформированную при помощи [Intl](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl) согласно установленноу локали
+- `getYearLabel` — Функция, принимающая один аргумент типа `Date` и возвращающая строку, сформированную при помощи [Intl](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl) согласно установленноу локали
+- `getYearsRange` — Функция, принимающая два аргумента типа `Date` и возвращающая массив лет, которые умещаются между переданными датами. **Важно: Возвращаемый массив будет ограничен параметрами minDate и maxDate**
+- `getMonthesRange` — Функция, принимающая два аргумента типа `Date` и возвращающая массив месяцев, которые умещаются между переданными датами. **Важно: Возвращаемый массив будет ограничен параметрами minDate и maxDate**
+
+_Пример использования (краткая версия):_
+
+```tsx
+import React from 'react';
+import { useCalendar } from '@via-profit/ui-kit/Calendar';
+
+const Example: React.FC = () => {
+  const currentDate = new Date(); // текущая дата от котороу будет построен календарь
+
+  const { isToday, getWeeks, getDayLabel } = useCalendar({
+    locale: 'ru-RU', // Локаль календаря
+    weekStartDay: 'monday', // День недели начинается с понедельника
+    displayLeadingZero: false, // Отображать дни без ведущего нуля
+    minDate: new Date(new Date().getFullYear() - 100, 0, 1), // 100 лет назад
+    maxDate: new Date(new Date().getFullYear() + 100, 0, 1), // 100 лет вперёд
+  });
+
+  return (
+    <div>
+      {getWeeks(currentDate).map(week => {
+        return (
+          <Week key={week.weekNumber}>
+            {week.days.map(day => (
+              <span key={date.getTime()}>{getDayLabel(day.date)}</span>
+            ))}
+          </Week>
+        );
+      })}
+    </div>
+  );
+};
+
+export default Example;
+```
+
+<ExampleCalendarHooks />
+
+_Пример использования (полная версия):_
+
+```tsx
+import React from 'react';
+import { useCalendar } from '@via-profit/ui-kit/Calendar';
+
+const Example: React.FC = () => {
+  const currentDate = new Date(); // текущая дата от котороу будет построен календарь
+
+  const { isToday, getWeeks, getDayLabel } = useCalendar({
+    locale: 'ru-RU', // Локаль календаря
+    weekStartDay: 'monday', // День недели начинается с понедельника
+    displayLeadingZero: false, // Отображать дни без ведущего нуля
+    minDate: new Date(new Date().getFullYear() - 100, 0, 1), // 100 лет назад
+    maxDate: new Date(new Date().getFullYear() + 100, 0, 1), // 100 лет вперёд
+  });
+
+  return (
+    <div>
+      {/* getWeeks вернет список недель */}
+      {getWeeks(currentDate).map(week => {
+        const {
+          days, // Массив дней текущей недели
+          weekNumber, // Номер недели
+        } = week;
+
+        // Рендерим каждую неделю в которой будем перебирать вложенные дни
+        return (
+          <Week key={weekNumber}>
+            {/* Перебираем массив дней */}
+            {days.map(day => {
+              const {
+                date, // Дата текущего дня
+                isToday, // Признак того, что этот день совпадает с сегодняшним
+                isDisabled, // Признак того, что день попал под ограничение minDate и maxDate
+              } = day;
+              const dayLabel = getDayLabel(date);
+              const key = date.getTime();
+              const isDayOfCurrentMonth = date.getMonth() === currenrtDate.getMonth();
+
+              // Если это сегодняшний день
+              if (isToday) {
+                return <CurrentDay key={key}>{dayLabel}</CurrentDay>;
+              }
+
+              // Если это день текущего месяца
+              if (isDayOfCurrentMonth) {
+                return <DayOfCurrentMonth key={key}>{dayLabel}</DayOfCurrentMonth>;
+              }
+
+              // Если это день предыдущего или следующего месяца
+              return <DayOfAnotherMonth key={key}>{dayLabel}</DayOfAnotherMonth>;
+            })}
+          </Week>
+        );
+      })}
+    </div>
+  );
+};
+
+export default Example;
+```
+
+<ExampleCalendarHooks />
 
 ## Переопределение
 

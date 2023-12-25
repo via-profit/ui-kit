@@ -5,6 +5,7 @@ import RenderMarkdown from '~/components/RenderMarkdown';
 import ExampleCalendarOverivew from '~/examples/calendar/ExampleCalendarOverivew';
 import ExampleCalendarOverrides from '~/examples/calendar/ExampleCalendarOverrides';
 import ExampleCalendarCustomControls from '~/examples/calendar/ExampleCalendarCustomControls';
+import ExampleCalendarHooks from '~/examples/calendar/ExampleCalendarHooks';
 import content from '@via-profit/ui-kit/docs/calendar/README.md';
 
 const Buttons: React.FC = () => (
@@ -14,6 +15,7 @@ const Buttons: React.FC = () => (
         ExampleCalendarOverivew,
         ExampleCalendarOverrides,
         ExampleCalendarCustomControls,
+        ExampleCalendarHooks,
       }}
     >
       {content}

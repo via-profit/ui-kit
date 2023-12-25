@@ -140,7 +140,6 @@ const Sidebar: React.ForwardRefRenderFunction<
         </Item>
         <Item $isActive={matchPath('/docs/calendar/*', pathname) !== null} to="/docs/calendar">
           <FormattedMessage defaultMessage="Календарь" />
-          <Draft />
         </Item>
         <Item
           $isActive={matchPath('/docs/date-picker/*', pathname) !== null}

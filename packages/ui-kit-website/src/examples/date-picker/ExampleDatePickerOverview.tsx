@@ -1,17 +1,17 @@
 import React from 'react';
 import DatePicker from '@via-profit/ui-kit/src/DatePicker';
+import { useIntl } from 'react-intl';
 
 const ExampleDatePickerOverview: React.FC = () => {
   const [value, setValue] = React.useState<null | Date>(null);
+  const intl = useIntl();
 
   return (
     <DatePicker
       template="dd.mm.yyyy"
-      calendarButtonTooltip="Open calendar"
+      calendarButtonTooltip={intl.formatMessage({ defaultMessage: 'Открыть календарь' })}
       value={value}
       onChange={setValue}
-      minDate={new Date(2003, 1, 22)}
-      maxDate={new Date(2023, 11, 31)}
     />
   );
 };
