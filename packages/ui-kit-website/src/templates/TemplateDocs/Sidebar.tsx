@@ -116,6 +116,15 @@ const Sidebar: React.ForwardRefRenderFunction<
         >
           <FormattedMessage defaultMessage="Click outside" />
         </Item>
+        <Item $isActive={matchPath('/docs/badge/*', pathname) !== null} to="/docs/badge">
+          <FormattedMessage defaultMessage="Бейдж" />
+        </Item>
+        <Item
+          $isActive={matchPath('/docs/country-flags/*', pathname) !== null}
+          to="/docs/country-flags"
+        >
+          <FormattedMessage defaultMessage="Флаги стран" />
+        </Item>
         <Item $isActive={matchPath('/docs/table/*', pathname) !== null} to="/docs/table">
           <FormattedMessage defaultMessage="Таблица" />
           <Draft />
@@ -152,13 +161,6 @@ const Sidebar: React.ForwardRefRenderFunction<
         <Item $isActive={matchPath('/docs/selectbox/*', pathname) !== null} to="/docs/selectbox">
           <FormattedMessage defaultMessage="Селектбокс" /> <Draft />
         </Item>
-        <Item
-          $isActive={matchPath('/docs/country-flags/*', pathname) !== null}
-          to="/docs/country-flags"
-        >
-          <FormattedMessage defaultMessage="Флаги стран" />
-          <Draft />
-        </Item>
         <Item $isActive={matchPath('/docs/modal/*', pathname) !== null} to="/docs/modal">
           <FormattedMessage defaultMessage="Модальные окна" /> <Draft />
         </Item>
@@ -167,10 +169,6 @@ const Sidebar: React.ForwardRefRenderFunction<
           to="/docs/loading-indicator"
         >
           <FormattedMessage defaultMessage="Индикатор загрузки" />
-          <Draft />
-        </Item>
-        <Item $isActive={matchPath('/docs/badge/*', pathname) !== null} to="/docs/badge">
-          <FormattedMessage defaultMessage="Бейдж" />
           <Draft />
         </Item>
       </ItemsList>
