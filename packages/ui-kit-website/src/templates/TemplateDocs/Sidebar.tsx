@@ -74,6 +74,15 @@ const Sidebar: React.ForwardRefRenderFunction<
         <StyledLogo />
       </LogoBlock>
       <ItemsList>
+        <Item $isActive={matchPath('/docs/theming/*', pathname) !== null} to="/docs/theming">
+          <FormattedMessage defaultMessage="Темы оформления" />
+        </Item>
+        <Item $isActive={matchPath('/docs/color', pathname) !== null} to="/docs/color">
+          <FormattedMessage defaultMessage="Цвета" />
+        </Item>
+        <Item $isActive={matchPath('/docs/surface/*', pathname) !== null} to="/docs/surface">
+          <FormattedMessage defaultMessage="Поверхность" />
+        </Item>
         <Item $isActive={matchPath('/docs/button/*', pathname) !== null} to="/docs/button">
           <FormattedMessage defaultMessage="Кнопка" />
         </Item>
@@ -83,18 +92,33 @@ const Sidebar: React.ForwardRefRenderFunction<
         <Item $isActive={matchPath('/docs/text-area/*', pathname) !== null} to="/docs/text-area">
           <FormattedMessage defaultMessage="Текстовое поле textarea" />
         </Item>
+        <Item $isActive={matchPath('/docs/calendar/*', pathname) !== null} to="/docs/calendar">
+          <FormattedMessage defaultMessage="Календарь" />
+        </Item>
+        <Item
+          $isActive={matchPath('/docs/date-picker/*', pathname) !== null}
+          to="/docs/date-picker"
+        >
+          <FormattedMessage defaultMessage="Date Picker" />
+        </Item>
+        <Item
+          $isActive={matchPath('/docs/highlighted/*', pathname) !== null}
+          to="/docs/highlighted"
+        >
+          <FormattedMessage defaultMessage="Подсветка подстроки" />
+        </Item>
+        <Item $isActive={matchPath('/docs/popper/*', pathname) !== null} to="/docs/popper">
+          <FormattedMessage defaultMessage="Popper" />
+        </Item>
+        <Item
+          $isActive={matchPath('/docs/click-outside/*', pathname) !== null}
+          to="/docs/click-outside"
+        >
+          <FormattedMessage defaultMessage="Click outside" />
+        </Item>
         <Item $isActive={matchPath('/docs/table/*', pathname) !== null} to="/docs/table">
           <FormattedMessage defaultMessage="Таблица" />
           <Draft />
-        </Item>
-        <Item $isActive={matchPath('/docs/theming/*', pathname) !== null} to="/docs/theming">
-          <FormattedMessage defaultMessage="Темы оформления" />
-        </Item>
-        <Item $isActive={matchPath('/docs/color', pathname) !== null} to="/docs/color">
-          <FormattedMessage defaultMessage="Цвета" />
-        </Item>
-        <Item $isActive={matchPath('/docs/surface/*', pathname) !== null} to="/docs/surface">
-          <FormattedMessage defaultMessage="Поверхность" />
         </Item>
         <Item
           $isActive={matchPath('/docs/masked-field/*', pathname) !== null}
@@ -138,22 +162,6 @@ const Sidebar: React.ForwardRefRenderFunction<
         <Item $isActive={matchPath('/docs/modal/*', pathname) !== null} to="/docs/modal">
           <FormattedMessage defaultMessage="Модальные окна" /> <Draft />
         </Item>
-        <Item $isActive={matchPath('/docs/calendar/*', pathname) !== null} to="/docs/calendar">
-          <FormattedMessage defaultMessage="Календарь" />
-        </Item>
-        <Item
-          $isActive={matchPath('/docs/date-picker/*', pathname) !== null}
-          to="/docs/date-picker"
-        >
-          <FormattedMessage defaultMessage="Date Picker" />
-          <Draft />
-        </Item>
-        <Item
-          $isActive={matchPath('/docs/highlighted/*', pathname) !== null}
-          to="/docs/highlighted"
-        >
-          <FormattedMessage defaultMessage="Подсветка подстроки" />
-        </Item>
         <Item
           $isActive={matchPath('/docs/loading-indicator/*', pathname) !== null}
           to="/docs/loading-indicator"
@@ -164,15 +172,6 @@ const Sidebar: React.ForwardRefRenderFunction<
         <Item $isActive={matchPath('/docs/badge/*', pathname) !== null} to="/docs/badge">
           <FormattedMessage defaultMessage="Бейдж" />
           <Draft />
-        </Item>
-        <Item $isActive={matchPath('/docs/popper/*', pathname) !== null} to="/docs/popper">
-          <FormattedMessage defaultMessage="Popper" />
-        </Item>
-        <Item
-          $isActive={matchPath('/docs/click-outside/*', pathname) !== null}
-          to="/docs/click-outside"
-        >
-          <FormattedMessage defaultMessage="Click outside" />
         </Item>
       </ItemsList>
     </Container>
