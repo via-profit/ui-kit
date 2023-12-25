@@ -12,12 +12,16 @@ export type AvatarProps = AvatarStandardProps & {
    * **Default**: `circular`
    */
   readonly variant?: 'circular' | 'rounded' | 'square';
+
+  /**
+   * Avatar size variant\
+   * \
+   * **Default**: `2.5em`
+   */
+  readonly size?: string;
 };
 
-//TODO add online badge to avatar
 //TODO add documentation
-//TODO add size customization
-//TODO add alt attribute
 
 const Avatar: React.ForwardRefRenderFunction<HTMLSpanElement, AvatarProps> = (props, ref) => (
   <AvatarStandard {...props} ref={ref} />

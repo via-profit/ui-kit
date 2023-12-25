@@ -4,6 +4,7 @@ import { useTheme, css } from '@emotion/react';
 
 import Color from '../Color';
 import AvatarBase, { AvatarBaseProps } from './AvatarBase';
+import AvatarOnlineBadge from './AvatarOnlineBadge';
 
 export type AvatarStandardProps = AvatarBaseProps;
 
@@ -13,10 +14,13 @@ type StyledProps = {
   readonly $clickable: boolean;
 };
 
+const Container = styled.span`
+  position: relative;
+`;
+
 const StyledStandardAvatar = styled(AvatarBase)<StyledProps>`
   color: ${({ $color }) => $color.toString()};
   background-color: ${({ $background }) => $background.toString()};
-  border-radius: 100%;
   ${({ $background }) => {
     switch (true) {
       case $background.luminance() > 0.49:
@@ -65,7 +69,7 @@ const AvatarStandard: React.ForwardRefRenderFunction<HTMLSpanElement, AvatarStan
   props,
   ref,
 ) => {
-  const { children, color, onClick, ...restProps } = props;
+  const { children, color, onClick, isOnline, ...restProps } = props;
   const theme = useTheme();
   const clickable = React.useMemo(() => typeof onClick === 'function', [onClick]);
   const { $background, $color } = React.useMemo(() => {
@@ -115,19 +119,22 @@ const AvatarStandard: React.ForwardRefRenderFunction<HTMLSpanElement, AvatarStan
   }, [color, theme.color]);
 
   return (
-    <StyledStandardAvatar
-      variant="circular"
-      $clickable={clickable}
-      $color={$color}
-      $background={$background}
-      color={color}
-      onClick={onClick}
-      {...restProps}
-      tabIndex={clickable ? 0 : -1}
-      ref={ref}
-    >
-      {children}
-    </StyledStandardAvatar>
+    <Container>
+      <StyledStandardAvatar
+        variant="circular"
+        $clickable={clickable}
+        $color={$color}
+        $background={$background}
+        color={color}
+        onClick={onClick}
+        {...restProps}
+        tabIndex={clickable ? 0 : -1}
+        ref={ref}
+      >
+        {children}
+      </StyledStandardAvatar>
+      {isOnline && <AvatarOnlineBadge />}
+    </Container>
   );
 };
 

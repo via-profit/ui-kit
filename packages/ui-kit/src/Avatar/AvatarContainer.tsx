@@ -6,10 +6,17 @@ export type AvatarContainerProps = React.HTMLAttributes<HTMLSpanElement> & {
    * You can pass the primary, default, secondary name of the colors or your specified color value
    */
   readonly color?: 'default' | 'primary' | 'secondary' | string;
+  /**
+   * Avatar size variant\
+   * \
+   * **Default**: `2.5em`
+   */
+  readonly size?: string;
 };
 
 type StyledProps = {
   readonly color?: AvatarContainerProps['color'];
+  readonly size?: string;
 };
 
 const StyledAvatar = styled.span<StyledProps>`
@@ -21,8 +28,8 @@ const StyledAvatar = styled.span<StyledProps>`
   transition: all 180ms ease-out 0s;
   background: none;
   position: relative;
-  width: 2.5em;
-  height: 2.5em;
+  width: ${({ size }) => size || '2.5em'};
+  height: ${({ size }) => size || '2.5em'};
   display: inline-flex;
   overflow: hidden;
   align-items: center;

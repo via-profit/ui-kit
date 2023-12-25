@@ -10,9 +10,11 @@ const TextWrapper = styled.span`
   align-items: center;
   justify-content: center;
   left: 50%;
-  transform: translateX(-50%);
+  transform: translate(-50%, -50%);
   position: relative;
   user-select: none;
+  position: absolute;
+  top: 50%;
 `;
 
 const AvatarTextWrapper: React.ForwardRefRenderFunction<HTMLSpanElement, AvatarTextWrapperProps> = (

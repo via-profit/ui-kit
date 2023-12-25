@@ -3,20 +3,25 @@ import React from 'react';
 import IconWrapper, { AvatarIconWrapperProps } from './AvatarIconWrapper';
 import TextWrapper, { AvatarTextWrapperProps } from './AvatarTextWrapper';
 import Container, { AvatarContainerProps } from './AvatarContainer';
+import Picture, { AvatarPictureProps } from './AvatarPicture';
 
 type AvatarNativeProps = React.HTMLAttributes<HTMLSpanElement>;
 
 export interface AvatarBaseProps extends Omit<AvatarNativeProps, 'color'> {
   /**
-   * Icon or another JSX element placed before Avatar label\
+   * image object of Avatar component
    * Example:
    * ```tsx
-   * <Avatar startIcon={<MyIconElement />}>
+   * <Avatar src={[{
+   *  srcSet: 'https://google.com/images/img.png',
+   *  type: 'image/png',
+   *  isDefault: true,
+   * }]}>
    *   Label
    * </Avatar>
    * ```
    */
-  readonly src?: JSX.Element | string;
+  readonly src?: AvatarPictureProps['src'];
 
   /**
    * Avatar style variant\
@@ -27,6 +32,20 @@ export interface AvatarBaseProps extends Omit<AvatarNativeProps, 'color'> {
   readonly variant?: 'circular' | 'rounded' | 'square';
 
   /**
+   * Avatar size variant\
+   * \
+   * **Default**: `2.5em`
+   */
+  readonly size?: string;
+
+  /**
+   * Show avatar online badge\
+   * \
+   * **Default**: `undefined`
+   */
+  readonly isOnline?: boolean;
+
+  /**
    * You can pass the primary, default, secondary name of the colors or your specified color value
    */
   readonly color?: AvatarContainerProps['color'];
@@ -35,6 +54,11 @@ export interface AvatarBaseProps extends Omit<AvatarNativeProps, 'color'> {
    * Overridable components map
    */
   readonly overrides?: AvatarBaseOverrides;
+
+  /**
+   * HTML image alt attribute
+   */
+  readonly alt?: string;
 }
 
 export interface AvatarBaseOverrides {
@@ -57,18 +81,25 @@ export interface AvatarBaseOverrides {
   readonly TextWrapper?: React.ForwardRefExoticComponent<
     AvatarTextWrapperProps & React.RefAttributes<HTMLSpanElement>
   >;
+  /**
+   * picture tag
+   */
+  readonly Picture?: React.ForwardRefExoticComponent<
+    AvatarPictureProps & React.RefAttributes<HTMLPictureElement>
+  >;
 }
 
 const AvatarBase: React.ForwardRefRenderFunction<HTMLSpanElement, AvatarBaseProps> = (
   props,
   ref,
 ) => {
-  const { children, src, color, variant, overrides, ...nativeProps } = props;
+  const { children, src, color, alt, variant, overrides, isOnline, ...nativeProps } = props;
   const overridesMap = React.useMemo(
     () => ({
       TextWrapper,
       IconWrapper,
       Container,
+      Picture,
       ...overrides,
     }),
     [overrides],
@@ -76,15 +107,15 @@ const AvatarBase: React.ForwardRefRenderFunction<HTMLSpanElement, AvatarBaseProp
 
   return (
     <overridesMap.Container {...nativeProps} color={color} ref={ref}>
-      {typeof src !== 'undefined' && src !== null && typeof src !== 'string' && (
-        <overridesMap.IconWrapper>{src}</overridesMap.IconWrapper>
+      {typeof src !== 'undefined' && src !== null && src?.length !== 0 && (
+        <overridesMap.IconWrapper>
+          <overridesMap.Picture src={src} />
+        </overridesMap.IconWrapper>
       )}
 
-      {typeof src !== 'undefined' && src !== null && typeof src === 'string' && (
-        <overridesMap.IconWrapper>{<img src={src} />}</overridesMap.IconWrapper>
+      {(!src || src === null || src?.length === 0) && (
+        <overridesMap.TextWrapper>{children}</overridesMap.TextWrapper>
       )}
-
-      {(!src || src === null) && <overridesMap.TextWrapper>{children}</overridesMap.TextWrapper>}
     </overridesMap.Container>
   );
 };

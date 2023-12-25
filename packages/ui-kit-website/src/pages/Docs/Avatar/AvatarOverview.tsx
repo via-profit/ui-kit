@@ -4,6 +4,7 @@ import RenderMarkdown from '~/components/RenderMarkdown';
 import Surface from '@via-profit/ui-kit/src/Surface';
 import content from '@via-profit/ui-kit/docs/avatar/README.md';
 import ExampleAvatarOverview from '~/examples/avatar/ExampleAvatarOverview';
+import ExampleAvatarOnline from '~/examples/avatar/ExampleAvatarOnline';
 import ExampleAvatarVariants from '~/examples/avatar/ExampleAvatarVariants';
 import ExampleAvatarColors from '~/examples/avatar/ExampleAvatarColors';
 import ExampleAvatarIcons from '~/examples/avatar/ExampleAvatarIcons';
@@ -14,6 +15,7 @@ const AvatarOverview: React.FC = () => (
     <RenderMarkdown
       overrides={{
         ExampleAvatarOverview,
+        ExampleAvatarOnline,
         ExampleAvatarVariants,
         ExampleAvatarColors,
         ExampleAvatarIcons,

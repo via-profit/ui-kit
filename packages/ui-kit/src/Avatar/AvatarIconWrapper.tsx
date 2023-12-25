@@ -7,12 +7,8 @@ const Wrapper = styled.span`
   display: flex;
   align-items: center;
   justify-content: center;
-  & img {
-    background-position: center;
-    background-size: cover;
-    width: 100%;
-    height: 100%;
-  }
+  width: 100%;
+  height: 100%;
 `;
 
 const AvatarIconWrapper: React.ForwardRefRenderFunction<HTMLSpanElement, AvatarIconWrapperProps> = (

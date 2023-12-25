@@ -16,18 +16,18 @@ const ExampleAvatarColors: React.FC = () => (
   <>
     <AvatarGroup>
       <Avatar variant="circular" color="primary">
-        Standard primary
+        P
       </Avatar>
       <Avatar variant="rounded" color="secondary">
-        Outlined secondary
+        Se
       </Avatar>
     </AvatarGroup>
     <AvatarGroup>
       <Avatar variant="square" color="lightpink">
-        Standard lightpink
+        Pi
       </Avatar>
       <Avatar variant="rounded" color="#529d29">
-        Outlined #529d29
+        Cu
       </Avatar>
     </AvatarGroup>
   </>

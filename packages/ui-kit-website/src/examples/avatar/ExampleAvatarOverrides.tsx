@@ -6,17 +6,17 @@ import AvatarContainer from '@via-profit/ui-kit/src/Avatar/AvatarContainer';
 import AvatarTextWrapper from '@via-profit/ui-kit/src/Avatar/AvatarTextWrapper';
 
 const StyledContainer = styled(AvatarContainer)`
-  background-color: red !important;
+  background-color: purple !important;
 `;
 
 const StyledTextWrapper = styled(AvatarTextWrapper)`
   color: #fff !important;
 `;
-
 const ExampleAvatarOverrides: React.FC = () => (
   <>
     <Avatar
       variant="circular"
+      isOnline
       overrides={{
         Container: React.forwardRef(function Override(props, ref) {
           return <StyledContainer {...props} ref={ref} />;
@@ -26,7 +26,7 @@ const ExampleAvatarOverrides: React.FC = () => (
         }),
       }}
     >
-      Standard
+      S
     </Avatar>
   </>
 );

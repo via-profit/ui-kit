@@ -15,8 +15,9 @@ const AvatarGroup = styled.div`
 const ExampleAvatarVariants: React.FC = () => (
   <>
     <AvatarGroup>
-      <Avatar variant="circular">Circular</Avatar>
-      <Avatar variant="rounded">Rounded</Avatar>
+      <Avatar variant="circular">C</Avatar>
+      <Avatar variant="rounded">R</Avatar>
+      <Avatar variant="square">S</Avatar>
     </AvatarGroup>
   </>
 );

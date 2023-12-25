@@ -16,13 +16,30 @@ const AvatarGroup = styled.div`
 
 const ExampleAvatarOverview: React.FC = () => (
   <AvatarGroup>
-    <Avatar variant="circular" src="https://i.pravatar.cc/300">
+    <Avatar
+      variant="circular"
+      src={[{ srcSet: 'https://i.pravatar.cc/300', type: 'image/jpeg', isDefault: true }]}
+      isOnline
+    >
       S
     </Avatar>
-    <Avatar variant="rounded" src={<img src="https://i.pravatar.cc/300" />}>
+    <Avatar
+      variant="rounded"
+      src={[
+        {
+          srcSet: 'https://i.pravatar.cc/300',
+          type: 'image/jpeg',
+          isDefault: true,
+        },
+        {
+          srcSet: 'https://i.pravatar.cc/300',
+          type: 'image/webp',
+        },
+      ]}
+    >
       H
     </Avatar>
-    <Avatar variant="square" src={<img src="https://i.pravatar.cc/300" />}>
+    <Avatar variant="square" src={[{ srcSet: 'https://i.pravatar.cc/300', type: 'image/jpeg' }]}>
       H
     </Avatar>
 
