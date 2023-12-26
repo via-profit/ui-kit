@@ -15,6 +15,7 @@
 - [Popper](./popper/README.md)
 - [Клик вне области](./click-outside/README.md)
 - [Флаги стран](./country-flags/README.md)
+- [Аватар](./avatar/README.md)
 - [Маскированное поле 🤏🏼](./masked-field/README.md)
 - [Поле для ввода телефона 🤏🏼](./phone-field/README.md)
 - [Типографика 🤏🏼](./typography/README.md)
