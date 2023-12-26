@@ -46,11 +46,12 @@ const Item = styled(Link, { shouldForwardProp: p => p.match(/^\$/) === null })<I
   }
 `;
 
-const LogoBlock = styled.div`
+const LogoBlock = styled(Link)`
   height: 5rem;
   display: flex;
   justify-content: center;
   align-items: center;
+  color: ${({ theme }) => theme.color.mainSidebarContrast.toString()};
 `;
 
 const StyledLogo = styled(Logo)`
@@ -109,7 +110,7 @@ const Sidebar: React.ForwardRefRenderFunction<
 
   return (
     <Container {...props} ref={ref}>
-      <LogoBlock>
+      <LogoBlock to="/docs">
         <StyledLogo />
       </LogoBlock>
       <ItemsList>
