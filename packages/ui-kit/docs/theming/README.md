@@ -1,3 +1,4 @@
+
 # Поддержка тем оформления
 
 ## Содержание
@@ -10,6 +11,9 @@
 - [Использование цветов](#использование-цветов)
 - [Использование размера шрифта](#использование-размера-шрифта)
 - [Несколько тем одновременно](#несколько-тем-одновременно)
+
+
+
 
 ## Описание
 
@@ -56,6 +60,8 @@ export default Example;
 <ExampleThemeProvider>
 &nbsp;
 &nbsp;
+
+
 
 ## Создание темы оформления
 
@@ -105,6 +111,9 @@ const myTheme = createTheme({
   - **warningContrast**: `String` Цвет контраста для предупреждения _По умолчанию `#ffffff`_
   - **success**: `String` Цвет успешного выполнения чего-либо _По умолчанию `#0ca400`_
   - **successContrast**: `String` Цвет контраста для цвета успешного выполнения чего-либо _По умолчанию `#ffffff`_
+
+
+
 
 ## Подключение темы оформления
 
@@ -162,7 +171,7 @@ import { UIThemeOverrideColor as Colors } from '@via-profit/ui-kit';
 declare module '@via-profit/ui-kit' {
   export interface UIThemeOverrideColor extends Colors {
     readonly mainSidebar: string; // <-- Your color name
-    readonly mainSidebarContrast: string;  // <-- Your color name
+    readonly mainSidebarContrast: string; // <-- Your color name
   }
 }
 ```
@@ -182,6 +191,9 @@ const myTheme = createTheme({
   },
 });
 ```
+
+
+
 
 ## Использование темы оформления
 
@@ -216,6 +228,9 @@ const Example: React.FC = () => {
 
 export default Example;
 ```
+
+
+
 
 ## Использование цветов
 
@@ -264,6 +279,8 @@ const MyComponent = styled.div`
 `;
 ```
 
+
+
 ## Использование размера шрифта
 
 Предполагается, что размер шрифта будет использоваться как настраиваемая величина, например, для того чтобы пользователь мог выбрать размер шрифта вашего приложения. Для простоты мы именуем 4 различных варианта как: `small` `normal` `medium` и `large`. Для каждого названия в теме оформления отводится соответствующий параметр с его реальным значением в пикселях.
@@ -310,6 +327,9 @@ export default GlobalStyles;
 ```
 
 _Примечание: Разумеется, вы в праве использовать свой способ регулирования размера шрифта в приложении_
+
+
+
 
 ## Несколько тем одновременно
 
@@ -361,3 +381,4 @@ export default Example;
 ```
 
 <ExampleMultiThemming>
+

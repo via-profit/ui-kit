@@ -167,7 +167,11 @@ const MarkdownRender: React.FC<Props> = props => {
           thead: TableHeader,
           tbody: TableBody,
           tr: TableRow,
-          td: TableCell,
+          td: ({ children, ...restProps }) => (
+            <TableCell {...restProps}>
+              {Array.isArray(children) && children.length === 0 ? `\u00A0` : children}
+            </TableCell>
+          ),
           th: TableHeaderCell,
           caption: TableCaption,
           pre: ({ children }) => <>{children}</>,

@@ -100,42 +100,63 @@ const TableOfContent: React.FC<TableOfContentProps> = props => {
       .filter((el): el is Elem => el !== null);
   }, [content]);
 
-  const scrollEventTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
+  const lastScrollTopRef = React.useRef(window.scrollY || document.documentElement.scrollTop);
+  const scrollDirectionRef = React.useRef<'up' | 'down'>('down');
 
   React.useEffect(() => {
     const scrollEvent = () => {
-      if (scrollEventTimeoutRef.current) {
-        clearTimeout(scrollEventTimeoutRef.current);
-      }
+      const scrollTopPosition = window.scrollY || document.documentElement.scrollTop;
 
-      scrollEventTimeoutRef.current = setTimeout(() => {
-        const anchors = document.querySelectorAll(
-          'h1 a[id], h2 a[id], h3 a[id], h4 a[id], h5 a[id], h6 a[id]',
-        );
-        anchors.forEach(anchor => {
-          const observer = new window.IntersectionObserver(
-            ([entry]) => {
-              if (entry.isIntersecting) {
-                const anchorID = anchor.getAttribute('id');
-                setActiveAnchor(anchorID);
+      scrollDirectionRef.current = scrollTopPosition > lastScrollTopRef.current ? 'down' : 'up';
+      lastScrollTopRef.current = scrollTopPosition <= 0 ? 0 : scrollTopPosition;
 
-                return;
-              }
-            },
-            {
-              root: null,
-              threshold: 0.1, // set offset 0.1 means trigger if atleast 10% of element in viewport
-            },
-          );
+      const headings = document.querySelectorAll('h1, h2, h3, h4, h5, h6');
+      headings.forEach(heading => {
+        if (heading instanceof HTMLElement) {
+          const anchor = heading.querySelector('a[id]');
+          const section =
+            heading.parentNode &&
+            heading.parentNode instanceof HTMLElement &&
+            heading.parentNode.tagName === 'SECTION'
+              ? heading.parentNode
+              : null;
+          const anchorID = anchor instanceof HTMLElement ? anchor.getAttribute('id') : '';
+          const target = section ?? anchor;
 
-          observer.observe(anchor);
-        });
-      }, 100);
+          if (target instanceof HTMLElement) {
+            const observer = new window.IntersectionObserver(
+              ([entry]) => {
+                if (entry.isIntersecting) {
+                  if (
+                    scrollDirectionRef.current === 'down' &&
+                    entry.boundingClientRect.top > 0 &&
+                    entry.boundingClientRect.top < window.innerHeight - window.innerHeight / 4
+                  ) {
+                    setActiveAnchor(anchorID);
+                  }
+
+                  if (
+                    scrollDirectionRef.current === 'up' &&
+                    entry.boundingClientRect.top > 100 &&
+                    entry.boundingClientRect.top < window.innerHeight / 4
+                  ) {
+                    setActiveAnchor(anchorID);
+                  }
+                }
+              },
+              {
+                root: null,
+                threshold: 0.1,
+              },
+            );
+
+            observer.observe(target);
+          }
+        }
+      });
     };
 
     window.addEventListener('scroll', scrollEvent);
-
-    scrollEvent();
 
     return () => {
       window.removeEventListener('scroll', scrollEvent);
