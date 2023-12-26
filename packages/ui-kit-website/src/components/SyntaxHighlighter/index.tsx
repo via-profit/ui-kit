@@ -24,7 +24,14 @@ const PreSSR = styled.pre<{ $styles: Record<string, any> }>`
   ${props => props.$styles};
 `;
 
+const Wrapper = styled.div`
+  display: grid;
+  overflow-x: auto;
+`;
+
 const Highlighter = styled(ReactSyntaxHighlighter)`
+  white-space: pre-wrap !important;
+  word-break: break-word !important;
   ::-webkit-scrollbar {
     height: 0.5em;
     width: 0.5em;
@@ -72,9 +79,11 @@ const SyntaxHighlighter: React.FC<SyntaxHighlighterProps> = props => {
   }
 
   return (
-    <Highlighter language={language} style={styles as any}>
-      {codeStr}
-    </Highlighter>
+    <Wrapper>
+      <Highlighter language={language} style={styles as any}>
+        {codeStr}
+      </Highlighter>
+    </Wrapper>
   );
 };
 

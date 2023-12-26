@@ -1,6 +1,7 @@
 import React from 'react';
 import { useLocation } from 'react-router-dom';
 
+import TableOfContent from '~/components/TableOfContent';
 import Surface from '@via-profit/ui-kit/src/Surface';
 import RenderMarkdown from '~/components/RenderMarkdown';
 import content from '@via-profit/ui-kit/docs/theming/README.md';
@@ -16,11 +17,14 @@ const ThemingOverview: React.FC = () => {
   }, [pathname]);
 
   return (
-    <Surface>
-      <RenderMarkdown overrides={{ ExampleThemeProvider, ExampleMultiThemming }}>
-        {modifiedContent}
-      </RenderMarkdown>
-    </Surface>
+    <>
+      <Surface>
+        <RenderMarkdown overrides={{ ExampleThemeProvider, ExampleMultiThemming }}>
+          {modifiedContent}
+        </RenderMarkdown>
+      </Surface>
+      <TableOfContent content={content} />
+    </>
   );
 };
 

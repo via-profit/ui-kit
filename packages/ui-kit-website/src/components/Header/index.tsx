@@ -15,7 +15,6 @@ const Container = styled.header`
   box-shadow: ${({ theme }) => theme.color.surface.darken(100).alpha(0.2).toString()} 0 0.3em 0.6em;
   padding: 0 2em;
   height: 4.8rem;
-
   align-items: center;
   justify-content: space-between;
 `;

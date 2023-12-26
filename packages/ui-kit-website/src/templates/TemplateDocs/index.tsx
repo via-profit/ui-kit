@@ -8,21 +8,8 @@ import Footer from '~/components/Footer';
 import Sidebar from './Sidebar';
 import GlobalStyles from './GlobalStyles';
 
-const Wrapper = styled.div`
-  flex: 1;
-  display: flex;
-  flex-flow: row nowrap;
-  position: relative;
-`;
-
-const Content = styled.div`
-  flex: 1;
-  margin: 1em;
-`;
-
 const StyledSidebar = styled(Sidebar)`
   top: 0;
-  width: 14rem;
   height: 100vh;
   display: flex;
   flex-direction: column;
@@ -30,8 +17,31 @@ const StyledSidebar = styled(Sidebar)`
 
 const Main = styled.div`
   flex: 1;
-  margin-left: 14rem;
   box-sizing: border-box;
+`;
+
+const Wrapper = styled.div`
+  --sidebar-width: 14rem;
+  flex: 1;
+  display: flex;
+  flex-flow: row nowrap;
+  position: relative;
+  ${StyledSidebar} {
+    width: var(--sidebar-width);
+  }
+  ${Main} {
+    margin-left: var(--sidebar-width);
+  }
+
+  @media all and (max-width: 1200px) {
+    --sidebar-width: 12em;
+  }
+`;
+
+const Content = styled.div`
+  flex: 1;
+  margin: 1em;
+  display: flex;
 `;
 
 const TemplateDocs: React.FC = () => (

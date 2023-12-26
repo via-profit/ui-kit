@@ -170,7 +170,7 @@ const MarkdownRender: React.FC<Props> = props => {
           td: TableCell,
           th: TableHeaderCell,
           caption: TableCaption,
-          pre: ({ children, ...otherProps }) => <div {...otherProps}>{children}</div>,
+          pre: ({ children }) => <>{children}</>,
           a: ({ href, title, children }) => {
             if (String(href || '').match(/^(http|https):\/\//)) {
               return (

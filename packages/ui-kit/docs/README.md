@@ -2,24 +2,29 @@
 
 ## Компоненты
 
+
+- [Темы оформления](./theming/README.md)
+- [Цвета](./color/README.md)
+- [Поверхность](./surface/README.md)
 - [Кнопка](./button/README.md)
 - [Текстовое поле](./text-field/README.md)
 - [Текстовое поле textarea](./text-area/README.md)
-- [Поверхность](./surface/README.md)
-- [Темы оформления](./theming/README.md)
-- [Флаги стран](./country-flags/README.md)
-- [Маскированное поле](./masked-field/README.md)
-- [Меню](./menu/README.md)
-- [Поле для ввода телефона](./phone-field/README.md)
-- [Таблица](./table/README.md)
-- [Типографика](./typography/README.md)
-- [Модальные окна](./modal/README.md)
 - [Календарь](./calendar/README.md)
+- [Дейтпикер](./date-picker/README.md)
 - [Подсветка подстроки](./highlighted/README.md)
-- [Бейдж](./badge/README.md)
 - [Popper](./popper/README.md)
-- [Индикатор загрузки](./loading-indicator/README.md)
-- [Click outside](./click-outside/README.md)
+- [Клик вне области](./click-outside/README.md)
+- [Флаги стран](./country-flags/README.md)
+- [Маскированное поле 🤏🏼](./masked-field/README.md)
+- [Поле для ввода телефона 🤏🏼](./phone-field/README.md)
+- [Типографика 🤏🏼](./typography/README.md)
+- [Меню 🤏🏼](./menu/README.md)
+- [Автокомплит 🤏🏼](./autocomplete/README.md)
+- [Селектбокс 🤏🏼](./selectbox/README.md)
+- [Модальные окна 🤏🏼](./modal/README.md)
+- [Индикатор загрузки 🤏🏼](./loading-indicator/README.md)
+- [Бейдж 🤏🏼](./badge/README.md)
+- [Таблица 🤏🏼](./table/README.md)
 
 ## Как использовать
 

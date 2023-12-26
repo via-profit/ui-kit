@@ -1,5 +1,6 @@
 import React from 'react';
 
+import TableOfContent from '~/components/TableOfContent';
 import Surface from '@via-profit/ui-kit/src/Surface';
 import RenderMarkdown from '~/components/RenderMarkdown';
 import ExampleButtonBasic from '~/examples/button/ExampleButtonBasic';
@@ -10,19 +11,22 @@ import ExampleButtonIcons from '~/examples/button/ExampleButtonIcons';
 import content from '@via-profit/ui-kit/docs/button/README.md';
 
 const ButtonOverview: React.FC = () => (
-  <Surface>
-    <RenderMarkdown
-      overrides={{
-        ExampleButtonBasic,
-        ExampleButtonVariants,
-        ExampleButtonColors,
-        ExampleButtonOverrides,
-        ExampleButtonIcons,
-      }}
-    >
-      {content}
-    </RenderMarkdown>
-  </Surface>
+  <>
+    <Surface>
+      <RenderMarkdown
+        overrides={{
+          ExampleButtonBasic,
+          ExampleButtonVariants,
+          ExampleButtonColors,
+          ExampleButtonOverrides,
+          ExampleButtonIcons,
+        }}
+      >
+        {content}
+      </RenderMarkdown>
+    </Surface>
+    <TableOfContent content={content} />
+  </>
 );
 
 export default ButtonOverview;

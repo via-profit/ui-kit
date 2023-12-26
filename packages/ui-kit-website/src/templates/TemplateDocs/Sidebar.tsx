@@ -2,8 +2,8 @@ import React from 'react';
 import styled from '@emotion/styled';
 import { css } from '@emotion/react';
 import { Link, matchPath, useLocation } from 'react-router-dom';
-import { FormattedMessage } from 'react-intl';
 
+import content from '@via-profit/ui-kit/docs/README.md';
 import Logo from '~/components/Logo';
 
 const Container = styled.div`
@@ -30,14 +30,20 @@ const Item = styled(Link, { shouldForwardProp: p => p.match(/^\$/) === null })<I
   color: currentColor;
   text-decoration: none;
   padding: 1em 1.2em;
+  background-color: ${({ theme }) => theme.color.mainSidebar.toString()};
   &:hover {
-    background-color: ${({ theme }) => theme.color.backgroundSecondary.lighten(15).toString()};
+    background-color: ${({ theme }) => theme.color.mainSidebar.lighten(15).toString()};
   }
   ${({ $isActive, theme }) =>
     $isActive &&
     css`
       color: ${theme.color.accentPrimary.toString()};
+      background-color: ${theme.color.accentPrimary.alpha(0.1).toString()};
     `};
+
+  @media all and (max-width: 1200px) {
+    font-size: 0.8em;
+  }
 `;
 
 const LogoBlock = styled.div`
@@ -62,11 +68,44 @@ const StyledDraft = styled.span`
 
 const Draft: React.FC = () => <StyledDraft>Draft</StyledDraft>;
 
+type Elem = {
+  readonly label: string;
+  readonly link: string;
+  readonly isDraft: boolean;
+};
+
 const Sidebar: React.ForwardRefRenderFunction<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
 > = (props, ref) => {
   const { pathname } = useLocation();
+
+  const listItems: readonly Elem[] = React.useMemo(() => {
+    const rawContent = content.split('## ').find(str => str.match(/^компоненты/i));
+    if (!rawContent) {
+      return [];
+    }
+
+    const list = rawContent.match(/-\s\[.*\]\(.*\)/gi);
+    if (!list) {
+      return [];
+    }
+
+    return list
+      .map(str => {
+        const matches = str.match(/^-\s\[(.*)\]\((.*)\)/i);
+        if (matches && matches.length > 2) {
+          return {
+            label: matches[1].replace('🤏🏼', '').trim(),
+            link: matches[2].replace(/\/README\.md$/, ''),
+            isDraft: matches[1].match('🤏🏼') !== null,
+          };
+        }
+
+        return null;
+      })
+      .filter((el): el is Elem => el !== null);
+  }, []);
 
   return (
     <Container {...props} ref={ref}>
@@ -74,103 +113,15 @@ const Sidebar: React.ForwardRefRenderFunction<
         <StyledLogo />
       </LogoBlock>
       <ItemsList>
-        <Item $isActive={matchPath('/docs/theming/*', pathname) !== null} to="/docs/theming">
-          <FormattedMessage defaultMessage="Темы оформления" />
-        </Item>
-        <Item $isActive={matchPath('/docs/color', pathname) !== null} to="/docs/color">
-          <FormattedMessage defaultMessage="Цвета" />
-        </Item>
-        <Item $isActive={matchPath('/docs/surface/*', pathname) !== null} to="/docs/surface">
-          <FormattedMessage defaultMessage="Поверхность" />
-        </Item>
-        <Item $isActive={matchPath('/docs/button/*', pathname) !== null} to="/docs/button">
-          <FormattedMessage defaultMessage="Кнопка" />
-        </Item>
-        <Item $isActive={matchPath('/docs/text-field/*', pathname) !== null} to="/docs/text-field">
-          <FormattedMessage defaultMessage="Текстовое поле" />
-        </Item>
-        <Item $isActive={matchPath('/docs/text-area/*', pathname) !== null} to="/docs/text-area">
-          <FormattedMessage defaultMessage="Текстовое поле textarea" />
-        </Item>
-        <Item $isActive={matchPath('/docs/calendar/*', pathname) !== null} to="/docs/calendar">
-          <FormattedMessage defaultMessage="Календарь" />
-        </Item>
-        <Item
-          $isActive={matchPath('/docs/date-picker/*', pathname) !== null}
-          to="/docs/date-picker"
-        >
-          <FormattedMessage defaultMessage="Date Picker" />
-        </Item>
-        <Item
-          $isActive={matchPath('/docs/highlighted/*', pathname) !== null}
-          to="/docs/highlighted"
-        >
-          <FormattedMessage defaultMessage="Подсветка подстроки" />
-        </Item>
-        <Item $isActive={matchPath('/docs/popper/*', pathname) !== null} to="/docs/popper">
-          <FormattedMessage defaultMessage="Popper" />
-        </Item>
-        <Item
-          $isActive={matchPath('/docs/click-outside/*', pathname) !== null}
-          to="/docs/click-outside"
-        >
-          <FormattedMessage defaultMessage="Click outside" />
-        </Item>
-        <Item $isActive={matchPath('/docs/badge/*', pathname) !== null} to="/docs/badge">
-          <FormattedMessage defaultMessage="Бейдж" />
-        </Item>
-        <Item
-          $isActive={matchPath('/docs/country-flags/*', pathname) !== null}
-          to="/docs/country-flags"
-        >
-          <FormattedMessage defaultMessage="Флаги стран" />
-        </Item>
-        <Item $isActive={matchPath('/docs/table/*', pathname) !== null} to="/docs/table">
-          <FormattedMessage defaultMessage="Таблица" />
-          <Draft />
-        </Item>
-        <Item
-          $isActive={matchPath('/docs/masked-field/*', pathname) !== null}
-          to="/docs/masked-field"
-        >
-          <FormattedMessage defaultMessage="Маскированное поле" />
-          <Draft />
-        </Item>
-        <Item $isActive={matchPath('/docs/typography/*', pathname) !== null} to="/docs/typography">
-          <FormattedMessage defaultMessage="Типографика" />
-          <Draft />
-        </Item>
-        <Item
-          $isActive={matchPath('/docs/phone-field/*', pathname) !== null}
-          to="/docs/phone-field"
-        >
-          <FormattedMessage defaultMessage="Поле ввода телефона" />
-          <Draft />
-        </Item>
-        <Item $isActive={matchPath('/docs/menu/*', pathname) !== null} to="/docs/menu">
-          <FormattedMessage defaultMessage="Меню" />
-          <Draft />
-        </Item>
-        <Item
-          $isActive={matchPath('/docs/autocomplete/*', pathname) !== null}
-          to="/docs/autocomplete"
-        >
-          <FormattedMessage defaultMessage="Автокомплит" />
-          <Draft />
-        </Item>
-        <Item $isActive={matchPath('/docs/selectbox/*', pathname) !== null} to="/docs/selectbox">
-          <FormattedMessage defaultMessage="Селектбокс" /> <Draft />
-        </Item>
-        <Item $isActive={matchPath('/docs/modal/*', pathname) !== null} to="/docs/modal">
-          <FormattedMessage defaultMessage="Модальные окна" /> <Draft />
-        </Item>
-        <Item
-          $isActive={matchPath('/docs/loading-indicator/*', pathname) !== null}
-          to="/docs/loading-indicator"
-        >
-          <FormattedMessage defaultMessage="Индикатор загрузки" />
-          <Draft />
-        </Item>
+        {listItems.map(({ link, label, isDraft }) => (
+          <Item
+            key={link}
+            $isActive={matchPath(`/docs${link.replace(/^\./, '')}/*`, pathname) !== null}
+            to={link}
+          >
+            {label} {isDraft && <Draft />}
+          </Item>
+        ))}
       </ItemsList>
     </Container>
   );

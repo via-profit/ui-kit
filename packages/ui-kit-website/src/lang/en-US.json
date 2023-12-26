@@ -1,27 +1,12 @@
 {
-  "+M2Tj9": {
-    "defaultMessage": "Селектбокс"
-  },
   "+glFq7": {
     "defaultMessage": "Сегодня"
-  },
-  "+mqMMV": {
-    "defaultMessage": "Цвета"
-  },
-  "2fINQ9": {
-    "defaultMessage": "Темы оформления"
   },
   "3NyjbW": {
     "defaultMessage": "Выбрана дата: {value}"
   },
   "44pMfw": {
     "defaultMessage": "Скрыть"
-  },
-  "4SjODy": {
-    "defaultMessage": "Флаги стран"
-  },
-  "7aec0X": {
-    "defaultMessage": "Кнопка"
   },
   "8xa/OX": {
     "defaultMessage": "Кликни вне этого элемента"
@@ -41,15 +26,6 @@
   "G0WBwd": {
     "defaultMessage": "Всего кликов: {counter}"
   },
-  "GfEP0g": {
-    "defaultMessage": "Поверхность"
-  },
-  "J4Mxi4": {
-    "defaultMessage": "Модальные окна"
-  },
-  "K9vWf3": {
-    "defaultMessage": "Подсветка подстроки"
-  },
   "L0LsrI": {
     "defaultMessage": "Какой-то контент"
   },
@@ -64,6 +40,54 @@
   },
   "RwqXf6": {
     "defaultMessage": "Показать"
+  },
+  "YHFvoS": {
+    "defaultMessage": "Открыть календарь"
+  },
+  "gwIXyk": {
+    "defaultMessage": "Ничего не выбрано"
+  },
+  "iNeTTO": {
+    "defaultMessage": "Содержание"
+  },
+  "l775qE": {
+    "defaultMessage": "Открыть Popper"
+  },
+  "n4Y9Sg": {
+    "defaultMessage": "Открыть диалог"
+  },
+  "wBODsZ": {
+    "defaultMessage": "Текущая дата в шаблоном {template} — {result}"
+  },
+  "whQBin": {
+    "defaultMessage": "Календарь"
+  },
+  "yeuMJs": {
+    "defaultMessage": "Строка 22.02.2003 распарсенная с шаблоном {template} — {result}"
+  },
+  "+M2Tj9": {
+    "defaultMessage": "Селектбокс"
+  },
+  "+mqMMV": {
+    "defaultMessage": "Цвета"
+  },
+  "2fINQ9": {
+    "defaultMessage": "Темы оформления"
+  },
+  "4SjODy": {
+    "defaultMessage": "Флаги стран"
+  },
+  "7aec0X": {
+    "defaultMessage": "Кнопка"
+  },
+  "GfEP0g": {
+    "defaultMessage": "Поверхность"
+  },
+  "J4Mxi4": {
+    "defaultMessage": "Модальные окна"
+  },
+  "K9vWf3": {
+    "defaultMessage": "Подсветка подстроки"
   },
   "T9uJ2Q": {
     "defaultMessage": "Бейдж"
@@ -80,9 +104,6 @@
   "Y2i5Fd": {
     "defaultMessage": "Popper"
   },
-  "YHFvoS": {
-    "defaultMessage": "Открыть календарь"
-  },
   "YaMZGV": {
     "defaultMessage": "Меню"
   },
@@ -92,35 +113,17 @@
   "bvxjPH": {
     "defaultMessage": "Типографика"
   },
-  "gwIXyk": {
-    "defaultMessage": "Ничего не выбрано"
-  },
   "i3OiMA": {
     "defaultMessage": "Индикатор загрузки"
   },
-  "l775qE": {
-    "defaultMessage": "Открыть Popper"
-  },
   "n48pl/": {
     "defaultMessage": "Маскированное поле"
-  },
-  "n4Y9Sg": {
-    "defaultMessage": "Открыть диалог"
   },
   "sfDpMH": {
     "defaultMessage": "Текстовое поле"
   },
   "tfwWYu": {
     "defaultMessage": "Click outside"
-  },
-  "wBODsZ": {
-    "defaultMessage": "Текущая дата в шаблоном {template} — {result}"
-  },
-  "whQBin": {
-    "defaultMessage": "Календарь"
-  },
-  "yeuMJs": {
-    "defaultMessage": "Строка 22.02.2003 распарсенная с шаблоном {template} — {result}"
   },
   "zuByI+": {
     "defaultMessage": "Date Picker"
