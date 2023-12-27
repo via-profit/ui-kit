@@ -1,6 +1,13 @@
 import React from 'react';
+import styled from '@emotion/styled';
 
 export type SelectboxContainerProps = React.HTMLAttributes<HTMLDivElement>;
+
+const StyledSelectboxContainer = styled.div`
+  display: inline-flex;
+  flex-flow: column;
+  vertical-align: top;
+`;
 
 const SelectboxContainer: React.ForwardRefRenderFunction<
   HTMLDivElement,
@@ -9,9 +16,9 @@ const SelectboxContainer: React.ForwardRefRenderFunction<
   const { children, ...nativeProps } = props;
 
   return (
-    <div {...nativeProps} ref={ref}>
+    <StyledSelectboxContainer {...nativeProps} ref={ref}>
       {children}
-    </div>
+    </StyledSelectboxContainer>
   );
 };
 

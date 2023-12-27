@@ -285,7 +285,7 @@ const Selectbox = React.forwardRef(
             )}
           </overridesMap.Label>
         )}
-        <overridesMap.ButtonWrapper fullWidth={fullWidth}>
+        <overridesMap.ButtonWrapper fullWidth={fullWidth} error={error}>
           <overridesMap.Button
             fullWidth={fullWidth}
             error={error}
