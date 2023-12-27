@@ -387,17 +387,25 @@ const MenuContainer = React.forwardRef(
         if (typeof onSelectItem === 'function') {
           // For multiple
           if (multiple) {
-            const selItems = new Set<Value<T, Multiple>>(
-              value !== null ? (value as Value<T, Multiple>[]) : [],
-            );
-
-            if (selectedIndexes.includes(index)) {
-              selItems.delete(item as Value<T, Multiple>);
-            } else {
-              selItems.add(item as Value<T, Multiple>);
+            const selectedMap = new Map<string, T>();
+            if (value !== null) {
+              (value as Value<T, Multiple>[]).forEach(v =>
+                selectedMap.set(JSON.stringify(v), v as T),
+              );
             }
 
-            onSelectItem(Array.from(selItems) as Multiple extends undefined ? T : readonly T[]);
+            if (selectedIndexes.includes(index)) {
+              selectedMap.delete(JSON.stringify(item));
+            }
+            if (!selectedIndexes.includes(index)) {
+              selectedMap.set(JSON.stringify(item), item as T);
+            }
+
+            onSelectItem(
+              Array.from(selectedMap, ([_key, v]) => v) as Multiple extends undefined
+                ? T
+                : readonly T[],
+            );
           } else {
             // For single
 
