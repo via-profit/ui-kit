@@ -14,10 +14,10 @@ type StyledProps = {
   readonly $clickable: boolean;
 };
 
-const Container = styled.span`
+const Container = styled.span<{ size?: string }>`
   position: relative;
-  width: 100%;
-  height: 100%;
+  width: ${({ size }) => (size ? size : '2.5em')};
+  height: ${({ size }) => (size ? size : '2.5em')};
 `;
 
 const StyledStandardAvatar = styled(AvatarBase)<StyledProps>`
@@ -71,7 +71,7 @@ const AvatarStandard: React.ForwardRefRenderFunction<HTMLSpanElement, AvatarStan
   props,
   ref,
 ) => {
-  const { children, color, onClick, isOnline, ...restProps } = props;
+  const { children, color, onClick, isOnline, size, ...restProps } = props;
   const theme = useTheme();
   const clickable = React.useMemo(() => typeof onClick === 'function', [onClick]);
   const { $background, $color } = React.useMemo(() => {
