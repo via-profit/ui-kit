@@ -12,13 +12,29 @@ const Autocomplete = React.forwardRef(
     props: AutocompleteProps<T, Multiple>,
     ref: React.Ref<AutocompleteRef>,
   ) => {
-    const { children, items, isOpen, value, ...restProps } = props;
+    const { children, items, isOpen, multiple, selectedItemToString, value, ...restProps } = props;
 
     return (
       <ContextProvider
-        initialState={{ filteredItems: items, currentOpen: isOpen, currentValue: value }}
+        initialState={{
+          filteredItems: items,
+          currentOpen: isOpen,
+          currentValue: value,
+          inputValue:
+            value === null
+              ? ''
+              : selectedItemToString(value as Multiple extends undefined ? T : readonly T[]),
+        }}
       >
-        <AutocompleteContainer {...restProps} items={items} isOpen={isOpen} value={value} ref={ref}>
+        <AutocompleteContainer
+          {...restProps}
+          items={items}
+          isOpen={isOpen}
+          multiple={multiple}
+          selectedItemToString={selectedItemToString}
+          value={value}
+          ref={ref}
+        >
           {children}
         </AutocompleteContainer>
       </ContextProvider>

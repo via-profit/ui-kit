@@ -296,11 +296,10 @@ const Autocomplete = React.forwardRef(
       dispatch(
         actionSetPartial({
           currentValue: value,
-          inputValue: multiple
-            ? ''
-            : value === null
-            ? inputValue
-            : selectedItemToString(value as Multiple extends undefined ? T : readonly T[]),
+          inputValue:
+            value === null
+              ? ''
+              : selectedItemToString(value as Multiple extends undefined ? T : readonly T[]),
         }),
       );
     }, [value, multiple, currentValue, inputValue, dispatch, selectedItemToString]);
@@ -504,13 +503,12 @@ const Autocomplete = React.forwardRef(
                 if (clearIfNotSelected) {
                   dispatch(
                     actionSetPartial({
-                      inputValue: multiple
-                        ? ''
-                        : value !== null
-                        ? selectedItemToString(
-                            value as Multiple extends undefined ? T : readonly T[],
-                          )
-                        : '',
+                      inputValue:
+                        value !== null
+                          ? selectedItemToString(
+                              value as Multiple extends undefined ? T : readonly T[],
+                            )
+                          : '',
                     }),
                   );
                 }
