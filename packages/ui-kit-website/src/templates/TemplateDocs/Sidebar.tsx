@@ -73,6 +73,7 @@ type Elem = {
   readonly label: string;
   readonly link: string;
   readonly isDraft: boolean;
+  readonly isActive: boolean;
 };
 
 const Sidebar: React.ForwardRefRenderFunction<
@@ -80,6 +81,8 @@ const Sidebar: React.ForwardRefRenderFunction<
   React.HTMLAttributes<HTMLDivElement>
 > = (props, ref) => {
   const { pathname } = useLocation();
+  const listRef = React.useRef<HTMLElement | null>(null);
+  const scrollAlreadyAffectedRef = React.useRef(false);
 
   const listItems: readonly Elem[] = React.useMemo(() => {
     const rawContent = content.split('## ').find(str => str.match(/^компоненты/i));
@@ -96,30 +99,48 @@ const Sidebar: React.ForwardRefRenderFunction<
       .map(str => {
         const matches = str.match(/^-\s\[(.*)\]\((.*)\)/i);
         if (matches && matches.length > 2) {
+          const link = `/docs${matches[2].replace(/\/README\.md$/, '').replace(/^\./, '')}`;
+          const label = matches[1].replace('🤏🏼', '').trim();
+          const isDraft = matches[1].match('🤏🏼') !== null;
+          const isActive = matchPath(`${link}/*`, pathname) !== null;
+
           return {
-            label: matches[1].replace('🤏🏼', '').trim(),
-            link: matches[2].replace(/\/README\.md$/, ''),
-            isDraft: matches[1].match('🤏🏼') !== null,
+            label,
+            link,
+            isDraft,
+            isActive,
           };
         }
 
         return null;
       })
       .filter((el): el is Elem => el !== null);
-  }, []);
+  }, [pathname]);
+
+  React.useEffect(() => {
+    if (scrollAlreadyAffectedRef.current) {
+      return;
+    }
+    const activeItem = listItems.find(item => item.isActive);
+    if (activeItem) {
+      setTimeout(() => {
+        const elem = listRef.current?.querySelector(`[href="${activeItem.link}"]`);
+        if (elem) {
+          scrollAlreadyAffectedRef.current = true;
+          elem.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 100);
+    }
+  }, [listItems]);
 
   return (
     <Container {...props} ref={ref}>
       <LogoBlock to="/docs">
         <StyledLogo />
       </LogoBlock>
-      <ItemsList>
-        {listItems.map(({ link, label, isDraft }) => (
-          <Item
-            key={link}
-            $isActive={matchPath(`/docs${link.replace(/^\./, '')}/*`, pathname) !== null}
-            to={link}
-          >
+      <ItemsList ref={listRef}>
+        {listItems.map(({ link, label, isDraft, isActive }) => (
+          <Item key={link} $isActive={isActive} to={link}>
             {label} {isDraft && <Draft />}
           </Item>
         ))}

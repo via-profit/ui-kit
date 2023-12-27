@@ -22,7 +22,13 @@ const BadgeContainer = styled.div`
 `;
 
 const ExampleAutocompleteMultiple: React.FC = () => {
-  const [value, setValue] = React.useState<readonly Item[]>([]);
+  const [value, setValue] = React.useState<readonly Item[]>([
+    { name: 'Brazil', code: 'BR' },
+    { name: 'Russian Federation', code: 'RU' },
+    { name: 'India', code: 'IN' },
+    { name: 'China', code: 'CN' },
+    { name: 'South Africa', code: 'ZA' },
+  ]);
   const [isOpen, setIsOpen] = React.useState(false);
 
   return (
@@ -50,6 +56,7 @@ const ExampleAutocompleteMultiple: React.FC = () => {
         onRequestClose={() => setIsOpen(false)}
         onRequestOpen={() => setIsOpen(true)}
         onChange={items => setValue(items)}
+        getOptionSelected={({ item, value }) => value.code === item.code}
         selectedItemToString={items => items.map(({ name }) => name).join(', ')}
       >
         {({ item, inputValue }, itemProps) => (

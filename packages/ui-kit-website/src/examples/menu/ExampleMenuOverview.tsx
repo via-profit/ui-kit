@@ -5,19 +5,18 @@ import MenuItem from '@via-profit/ui-kit/src/Menu/MenuItem';
 import Strong from '@via-profit/ui-kit/src/Typography/Strong';
 import { FormattedMessage } from 'react-intl';
 
+import countries from '../autocomplete/countries.json';
+
 type Item = {
-  readonly id: number;
+  readonly code: string;
   readonly name: string;
 };
 
-const items: Item[] = [...new Array(30).keys()].map(i => ({
-  id: i,
-  name: i % 3 === 0 ? `Item ${i} Eiusmod enim labore reprehenderit` : `Item ${i}`,
-}));
-
 const ExampleMenuOverview: React.FC = () => {
   const [anchorElement, setAnchorElement] = React.useState<HTMLButtonElement | null>(null);
-  const [value, setValue] = React.useState<Item | null>(null);
+  const [value, setValue] = React.useState<Item | null>(
+    countries.find(c => c.code === 'RU') || null,
+  );
 
   return (
     <>
@@ -45,13 +44,13 @@ const ExampleMenuOverview: React.FC = () => {
         anchorElement={anchorElement}
         isOpen={Boolean(anchorElement)}
         value={value}
-        items={items}
-        getOptionSelected={({ item, value }) => item.id === value.id}
+        items={countries}
+        getOptionSelected={({ item, value }) => item.code === value.code}
         onRequestClose={() => setAnchorElement(null)}
         onSelectItem={item => setValue(item)}
       >
         {({ item }, itemProps) => (
-          <MenuItem {...itemProps} key={item.id}>
+          <MenuItem {...itemProps} key={item.code}>
             {item.name}
           </MenuItem>
         )}

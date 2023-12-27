@@ -1,7 +1,6 @@
 import React from 'react';
 import Autocomplete, { AutocompleteItem } from '@via-profit/ui-kit/src/Autocomplete';
 import Highlighted from '@via-profit/ui-kit/src/Highlighted';
-import Button from '@via-profit/ui-kit/src/Button';
 
 import countries from './countries.json';
 
@@ -9,25 +8,11 @@ type Item = {
   readonly code: string;
   readonly name: string;
 };
-const colors: Item[] = [
-  {
-    name: 'Red',
-    code: '#f00',
-  },
-  {
-    name: 'Green',
-    code: '#0f0',
-  },
-  {
-    name: 'Blue',
-    code: '#00f',
-  },
-];
 
 const ExampleAutocompleteOverview: React.FC = () => {
-  const [value, setValue] = React.useState<Item | null>(null);
+  const [value, setValue] = React.useState<Item | null>(countries[0]);
   const [isOpen, setIsOpen] = React.useState(false);
-  const [items, setItems] = React.useState<Item[]>(countries);
+  const [items] = React.useState<Item[]>(countries);
 
   return (
     <>
@@ -50,8 +35,6 @@ const ExampleAutocompleteOverview: React.FC = () => {
           </AutocompleteItem>
         )}
       </Autocomplete>
-      <Button onClick={() => setItems(countries)}>Set countries</Button>
-      <Button onClick={() => setItems(colors)}>Set colors</Button>
     </>
   );
 };
