@@ -16,6 +16,8 @@ type StyledProps = {
 
 const Container = styled.span`
   position: relative;
+  width: 100%;
+  height: 100%;
 `;
 
 const StyledStandardAvatar = styled(AvatarBase)<StyledProps>`

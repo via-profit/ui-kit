@@ -21,8 +21,6 @@ export type AvatarProps = AvatarStandardProps & {
   readonly size?: string;
 };
 
-//TODO add documentation
-
 const Avatar: React.ForwardRefRenderFunction<HTMLSpanElement, AvatarProps> = (props, ref) => (
   <AvatarStandard {...props} ref={ref} />
 );
