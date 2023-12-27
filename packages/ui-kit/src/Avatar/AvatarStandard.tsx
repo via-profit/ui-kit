@@ -121,7 +121,7 @@ const AvatarStandard: React.ForwardRefRenderFunction<HTMLSpanElement, AvatarStan
   }, [color, theme.color]);
 
   return (
-    <Container>
+    <Container size={size}>
       <StyledStandardAvatar
         variant="circular"
         $clickable={clickable}
