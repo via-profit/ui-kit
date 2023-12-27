@@ -310,10 +310,8 @@ const MenuContainer = React.forwardRef(
       return [...idx];
     }, [getOptionSelected, items, multiple, value]);
 
-    // const [currentAnchorPos, setCurrentAnchorPos] = React.useState(anchorPos);
-    const [menuIsOpen, setMenuOpen] = React.useState(Boolean(isOpen));
     const [currentAnchorElement, setAnchorElement] = React.useState(anchorElement);
-    const isOpenRef = React.useRef(menuIsOpen);
+    const isOpenRef = React.useRef(isOpen);
     const menuListRef = React.useRef<HTMLDivElement | null>(null);
     const menuPopperRef = React.useRef<HTMLDivElement | null>(null);
     const {
@@ -599,7 +597,7 @@ const MenuContainer = React.forwardRef(
       return () => {
         window.document.removeEventListener('resize', windowResizeEvent);
       };
-    }, [menuIsOpen, onRequestClose, anchorElement, closeOutsideClick]);
+    }, [isOpen, onRequestClose, anchorElement, closeOutsideClick]);
 
     /**
      * Toggle menu open
@@ -607,7 +605,10 @@ const MenuContainer = React.forwardRef(
     React.useEffect(() => {
       if (isOpenRef.current !== isOpen) {
         isOpenRef.current = Boolean(isOpen);
-        setMenuOpen(Boolean(isOpen));
+        // setMenuOpen(Boolean(isOpen));
+        if (!isOpen) {
+          onRequestClose();
+        }
         if (isOpen) {
           scrollToFirstSelected();
 
@@ -624,7 +625,7 @@ const MenuContainer = React.forwardRef(
           dispatch(actionSetmenuState({ markedIndex: -1, hoveredIndex: -1 }));
         }
       }
-    }, [getSelectedIndexes, scrollToFirstSelected, isOpen, autofocus, dispatch]);
+    }, [getSelectedIndexes, scrollToFirstSelected, isOpen, autofocus, dispatch, onRequestClose]);
 
     /**
      * Mark selected items by values

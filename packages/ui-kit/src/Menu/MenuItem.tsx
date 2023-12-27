@@ -16,6 +16,8 @@ export type MenuItemCommonProps = {
 const InnerContainer = styled.div<{ selected?: boolean; hovered?: boolean }>`
   cursor: pointer;
   user-select: none;
+  display: flex;
+  align-items: center;
   padding: 0.4em 0.8em;
   transition: all 240ms ease-out;
   border-radius: ${({ theme }) => theme.shape.radiusFactor}em;
