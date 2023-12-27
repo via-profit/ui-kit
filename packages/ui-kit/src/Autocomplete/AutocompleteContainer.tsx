@@ -45,12 +45,14 @@ export interface AutocompleteProps<T, Multiple extends boolean | undefined = und
   readonly isLoading?: boolean;
 
   /**
-   * Should the autocomplete element be cleared when blur and if no element is selected
+   * Should the autocomplete element be cleared when blur and if no element is selected\
+   * **Default:** `true`
    */
   readonly clearIfNotSelected?: boolean;
 
   /**
-   * Show clear button if clearable is true
+   * Show clear button if clearable is true\
+   * **Default:** `true`
    */
   readonly clearable?: boolean;
 
@@ -207,8 +209,10 @@ const Autocomplete = React.forwardRef(
         switch (event.code) {
           case 'Enter':
           case 'NumpadEnter':
-            event.preventDefault();
-            menuRef.current?.selectHightlightedItem();
+            if (currentOpen) {
+              event.preventDefault();
+              menuRef.current?.selectHightlightedItem();
+            }
             break;
 
           case 'ArrowUp':
@@ -318,14 +322,12 @@ const Autocomplete = React.forwardRef(
 
     React.useEffect(() => {
       if (currentOpen !== isOpen || currentLoading !== isLoading) {
-        // console.debug('Use effect 1', { currentOpen: isOpen, currentLoading: isLoading });
         dispatch(actionSetPartial({ currentOpen: isOpen, currentLoading: isLoading }));
       }
     }, [isOpen, isLoading, dispatch, currentOpen, currentLoading]);
 
     React.useEffect(() => {
       if (JSON.stringify(items) !== JSON.stringify(itemsRef.current)) {
-        // console.debug('Use effect 2', { filteredItems: applyFilterForItems(inputValue, items) });
         itemsRef.current = items;
         dispatch(actionSetPartial({ filteredItems: applyFilterForItems(inputValue, items) }));
       }
@@ -344,8 +346,24 @@ const Autocomplete = React.forwardRef(
           parentElem = parentElem.parentNode as Node;
         }
 
+        // Click outside
         if (needToClose) {
-          onRequestClose(event);
+          if (clearIfNotSelected) {
+            dispatch(
+              actionSetPartial({
+                inputValue:
+                  currentValue === null
+                    ? ''
+                    : selectedItemToString(
+                        currentValue as Multiple extends undefined ? T : readonly T[],
+                      ),
+              }),
+            );
+          }
+
+          if (isOpen) {
+            onRequestClose(event);
+          }
         }
       };
 
@@ -354,7 +372,16 @@ const Autocomplete = React.forwardRef(
       return () => {
         window.document.removeEventListener(mouseEventMap.onMouseDown, mouseDownEvent);
       };
-    }, [onRequestClose, anchorElement]);
+    }, [
+      onRequestClose,
+      anchorElement,
+      isOpen,
+      clearIfNotSelected,
+      dispatch,
+      value,
+      selectedItemToString,
+      currentValue,
+    ]);
 
     return (
       <>
@@ -498,25 +525,8 @@ const Autocomplete = React.forwardRef(
                   onChange(item);
                 }
               }}
+              onRequestClose={onRequestClose}
               closeOnSelect={multiple ? false : true}
-              onRequestClose={evt => {
-                if (clearIfNotSelected) {
-                  dispatch(
-                    actionSetPartial({
-                      inputValue:
-                        value !== null
-                          ? selectedItemToString(
-                              value as Multiple extends undefined ? T : readonly T[],
-                            )
-                          : '',
-                    }),
-                  );
-                }
-
-                if (evt?.target !== anchorElement) {
-                  onRequestClose(evt);
-                }
-              }}
             >
               {({ index, item }, itemProps) =>
                 children({ index, item: item as T, inputValue }, itemProps)
@@ -532,10 +542,6 @@ const Autocomplete = React.forwardRef(
             anchorElement,
             getOptionSelected,
             onChange,
-            clearIfNotSelected,
-            dispatch,
-            value,
-            selectedItemToString,
             onRequestClose,
             children,
             inputValue,
