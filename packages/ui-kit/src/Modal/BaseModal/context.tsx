@@ -6,7 +6,7 @@ export type State = {
   readonly isOpen: boolean;
   readonly isMounted: boolean;
   readonly destroyTimeout: number;
-  readonly onRequestClose: () => void;
+  readonly onRequestClose: (event: React.MouseEvent<HTMLElement> | KeyboardEvent) => void;
   readonly closeOnEscape: boolean;
   readonly closeOnOverlayClick: boolean;
 };

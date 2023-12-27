@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from '@emotion/styled';
 
-import Base from '../../Typography/Base';
+import Span from '../../Typography/Span';
 import DrawerCloseIcon from './DrawerCloseIcon';
 import Button from '../../Button';
 
@@ -20,9 +20,7 @@ export type DrawerHeaderProps = Omit<React.HTMLAttributes<HTMLDivElement>, 'titl
   /**
    * On close request
    */
-  readonly onRequestClose?: (
-    event: React.MouseEvent<Element, MouseEvent> | React.KeyboardEvent<Element>,
-  ) => void;
+  readonly onRequestClose?: (event: React.MouseEvent<HTMLButtonElement>) => void;
 };
 
 const StyledDrawerHeader = styled.div`
@@ -32,7 +30,7 @@ const StyledDrawerHeader = styled.div`
   justify-content: space-between;
 `;
 
-const DrawerTitle = styled(Base)`
+const DrawerTitle = styled(Span)`
   font-size: 1.3em;
   font-weight: 600;
   margin-right: 1em;

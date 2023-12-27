@@ -17,7 +17,7 @@ export interface BaseModalProps {
   /**
    * The function that will be called to close the dialog
    */
-  readonly onRequestClose: () => void;
+  readonly onRequestClose: (event: React.MouseEvent<HTMLElement> | KeyboardEvent) => void;
 
   /**
    * Dialog content

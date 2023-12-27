@@ -102,7 +102,7 @@ const ModalWrapper: React.FC<ModalWrapperProps> = props => {
         const portal = window.document.querySelector(`#${PORTAL_ID}`);
         const lastID = portal?.children?.[portal?.childNodes?.length - 1]?.id;
         if (lastID === id) {
-          onRequestClose();
+          onRequestClose(event);
         }
       }
 

@@ -16,7 +16,7 @@ export interface MessageBoxProps extends Omit<BaseModalProps, 'overrides'> {
   /**
    * On close request
    */
-  readonly onRequestClose: () => void;
+  readonly onRequestClose: BaseModalProps['onRequestClose'];
 
   /**
    * Label of button

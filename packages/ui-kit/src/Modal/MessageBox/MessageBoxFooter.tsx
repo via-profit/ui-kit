@@ -12,9 +12,7 @@ export type MessageBoxFooterProps = Omit<React.HTMLAttributes<HTMLDivElement>, '
   /**
    * On close request
    */
-  readonly onRequestClose: (
-    event: React.MouseEvent<Element, MouseEvent> | React.KeyboardEvent<Element>,
-  ) => void;
+  readonly onRequestClose: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
 
   /**
    * Label of button

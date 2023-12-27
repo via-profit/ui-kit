@@ -10,7 +10,7 @@ export interface ModalOverlayProps extends Omit<React.HTMLAttributes<HTMLDivElem
   /**
    * The function that will be called to close the dialog
    */
-  readonly onRequestClose: () => void;
+  readonly onRequestClose: (event: React.MouseEvent<HTMLDivElement>) => void;
 
   /**
    * Should the dialog close when overlay mouse click
@@ -45,7 +45,7 @@ const ModalOverlay: React.ForwardRefRenderFunction<HTMLDivElement, ModalOverlayP
       {...restProps}
       ref={ref}
       $isOpen={isOpen}
-      onClick={closeOnOverlayClick ? () => onRequestClose() : undefined}
+      onClick={closeOnOverlayClick ? onRequestClose : undefined}
     />
   );
 };

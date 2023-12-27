@@ -21,7 +21,7 @@ export interface ConfirmBoxProps extends Omit<BaseModalProps, 'overrides'> {
   /**
    * On close request
    */
-  readonly onRequestClose: () => void;
+  readonly onRequestClose: BaseModalProps['onRequestClose'];
 
   /**
    * Label of Dissmiss button

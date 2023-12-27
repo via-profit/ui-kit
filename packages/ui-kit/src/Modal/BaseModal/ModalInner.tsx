@@ -11,7 +11,7 @@ export interface ModalInnerProps extends React.HTMLAttributes<HTMLDivElement> {
   /**
    * The function that will be called to close the dialog
    */
-  readonly onRequestClose: () => void;
+  readonly onRequestClose: (event: React.MouseEvent<HTMLElement> | KeyboardEvent) => void;
 }
 
 type StyledProps = {
