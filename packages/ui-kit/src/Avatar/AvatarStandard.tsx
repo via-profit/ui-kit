@@ -129,6 +129,7 @@ const AvatarStandard: React.ForwardRefRenderFunction<HTMLSpanElement, AvatarStan
         $background={$background}
         color={color}
         onClick={onClick}
+        size={size}
         {...restProps}
         tabIndex={clickable ? 0 : -1}
         ref={ref}
