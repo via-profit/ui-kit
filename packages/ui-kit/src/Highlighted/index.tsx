@@ -35,6 +35,12 @@ export interface HighlightedProps extends React.HTMLAttributes<HTMLSpanElement> 
   readonly caseSensitive?: boolean;
 
   /**
+   * Disable highlighting and show the plain text\
+   * **Default:** `false`
+   */
+  readonly disabledHighlighting?: boolean;
+
+  /**
    * Overridable components map
    */
   readonly overrides?: HighlightedOverrides;
@@ -72,7 +78,14 @@ const Highlighted: React.ForwardRefRenderFunction<HTMLSpanElement, HighlightedPr
   props,
   ref,
 ) => {
-  const { text, highlight, overrides, caseSensitive = false, ...nativeProps } = props;
+  const {
+    text,
+    highlight,
+    overrides,
+    disabledHighlighting = false,
+    caseSensitive = false,
+    ...nativeProps
+  } = props;
 
   const patterns = React.useMemo(
     () =>
@@ -98,8 +111,12 @@ const Highlighted: React.ForwardRefRenderFunction<HTMLSpanElement, HighlightedPr
 
   return (
     <overridesMap.Container {...nativeProps} ref={ref}>
-      {patterns.length === 0 && <overridesMap.Text>{text}</overridesMap.Text>}
-      {patterns.length > 0 &&
+      {disabledHighlighting && <overridesMap.Text>{text}</overridesMap.Text>}
+      {!disabledHighlighting && patterns.length === 0 && (
+        <overridesMap.Text>{text}</overridesMap.Text>
+      )}
+      {!disabledHighlighting &&
+        patterns.length > 0 &&
         text
           .split(regex)
           .map((part, i) =>
