@@ -62,7 +62,7 @@ const ExampleAutocompleteOverrides: React.FC = () => {
       items={phones}
       isOpen={isOpen}
       filterItems={filteritems}
-      clearIfNotSelected={false}
+      clearOnBlur={false}
       onRequestClose={() => setIsOpen(false)}
       onRequestOpen={() => setIsOpen(true)}
       onChange={item => setValue(item)}
