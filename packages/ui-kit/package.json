@@ -88,7 +88,7 @@
     "shebang-loader": "^0.0.1",
     "terser-webpack-plugin": "^5.3.9",
     "ts-node": "^10.9.2",
-    "type-fest": "^4.8.3",
+    "type-fest": "^4.9.0",
     "typescript": "^5.3.3",
     "url-loader": "^4.1.1",
     "webpack": "^5.89.0",
