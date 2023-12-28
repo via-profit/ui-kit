@@ -12,6 +12,7 @@ type StyleProps = {
 
 const StyledContent = styled.div<StyleProps>`
   flex: 1;
+  overflow: auto;
   ${({ $noPadding }) =>
     (typeof $noPadding === 'undefined' || $noPadding === false) &&
     css`
