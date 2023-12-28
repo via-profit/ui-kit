@@ -48,7 +48,7 @@ export interface AutocompleteProps<T, Multiple extends boolean | undefined = und
    * Should the autocomplete element be cleared when blur and if no element is selected\
    * **Default:** `true`
    */
-  readonly clearIfNotSelected?: boolean;
+  readonly clearOnBlur?: boolean;
 
   /**
    * Show clear button if clearable is true\
@@ -135,7 +135,7 @@ const Autocomplete = React.forwardRef(
       multiple,
       isOpen = false,
       isLoading = false,
-      clearIfNotSelected = true,
+      clearOnBlur = true,
       anchorPos = 'auto-start-end',
       openOnFocus = true,
       requiredAsterisk,
@@ -348,7 +348,7 @@ const Autocomplete = React.forwardRef(
 
         // Click outside
         if (needToClose) {
-          if (clearIfNotSelected) {
+          if (clearOnBlur) {
             dispatch(
               actionSetPartial({
                 inputValue:
@@ -376,7 +376,7 @@ const Autocomplete = React.forwardRef(
       onRequestClose,
       anchorElement,
       isOpen,
-      clearIfNotSelected,
+      clearOnBlur,
       dispatch,
       value,
       selectedItemToString,
