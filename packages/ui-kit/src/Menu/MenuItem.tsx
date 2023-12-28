@@ -5,12 +5,28 @@ import { css } from '@emotion/react';
 export type MenuItemProps = React.HTMLAttributes<HTMLDivElement> & MenuItemCommonProps;
 
 export type MenuItemCommonProps = {
+  /**
+   * Selected flag
+   */
   readonly selected: boolean;
+
+  /**
+   * Hovered flag
+   */
   readonly hovered: boolean;
+
+  /**
+   * React key
+   */
   readonly key: React.Key;
   readonly onMouseEnter: React.MouseEventHandler<HTMLDivElement>;
   readonly onMouseLeave: React.MouseEventHandler<HTMLDivElement>;
   readonly onClick: React.MouseEventHandler<HTMLDivElement>;
+
+  /**
+   * Icon or another JSX element placed before button label
+   */
+  readonly startIcon?: JSX.Element;
 };
 
 const InnerContainer = styled.div<{ selected?: boolean; hovered?: boolean }>`
@@ -50,9 +66,21 @@ const InnerContainer = styled.div<{ selected?: boolean; hovered?: boolean }>`
     `}
 `;
 
+const ItemIconWrapper = styled.span`
+  margin-right: 0.5em;
+`;
+
 const MenuItem = React.forwardRef((props: MenuItemProps, ref: React.Ref<HTMLDivElement>) => {
-  const { children, selected, hovered, onMouseEnter, onMouseLeave, onClick, ...nativeProps } =
-    props;
+  const {
+    children,
+    selected,
+    hovered,
+    onMouseEnter,
+    onMouseLeave,
+    onClick,
+    startIcon,
+    ...nativeProps
+  } = props;
 
   return (
     <InnerContainer
@@ -64,6 +92,9 @@ const MenuItem = React.forwardRef((props: MenuItemProps, ref: React.Ref<HTMLDivE
       selected={selected}
       hovered={hovered}
     >
+      {typeof startIcon !== 'undefined' && startIcon !== null && (
+        <ItemIconWrapper>{startIcon}</ItemIconWrapper>
+      )}
       {children}
     </InnerContainer>
   );
