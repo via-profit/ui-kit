@@ -6,12 +6,14 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "npm run start --workspace packages/ui-kit-website",
     "build": "npm run build --workspace packages/ui-kit",
-    "i18n": "npm run i18n --workspace packages/ui-kit-website"
+    "i18n": "npm run i18n --workspace packages/ui-kit-website",
+    "postinstall": "node ./scripts/postinstall.js"
   },
   "author": "",
   "license": "MIT",
   "workspaces": [
-    "packages/*"
+    "packages/ui-kit",
+    "packages/ui-kit-website"
   ],
   "devDependencies": {
     "concurrently": "^8.2.1",
