@@ -55,7 +55,7 @@ const InnerContainer = styled.div<{ selected?: boolean; hovered?: boolean }>`
       return theme.color.accentPrimaryContrast.toString();
     }
 
-    return 'inherit';
+    return theme.color.textPrimary.toString();
   }};
   ${({ selected }) =>
     selected &&
