@@ -79,6 +79,7 @@ const Example: React.FC = () => (
 | **text**                 |     \*     | `string`                 |                          | Исходный текст                                                           |
 | **highlight**            |     \*     | `string` `Array<string>` |                          | Строка или массив строк, которые необходимо подсветить в исходном тексте |
 | **caseSensitive**        |            | `boolean`                | `false`                  | Будет ли выражение чувствительно к регистру                              |
+| **disabledHighlighting** |            | `boolean`                | `false`                  | Отключает подсветку строки и отображает текст как есть                   |
 | **overrides**            |            | `Object`                 | `undefined`              | Объект элементов для переопределения составных компонентов кнопки        |
 | **overrides .Container** |            | `<React.Component>`      | `<HighlightedContainer>` | Компонент контейнер `<span>`                                             |
 | **overrides .Text**      |            | `<React.Component>`      | `<HighlightedText>`      | компонент, отображающий простой текст                                    |
