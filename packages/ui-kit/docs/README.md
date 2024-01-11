@@ -6,6 +6,7 @@
 - [Темы оформления](./theming/README.md)
 - [Цвета](./color/README.md)
 - [Поверхность](./surface/README.md)
+- [Аккордеон](./accordion/README.md)
 - [Кнопка](./button/README.md)
 - [Текстовое поле](./text-field/README.md)
 - [Текстовое поле textarea](./text-area/README.md)

@@ -34,6 +34,7 @@ const LoadingIndicatorOverview = loadable(
 );
 const BadgeOverview = loadable(() => import('~/pages/Docs/Badge/BadgeOverview'));
 const AvatarOverview = loadable(() => import('~/pages/Docs/Avatar/AvatarOverview'));
+const AccordionOverview = loadable(() => import('~/pages/Docs/Accordion/AccordionOverview'));
 const PopperOverview = loadable(() => import('~/pages/Docs/Popper/PopperOverview'));
 const ClickOutsideOverview = loadable(
   () => import('~/pages/Docs/ClickOutside/ClickOutsideOverview'),
@@ -114,6 +115,15 @@ const docsRouter: RouteObject = {
       element: (
         <React.Suspense fallback={<LoadingIndicator />}>
           <SurfaceOverview />
+        </React.Suspense>
+      ),
+    },
+    {
+      path: 'accordion',
+      caseSensitive: true,
+      element: (
+        <React.Suspense fallback={<LoadingIndicator />}>
+          <AccordionOverview />
         </React.Suspense>
       ),
     },
