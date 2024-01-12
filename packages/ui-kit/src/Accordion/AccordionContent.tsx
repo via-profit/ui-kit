@@ -20,7 +20,7 @@ const StyledAccordionContent = styled.div<StyleProps>`
 `;
 
 const Wrapper = styled.div<{ $noPadding: boolean }>`
-  padding: ${({ $noPadding }) => ($noPadding ? '0' : '1rem 1rem 0 1rem')};
+  padding: ${({ $noPadding }) => ($noPadding ? '0' : '1rem')};
 `;
 
 const AccordionContent: React.ForwardRefRenderFunction<HTMLDivElement, AccordionContentProps> = (
