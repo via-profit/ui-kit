@@ -1,6 +1,5 @@
 import React from 'react';
 import styled from '@emotion/styled';
-import { css } from '@emotion/react';
 
 export type AccordionContentProps = React.HTMLAttributes<HTMLDivElement> & {
   readonly noPadding?: boolean;
@@ -8,18 +7,20 @@ export type AccordionContentProps = React.HTMLAttributes<HTMLDivElement> & {
 };
 
 type StyleProps = {
-  readonly $noPadding?: boolean;
   readonly $isOpen: boolean;
 };
 
 const StyledAccordionContent = styled.div<StyleProps>`
   flex: 1;
   overflow: auto;
-  transition: all 0.4s ease-out;
+  transition: all 0.3s ease-out;
   max-height: ${({ $isOpen }) => (!$isOpen ? '0px' : '90vh')};
-  box-sizing: border-box;
-  padding: 0 1em;
+  box-sizing: content-box;
   overflow: hidden;
+`;
+
+const Wrapper = styled.div<{ $noPadding: boolean }>`
+  padding: ${({ $noPadding }) => ($noPadding ? '0' : '1rem 1rem 0 1rem')};
 `;
 
 const AccordionContent: React.ForwardRefRenderFunction<HTMLDivElement, AccordionContentProps> = (
@@ -29,8 +30,8 @@ const AccordionContent: React.ForwardRefRenderFunction<HTMLDivElement, Accordion
   const { children, noPadding, isOpen, ...nativeProps } = props;
 
   return (
-    <StyledAccordionContent $noPadding={noPadding} $isOpen={isOpen} {...nativeProps} ref={ref}>
-      {children}
+    <StyledAccordionContent $isOpen={isOpen} {...nativeProps} ref={ref}>
+      <Wrapper $noPadding={Boolean(noPadding)}>{children}</Wrapper>
     </StyledAccordionContent>
   );
 };

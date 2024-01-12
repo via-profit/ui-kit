@@ -24,14 +24,24 @@ export type AccordionProps = React.HTMLAttributes<HTMLDivElement> & {
   readonly overrides?: AccordionOverrides;
 
   /**
-   * If `true` accordion will be opened by default
+   * This props ovveride default component open state
    */
   readonly isOpen?: boolean;
+
+  /**
+   * If `true` accordion will be opened by default
+   */
+  readonly defaultOpened?: boolean;
 
   /**
    * Callback function witch should open the accordion. You can forward your own function to make accordion controlled
    */
   readonly onOpen?: () => void;
+
+  /**
+   * If `true` initial padding of accorion content would be disabled
+   */
+  readonly noPadding?: boolean;
 };
 
 export interface AccordionOverrides {
@@ -62,11 +72,23 @@ export interface AccordionOverrides {
 }
 
 const Accordion: React.ForwardRefRenderFunction<HTMLDivElement, AccordionProps> = (props, ref) => {
-  const { children, header, actions, isOpen, onOpen, overrides, ...nativeProps } = props;
+  const {
+    children,
+    header,
+    actions,
+    isOpen,
+    onOpen,
+    overrides,
+    noPadding,
+    defaultOpened,
+    ...nativeProps
+  } = props;
 
   const hasActions = typeof actions !== 'undefined' && actions !== null;
   const hasHeader = typeof header !== 'undefined' && header !== null;
-  const [opened, setOpened] = React.useState(isOpen || false);
+  const [opened, setOpened] = React.useState(
+    typeof defaultOpened !== 'undefined' ? defaultOpened : false,
+  );
 
   const overridesMap = React.useMemo(
     () => ({
@@ -87,13 +109,21 @@ const Accordion: React.ForwardRefRenderFunction<HTMLDivElement, AccordionProps> 
   return (
     <overridesMap.Container {...nativeProps} ref={ref}>
       {hasHeader && (
-        <overridesMap.Header isOpen={opened} onOpen={onOpen ? onOpen : () => setOpened(!opened)}>
+        <overridesMap.Header
+          isOpen={typeof isOpen !== 'undefined' ? isOpen : opened}
+          onOpen={
+            onOpen ? onOpen : () => setOpened(typeof isOpen !== 'undefined' ? !isOpen : !opened)
+          }
+        >
           {header}
         </overridesMap.Header>
       )}
-      <overridesMap.Content isOpen={opened}>
+      <overridesMap.Content
+        noPadding={noPadding}
+        isOpen={typeof isOpen !== 'undefined' ? isOpen : opened}
+      >
         {children}
-        {hasActions && <overridesMap.Actions>{actions}</overridesMap.Actions>}
+        {hasActions && <overridesMap.Actions noPadding={noPadding}>{actions}</overridesMap.Actions>}
       </overridesMap.Content>
     </overridesMap.Container>
   );

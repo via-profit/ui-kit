@@ -21,7 +21,11 @@ const StyledHeader = styled.div`
   align-items: center;
 `;
 
-const StyledChevron = styled(Chevron)<{ $isOpen: boolean }>`
+type StyledIconProps = {
+  readonly $isOpen: boolean;
+};
+
+const StyledChevron = styled(Chevron, { shouldForwardProp: p => p[0] !== '$' })<StyledIconProps>`
   transform: ${({ $isOpen }) => (!$isOpen ? 'rotate(180deg)' : 'rotate(0)')};
   transition: all 0.3s ease-out;
 `;

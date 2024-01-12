@@ -13,7 +13,7 @@ const StyledActions = styled.div<StyleProps>`
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  padding: 1rem;
+  padding: ${({ $noPadding }) => ($noPadding ? '0' : '1rem 0')};
   border-bottom-left-radius: inherit;
   border-bottom-right-radius: inherit;
 `;
@@ -22,10 +22,10 @@ const AccordionActions: React.ForwardRefRenderFunction<HTMLDivElement, Accordion
   props,
   ref,
 ) => {
-  const { children, ...nativeProps } = props;
+  const { children, noPadding, ...nativeProps } = props;
 
   return (
-    <StyledActions {...nativeProps} ref={ref}>
+    <StyledActions {...nativeProps} $noPadding={Boolean(noPadding)} ref={ref}>
       {children}
     </StyledActions>
   );
