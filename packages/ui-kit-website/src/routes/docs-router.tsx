@@ -9,6 +9,7 @@ const TemplateDocs = loadable(() => import('~/templates/TemplateDocs/index'));
 const NotFound = loadable(() => import('~/pages/NotFound/index'));
 const Introduction = loadable(() => import('~/pages/Docs/Introduction'));
 const ButtonOverview = loadable(() => import('~/pages/Docs/Button/ButtonOverview'));
+const SwitchOverview = loadable(() => import('~/pages/Docs/Switch/SwitchOverview'));
 const Tables = loadable(() => import('~/pages/Docs/Table'));
 const TextField = loadable(() => import('~/pages/Docs/TextField'));
 const TextArea = loadable(() => import('~/pages/Docs/TextArea'));
@@ -61,6 +62,15 @@ const docsRouter: RouteObject = {
       element: (
         <React.Suspense fallback={<LoadingIndicator />}>
           <ButtonOverview />
+        </React.Suspense>
+      ),
+    },
+    {
+      path: 'switch',
+      caseSensitive: true,
+      element: (
+        <React.Suspense fallback={<LoadingIndicator />}>
+          <SwitchOverview />
         </React.Suspense>
       ),
     },
