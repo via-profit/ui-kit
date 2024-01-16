@@ -1,32 +1,76 @@
 import React from 'react';
 import styled from '@emotion/styled';
+import { css } from '@emotion/react';
 
-export type SwitchContainerProps = React.HTMLAttributes<HTMLSpanElement> & {
-  readonly onChange: () => void;
+export type SwitchContainerProps = React.HTMLAttributes<HTMLLabelElement> & {
+  /**
+   * This property changes position of switch and its label.
+   * Default: `end`
+   */
+  readonly labelPosition?: 'start' | 'end' | 'top' | 'bottom';
+
+  /**
+   * if `true` switch state can not be changed
+   * Default: false;
+   */
+  readonly disabled?: boolean;
 };
 
 type StyledProps = {
   readonly disabled?: boolean;
+  readonly labelPosition?: 'start' | 'end' | 'top' | 'bottom';
 };
 
-const StyledSwitch = styled.span<StyledProps>`
+const StyledContainer = styled.label<StyledProps>`
   cursor: ${({ disabled }) => (disabled ? 'default' : 'pointer')};
   font-size: 1em;
   padding-right: 1em;
   display: inline-flex;
   align-items: center;
+  opacity: ${({ disabled }) => (disabled ? 0.6 : 1)};
+  ${({ labelPosition }) => {
+    let direction = 'row';
+
+    switch (labelPosition) {
+      case 'bottom':
+        direction = 'column';
+        break;
+
+      case 'start':
+        direction = 'row-reverse';
+        break;
+
+      case 'top':
+        direction = 'column-reverse';
+        break;
+
+      default:
+        //do nothing
+        break;
+    }
+
+    return css`
+      flex-direction: ${direction};
+    `;
+  }}
 `;
 
-const SwitchContainer: React.ForwardRefRenderFunction<HTMLSpanElement, SwitchContainerProps> = (
+const SwitchContainer: React.ForwardRefRenderFunction<HTMLLabelElement, SwitchContainerProps> = (
   props,
   ref,
 ) => {
-  const { children, onChange, ...nativeProps } = props;
+  const { children, labelPosition, disabled, ...nativeProps } = props;
 
   return (
-    <StyledSwitch {...nativeProps} ref={ref} onClick={() => onChange()}>
+    <StyledContainer
+      {...nativeProps}
+      labelPosition={labelPosition}
+      disabled={disabled}
+      ref={ref}
+      // onClick={() => !disabled && onChange()}
+    >
       {children}
-    </StyledSwitch>
+    </StyledContainer>
   );
 };
 

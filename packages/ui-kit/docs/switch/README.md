@@ -11,21 +11,25 @@
 
 ## Описание
 
-Компонент `<Switch>` создаёт кликабельную кнопку, которая может быть
-использована в формах или в любом другом месте документа, который требует простой,
-стандартной кнопки.
+Компонент `<Switch>` создаёт кликабельный переключатель, который может быть
+использован в формах или в любом другом месте интерфейса
 
 _Пример использования:_
 
 ```tsx
 import React from 'react';
-import Button from '@via-profit/ui-kit/Button';
+import Switch from '@via-profit/ui-kit/src/Switch';
 
-const Example: React.FC = () => {
-  return <Button type="button">Button</Button>;
-};
+const ExampleSwitchBasic: React.FC = () => (
+  <>
+    <Switch defaultChecked />
+    <Switch />
+    <Switch defaultChecked disabled />
+    <Switch disabled />
+  </>
+);
 
-export default Example;
+export default ExampleSwitchBasic;
 ```
 
 <ExampleSwitchBasic />

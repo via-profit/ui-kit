@@ -1,9 +1,12 @@
 import React from 'react';
 import styled from '@emotion/styled';
 
-export type SwitchToggleProps = React.HTMLAttributes<HTMLSpanElement> & {
+export type SwitchToggleProps = React.HTMLAttributes<HTMLInputElement> & {
+  /**
+   * This prop allows you to provide switch state and control it. This property overrides internal component state
+   */
   readonly checked: boolean;
-  readonly disabled?: boolean;
+
   /**
    * You can pass the primary, default, secondary name of the colors or your specified color value
    */
@@ -12,7 +15,6 @@ export type SwitchToggleProps = React.HTMLAttributes<HTMLSpanElement> & {
 
 type StyleProps = {
   readonly color?: SwitchToggleProps['color'];
-  readonly disabled?: boolean;
   readonly checked: boolean;
 };
 
@@ -44,20 +46,11 @@ const StyledInput = styled.input`
 
 const Switch = styled.span<StyleProps>`
   display: inline-flex;
-  -webkit-box-align: center;
   align-items: center;
-  -webkit-box-pack: center;
   justify-content: center;
   box-sizing: border-box;
-  -webkit-tap-highlight-color: transparent;
   background-color: transparent;
-  outline: 0px;
-  border: 0px;
-  margin: 0px;
-  cursor: pointer;
-  user-select: none;
   vertical-align: middle;
-  appearance: none;
   text-decoration: none;
   padding: 0.8rem;
   border-radius: 50%;
@@ -80,53 +73,35 @@ const Dot = styled.span<StyleProps>`
     rgba(0, 0, 0, 0.2) 0px 2px 1px -1px,
     rgba(0, 0, 0, 0.14) 0px 1px 1px 0px,
     rgba(0, 0, 0, 0.12) 0px 1px 3px 0px;
-  background-color: ${({ color, checked, disabled, theme }) => {
+  background-color: inherit;
+  background-color: ${({ color, checked, theme }) => {
     switch (true) {
       case !checked:
-        return theme.color.accentPrimaryContrast.toString();
-
-      case disabled:
-        return theme.color.accentPrimary.alpha(0.8).toString();
-      case !disabled && typeof color === 'undefined':
+        return theme.isDark ? theme.color.textPrimary.toString() : theme.color.surface.toString();
+      case typeof color === 'undefined':
       default:
         return theme.color.accentPrimary.toString();
     }
   }};
-`;
-
-const Track = styled.span<StyleProps>`
-  height: 100%;
-  width: 100%;
-  border-radius: 7px;
-  transition:
-    opacity 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,
-    background-color 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
-  background-color: ${({ color, disabled, checked, theme }) => {
-    switch (true) {
-      case !checked:
-        return theme.color.backgroundSecondary.toString();
-      case disabled:
-        return theme.color.accentPrimary.alpha(0.8).toString();
-      case !disabled && typeof color === 'undefined':
-      default:
-        return theme.color.accentPrimary.toString();
-    }
-  }};
-  opacity: 0.5;
 `;
 
 const SwitchToggle: React.ForwardRefRenderFunction<HTMLSpanElement, SwitchToggleProps> = (
   props,
   ref,
 ) => {
-  const { disabled, color, checked, ...nativeProps } = props;
+  const { color, checked, ...nativeProps } = props;
 
   return (
     <ToggleWrapper ref={ref}>
-      <StyledInput {...nativeProps} type="checkbox" />
-      <Track color={color} disabled={disabled} checked={checked} />
-      <Switch color={color} disabled={disabled} checked={checked}>
-        <Dot color={color} disabled={disabled} checked={checked} />
+      <StyledInput
+        {...nativeProps}
+        onChange={e => {
+          nativeProps.onChange(e);
+        }}
+        type="checkbox"
+      />
+      <Switch color={color} checked={checked}>
+        <Dot color={color} checked={checked} />
       </Switch>
     </ToggleWrapper>
   );
