@@ -1,11 +1,12 @@
 import React from 'react';
 
-import SwitchStandard, { SwitchStandardProps } from './SwitchStandard';
 import Container, { SwitchContainerProps } from './SwitchContainer';
-import Toggle, { SwitchToggleProps } from './SwitchToggle';
+import ToggleWrapper, { SwitchToggleWrapperProps } from './SwitchToggleWrapper';
 import TextWrapper, { SwitchTextWrapperProps } from './SwitchTextWrapper';
+import Dot, { SwitchDotProps } from './SwitchDot';
+import Track, { SwitchTrackProps } from './SwitchTrack';
 
-export type SwitchProps = Omit<SwitchStandardProps, 'checked' | 'onChange' | 'disabled'> & {
+export type SwitchProps = Omit<SwitchToggleWrapperProps, 'checked' | 'onChange' | 'disabled'> & {
   /**
    * This prop allows you to provide switch state and control it. This property overrides internal component state
    * Default: undefined
@@ -36,9 +37,11 @@ export type SwitchProps = Omit<SwitchStandardProps, 'checked' | 'onChange' | 'di
    * Default: `end`
    */
   readonly labelPosition?: 'start' | 'end' | 'top' | 'bottom';
+
+  readonly overrides?: SwitchOverrides;
 };
 
-export interface SwitchBaseOverrides {
+export interface SwitchOverrides {
   /**
    * Element container
    */
@@ -49,8 +52,8 @@ export interface SwitchBaseOverrides {
   /**
    * Element toggle
    */
-  readonly Toggle?: React.ForwardRefExoticComponent<
-    SwitchToggleProps & React.RefAttributes<HTMLSpanElement>
+  readonly ToggleWrapper?: React.ForwardRefExoticComponent<
+    SwitchToggleWrapperProps & React.RefAttributes<HTMLSpanElement>
   >;
 
   /**
@@ -59,9 +62,23 @@ export interface SwitchBaseOverrides {
   readonly TextWrapper?: React.ForwardRefExoticComponent<
     SwitchTextWrapperProps & React.RefAttributes<HTMLSpanElement>
   >;
+
+  /**
+   * text wrapper
+   */
+  readonly Dot?: React.ForwardRefExoticComponent<
+    SwitchDotProps & React.RefAttributes<HTMLSpanElement>
+  >;
+
+  /**
+   * text wrapper
+   */
+  readonly Track?: React.ForwardRefExoticComponent<
+    SwitchTrackProps & React.RefAttributes<HTMLSpanElement>
+  >;
 }
 
-const Switch: React.ForwardRefRenderFunction<HTMLLabelElement, SwitchProps> = (props, ref) => {
+const Switch: React.ForwardRefRenderFunction<HTMLInputElement, SwitchProps> = (props, ref) => {
   const {
     checked,
     onChange,
@@ -71,6 +88,7 @@ const Switch: React.ForwardRefRenderFunction<HTMLLabelElement, SwitchProps> = (p
     labelPosition,
     children,
     color,
+    name,
     ...nativeProps
   } = props;
   const [internalChecked, setInternalChecked] = React.useState<boolean>(
@@ -79,8 +97,10 @@ const Switch: React.ForwardRefRenderFunction<HTMLLabelElement, SwitchProps> = (p
   const overridesMap = React.useMemo(
     () => ({
       TextWrapper: overrides?.TextWrapper || TextWrapper,
-      Toggle: overrides?.Toggle || Toggle,
+      ToggleWrapper: overrides?.ToggleWrapper || ToggleWrapper,
       Container: overrides?.Container || Container,
+      Track: overrides?.Track || Track,
+      Dot: overrides?.Dot || Dot,
     }),
     [overrides],
   );
@@ -92,13 +112,31 @@ const Switch: React.ForwardRefRenderFunction<HTMLLabelElement, SwitchProps> = (p
   }
 
   return (
-    <overridesMap.Container
-      labelPosition={labelPosition}
-      disabled={disabled}
-      ref={ref}
-      onChange={onChange}
-    >
-      <overridesMap.Toggle {...nativeProps} color={color} />
+    <overridesMap.Container labelPosition={labelPosition} disabled={disabled}>
+      <overridesMap.ToggleWrapper
+        {...nativeProps}
+        disabled={disabled}
+        onChange={
+          typeof onChange !== 'undefined'
+            ? onChange
+            : () => {
+                setInternalChecked(!internalChecked);
+              }
+        }
+        color={color}
+        checked={typeof checked !== 'undefined' ? checked : defaultChecked ? true : undefined}
+        name={name}
+        ref={ref}
+      >
+        <overridesMap.Track
+          color={color}
+          checked={typeof checked !== 'undefined' ? checked : internalChecked}
+        />
+        <overridesMap.Dot
+          color={color}
+          checked={typeof checked !== 'undefined' ? checked : internalChecked}
+        />
+      </overridesMap.ToggleWrapper>
       <overridesMap.TextWrapper>{children}</overridesMap.TextWrapper>
     </overridesMap.Container>
   );

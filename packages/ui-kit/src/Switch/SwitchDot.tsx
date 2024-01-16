@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from '@emotion/styled';
 
-export type SwitchToggleProps = React.HTMLAttributes<HTMLInputElement> & {
+export type SwitchDotProps = React.HTMLAttributes<HTMLSpanElement> & {
   /**
    * This prop allows you to provide switch state and control it. This property overrides internal component state
    */
@@ -12,39 +12,12 @@ export type SwitchToggleProps = React.HTMLAttributes<HTMLInputElement> & {
    */
   readonly color?: 'default' | 'primary' | 'secondary' | string;
 };
-
 type StyleProps = {
-  readonly color?: SwitchToggleProps['color'];
+  readonly color?: SwitchDotProps['color'];
   readonly checked: boolean;
 };
 
-const ToggleWrapper = styled.span`
-  font-size: 0.86em;
-  display: inline-flex;
-  align-items: center;
-  user-select: none;
-  position: relative;
-  height: 3rem;
-  width: 4.5rem;
-  padding: 1.1rem;
-  overflow: hidden;
-  box-sizing: border-box;
-`;
-
-const StyledInput = styled.input`
-  cursor: inherit;
-  position: absolute;
-  width: 100%;
-  opacity: 0;
-  height: 100%;
-  top: 0px;
-  left: 0px;
-  margin: 0px;
-  padding: 0px;
-  z-index: 1;
-`;
-
-const Switch = styled.span<StyleProps>`
+const DotContainer = styled.span<StyleProps>`
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -85,26 +58,16 @@ const Dot = styled.span<StyleProps>`
   }};
 `;
 
-const SwitchToggle: React.ForwardRefRenderFunction<HTMLSpanElement, SwitchToggleProps> = (
-  props,
-  ref,
-) => {
-  const { color, checked, ...nativeProps } = props;
+const SwitchDot: React.ForwardRefRenderFunction<HTMLSpanElement, SwitchDotProps> = (props, ref) => {
+  const { children, color, checked, ...nativeProps } = props;
 
   return (
-    <ToggleWrapper ref={ref}>
-      <StyledInput
-        {...nativeProps}
-        onChange={e => {
-          nativeProps.onChange(e);
-        }}
-        type="checkbox"
-      />
-      <Switch color={color} checked={checked}>
-        <Dot color={color} checked={checked} />
-      </Switch>
-    </ToggleWrapper>
+    <DotContainer {...nativeProps} ref={ref} color={color} checked={checked}>
+      <Dot color={color} checked={checked}>
+        {children}
+      </Dot>
+    </DotContainer>
   );
 };
 
-export default React.forwardRef(SwitchToggle);
+export default React.forwardRef(SwitchDot);

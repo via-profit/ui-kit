@@ -2,7 +2,7 @@ import React from 'react';
 import styled from '@emotion/styled';
 import { css } from '@emotion/react';
 
-export type SwitchContainerProps = React.HTMLAttributes<HTMLLabelElement> & {
+export type SwitchContainerProps = React.LabelHTMLAttributes<HTMLLabelElement> & {
   /**
    * This property changes position of switch and its label.
    * Default: `end`
@@ -53,6 +53,10 @@ const StyledContainer = styled.label<StyledProps>`
       flex-direction: ${direction};
     `;
   }}
+
+  &:focus {
+    border: 1px solid violete;
+  }
 `;
 
 const SwitchContainer: React.ForwardRefRenderFunction<HTMLLabelElement, SwitchContainerProps> = (
@@ -62,13 +66,7 @@ const SwitchContainer: React.ForwardRefRenderFunction<HTMLLabelElement, SwitchCo
   const { children, labelPosition, disabled, ...nativeProps } = props;
 
   return (
-    <StyledContainer
-      {...nativeProps}
-      labelPosition={labelPosition}
-      disabled={disabled}
-      ref={ref}
-      // onClick={() => !disabled && onChange()}
-    >
+    <StyledContainer {...nativeProps} labelPosition={labelPosition} disabled={disabled} ref={ref}>
       {children}
     </StyledContainer>
   );

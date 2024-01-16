@@ -1,10 +1,20 @@
 import React from 'react';
 import styled from '@emotion/styled';
 
-export type SwitchTrackProps = React.HTMLAttributes<HTMLSpanElement>;
+export type SwitchTrackProps = React.HTMLAttributes<HTMLSpanElement> & {
+  /**
+   * This prop allows you to provide switch state and control it. This property overrides internal component state
+   */
+  readonly checked: boolean;
+
+  /**
+   * You can pass the primary, default, secondary name of the colors or your specified color value
+   */
+  readonly color?: 'default' | 'primary' | 'secondary' | string;
+};
 
 type StyleProps = {
-  readonly color?: SwitchToggleProps['color'];
+  readonly color?: SwitchTrackProps['color'];
   readonly checked: boolean;
 };
 
@@ -33,9 +43,13 @@ const SwitchTrack: React.ForwardRefRenderFunction<HTMLSpanElement, SwitchTrackPr
   props,
   ref,
 ) => {
-  const { children, ...nativeProps } = props;
+  const { color, checked, children, ...nativeProps } = props;
 
-  return <Track {...nativeProps} ref={ref} color={color} checked={checked} />;
+  return (
+    <Track {...nativeProps} ref={ref} color={color} checked={checked}>
+      {children}
+    </Track>
+  );
 };
 
 export default React.forwardRef(SwitchTrack);
