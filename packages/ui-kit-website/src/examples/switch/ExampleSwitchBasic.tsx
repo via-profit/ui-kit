@@ -5,9 +5,7 @@ const ExampleSwitchBasic: React.FC = () => (
   <>
     <Switch defaultChecked />
     <Switch />
-    <Switch defaultChecked disabled>
-      Label
-    </Switch>
+    <Switch defaultChecked disabled />
     <Switch disabled />
   </>
 );

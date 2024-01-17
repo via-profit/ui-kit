@@ -14,6 +14,9 @@ const ToggleWrapper = styled.span`
   padding: 1.1rem;
   overflow: hidden;
   box-sizing: border-box;
+  &:hover span[class*='ToggleContainer'] > span[class*='Dot']:after {
+    transform: translate(-50%, -50%) scale(1.7);
+  }
 `;
 
 const StyledInput = styled.input`
@@ -27,6 +30,9 @@ const StyledInput = styled.input`
   margin: 0px;
   padding: 0px;
   z-index: 1;
+  &:focus-visible ~ span[class*='ToggleContainer'] > span[class*='Dot']:before {
+    transform: translate(-50%, -50%) scale(1.7);
+  }
 `;
 
 const SwitchToggleWrapper: React.ForwardRefRenderFunction<

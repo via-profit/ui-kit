@@ -3,9 +3,10 @@
 ## Содержание
 
 - [Описание](#описание)
-- [Варианты](#варианты)
+- [Текст](#текст)
+- [Положение](#положение)
 - [Цвета](#цвета)
-- [Иконки](#иконки)
+- [Контролируемый](#контролируемый)
 - [Переопределение](#переопределение)
 - [Свойства](#свойства)
 
@@ -34,46 +35,82 @@ export default ExampleSwitchBasic;
 
 <ExampleSwitchBasic />
 
-## Варианты
+## Текст
 
-Кнопки выполнены в трёх вариациях: `standard`, `outlined` и `plain`. По умолчанию, используется стиль `standard`.
-
-- **plain** — отображает кнопку без фона и окантовки
-- **standard** — отображает обычную кнопку в привычном для всех виде
-- **outlined** — отображает кнопку с окантовкой
+Вы можете передать текст переключателя в качестве свойства `children`. Он может быть выполнен в виде строки или компонена JSX
 
 _Пример использования:_
 
 ```tsx
 import React from 'react';
-import Button from '@via-profit/ui-kit/Button';
+import Switch from '@via-profit/ui-kit/src/Switch';
 
-const Example: React.FC = () => (
+const ExampleSwitchLabel: React.FC = () => (
   <>
-    <Button type="button" variant="standard">
-      Standard
-    </Button>
-    <Button type="button" variant="outlined">
-      Outlined
-    </Button>
-    <Button type="button" variant="plain">
-      Plain
-    </Button>
+    <Switch defaultChecked>Label</Switch>
+    <Switch requiredAsterisk>Required</Switch>
+    <Switch>Disabled</Switch>
   </>
 );
 
-export default Example;
+export default ExampleSwitchLabel;
 ```
 
-<ExampleButtonVariants />
+<ExampleSwitchLabel />
+
+## Положение
+
+Вы можете указать положение текста относительно переключателя. Это реализуется с помощью свойства `labelPosition`. Оно принимает одно из следующих значений
+
+- **start** — Текст расположен перед переключателем
+- **end** — Текст расположен за переключателем
+- **top** — Текст расположен над переключателем
+- **bottom** — Текст расположен под переключателем
+
+По умолчанию: `end`
+
+_Пример использования:_
+
+```tsx
+import React from 'react';
+import Switch from '@via-profit/ui-kit/src/Switch';
+import styled from '@emotion/styled';
+
+const Wrapper = styled.div`
+  display: flex;
+`;
+
+const ExampleSwitchLabelPlacement: React.FC = () => (
+  <Wrapper>
+    <Switch defaultChecked labelPosition="start">
+      Start
+    </Switch>
+    <Switch defaultChecked labelPosition="end">
+      End
+    </Switch>
+    <Switch defaultChecked labelPosition="top">
+      Top
+    </Switch>
+    <Switch defaultChecked labelPosition="bottom">
+      Bottom
+    </Switch>
+  </Wrapper>
+);
+
+export default ExampleSwitchLabelPlacement;
+```
+
+<ExampleSwitchLabelPlacement />
 
 ## Цвета
 
 Вы можете указать одно из трёх зарезервированных значений `default` `primary` `secondary`, или **rgb(a)**/**hex** код произвольного цвета. По умолчанию, используется цвет стиля `default`.
 
+**Важно:** Цвет будет применен только ко включенному переключателю
+
 В качестве цвета вы можете передать и псевдоним цвета, например, **lightpink** что будет соответствовать коду цвета `#ffb6c1`,
 
-- **default** — Цвет кнопки совпадает с цветом заднего плана
+- **default** — Цвет переключателя совпадает с цветом `primary`
 - **primary** — Используется основной цвет акцента
 - **secondary** — Используется второстепенный цвет акцента
 
@@ -81,58 +118,66 @@ _Пример использования:_
 
 ```tsx
 import React from 'react';
-import Button from '@via-profit/ui-kit/Button';
+import Switch from '@via-profit/ui-kit/src/Switch';
 
-const Example: React.FC = () => (
+const ExampleSwitchColors: React.FC = () => (
   <>
-    <>
-      <Button type="button" variant="standard" color="default">
-        Standard default
-      </Button>
-      <Button type="button" variant="standard" color="primary">
-        Standard primary
-      </Button>
-      <Button type="button" variant="standard" color="secondary">
-        Standard secondary
-      </Button>
-      <Button type="button" variant="standard" color="#308dfc">
-        Standard #308dfc
-      </Button>
-      <Button type="button" variant="standard" color="lightpink">
-        Standard lightpink
-      </Button>
-    </>
+    <Switch defaultChecked color="default">
+      Standard default
+    </Switch>
+    <Switch defaultChecked color="primary">
+      Standard primary
+    </Switch>
+    <Switch defaultChecked color="secondary">
+      Standard secondary
+    </Switch>
+    <Switch defaultChecked color="#308dfc">
+      Standard #308dfc
+    </Switch>
+    <Switch defaultChecked color="lightpink">
+      Standard lightpink
+    </Switch>
   </>
 );
 
-export default Example;
+export default ExampleSwitchColors;
 ```
 
-<ExampleButtonColors />
+<ExampleSwitchColors />
 
-## Иконки
+## Контролируемый
 
-Кнопка может отображать иконку, переданную в свойстве `startIcon` или `endIcon`. Если передать аргумент `onlyIcon`, то кнопка примет вид кнопки-иконки. Данное свойство не следует использовать одновременно с `startIcon` и/или `endIcon`
-**Важно:** Передавать следует не React компонент, а JSX выражение:
+Переключатель может быть контролируемый. Для чтобы сделать переключатель контролируемым необходимо передать 2 свойства: `checked` и `onChange`.
+
+- **checked** — булево состояние компонента. По умолчанию `undefined`
+- **onChange** — Функция, которая сработает при переключении. По умолчанию `undefined`
 
 ```tsx
-import Button from '@via-profit/ui-kit/Button';
-import MyIcon from './MyIcon';
+import React from 'react';
+import Switch from '@via-profit/ui-kit/src/Switch';
 
-const Example: React.FC = () => (
-  <>
-    <Button startIcon={<MyIcon />}>Button with icon</Button>
-    <Button iconOnly>
-      <MyIcon />
-    </Button>
-    <Button iconOnly>
-      <MyIcon />
-    </Button>
-  </>
-);
+const ExampleButtonColors: React.FC = () => {
+  const [switchState, setSwitchState] = React.useState<number | null>(null);
+
+  return (
+    <>
+      <Switch checked={switchState === 1} onChange={() => setSwitchState(1)}>
+        One
+      </Switch>
+      <Switch checked={switchState === 2} onChange={() => setSwitchState(2)}>
+        Two
+      </Switch>
+      <Switch checked={switchState === 3} onChange={() => setSwitchState(3)}>
+        Three
+      </Switch>
+    </>
+  );
+};
+
+export default ExampleButtonColors;
 ```
 
-<ExampleButtonIcons />
+<ExampleSwitchControlled />
 
 ## Переопределение
 
@@ -171,7 +216,7 @@ const Example: React.FC = () => (
 export default Example;
 ```
 
-<ExampleButtonOverrides />
+<ExampleSwitchOverrides />
 
 ## Свойства
 

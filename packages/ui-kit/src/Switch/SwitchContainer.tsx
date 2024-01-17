@@ -53,10 +53,6 @@ const StyledContainer = styled.label<StyledProps>`
       flex-direction: ${direction};
     `;
   }}
-
-  &:focus {
-    border: 1px solid violete;
-  }
 `;
 
 const SwitchContainer: React.ForwardRefRenderFunction<HTMLLabelElement, SwitchContainerProps> = (
