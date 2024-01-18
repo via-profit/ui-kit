@@ -5,6 +5,7 @@ import ToggleWrapper, { SwitchToggleWrapperProps } from './SwitchToggleWrapper';
 import TextWrapper, { SwitchTextWrapperProps } from './SwitchTextWrapper';
 import Dot, { SwitchDotProps } from './SwitchDot';
 import Track, { SwitchTrackProps } from './SwitchTrack';
+import Wrapper, { SwitchWrapperProps } from './SwitchWrapper';
 import ErrorText, { SwitchErrorTextProps } from './SwitchErrorText';
 import Asterisk, { SwitchAsteriskProps } from './SwitchAsterisk';
 
@@ -114,6 +115,13 @@ export interface SwitchOverrides {
   readonly Asterisk?: React.ForwardRefExoticComponent<
     SwitchAsteriskProps & React.RefAttributes<HTMLSpanElement>
   >;
+
+  /**
+   * the main cwitch wrapper
+   */
+  readonly Wrapper?: React.ForwardRefExoticComponent<
+    SwitchWrapperProps & React.RefAttributes<HTMLSpanElement>
+  >;
 }
 
 const Switch: React.ForwardRefRenderFunction<HTMLInputElement, SwitchProps> = (props, ref) => {
@@ -145,6 +153,7 @@ const Switch: React.ForwardRefRenderFunction<HTMLInputElement, SwitchProps> = (p
       Dot: overrides?.Dot || Dot,
       ErrorText: overrides?.ErrorText || ErrorText,
       Asterisk: overrides?.Asterisk || Asterisk,
+      Wrapper: overrides?.Wrapper || Wrapper,
     }),
     [overrides],
   );
@@ -156,40 +165,42 @@ const Switch: React.ForwardRefRenderFunction<HTMLInputElement, SwitchProps> = (p
   }
 
   return (
-    <overridesMap.Container labelPosition={labelPosition} disabled={disabled}>
-      <overridesMap.ToggleWrapper
-        {...nativeProps}
-        disabled={disabled}
-        onChange={
-          typeof onChange !== 'undefined'
-            ? onChange
-            : () => {
-                setInternalChecked(!internalChecked);
-              }
-        }
-        checked={typeof checked !== 'undefined' ? checked : defaultChecked ? true : undefined}
-        name={name}
-        ref={ref}
-      >
-        <overridesMap.Track
-          color={color}
-          checked={typeof checked !== 'undefined' ? checked : internalChecked}
-        />
-        <overridesMap.Dot
-          color={color}
-          checked={typeof checked !== 'undefined' ? checked : internalChecked}
-        />
-      </overridesMap.ToggleWrapper>
-      <overridesMap.TextWrapper>
-        {children}
-        {typeof requiredAsterisk !== 'undefined' && requiredAsterisk !== null && (
-          <overridesMap.Asterisk>
-            {typeof requiredAsterisk === 'boolean' ? '*' : requiredAsterisk}
-          </overridesMap.Asterisk>
-        )}
-      </overridesMap.TextWrapper>
+    <overridesMap.Wrapper>
+      <overridesMap.Container labelPosition={labelPosition} disabled={disabled}>
+        <overridesMap.ToggleWrapper
+          {...nativeProps}
+          disabled={disabled}
+          onChange={
+            typeof onChange !== 'undefined'
+              ? onChange
+              : () => {
+                  setInternalChecked(!internalChecked);
+                }
+          }
+          checked={typeof checked !== 'undefined' ? checked : defaultChecked ? true : undefined}
+          name={name}
+          ref={ref}
+        >
+          <overridesMap.Track
+            color={color}
+            checked={typeof checked !== 'undefined' ? checked : internalChecked}
+          />
+          <overridesMap.Dot
+            color={color}
+            checked={typeof checked !== 'undefined' ? checked : internalChecked}
+          />
+        </overridesMap.ToggleWrapper>
+        <overridesMap.TextWrapper>
+          {children}
+          {typeof requiredAsterisk !== 'undefined' && requiredAsterisk !== null && (
+            <overridesMap.Asterisk>
+              {typeof requiredAsterisk === 'boolean' ? '*' : requiredAsterisk}
+            </overridesMap.Asterisk>
+          )}
+        </overridesMap.TextWrapper>
+      </overridesMap.Container>
       <overridesMap.ErrorText error={error}>{errorText}</overridesMap.ErrorText>
-    </overridesMap.Container>
+    </overridesMap.Wrapper>
   );
 };
 
