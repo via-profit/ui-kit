@@ -98,7 +98,9 @@ const ModalWrapper: React.FC<ModalWrapperProps> = props => {
      * The last dialog will be found and closed
      */
     const keyDown = (event: KeyboardEvent) => {
-      if (event.key.toLocaleLowerCase() === 'escape' && closeOnEscape) {
+      const key = event?.key?.toLowerCase() || '';
+
+      if (key === 'escape' && closeOnEscape) {
         const portal = window.document.querySelector(`#${PORTAL_ID}`);
         const lastID = portal?.children?.[portal?.childNodes?.length - 1]?.id;
         if (lastID === id) {
@@ -106,11 +108,7 @@ const ModalWrapper: React.FC<ModalWrapperProps> = props => {
         }
       }
 
-      if (
-        event.key.toLowerCase() === 'tab' &&
-        isOpenProp &&
-        TabManager.isCurrentContainer(containerRef.current)
-      ) {
+      if (key === 'tab' && isOpenProp && TabManager.isCurrentContainer(containerRef.current)) {
         event.preventDefault();
         if (event.shiftKey) {
           TabManager.focusPrev();
