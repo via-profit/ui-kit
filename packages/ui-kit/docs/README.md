@@ -1,7 +1,10 @@
 # @via-profit/ui-kit
 
-## Компоненты
+## Roadmap
 
+- [ ] Расписать в TypeScript свойства компонентов Autocomplete, Selectbox, Menu. Свойства такие как: `selectedItemToString`, `filterItems` и пр
+
+## Компоненты
 
 - [Темы оформления](./theming/README.md)
 - [Цвета](./color/README.md)
