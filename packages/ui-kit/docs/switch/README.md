@@ -19,7 +19,7 @@ _Пример использования:_
 
 ```tsx
 import React from 'react';
-import Switch from '@via-profit/ui-kit/src/Switch';
+import Switch from '@via-profit/ui-kit/Switch';
 
 const ExampleSwitchBasic: React.FC = () => (
   <>
@@ -43,7 +43,7 @@ _Пример использования:_
 
 ```tsx
 import React from 'react';
-import Switch from '@via-profit/ui-kit/src/Switch';
+import Switch from '@via-profit/ui-kit/Switch';
 
 const ExampleSwitchLabel: React.FC = () => (
   <>
@@ -73,7 +73,7 @@ _Пример использования:_
 
 ```tsx
 import React from 'react';
-import Switch from '@via-profit/ui-kit/src/Switch';
+import Switch from '@via-profit/ui-kit/Switch';
 import styled from '@emotion/styled';
 
 const Wrapper = styled.div`
@@ -118,7 +118,7 @@ _Пример использования:_
 
 ```tsx
 import React from 'react';
-import Switch from '@via-profit/ui-kit/src/Switch';
+import Switch from '@via-profit/ui-kit/Switch';
 
 const ExampleSwitchColors: React.FC = () => (
   <>
@@ -154,7 +154,7 @@ export default ExampleSwitchColors;
 
 ```tsx
 import React from 'react';
-import Switch from '@via-profit/ui-kit/src/Switch';
+import Switch from '@via-profit/ui-kit/Switch';
 
 const ExampleButtonColors: React.FC = () => {
   const [switchState, setSwitchState] = React.useState<number | null>(null);
@@ -198,8 +198,8 @@ _Пример использования:_
 
 ```tsx
 import React from 'react';
-import Switch from '@via-profit/ui-kit/src/Switch';
-import SwitchDot from '@via-profit/ui-kit/src/Switch/SwitchDot';
+import Switch from '@via-profit/ui-kit/Switch';
+import SwitchDot from '@via-profit/ui-kit/Switch/SwitchDot';
 import styled from '@emotion/styled';
 
 const TextWrapper = styled.span`
