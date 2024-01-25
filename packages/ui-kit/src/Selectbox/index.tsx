@@ -143,6 +143,11 @@ export interface SelectboxProps<T, Multiple extends boolean | undefined = undefi
   ) => void;
 
   /**
+   * Еhe label that will be shown if there are no selected items
+   */
+  readonly notSetLabel?: string;
+
+  /**
    * Overridable components map
    */
   readonly overrides?: SelectboxOverrides;
@@ -240,6 +245,7 @@ const Selectbox = React.forwardRef(
       requiredAsterisk,
       error,
       errorText,
+      notSetLabel = 'Not set',
       ...nativeButtonProps
     } = props;
     const menuRef = React.useRef<MenuRef | null>(null);
@@ -290,11 +296,11 @@ const Selectbox = React.forwardRef(
 
     const renderValueAsString = React.useCallback(() => {
       if ((!multiple && !value) || (multiple && (value as readonly T[]).length === 0)) {
-        return 'Not set label';
+        return notSetLabel;
       }
 
       return selectedItemToString(value as Multiple extends undefined ? T : readonly T[]);
-    }, [multiple, selectedItemToString, value]);
+    }, [multiple, selectedItemToString, value, notSetLabel]);
 
     const inputID = React.useMemo(() => {
       if (typeof id === 'string') {
