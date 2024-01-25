@@ -155,13 +155,6 @@ export interface MenuProps<T, Multiple extends boolean | undefined = undefined> 
   readonly onSelectItem?: OnSelectItem<T, Multiple>;
 
   /**
-   * A function that renders each list item as string\
-   * \
-   * **Default**: `JSON.stringify(...)`
-   */
-  // readonly itemToString?: ItemToString<T>;
-
-  /**
    * The function that will be called at the moment when you want to close the menu
    */
   readonly onRequestClose?: OnRequestClose;

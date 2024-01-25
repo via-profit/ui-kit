@@ -18,6 +18,9 @@ export { SelectboxItem };
 
 export interface SelectboxProps<T, Multiple extends boolean | undefined = undefined>
   extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'value' | 'onChange' | 'children'> {
+  /**
+   * Array of values
+   */
   readonly items: readonly T[];
 
   readonly value: Value<T, Multiple>;
@@ -90,11 +93,47 @@ export interface SelectboxProps<T, Multiple extends boolean | undefined = undefi
    * items render function
    */
   readonly children: Children<T>;
+
+  /**
+   * The function that will be called when an item is selected from the list
+   */
   readonly onChange?: OnChange<T, Multiple>;
+
+  /**
+   * A function that transforms the selected item into a string
+   * Example:
+   * ```tsx
+   * <Selectbox
+   *   selectedItemToString={item => item.name} // item is {id: 1, name: 'Oleg'}
+   *   ...
+   * >
+   *   ...
+   * </Selectbox>
+   * ```
+   */
   readonly selectedItemToString: ItemToString<T, Multiple>;
+
+  /**
+   * A function that determines which of the elements is currently selected\
+   * Example:
+   * ```tsx
+   * <Selectbox
+   *   getOptionSelected={({ item, value }) => item.id === value.id}
+   * >
+   *   ...
+   * </Selectbox>
+   * ```
+   */
   readonly getOptionSelected?: GetOptionSelected<T>;
+
+  /**
+   * The function that will be called at the moment when you want to close the selectbox
+   */
   readonly onRequestClose?: OnRequestClose;
-  readonly onInputChange?: React.ChangeEventHandler<HTMLInputElement>;
+
+  /**
+   * The function that will be called at the moment when you want to open the selectbox
+   */
   readonly onRequestOpen?: (
     event:
       | React.KeyboardEvent<HTMLElement>

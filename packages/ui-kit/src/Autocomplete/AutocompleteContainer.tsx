@@ -66,12 +66,64 @@ export interface AutocompleteProps<T, Multiple extends boolean | undefined = und
    * items render function
    */
   readonly children: Children<T>;
+
+  /**
+   * A function that returns a filtered array of values. which correspond to the entered query
+   * Example:
+   * ```tsx
+   * <Autocomplete
+   *  filterItems={(items, { query }) =>
+   *    items.filter(item => item.name.toLocaleLowerCase().indexOf(query) !== -1)
+   *  }
+   *  ...
+   * >
+   * ```
+   * </Autocomplete>
+   */
   readonly filterItems?: FilterItems<T>;
+
+  /**
+   * The function that will be called when an item is selected from the list
+   */
   readonly onChange?: OnChange<T, Multiple>;
+
+  /**
+   * A function that transforms the selected item into a string
+   * Example:
+   * ```tsx
+   * <Autocomplete
+   *   selectedItemToString={item => item.name} // item is {id: 1, name: 'Oleg'}
+   *   ...
+   * >
+   *   ...
+   * </Autocomplete>
+   * ```
+   */
   readonly selectedItemToString: ItemToString<T, Multiple>;
+
+  /**
+   * A function that determines which of the elements is currently selected\
+   * Example:
+   * ```tsx
+   * <Menu
+   *   ...
+   *   getOptionSelected={({ item, value }) => item.id === value.id}
+   */
   readonly getOptionSelected?: GetOptionSelected<T>;
+
+  /**
+   * The function that will be called at the moment when you want to close the autocomplete
+   */
   readonly onRequestClose?: OnRequestClose;
+
+  /**
+   * The function that will be called at the moment when you change the input value of input element
+   */
   readonly onInputChange?: React.ChangeEventHandler<HTMLInputElement>;
+
+  /**
+   * The function that will be called at the moment when you want to open the selectbox
+   */
   readonly onRequestOpen?: (
     event:
       | React.KeyboardEvent<HTMLElement>
