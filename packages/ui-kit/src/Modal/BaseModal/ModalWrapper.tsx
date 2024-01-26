@@ -27,6 +27,7 @@ export type ModalWrapperProps = {
 const ModalWrapper: React.FC<ModalWrapperProps> = props => {
   const { children, isOpen: isOpenProp, autofocus = true } = props;
   const { state, dispatch } = useContext();
+  const initialOpenStateRef = React.useRef(isOpenProp);
   const [alreadyMounted, setMountState] = React.useState(true);
   const { closeOnEscape, isMounted, isOpen, destroyTimeout, onRequestClose } = state;
   const containerRef = React.useRef<HTMLDivElement | null>(null);
@@ -135,7 +136,7 @@ const ModalWrapper: React.FC<ModalWrapperProps> = props => {
    * and sets visibility property to false otherwise
    */
   React.useEffect(() => {
-    if (isOpen !== isOpenProp) {
+    if (isOpen !== isOpenProp || initialOpenStateRef.current) {
       /**
        * Mark as mounted and wait minimum loop of event (15ms) then mark as open
        */
