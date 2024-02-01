@@ -53,7 +53,12 @@ const ExampleAutocompleteFetch: React.FC = () => {
 
       timeoutRef.current = setTimeout(() => {
         fetchQuery(v)
-          .then(setItems)
+          .then(list => {
+            setItems(list);
+            setIsOpen(list.length > 0);
+
+            return list;
+          })
           .catch(err => console.error(err));
       }, 300);
     },
