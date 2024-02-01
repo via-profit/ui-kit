@@ -504,10 +504,6 @@ const Autocomplete = React.forwardRef(
                 }
               }}
               onClick={event => {
-                // if (isFocusedRef.current) {
-                //   onRequestOpen(event);
-                // }
-
                 if (typeof nativeInputProps.onClick === 'function') {
                   nativeInputProps.onClick(event);
                 }
