@@ -277,7 +277,7 @@ const Autocomplete = React.forwardRef(
           case 'ArrowDown':
             {
               event.preventDefault();
-              if (!currentOpen) {
+              if (!currentOpen && filteredItems.length > 0) {
                 onRequestOpen(event);
               }
 
@@ -323,7 +323,7 @@ const Autocomplete = React.forwardRef(
             break;
         }
       },
-      [currentOpen, onRequestClose, onRequestOpen],
+      [currentOpen, onRequestClose, onRequestOpen, filteredItems.length],
     );
 
     const applyFilterForItems = React.useCallback(
@@ -399,16 +399,18 @@ const Autocomplete = React.forwardRef(
         }
 
         // Click outside
-        if (needToClose) {
+        if (needToClose && currentOpen) {
           if (clearOnBlur) {
+            const newInputValue =
+              currentValue === null
+                ? ''
+                : selectedItemToString(
+                    currentValue as Multiple extends undefined ? T : readonly T[],
+                  );
             dispatch(
               actionSetPartial({
-                inputValue:
-                  currentValue === null
-                    ? ''
-                    : selectedItemToString(
-                        currentValue as Multiple extends undefined ? T : readonly T[],
-                      ),
+                filteredItems: multiple ? filteredItems : applyFilterForItems(newInputValue, items),
+                inputValue: newInputValue,
               }),
             );
           }
@@ -427,12 +429,18 @@ const Autocomplete = React.forwardRef(
     }, [
       onRequestClose,
       anchorElement,
+      filteredItems,
+      items,
       isOpen,
       clearOnBlur,
+      currentOpen,
       dispatch,
       value,
       selectedItemToString,
       currentValue,
+      applyFilterForItems,
+      inputValue,
+      multiple,
     ]);
 
     return (
@@ -491,11 +499,11 @@ const Autocomplete = React.forwardRef(
               onFocus={event => {
                 isFocusedRef.current = true;
 
-                if (openOnFocus) {
+                if (openOnFocus && !currentOpen && filteredItems.length > 0) {
                   onRequestOpen(event);
                 }
 
-                if (!openOnFocus && !currentOpen && inputValue !== '') {
+                if (!openOnFocus && !currentOpen && inputValue !== '' && filteredItems.length > 0) {
                   onRequestOpen(event);
                 }
 
@@ -507,6 +515,10 @@ const Autocomplete = React.forwardRef(
                 if (typeof nativeInputProps.onClick === 'function') {
                   nativeInputProps.onClick(event);
                 }
+
+                if (isFocusedRef.current && !currentOpen && filteredItems.length > 0) {
+                  onRequestOpen(event);
+                }
               }}
               onChange={event => {
                 if (typeof onInputChange === 'function') {
@@ -515,7 +527,12 @@ const Autocomplete = React.forwardRef(
 
                 // If openOnFocus is false, but value is not empty
                 // we should open menu list if is not opened
-                if (!openOnFocus && isFocusedRef.current && !currentOpen) {
+                if (
+                  !openOnFocus &&
+                  isFocusedRef.current &&
+                  !currentOpen &&
+                  filteredItems.length > 0
+                ) {
                   onRequestOpen(event);
                 }
 
@@ -549,10 +566,11 @@ const Autocomplete = React.forwardRef(
             inputRef,
             openOnFocus,
             currentOpen,
+            filteredItems.length,
             onRequestOpen,
             onInputChange,
-            applyFilterForItems,
             items,
+            applyFilterForItems,
           ],
         )}
         {React.useMemo(
@@ -563,18 +581,26 @@ const Autocomplete = React.forwardRef(
               multiple={multiple}
               items={filteredItems as T[]}
               value={currentValue as Value<T, Multiple>}
-              isOpen={currentOpen && filteredItems.length > 0}
+              isOpen={currentOpen}
               autofocus={false}
               anchorElement={anchorElement}
               closeOutsideClick={false}
               getOptionSelected={getOptionSelected}
+              onRequestClose={onRequestClose}
+              closeOnSelect={multiple ? false : true}
               onSelectItem={item => {
+                if (!multiple) {
+                  dispatch({
+                    type: 'setPartial',
+                    payload: {
+                      filteredItems: applyFilterForItems(selectedItemToString(item), items),
+                    },
+                  });
+                }
                 if (typeof onChange === 'function') {
                   onChange(item);
                 }
               }}
-              onRequestClose={onRequestClose}
-              closeOnSelect={multiple ? false : true}
             >
               {({ index, item }, itemProps) =>
                 children({ index, item: item as T, inputValue }, itemProps)
@@ -589,8 +615,12 @@ const Autocomplete = React.forwardRef(
             currentOpen,
             anchorElement,
             getOptionSelected,
-            onChange,
             onRequestClose,
+            dispatch,
+            applyFilterForItems,
+            selectedItemToString,
+            items,
+            onChange,
             children,
             inputValue,
           ],
