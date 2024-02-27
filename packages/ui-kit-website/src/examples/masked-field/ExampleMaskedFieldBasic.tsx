@@ -1,7 +1,7 @@
 import React from 'react';
 import MaskedField from '@via-profit/ui-kit/src/MaskedField';
 
-const letter = /[АВЕКМНОРСТУХавекмнорстух]/;
+const letter = /[abekmhopctyXABEKMHOPCTYXАВЕКМНОРСТУХавекмнорстух]/;
 const digit = /\d/;
 
 const ExampleMaskedFieldBasic: React.FC = () => {
