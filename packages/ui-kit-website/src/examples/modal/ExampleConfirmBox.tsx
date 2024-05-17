@@ -4,20 +4,34 @@ import Button from '@via-profit/ui-kit/src/Button';
 import Typography from '@via-profit/ui-kit/src/Typography';
 
 const ExampleConfirmBox: React.FC = () => {
-  const [isOpen, setIsOpen] = React.useState(false);
+  const [isOpenFirst, setIsOpenFirst] = React.useState(false);
+  const [isOpenInner, setIsOpenInner] = React.useState(false);
 
   return (
     <>
-      <Button onClick={() => setIsOpen(true)}>Open confirmation dialog</Button>
+      <Button onClick={() => setIsOpenFirst(true)}>Open confirmation dialog</Button>
 
       <Modal
         variant="confirm-box"
-        isOpen={isOpen}
-        onRequestClose={() => setIsOpen(false)}
+        isOpen={isOpenFirst}
+        onRequestClose={() => setIsOpenFirst(false)}
         header="Title"
-        onRequestYes={() => setIsOpen(false)}
+        onRequestYes={() => setIsOpenFirst(false)}
       >
         <Typography noMargin>Dialog content</Typography>
+        <Button variant="outlined" onClick={() => setIsOpenInner(true)}>
+          Open inner dialog
+        </Button>
+      </Modal>
+
+      <Modal
+        variant="confirm-box"
+        isOpen={isOpenInner}
+        onRequestClose={() => setIsOpenInner(false)}
+        header="Title"
+        onRequestYes={() => setIsOpenInner(false)}
+      >
+        <Typography noMargin>Inner Dialog content</Typography>
       </Modal>
     </>
   );

@@ -101,7 +101,12 @@ const ModalWrapper: React.FC<ModalWrapperProps> = props => {
     const keyDown = (event: KeyboardEvent) => {
       const key = event?.key?.toLowerCase() || '';
 
-      if (key === 'escape' && closeOnEscape) {
+      if (
+        key === 'escape' &&
+        closeOnEscape &&
+        isOpenProp &&
+        TabManager.isCurrentContainer(containerRef.current)
+      ) {
         const portal = window.document.querySelector(`#${PORTAL_ID}`);
         const lastID = portal?.children?.[portal?.childNodes?.length - 1]?.id;
         if (lastID === id) {
