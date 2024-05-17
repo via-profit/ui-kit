@@ -39,16 +39,20 @@ type ParseAndFormat = (inputValue: string, caret?: number) => Formatted;
 
 export const usePhoneUtils = (params: { templates: readonly PhoneTemplate[] }) => {
   const { templates } = params;
-  const templatesList = templates.concat([
-    [
-      null,
-      <UnknownFlag key="unknnown" />,
-      null,
-      '+x xxx xxx-xx-xx',
-      '+7 987 654-32-10',
-      /^\+{0,1}.*/,
-    ],
-  ]);
+  const templatesList = React.useMemo(
+    () =>
+      templates.concat([
+        [
+          null,
+          <UnknownFlag key="unknnown" />,
+          null,
+          '+x xxx xxx-xx-xx',
+          '+7 987 654-32-10',
+          /^\+{0,1}.*/,
+        ],
+      ]),
+    [templates],
+  );
   /**
    * Get template info by parset value
    */
