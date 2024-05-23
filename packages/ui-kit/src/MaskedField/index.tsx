@@ -117,10 +117,18 @@ const MaskedField: React.ForwardRefRenderFunction<HTMLDivElement, MaskedFieldPro
     <TextField
       ref={ref}
       {...nativeProps}
-      inputRef={textInputRef}
       type="text"
       value={inputValue}
       onChange={handleOnChange}
+      inputRef={elem => {
+        textInputRef.current = elem;
+        if (typeof nativeProps.inputRef === 'function') {
+          nativeProps.inputRef(elem);
+        }
+        if (nativeProps.inputRef !== null && typeof nativeProps.inputRef === 'object') {
+          nativeProps.inputRef.current = elem;
+        }
+      }}
     />
   );
 };
