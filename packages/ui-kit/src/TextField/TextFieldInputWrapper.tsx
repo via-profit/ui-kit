@@ -25,7 +25,6 @@ const Wrapper = styled.div<{
       ? theme.color.textPrimary.darken(100).toString()
       : theme.color.textPrimary.lighten(150).toString()};
   width: ${({ $fullWidth }) => ($fullWidth ? '100%' : 'auto')};
-  min-width: 16em;
   font-size: 0.9em;
   background-color: ${({ theme }) => theme.color.surface.toString()};
   color: ${({ theme }) => theme.color.textPrimary.toString()};
