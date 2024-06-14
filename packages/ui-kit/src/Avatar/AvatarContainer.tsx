@@ -31,7 +31,6 @@ const StyledAvatar = styled.span<StyledProps>`
   width: ${({ size }) => size || '2.5em'};
   height: ${({ size }) => size || '2.5em'};
   display: inline-flex;
-  overflow: hidden;
   align-items: center;
   color: ${({ color, theme }) => {
     switch (true) {

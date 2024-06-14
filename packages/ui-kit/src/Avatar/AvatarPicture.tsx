@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from '@emotion/styled';
+import { css } from '@emotion/react';
 
 export type MimeType =
   | 'image/webp'
@@ -12,9 +13,9 @@ export type MimeType =
   | 'image/x-icon';
 
 export type SrcObject = {
-  srcSet: string;
-  type: MimeType;
-  isDefault?: boolean;
+  readonly srcSet: string;
+  readonly type: MimeType;
+  readonly isDefault?: boolean;
 };
 
 export type AvatarPictureProps = React.HTMLAttributes<HTMLPictureElement> & {
@@ -32,9 +33,17 @@ export type AvatarPictureProps = React.HTMLAttributes<HTMLPictureElement> & {
    * ```
    */
   readonly src: SrcObject[];
+
+  /**
+   * Avatar style variant\
+   * Allowed variants: `circular`,`rounded` or `square`\
+   * \
+   * **Default**: `circular`
+   */
+  readonly variant?: 'circular' | 'rounded' | 'square';
 };
 
-const Picture = styled.picture`
+const Picture = styled.picture<{ $variant: AvatarPictureProps['variant'] }>`
   background-position: center;
   background-size: cover;
   width: 100%;
@@ -43,6 +52,27 @@ const Picture = styled.picture`
     width: 100%;
     height: 100%;
   }
+
+  ${({ $variant, theme }) => {
+    switch ($variant) {
+      case 'rounded':
+        return css`
+          border-radius: ${theme.shape.radiusFactor * 0.8}em;
+          overflow: hidden;
+        `;
+
+      case 'square':
+        return css`
+          border-radius: inherit;
+        `;
+
+      default:
+        return css`
+          border-radius: 100%;
+          overflow: hidden;
+        `;
+    }
+  }}
 `;
 
 const generateKey = () => (Math.random() * 10000).toFixed();
@@ -51,7 +81,7 @@ const AvatarPicture: React.ForwardRefRenderFunction<HTMLSpanElement, AvatarPictu
   props,
   ref,
 ) => {
-  const { src, ...nativeProps } = props;
+  const { src, variant, ...nativeProps } = props;
 
   const defaultSrc = React.useMemo(() => {
     if (typeof src === 'undefined' || src?.length === 0) {
@@ -76,7 +106,7 @@ const AvatarPicture: React.ForwardRefRenderFunction<HTMLSpanElement, AvatarPictu
   }, [src]);
 
   return (
-    <Picture {...nativeProps} ref={ref}>
+    <Picture {...nativeProps} $variant={variant} ref={ref}>
       {src.map(({ isDefault, ...srcProps }) => (
         <source key={generateKey()} {...srcProps} />
       ))}

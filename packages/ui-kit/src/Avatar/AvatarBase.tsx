@@ -4,6 +4,7 @@ import IconWrapper, { AvatarIconWrapperProps } from './AvatarIconWrapper';
 import TextWrapper, { AvatarTextWrapperProps } from './AvatarTextWrapper';
 import Container, { AvatarContainerProps } from './AvatarContainer';
 import Picture, { AvatarPictureProps } from './AvatarPicture';
+import AvatarOnlineBadge from './AvatarOnlineBadge';
 
 type AvatarNativeProps = React.HTMLAttributes<HTMLSpanElement>;
 
@@ -109,13 +110,15 @@ const AvatarBase: React.ForwardRefRenderFunction<HTMLSpanElement, AvatarBaseProp
     <overridesMap.Container {...nativeProps} color={color} ref={ref}>
       {typeof src !== 'undefined' && src !== null && src?.length !== 0 && (
         <overridesMap.IconWrapper>
-          <overridesMap.Picture src={src} />
+          <overridesMap.Picture src={src} variant={variant} />
         </overridesMap.IconWrapper>
       )}
 
       {(!src || src === null || src?.length === 0) && (
         <overridesMap.TextWrapper>{children}</overridesMap.TextWrapper>
       )}
+
+      {isOnline && <AvatarOnlineBadge />}
     </overridesMap.Container>
   );
 };
