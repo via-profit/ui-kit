@@ -40,6 +40,25 @@ const StyledAvatarBase = styled(AvatarBase)<StyledProps>`
     css`
       cursor: pointer;
     `}
+
+  ${({ variant, theme }) => {
+    switch (variant) {
+      case 'rounded':
+        return css`
+          border-radius: ${theme.shape.radiusFactor * 0.8}em;
+        `;
+
+      case 'square':
+        return css`
+          border-radius: inherit;
+        `;
+
+      default:
+        return css`
+          border-radius: 100%;
+        `;
+    }
+  }}
 `;
 
 const Avatar: React.ForwardRefRenderFunction<HTMLSpanElement, AvatarProps> = (props, ref) => {
