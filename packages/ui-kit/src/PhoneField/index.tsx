@@ -3,16 +3,28 @@ import React from 'react';
 import TextField, { TextFieldProps } from '../TextField';
 import { usePhoneUtils } from './usePhoneUtils';
 import CountryFlagComponent from './CountryFlagComponent';
-import type { CountryCode, CountryFlag, PhoneTemplate } from './templates';
+import type { CountryFlag, PhoneTemplate } from './templates';
 
 export interface PhoneFieldProps extends Omit<TextFieldProps, 'value' | 'onChange'> {
   /**
    * Phone string format 79876543210 or +7 (987) 654-32-10
    */
   readonly value: string;
-  readonly defaultCountry?: CountryCode | null;
+
+  /**
+   * On input change event
+   */
   readonly onChange: (event: React.ChangeEvent<HTMLInputElement>, payload: PhonePayload) => void;
+
+  /**
+   * Supported RegExp templates
+   */
   readonly templates: readonly PhoneTemplate[];
+
+  /**
+   * If truethen CountryFalg component will be hidden
+   */
+  readonly withoutCountryFlag?: boolean;
 }
 
 export interface PhonePayload {
@@ -58,7 +70,7 @@ const PhoneField: React.ForwardRefRenderFunction<HTMLDivElement, PhoneFieldProps
   props,
   ref,
 ) => {
-  const { value, defaultCountry, templates, inputRef, onChange, ...textFieldProps } = props;
+  const { value, templates, inputRef, withoutCountryFlag, onChange, ...textFieldProps } = props;
   const { formatParsedInput, parseInput, parseAndFormat } = usePhoneUtils({ templates });
   const textInputRef = React.useRef<HTMLInputElement | null>(null);
   const initialValue = React.useRef(value);
@@ -151,18 +163,19 @@ const PhoneField: React.ForwardRefRenderFunction<HTMLDivElement, PhoneFieldProps
     <TextField
       ref={ref}
       startIcon={React.useMemo(
-        () => (
-          <CountryFlagComponent
-            flag={CountryFlag}
-            onClick={() => {
-              if (textInputRef.current) {
-                textInputRef.current.select();
-                textInputRef.current.focus();
-              }
-            }}
-          />
-        ),
-        [CountryFlag],
+        () =>
+          withoutCountryFlag ? undefined : (
+            <CountryFlagComponent
+              flag={CountryFlag}
+              onClick={() => {
+                if (textInputRef.current) {
+                  textInputRef.current.select();
+                  textInputRef.current.focus();
+                }
+              }}
+            />
+          ),
+        [CountryFlag, withoutCountryFlag],
       )}
       {...textFieldProps}
       value={currentValue}
