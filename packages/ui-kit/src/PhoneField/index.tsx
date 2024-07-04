@@ -150,7 +150,6 @@ const PhoneField: React.ForwardRefRenderFunction<HTMLDivElement, PhoneFieldProps
   return (
     <TextField
       ref={ref}
-      {...textFieldProps}
       startIcon={React.useMemo(
         () => (
           <CountryFlagComponent
@@ -165,6 +164,7 @@ const PhoneField: React.ForwardRefRenderFunction<HTMLDivElement, PhoneFieldProps
         ),
         [CountryFlag],
       )}
+      {...textFieldProps}
       value={currentValue}
       placeholder={placeholder}
       onChange={handleChange}
