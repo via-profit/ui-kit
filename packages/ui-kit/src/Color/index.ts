@@ -134,6 +134,37 @@ class Color {
     return this;
   }
 
+  public static stringToHashCode(str: string): number {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+      const char = str.charCodeAt(i);
+      hash = (hash << 5) - hash + char;
+      hash |= 0; // Convert to a 32-bit integer
+    }
+
+    return hash;
+  }
+
+  /**
+   * Convert the integer value to a string color value
+   */
+  public static intToRGB(i: number): string {
+    const red = (i >> 16) & 0xff;
+    const green = (i >> 8) & 0xff;
+    const blue = i & 0xff;
+
+    return `rgb(${red},${green},${blue})`;
+  }
+
+  /**
+   * Convert GUID string value to a color string
+   */
+  public static uuidToColor(uuid: string): string {
+    const hash = Color.stringToHashCode(uuid);
+
+    return Color.intToRGB(hash);
+  }
+
   /**
    * Returns the current color as separate rgb channels
    */
