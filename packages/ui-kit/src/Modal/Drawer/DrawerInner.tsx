@@ -2,7 +2,7 @@ import React from 'react';
 import styled from '@emotion/styled';
 import { css } from '@emotion/react';
 
-import { ModalInnerProps } from '../BaseModal/ModalInner';
+import ModalInner, { ModalInnerProps } from '../BaseModal/ModalInner';
 
 export type AnchorVariant = 'bottom' | 'right' | 'left' | 'top';
 
@@ -22,12 +22,9 @@ export type DrawerInnerProps = ModalInnerProps &
     readonly anchor: AnchorVariant;
   };
 
-type StyleProps = {
-  readonly $isOpen: boolean;
-};
-
-const StyledDrawerBottomInner = styled.div<StyleProps>`
+const StyledDrawerBottomInner = styled(ModalInner)`
   position: fixed;
+  margin: 0;
   left: 0;
   right: 0;
   bottom: -100%;
@@ -42,8 +39,8 @@ const StyledDrawerBottomInner = styled.div<StyleProps>`
   transition:
     opacity 120ms ease-out,
     bottom 600ms ease-out;
-  ${({ $isOpen }) =>
-    $isOpen &&
+  ${({ isOpen }) =>
+    isOpen &&
     css`
       opacity: 1;
       bottom: 0;
@@ -53,8 +50,9 @@ const StyledDrawerBottomInner = styled.div<StyleProps>`
     `}
 `;
 
-const StyledDrawerTopInner = styled.div<StyleProps>`
+const StyledDrawerTopInner = styled(ModalInner)`
   position: fixed;
+  margin: 0;
   left: 0;
   right: 0;
   top: -100%;
@@ -69,8 +67,8 @@ const StyledDrawerTopInner = styled.div<StyleProps>`
   transition:
     top 600ms ease-out,
     opacity 120ms ease-out;
-  ${({ $isOpen }) =>
-    $isOpen &&
+  ${({ isOpen }) =>
+    isOpen &&
     css`
       opacity: 1;
       top: 0;
@@ -80,8 +78,9 @@ const StyledDrawerTopInner = styled.div<StyleProps>`
     `}
 `;
 
-const StyledDrawerRightInner = styled.div<StyleProps>`
+const StyledDrawerRightInner = styled(ModalInner)`
   position: fixed;
+  margin: 0;
   right: -100%;
   top: 0;
   bottom: 0;
@@ -96,8 +95,8 @@ const StyledDrawerRightInner = styled.div<StyleProps>`
   transition:
     right 600ms ease-out,
     opacity 120ms ease-out;
-  ${({ $isOpen }) =>
-    $isOpen &&
+  ${({ isOpen }) =>
+    isOpen &&
     css`
       opacity: 1;
       right: 0;
@@ -107,8 +106,9 @@ const StyledDrawerRightInner = styled.div<StyleProps>`
     `}
 `;
 
-const StyledDrawerLeftInner = styled.div<StyleProps>`
+const StyledDrawerLeftInner = styled(ModalInner)`
   position: fixed;
+  margin: 0;
   left: -100%;
   top: 0;
   bottom: 0;
@@ -123,8 +123,8 @@ const StyledDrawerLeftInner = styled.div<StyleProps>`
   transition:
     left 600ms ease-out,
     opacity 120ms ease-out;
-  ${({ $isOpen }) =>
-    $isOpen &&
+  ${({ isOpen }) =>
+    isOpen &&
     css`
       opacity: 1;
       left: 0;
@@ -155,7 +155,13 @@ const DrawerInner: React.ForwardRefRenderFunction<HTMLDivElement, DrawerInnerPro
   }, [anchor]);
 
   return (
-    <Element $isOpen={isOpen} id={`${dialogID}-description`} {...nativeProps} ref={ref}>
+    <Element
+      isOpen={isOpen}
+      id={`${dialogID}-description`}
+      onRequestClose={onRequestClose}
+      {...nativeProps}
+      ref={ref}
+    >
       {children}
     </Element>
   );
