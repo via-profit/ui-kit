@@ -75,8 +75,6 @@ const Picture = styled.picture<{ $variant: AvatarPictureProps['variant'] }>`
   }}
 `;
 
-const generateKey = () => (Math.random() * 10000).toFixed();
-
 const AvatarPicture: React.ForwardRefRenderFunction<HTMLSpanElement, AvatarPictureProps> = (
   props,
   ref,
@@ -108,7 +106,7 @@ const AvatarPicture: React.ForwardRefRenderFunction<HTMLSpanElement, AvatarPictu
   return (
     <Picture {...nativeProps} $variant={variant} ref={ref}>
       {src.map(({ isDefault, ...srcProps }) => (
-        <source key={generateKey()} {...srcProps} />
+        <source key={`${srcProps.srcSet}:${srcProps.type}`} {...srcProps} />
       ))}
       <img src={defaultSrc?.srcSet || ''} />
     </Picture>
