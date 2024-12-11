@@ -104,7 +104,7 @@ const Drawer: React.FC<DrawerProps> = props => {
     [showCloseButton, header, toolbar],
   );
 
-  const dialogID = React.useMemo(() => `drawer-confirm-${new Date().getTime()}`, []);
+  const dialogID = React.useMemo(() => `drawer-${new Date().getTime()}`, []);
 
   const overridesMap = React.useMemo(
     () => ({

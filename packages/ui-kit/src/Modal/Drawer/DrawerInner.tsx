@@ -30,27 +30,26 @@ const StyledDrawerBottomInner = styled.div<StyleProps>`
   position: fixed;
   left: 0;
   right: 0;
-  bottom: 0;
-  opacity: 0;
+  bottom: -100%;
   max-height: 90%;
+  opacity: 0;
   display: flex;
   flex-direction: column;
-  transform: translate(0, 100%);
   z-index: ${({ theme }) => theme.zIndex.modal};
   background-color: ${({ theme }) => theme.color.surface.toString()};
   border-top-left-radius: ${({ theme }) => theme.shape.radiusFactor * 2}em;
   border-top-right-radius: ${({ theme }) => theme.shape.radiusFactor * 2}em;
   transition:
-    transform 600ms ease-out,
-    opacity 120ms ease-out;
+    opacity 120ms ease-out,
+    bottom 600ms ease-out;
   ${({ $isOpen }) =>
     $isOpen &&
     css`
       opacity: 1;
-      transform: translate(0, 0);
+      bottom: 0;
       transition:
-        transform 240ms ease-out,
-        opacity 100ms ease-out;
+        opacity 100ms ease-out,
+        bottom 240ms ease-out;
     `}
 `;
 
@@ -58,82 +57,79 @@ const StyledDrawerTopInner = styled.div<StyleProps>`
   position: fixed;
   left: 0;
   right: 0;
-  top: 0;
+  top: -100%;
   opacity: 0;
   max-height: 90%;
   display: flex;
   flex-direction: column;
-  transform: translate(0, -100%);
   z-index: ${({ theme }) => theme.zIndex.modal};
   background-color: ${({ theme }) => theme.color.surface.toString()};
   border-bottom-left-radius: ${({ theme }) => theme.shape.radiusFactor * 2}em;
   border-bottom-right-radius: ${({ theme }) => theme.shape.radiusFactor * 2}em;
   transition:
-    transform 600ms ease-out,
+    top 600ms ease-out,
     opacity 120ms ease-out;
   ${({ $isOpen }) =>
     $isOpen &&
     css`
       opacity: 1;
-      transform: translate(0, 0);
+      top: 0;
       transition:
-        transform 240ms ease-out,
+        top 240ms ease-out,
         opacity 100ms ease-out;
     `}
 `;
 
 const StyledDrawerRightInner = styled.div<StyleProps>`
   position: fixed;
-  right: 0;
+  right: -100%;
   top: 0;
   bottom: 0;
   opacity: 0;
   max-width: 90%;
   display: flex;
   flex-direction: column;
-  transform: translate(100%, 0);
   z-index: ${({ theme }) => theme.zIndex.modal};
   background-color: ${({ theme }) => theme.color.surface.toString()};
   border-top-left-radius: ${({ theme }) => theme.shape.radiusFactor * 2}em;
   border-bottom-left-radius: ${({ theme }) => theme.shape.radiusFactor * 2}em;
   transition:
-    transform 600ms ease-out,
+    right 600ms ease-out,
     opacity 120ms ease-out;
   ${({ $isOpen }) =>
     $isOpen &&
     css`
       opacity: 1;
-      transform: translate(0, 0);
+      right: 0;
       transition:
-        transform 240ms ease-out,
+        right 240ms ease-out,
         opacity 100ms ease-out;
     `}
 `;
 
 const StyledDrawerLeftInner = styled.div<StyleProps>`
   position: fixed;
-  left: 0;
+  left: -100%;
   top: 0;
   bottom: 0;
   opacity: 0;
   max-width: 90%;
   display: flex;
   flex-direction: column;
-  transform: translate(-100%, 0);
   z-index: ${({ theme }) => theme.zIndex.modal};
   background-color: ${({ theme }) => theme.color.surface.toString()};
   border-top-right-radius: ${({ theme }) => theme.shape.radiusFactor * 2}em;
   border-bottom-right-radius: ${({ theme }) => theme.shape.radiusFactor * 2}em;
   transition:
-    transform 600ms ease-out,
+    left 600ms ease-out,
     opacity 120ms ease-out;
   ${({ $isOpen }) =>
     $isOpen &&
     css`
       opacity: 1;
-      transform: translate(0, 0);
+      left: 0;
       transition:
-        transform 240ms ease-out,
+        left 240ms ease-out,
         opacity 100ms ease-out;
     `}
 `;

@@ -47,12 +47,16 @@ const Title: React.FC = () => <>Title</>;
 
 const ExampleModalDrawerOverview: React.FC = () => {
   const [isOpenDrawer1, setOpenDrawer1] = React.useState(false);
-  const [isOpenDrawer2, setOpenDrawer2] = React.useState(false);
+  const [isOpenDrawerLeft, setOpenDrawerLeft] = React.useState(false);
+  const [isOpenDrawerTop, setOpenDrawerTop] = React.useState(false);
+  const [isOpenDrawerBottom, setOpenDrawerBottom] = React.useState(false);
 
   return (
     <>
       <Button onClick={() => setOpenDrawer1(true)}>Open large drawer </Button>
-      <Button onClick={() => setOpenDrawer2(true)}>Open simple drawer</Button>
+      <Button onClick={() => setOpenDrawerBottom(true)}>Open drawer bottom</Button>
+      <Button onClick={() => setOpenDrawerLeft(true)}>Open drawer left</Button>
+      <Button onClick={() => setOpenDrawerTop(true)}>Open drawer top</Button>
 
       <Modal
         variant="drawer"
@@ -63,7 +67,7 @@ const ExampleModalDrawerOverview: React.FC = () => {
         toolbar={
           <Toolbar>
             <ToolbarTitle>Toolbar</ToolbarTitle>
-            <Button onClick={() => setOpenDrawer2(true)}>Open simple drawer</Button>
+            <Button onClick={() => setOpenDrawerLeft(true)}>Open simple drawer</Button>
           </Toolbar>
         }
         onRequestClose={() => setOpenDrawer1(false)}
@@ -88,9 +92,52 @@ const ExampleModalDrawerOverview: React.FC = () => {
 
       <Modal
         variant="drawer"
+        anchor="top"
+        isOpen={isOpenDrawerTop}
+        onRequestClose={() => setOpenDrawerTop(false)}
+      >
+        <ClassNames>
+          {({ css }) => (
+            <Dummy
+              className={css`
+                flex-basis: initial;
+              `}
+            >
+              <Strong>Lorem ipsum</Strong>
+              <CardText noMargin>
+                Pariatur sint commodo commodo enim adipisicing irure proident cillum sint.
+              </CardText>
+            </Dummy>
+          )}
+        </ClassNames>
+      </Modal>
+
+      <Modal
+        variant="drawer"
         anchor="left"
-        isOpen={isOpenDrawer2}
-        onRequestClose={() => setOpenDrawer2(false)}
+        isOpen={isOpenDrawerLeft}
+        onRequestClose={() => setOpenDrawerLeft(false)}
+      >
+        <ClassNames>
+          {({ css }) => (
+            <Dummy
+              className={css`
+                flex-basis: initial;
+              `}
+            >
+              <Strong>Lorem ipsum</Strong>
+              <CardText noMargin>
+                Pariatur sint commodo commodo enim adipisicing irure proident cillum sint.
+              </CardText>
+            </Dummy>
+          )}
+        </ClassNames>
+      </Modal>
+      <Modal
+        variant="drawer"
+        anchor="bottom"
+        isOpen={isOpenDrawerBottom}
+        onRequestClose={() => setOpenDrawerBottom(false)}
       >
         <ClassNames>
           {({ css }) => (
