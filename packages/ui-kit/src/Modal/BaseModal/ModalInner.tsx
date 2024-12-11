@@ -21,25 +21,22 @@ type StyledProps = {
 const StyledModalInner = styled.div<StyledProps>`
   opacity: 0;
   z-index: ${({ theme }) => theme.zIndex.modal};
-  position: fixed;
-  left: 50%;
-  top: 50%;
   outline: none;
+  position: relative;
   background-color: ${({ theme }) => theme.color.surface.toString()};
   border-radius: ${({ theme }) => theme.shape.radiusFactor * 2}em;
-  transform: translate(-50%, -30%);
+  margin-top: 2em;
   transition:
-    transform 240ms ease-out,
-    opacity 100ms ease-out;
-
+    opacity 100ms ease-out,
+    margin-top 240ms ease-out;
   ${({ $isOpen }) =>
     $isOpen &&
     css`
+      margin-top: 0;
       opacity: 1;
-      transform: translate(-50%, -50%);
       transition:
-        transform 240ms ease-out,
-        opacity 100ms ease-out;
+        opacity 100ms ease-out,
+        margin-top 240ms ease-out;
     `}
 `;
 
