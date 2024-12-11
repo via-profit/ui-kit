@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom';
 import { ContextProvider, defaultState, PORTAL_ID } from './context';
 import Overlay, { ModalOverlayProps } from './ModalOverlay';
 import Inner, { ModalInnerProps } from './ModalInner';
+import InnerContainer, { ModalInnerContainerProps } from './ModalInnerContainer';
 import ModalWrapper from './ModalWrapper';
 import RenderModal from './RenderModal';
 import NoSSR from '../../NoSSR';
@@ -64,6 +65,9 @@ export interface BaseModalOverrides {
   readonly Inner?: React.ForwardRefExoticComponent<
     ModalInnerProps & React.RefAttributes<HTMLDivElement>
   >;
+  readonly InnerContainer?: React.ForwardRefExoticComponent<
+    ModalInnerContainerProps & React.RefAttributes<HTMLDivElement>
+  >;
 }
 
 const BaseModal: React.FC<BaseModalProps> = props => {
@@ -84,6 +88,7 @@ const BaseModal: React.FC<BaseModalProps> = props => {
     () => ({
       Overlay: overrides?.Overlay || Overlay,
       Inner: overrides?.Inner || Inner,
+      InnerContainer: overrides?.InnerContainer || InnerContainer,
     }),
     [overrides],
   );
