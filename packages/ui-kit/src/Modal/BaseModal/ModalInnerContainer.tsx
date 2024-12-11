@@ -29,6 +29,7 @@ const StyledModalInnerContainer = styled.div<StyledProps>`
   align-items: center;
   justify-content: center;
   flex-direction: column;
+  pointer-events: none;
 
   ${({ $isOpen }) =>
     $isOpen &&

@@ -22,6 +22,7 @@ const StyledModalInner = styled.div<StyledProps>`
   opacity: 0;
   z-index: ${({ theme }) => theme.zIndex.modal};
   outline: none;
+  pointer-events: all;
   position: relative;
   background-color: ${({ theme }) => theme.color.surface.toString()};
   border-radius: ${({ theme }) => theme.shape.radiusFactor * 2}em;

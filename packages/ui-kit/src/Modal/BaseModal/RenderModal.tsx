@@ -21,7 +21,7 @@ interface RenderModalProps {
 }
 
 const RenderModal: React.FC<RenderModalProps> = props => {
-  const { children, overrides } = props;
+  const { children, overrides, ...restProps } = props;
   const { state } = useContext();
   const { isOpen, closeOnOverlayClick, onRequestClose } = state;
 
@@ -39,12 +39,13 @@ const RenderModal: React.FC<RenderModalProps> = props => {
       {React.useMemo(
         () => (
           <overridesMap.Overlay
+            {...restProps}
             isOpen={isOpen}
-            onRequestClose={onRequestClose}
             closeOnOverlayClick={closeOnOverlayClick}
+            onRequestClose={onRequestClose}
           />
         ),
-        [overridesMap, isOpen, closeOnOverlayClick, onRequestClose],
+        [overridesMap, isOpen, closeOnOverlayClick, onRequestClose, restProps],
       )}
       {React.useMemo(
         () => (
