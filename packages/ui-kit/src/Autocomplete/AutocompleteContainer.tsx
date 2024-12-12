@@ -232,7 +232,6 @@ const Autocomplete = React.forwardRef(
       dispatch(
         actionSetPartial({
           filteredItems: items,
-          currentValue: null,
           inputValue: '',
         }),
       );
