@@ -380,9 +380,14 @@ const Autocomplete = React.forwardRef(
     React.useEffect(() => {
       if (JSON.stringify(items) !== JSON.stringify(itemsRef.current)) {
         itemsRef.current = items;
-        dispatch(actionSetPartial({ filteredItems: applyFilterForItems(inputValue, items) }));
+        const newFilteredItems = applyFilterForItems(inputValue, items);
+
+        dispatch(actionSetPartial({ filteredItems: newFilteredItems }));
+        if (!newFilteredItems.length) {
+          onRequestClose();
+        }
       }
-    }, [items, inputValue, applyFilterForItems, dispatch]);
+    }, [items, inputValue, applyFilterForItems, dispatch, onRequestClose]);
 
     React.useEffect(() => {
       const mouseDownEvent = (event: MouseEvent) => {
@@ -406,9 +411,14 @@ const Autocomplete = React.forwardRef(
                 : selectedItemToString(
                     currentValue as Multiple extends undefined ? T : readonly T[],
                   );
+
+            const newFilteredItems = multiple
+              ? filteredItems
+              : applyFilterForItems(newInputValue, items);
+
             dispatch(
               actionSetPartial({
-                filteredItems: multiple ? filteredItems : applyFilterForItems(newInputValue, items),
+                filteredItems: newFilteredItems,
                 inputValue: newInputValue,
               }),
             );
@@ -501,8 +511,8 @@ const Autocomplete = React.forwardRef(
                 if (
                   openOnFocus &&
                   !currentOpen &&
-                  filteredItems.length > 0 &&
-                  inputValue.trim() !== ''
+                  filteredItems.length > 0
+                  // && inputValue.trim() !== ''
                 ) {
                   onRequestOpen(event);
                 }
@@ -523,8 +533,8 @@ const Autocomplete = React.forwardRef(
                 if (
                   isFocusedRef.current &&
                   !currentOpen &&
-                  filteredItems.length > 0 &&
-                  inputValue.trim() !== ''
+                  filteredItems.length > 0
+                  // && inputValue.trim() !== ''
                 ) {
                   onRequestOpen(event);
                 }
@@ -546,9 +556,18 @@ const Autocomplete = React.forwardRef(
                 }
 
                 // console.debug('set filteredItems');
+                const newFilteredItems = applyFilterForItems(event.currentTarget.value, items);
+
+                if (newFilteredItems.length === 0 && currentOpen) {
+                  onRequestClose();
+                }
+
+                if (newFilteredItems.length > 0 && !currentOpen) {
+                  onRequestOpen(event);
+                }
                 dispatch(
                   actionSetPartial({
-                    filteredItems: applyFilterForItems(event.currentTarget.value, items),
+                    filteredItems: newFilteredItems,
                     inputValue: event.currentTarget.value,
                   }),
                 );
@@ -559,6 +578,7 @@ const Autocomplete = React.forwardRef(
             overridesMap,
             placeholder,
             label,
+            onRequestClose,
             error,
             requiredAsterisk,
             errorText,
