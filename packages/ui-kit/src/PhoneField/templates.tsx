@@ -8,6 +8,7 @@ import UA from '../CountryFlags/UA';
 import JP from '../CountryFlags/JP';
 import US from '../CountryFlags/US';
 import IL from '../CountryFlags/IL';
+import CN from '../CountryFlags/CN';
 
 export const templates: PhoneTemplate[] = [
   // Russian template
@@ -24,6 +25,7 @@ export const templates: PhoneTemplate[] = [
 
   // Other fucking countries
   ['BY', <BY key="by" />, '375', '+375 (xx) xxx-xx-xx', '+375 (98) 765-43-21', /^\+{0,1}375/],
+  ['CN', <CN key="cn" />, '86', '+86 (xxx) xxxx-xxxx', '+86 (138) 0013-8000', /^\+{0,1}86/],
   ['KZ', <KZ key="kz-1" />, '7', '+997 (xx) xxx-xx-xx', '+997 (98) 765-43-21', /^\+{0,1}997/],
   [
     'KZ',
