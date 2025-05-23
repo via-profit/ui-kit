@@ -10,12 +10,10 @@ const Week = styled.div`
 const DayOfCurrentMonth = styled.span`
   width: 3em;
   height: 3em;
-  display: flex;
   text-align: center;
   align-items: center;
   justify-content: center;
   font-size: 1em;
-  text-align: center;
   display: inline-flex;
   border-radius: ${({ theme }) => theme.shape.radiusFactor}em;
 `;

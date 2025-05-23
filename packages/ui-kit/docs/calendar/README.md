@@ -42,7 +42,7 @@ const ExampleCalendarOverivew: React.FC = () => {
 export default ExampleCalendarOverivew;
 ```
 
-<ExampleCalendarOverivew />
+<ExampleCalendarOverivew/>
 
 ## Дополнительные кнопки
 
@@ -82,7 +82,7 @@ const ExampleCalendarCustomControls: React.FC = () => {
 export default ExampleCalendarCustomControls;
 ```
 
-<ExampleCalendarCustomControls />
+< ExampleCalendarCustomControls / >
 
 ## Хуки
 
@@ -146,7 +146,7 @@ const Example: React.FC = () => {
 export default Example;
 ```
 
-<ExampleCalendarHooks />
+< ExampleCalendarHooks / >
 
 _Пример использования (полная версия):_
 
@@ -211,7 +211,7 @@ const Example: React.FC = () => {
 export default Example;
 ```
 
-<ExampleCalendarHooks />
+< ExampleCalendarHooks / >
 
 ## Переопределение компонентов
 
@@ -277,7 +277,7 @@ const Example: React.FC = () => {
 export default Example;
 ```
 
-<ExampleCalendarOverrides />
+< ExampleCalendarOverrides / >
 
 ## Свойства
 
