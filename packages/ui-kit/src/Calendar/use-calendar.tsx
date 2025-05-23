@@ -1,5 +1,7 @@
 import React from 'react';
 
+export type CalendarValue<Multiple> = Multiple extends undefined ? Date : [Date, Date];
+
 export type WeekDayName =
   | 'sunday'
   | 'monday'
@@ -86,7 +88,7 @@ export type UseCalendarPayload = {
   /**
    * Returns range of monthes (array of month indexes) between passed dates
    */
-  getMonthesRange: (minDate: Date, maxDate: Date) => number[];
+  getMonthsRange: (minDate: Date, maxDate: Date) => number[];
 };
 
 const WHITESPACE = '\u{0020}';
@@ -195,7 +197,7 @@ export const useCalendar = (props: UseCalendarProps): UseCalendarPayload => {
     return y;
   }, []);
 
-  const getMonthesRange = React.useCallback((minDate: Date, maxDate: Date) => {
+  const getMonthsRange = React.useCallback((minDate: Date, maxDate: Date) => {
     const m: number[] = [];
     const y = new Date().getFullYear();
     for (let index = 0; index < 12; index++) {
@@ -381,7 +383,7 @@ export const useCalendar = (props: UseCalendarProps): UseCalendarPayload => {
     getMonthLabel,
     getYearLabel,
     getYearsRange,
-    getMonthesRange,
+    getMonthsRange,
   };
 };
 

@@ -246,6 +246,8 @@ export type OnRequestClose = (
     | MouseEvent,
 ) => void;
 
+const onRequestCloseDefault = () => undefined;
+
 const MenuContainer = React.forwardRef(
   <T, Multiple extends boolean | undefined = undefined>(
     props: MenuProps<T, Multiple>,
@@ -258,12 +260,12 @@ const MenuContainer = React.forwardRef(
       overrides,
       children,
       closeOutsideClick = true,
-      isOpen = props.anchorPos === 'static' ? true : false,
+      isOpen = props.anchorPos === 'static',
       anchorPos = 'auto',
       multiple = false,
       autofocus = true,
       closeOnSelect = !multiple,
-      onRequestClose = () => undefined,
+      onRequestClose = onRequestCloseDefault,
       zIndex,
       onSelectItem,
       getOptionSelected,

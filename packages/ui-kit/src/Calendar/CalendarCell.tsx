@@ -2,6 +2,7 @@ import React from 'react';
 import styled from '@emotion/styled';
 
 import Button from '../Button';
+import { css } from '@emotion/react';
 
 export interface CalendarCellProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   /**
@@ -24,9 +25,11 @@ export interface CalendarCellProps extends React.ButtonHTMLAttributes<HTMLButton
    * Possibility variants: `primary` `secondary` or custom color string like hex or rgb format
    */
   readonly accentColor?: 'primary' | 'secondary' | string;
+
+  readonly fill?: boolean;
 }
 
-const Btn = styled(Button)`
+const Btn = styled(Button)<{ $fill?: boolean }>`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -37,19 +40,25 @@ const Btn = styled(Button)`
   min-width: 0;
   outline: none;
   position: relative;
-  border-radius: ${({ theme }) => theme.shape.radiusFactor * 3}em;
+  border-radius: ${({ theme, $fill }) => ($fill ? 0 : theme.shape.radiusFactor * 3)}em;
+  ${({ $fill, theme }) =>
+    $fill &&
+    css`
+      background-color: ${theme.color.accentPrimary.alpha(0.2).toString()};
+    `};
 `;
 
 const CalendarCell: React.ForwardRefRenderFunction<HTMLButtonElement, CalendarCellProps> = (
   props,
   ref,
 ) => {
-  const { isToday, children, isSelected, isDisabled, accentColor, ...restProps } = props;
+  const { isToday, children, isSelected, isDisabled, accentColor, fill, ...restProps } = props;
 
   return (
     <Btn
       iconOnly
       type="button"
+      $fill={fill}
       variant={isSelected ? 'standard' : isToday ? 'outlined' : 'plain'}
       color={isSelected || isToday ? accentColor : 'default'}
       tabIndex={isDisabled ? -1 : restProps.tabIndex}

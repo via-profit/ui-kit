@@ -95,9 +95,9 @@ export const useDatePickerFormat = (): UseDatePickerFormatPayload => {
         return null;
       }
 
-      const data: { days: string[]; monthes: string[]; years: string[] } = {
+      const data: { days: string[]; months: string[]; years: string[] } = {
         days: [],
-        monthes: [],
+        months: [],
         years: [],
       };
       template.split('').forEach((char, charIndex) => {
@@ -106,7 +106,7 @@ export const useDatePickerFormat = (): UseDatePickerFormatPayload => {
             data.years.push(input[charIndex]);
             break;
           case 'm':
-            data.monthes.push(input[charIndex]);
+            data.months.push(input[charIndex]);
             break;
           case 'd':
             data.days.push(input[charIndex]);
@@ -120,7 +120,7 @@ export const useDatePickerFormat = (): UseDatePickerFormatPayload => {
 
       return new Date(
         parseInt(data.years.join(''), 10),
-        parseInt(data.monthes.join(''), 10) - 1, // Fucking month indexes
+        parseInt(data.months.join(''), 10) - 1, // Fucking month indexes
         parseInt(data.days.join(''), 10),
       );
     },

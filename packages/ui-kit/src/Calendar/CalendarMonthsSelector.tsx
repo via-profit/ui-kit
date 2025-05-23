@@ -9,11 +9,11 @@ const SelectorContainer = styled.div`
   padding: 0.8em;
 `;
 
-export type CalendarMonthesSelectorProps = React.HTMLAttributes<HTMLDivElement>;
+export type CalendarMonthsSelectorProps = React.HTMLAttributes<HTMLDivElement>;
 
-const CalendarMonthesSelector: React.ForwardRefRenderFunction<
+const CalendarMonthsSelector: React.ForwardRefRenderFunction<
   HTMLDivElement,
-  CalendarMonthesSelectorProps
+  CalendarMonthsSelectorProps
 > = (props, ref) => {
   const { children, ...restProps } = props;
 
@@ -24,4 +24,4 @@ const CalendarMonthesSelector: React.ForwardRefRenderFunction<
   );
 };
 
-export default React.forwardRef(CalendarMonthesSelector);
+export default React.forwardRef(CalendarMonthsSelector);

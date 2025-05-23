@@ -109,7 +109,7 @@ const paylaod = useCalendar({
 - `getMonthLabel` — Функция, принимающая один аргумент типа `Date` и возвращающая строку, сформированную при помощи [Intl](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl) согласно установленноу локали
 - `getYearLabel` — Функция, принимающая один аргумент типа `Date` и возвращающая строку, сформированную при помощи [Intl](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl) согласно установленноу локали
 - `getYearsRange` — Функция, принимающая два аргумента типа `Date` и возвращающая массив лет, которые умещаются между переданными датами. **Важно: Возвращаемый массив будет ограничен параметрами minDate и maxDate**
-- `getMonthesRange` — Функция, принимающая два аргумента типа `Date` и возвращающая массив месяцев, которые умещаются между переданными датами. **Важно: Возвращаемый массив будет ограничен параметрами minDate и maxDate**
+- `getMonthsRange` — Функция, принимающая два аргумента типа `Date` и возвращающая массив месяцев, которые умещаются между переданными датами. **Важно: Возвращаемый массив будет ограничен параметрами minDate и maxDate**
 
 _Пример использования (краткая версия):_
 
@@ -226,7 +226,7 @@ export default Example;
 - `<DateContainer>` — Контейнер содержащий список дней
 - `<Toolbar>` — Компонет верхнего тулбара
 - `<YearsSelector>` — Контейнер списка лет
-- `<MonthesSelector>` — Контейнер списка месяцев
+- `<MonthsSelector>` — Контейнер списка месяцев
 - `<MonthCell>` — Компонент, представляющий один месяц в списке месяцев
 - `<YearCell>` — Компонент, представляющий один год в списке лет
 - `<DayBadge>` — компонент бэйдж
@@ -315,7 +315,7 @@ export default Example;
 | **overrides .DateContainer**   |            | `<React.Component>`                                                    | `<CalendarDateContainer>`   | Контейнер содержащий список дней                                                                  |
 | **overrides .Toolbar**         |            | `<React.Component>`                                                    | `<CalendarToolbar>`         | Компонет верхнего тулбара                                                                         |
 | **overrides .YearsSelector**   |            | `<React.Component>`                                                    | `<CalendarYearsSelector>`   | Контейнер списка лет                                                                              |
-| **overrides .MonthesSelector** |            | `<React.Component>`                                                    | `<CalendarMonthesSelector>` | Контейнер списка месяцев                                                                          |
+| **overrides .MonthsSelector** |            | `<React.Component>`                                                    | `<CalendarMonthsSelector>` | Контейнер списка месяцев                                                                          |
 | **overrides .MonthCell**       |            | `<React.Component>`                                                    | `<CalendarMonthCell>`       | Компонент, представляющий один месяц в списке месяцев                                             |
 | **overrides .YearCell**        |            | `<React.Component>`                                                    | `<CalendarYearCell>`        | Компонент, представляющий один год в списке лет                                                   |
 | **overrides .DayBadge**        |            | `<React.Component>`                                                    | `<CalendarDayBadge>`        | компонент бэйдж                                                                                   |

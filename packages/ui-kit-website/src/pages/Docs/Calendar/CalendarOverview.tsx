@@ -12,16 +12,17 @@ import content from '@via-profit/ui-kit/docs/calendar/README.md';
 const Buttons: React.FC = () => (
   <>
     <Surface>
-      <RenderMarkdown
-        overrides={{
-          ExampleCalendarOverivew,
-          ExampleCalendarOverrides,
-          ExampleCalendarCustomControls,
-          ExampleCalendarHooks,
-        }}
-      >
-        {content}
-      </RenderMarkdown>
+      <ExampleCalendarOverivew />
+      {/*<RenderMarkdown*/}
+      {/*  overrides={{*/}
+      {/*    ExampleCalendarOverivew,*/}
+      {/*    ExampleCalendarOverrides,*/}
+      {/*    ExampleCalendarCustomControls,*/}
+      {/*    ExampleCalendarHooks,*/}
+      {/*  }}*/}
+      {/*>*/}
+      {/*  {content}*/}
+      {/*</RenderMarkdown>*/}
     </Surface>
     <TableOfContent content={content} />
   </>
