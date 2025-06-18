@@ -31,7 +31,7 @@ const StyledStandardButton = styled(ButtonBase)<StyledProps>`
   }};
   ${({ $background }) => {
     switch (true) {
-      case $background.luminance() > 0.49:
+      case $background.getLuminance() > 0.49:
         return $background.darken(40).alpha(0.8).toString();
       default:
         return $background.darken(20).alpha(0.5).toString();
@@ -94,7 +94,7 @@ const ButtonStandard: React.ForwardRefRenderFunction<HTMLButtonElement, ButtonSt
         return {
           $background,
           $color:
-            $background.contrast(theme.color.textPrimary.rgbString()) > 5
+            $background?.getContrast(theme.color.textPrimary.rgbString()) > 5
               ? theme.color.textPrimary
               : theme.color.surface,
         };

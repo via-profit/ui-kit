@@ -77,7 +77,7 @@ class Color {
   /**
    * Returns color luminance value
    */
-  public luminance(): number {
+  public getLuminance(): number {
     const RED = 0.2126;
     const GREEN = 0.7152;
     const BLUE = 0.0722;
@@ -102,7 +102,7 @@ class Color {
    * const { colors } = themes;
    * const contrast = colors
    *   .accentPrimary
-   *   .contrast(color.textPrimary.rgbString());
+   *   .getContrast(color.textPrimary.rgbString());
    *
    * if (contrast > 5) {
    *   return color.textPrimary.toString();
@@ -111,15 +111,16 @@ class Color {
    * }
    * ```
    */
-  public contrast(rgb2: string | Color) {
+  public getContrast(rgb2: string | Color) {
     const color2 = rgb2 instanceof Color ? rgb2 : new Color(rgb2);
-    const lum1 = this.luminance();
-    const lum2 = color2.luminance();
+    const lum1 = this.getLuminance();
+    const lum2 = color2.getLuminance();
     const brightest = Math.max(lum1, lum2);
     const darkest = Math.min(lum1, lum2);
 
     return (brightest + 0.05) / (darkest + 0.05);
   }
+
   /**
    * Lighten or darknest color to lum steps
    * lum - 0-25
@@ -130,6 +131,16 @@ class Color {
     this.#color.g = parseInt('0' + Math.min(255, Math.max(0, this.#color.g + lum)), 10);
 
     this.#color.b = parseInt('0' + Math.min(255, Math.max(0, this.#color.b + lum)), 10);
+
+    return this;
+  }
+
+  public luminance(lum: number) {
+    const { r, g, b } = this.#color;
+
+    this.#color.r = Math.round(Math.min(Math.max(0, r + r * lum), 255));
+    this.#color.g = Math.round(Math.min(Math.max(0, g + g * lum), 255));
+    this.#color.b = Math.round(Math.min(Math.max(0, b + b * lum), 255));
 
     return this;
   }
@@ -196,7 +207,7 @@ class Color {
   }
 
   /**
-   * Returns the current color as an hex string
+   * Returns the current color as a hex string
    */
   public hexString(): string {
     const colorToHex = (color: number) => {

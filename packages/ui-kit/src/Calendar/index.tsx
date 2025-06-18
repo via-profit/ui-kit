@@ -455,13 +455,13 @@ const Calendar = <Range extends boolean | undefined = undefined>(
           });
 
           if (selectedDate.getTime() >= toDate.getTime()) {
-            onChange([fromDate, selectedDate] as CalendarValue<true>);
+            onChange([fromDate, selectedDate] as any);
 
             return;
           }
 
           if (selectedDate.getTime() < fromDate.getTime()) {
-            onChange([selectedDate, toDate] as CalendarValue<true>);
+            onChange([selectedDate, toDate] as any);
 
             return;
           }
@@ -479,13 +479,13 @@ const Calendar = <Range extends boolean | undefined = undefined>(
             );
 
             if (daysBetweenToDate <= daysBetweenFromDate) {
-              onChange([fromDate, selectedDate] as CalendarValue<true>);
+              onChange([fromDate, selectedDate] as any);
 
               return;
             }
 
             if (daysBetweenToDate > daysBetweenFromDate) {
-              onChange([selectedDate, toDate] as CalendarValue<true>);
+              onChange([selectedDate, toDate] as any);
 
               return;
             }
@@ -493,7 +493,7 @@ const Calendar = <Range extends boolean | undefined = undefined>(
 
           throw new Error('Oooops. I don`t know whats is it');
         } else {
-          onChange(selectedDate as CalendarValue<false>);
+          onChange(selectedDate as any);
         }
       }
 
@@ -583,7 +583,7 @@ const Calendar = <Range extends boolean | undefined = undefined>(
       type: 'setPartial',
       payload: {
         calendarCurrentView: initialProps.current.initialView,
-        calendarDate: initialProps.current.value,
+        calendarDate: initialProps.current.value as any,
         calendarValue: initialProps.current.value,
       },
     });

@@ -82,7 +82,7 @@ const BadgeDeleteButton: React.ForwardRefRenderFunction<
       case variant === 'standard' && typeof color === 'string':
         return {
           $color:
-            new Color(color).contrast(theme.color.textPrimary) > 5
+            new Color(color).getContrast(theme.color.textPrimary) > 5
               ? theme.color.textPrimary
               : theme.color.surface,
           $background: new Color(color),

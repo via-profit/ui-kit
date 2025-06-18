@@ -1,10 +1,10 @@
 {
   "name": "@via-profit/ui-kit",
-  "version": "0.1.0-rc.97",
+  "version": "0.1.1",
   "description": "UI Kit",
   "repository": {
     "type": "git",
-    "url": "git@github.com:via-profit/ui-kit.git"
+    "url": "git+ssh://git@github.com/via-profit/ui-kit.git"
   },
   "engines": {
     "node": ">=16.x"
