@@ -291,14 +291,14 @@ const MenuContainer = React.forwardRef(
           } else {
             idx.add(items.findIndex(item => getOptionSelected({ item, value: value as T })));
           }
-        }
-
-        if (multiple) {
-          (value as T[]).forEach(v => {
-            idx.add(items.findIndex(item => JSON.stringify(item) === JSON.stringify(v)));
-          });
         } else {
-          idx.add(items.findIndex(item => JSON.stringify(item) === JSON.stringify(value)));
+          if (multiple) {
+            (value as T[]).forEach(v => {
+              idx.add(items.findIndex(item => JSON.stringify(item) === JSON.stringify(v)));
+            });
+          } else {
+            idx.add(items.findIndex(item => JSON.stringify(item) === JSON.stringify(value)));
+          }
         }
       }
 
