@@ -611,7 +611,7 @@ const Calendar = <Range extends boolean | undefined = undefined>(
   }, []);
 
   return (
-    <overridesMap.Paper>{JSON.stringify(calendarDate)}
+    <overridesMap.Paper>
       <overridesMap.Header>
         {typeof heading !== "undefined" && <overridesMap.Heading>{heading}</overridesMap.Heading>}
         {typeof subheading !== "undefined" && (
