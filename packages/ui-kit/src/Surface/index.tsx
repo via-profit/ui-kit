@@ -30,6 +30,16 @@ export type SurfaceProps = React.HTMLAttributes<HTMLDivElement> & {
   readonly inline?: boolean;
 
   /**
+   * The surface will be rounded
+   */
+  readonly rounded?: boolean;
+
+  /**
+   * If true then surface does not contin any paddings
+   */
+  readonly noPadding?: boolean;
+
+  /**
    * Overridable components map
    */
   readonly overrides?: SurfaceOverrides;
@@ -69,7 +79,8 @@ export interface SurfaceOverrides {
 }
 
 const Surface: React.ForwardRefRenderFunction<HTMLDivElement, SurfaceProps> = (props, ref) => {
-  const { children, header, subheader, footer, inline, overrides, ...nativeProps } = props;
+  const { children, header, subheader, footer, inline, noPadding, overrides, ...nativeProps } =
+    props;
 
   const hasFooter = typeof footer !== 'undefined' && footer !== null;
   const hasHeader = typeof header !== 'undefined' && header !== null;
@@ -93,11 +104,13 @@ const Surface: React.ForwardRefRenderFunction<HTMLDivElement, SurfaceProps> = (p
   }
 
   return (
-    <overridesMap.Container {...nativeProps} inline={inline} ref={ref}>
-      {hasHeader && <overridesMap.Header>{header}</overridesMap.Header>}
-      {hasSubheader && <overridesMap.Subheader>{subheader}</overridesMap.Subheader>}
-      <overridesMap.Content>{children}</overridesMap.Content>
-      {hasFooter && <overridesMap.Footer>{footer}</overridesMap.Footer>}
+    <overridesMap.Container {...nativeProps} inline={inline} noPadding={noPadding} ref={ref}>
+      {hasHeader && <overridesMap.Header noPadding={noPadding}>{header}</overridesMap.Header>}
+      {hasSubheader && (
+        <overridesMap.Subheader noPadding={noPadding}>{subheader}</overridesMap.Subheader>
+      )}
+      <overridesMap.Content noPadding={noPadding}>{children}</overridesMap.Content>
+      {hasFooter && <overridesMap.Footer noPadding={noPadding}>{footer}</overridesMap.Footer>}
     </overridesMap.Container>
   );
 };

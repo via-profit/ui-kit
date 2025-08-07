@@ -1,7 +1,16 @@
 import React from 'react';
 import styled from '@emotion/styled';
+import { AnchorVariant } from './DrawerInner';
 
-export type DrawerFooterProps = React.HTMLAttributes<HTMLDivElement>;
+export type DrawerFooterProps = React.HTMLAttributes<HTMLDivElement> & {
+  /**
+   * Drawer position\
+   * \
+   * **Varians:** `bottom` `right` `left` `top`\
+   * **Default:** `bottom`
+   */
+  readonly anchor: AnchorVariant;
+};
 
 const StyledDrawerFooter = styled.div`
   padding: 0.5em 1em;

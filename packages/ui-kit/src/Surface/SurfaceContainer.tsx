@@ -3,6 +3,8 @@ import styled from '@emotion/styled';
 
 export type SurfaceContainerProps = React.HTMLAttributes<HTMLDivElement> & {
   readonly inline?: boolean;
+  readonly rounded?: boolean;
+  readonly noPadding?: boolean;
 };
 
 type StyledProps = {

@@ -1,7 +1,16 @@
 import React from 'react';
 import styled from '@emotion/styled';
+import { AnchorVariant } from './DrawerInner';
 
-export type DrawerContainerProps = React.HTMLAttributes<HTMLDivElement>;
+export type DrawerContainerProps = React.HTMLAttributes<HTMLDivElement> & {
+  /**
+   * Drawer position\
+   * \
+   * **Varians:** `bottom` `right` `left` `top`\
+   * **Default:** `bottom`
+   */
+  readonly anchor: AnchorVariant;
+};
 
 const StyledDrawerContainer = styled.div`
   min-height: 2rem;
