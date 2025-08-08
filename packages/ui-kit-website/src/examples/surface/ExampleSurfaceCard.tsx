@@ -7,7 +7,6 @@ import Button from '@via-profit/ui-kit/src/Button';
 
 const ExampleSurfaceCard: React.FC = () => (
   <Surface
-    
     inline
     subheader="Yekaterinburg"
     header={

@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from '@emotion/styled';
+import { css } from '@emotion/react';
 
 export type SurfaceContainerProps = React.HTMLAttributes<HTMLDivElement> & {
   readonly inline?: boolean;
@@ -9,6 +10,8 @@ export type SurfaceContainerProps = React.HTMLAttributes<HTMLDivElement> & {
 
 type StyledProps = {
   readonly $inline?: boolean;
+  readonly $rounded?: boolean;
+  readonly $noPadding?: boolean;
 };
 
 const StyledSurfaceContainer = styled.div<StyledProps>`
@@ -21,16 +24,28 @@ const StyledSurfaceContainer = styled.div<StyledProps>`
     `0 0.5em 2em -0.8em ${theme.color.surface.darken(100).alpha(0.4).toString()}`};
   border-radius: ${({ theme }) => theme.shape.radiusFactor}em;
   font-size: 1em;
+
+  ${({ $rounded }) =>
+    $rounded &&
+    css`
+      border-radius: 100%;
+    `}
 `;
 
 const SurfaceContainer: React.ForwardRefRenderFunction<HTMLDivElement, SurfaceContainerProps> = (
   props,
   ref,
 ) => {
-  const { inline, children, ...nativeProps } = props;
+  const { inline, children, rounded, noPadding, ...nativeProps } = props;
 
   return (
-    <StyledSurfaceContainer $inline={inline} {...nativeProps} ref={ref}>
+    <StyledSurfaceContainer
+      $inline={inline}
+      $rounded={rounded}
+      $noPadding={noPadding}
+      {...nativeProps}
+      ref={ref}
+    >
       {children}
     </StyledSurfaceContainer>
   );

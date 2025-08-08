@@ -79,8 +79,17 @@ export interface SurfaceOverrides {
 }
 
 const Surface: React.ForwardRefRenderFunction<HTMLDivElement, SurfaceProps> = (props, ref) => {
-  const { children, header, subheader, footer, inline, noPadding, overrides, ...nativeProps } =
-    props;
+  const {
+    children,
+    header,
+    subheader,
+    footer,
+    inline,
+    noPadding,
+    rounded,
+    overrides,
+    ...nativeProps
+  } = props;
 
   const hasFooter = typeof footer !== 'undefined' && footer !== null;
   const hasHeader = typeof header !== 'undefined' && header !== null;
@@ -104,13 +113,31 @@ const Surface: React.ForwardRefRenderFunction<HTMLDivElement, SurfaceProps> = (p
   }
 
   return (
-    <overridesMap.Container {...nativeProps} inline={inline} noPadding={noPadding} ref={ref}>
-      {hasHeader && <overridesMap.Header noPadding={noPadding}>{header}</overridesMap.Header>}
-      {hasSubheader && (
-        <overridesMap.Subheader noPadding={noPadding}>{subheader}</overridesMap.Subheader>
+    <overridesMap.Container
+      {...nativeProps}
+      inline={inline}
+      noPadding={noPadding}
+      rounded={rounded}
+      ref={ref}
+    >
+      {hasHeader && (
+        <overridesMap.Header noPadding={noPadding} rounded={rounded}>
+          {header}
+        </overridesMap.Header>
       )}
-      <overridesMap.Content noPadding={noPadding}>{children}</overridesMap.Content>
-      {hasFooter && <overridesMap.Footer noPadding={noPadding}>{footer}</overridesMap.Footer>}
+      {hasSubheader && (
+        <overridesMap.Subheader noPadding={noPadding} rounded={rounded}>
+          {subheader}
+        </overridesMap.Subheader>
+      )}
+      <overridesMap.Content noPadding={noPadding} rounded={rounded}>
+        {children}
+      </overridesMap.Content>
+      {hasFooter && (
+        <overridesMap.Footer noPadding={noPadding} rounded={rounded}>
+          {footer}
+        </overridesMap.Footer>
+      )}
     </overridesMap.Container>
   );
 };

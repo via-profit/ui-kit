@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 
 export type SurfaceFooterProps = React.HTMLAttributes<HTMLDivElement> & {
   readonly noPadding?: boolean;
+  readonly rounded?: boolean;
 };
 
 type StyleProps = {
@@ -13,7 +14,7 @@ const StyledFooter = styled.div<StyleProps>`
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  padding: 1rem;
+  padding: ${({ $noPadding }) => ($noPadding ? '0' : '1rem')};
   border-bottom-left-radius: inherit;
   border-bottom-right-radius: inherit;
 `;
@@ -22,10 +23,10 @@ const SurfaceFooter: React.ForwardRefRenderFunction<HTMLDivElement, SurfaceFoote
   props,
   ref,
 ) => {
-  const { children, ...nativeProps } = props;
+  const { children, noPadding, rounded, ...nativeProps } = props;
 
   return (
-    <StyledFooter {...nativeProps} ref={ref}>
+    <StyledFooter $noPadding={noPadding} {...nativeProps} ref={ref}>
       {children}
     </StyledFooter>
   );

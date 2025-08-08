@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 
 export type SurfaceSubheaderProps = React.HTMLAttributes<HTMLDivElement> & {
   readonly noPadding?: boolean;
+  readonly rounded?: boolean;
 };
 
 type StyleProps = {
@@ -20,7 +21,7 @@ const SurfaceSubheader: React.ForwardRefRenderFunction<HTMLDivElement, SurfaceSu
   props,
   ref,
 ) => {
-  const { children, noPadding, ...nativeProps } = props;
+  const { children, noPadding, rounded, ...nativeProps } = props;
 
   return (
     <StyledHeader $noPadding={noPadding} {...nativeProps} ref={ref}>
