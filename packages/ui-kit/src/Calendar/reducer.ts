@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { CalendarValue } from './use-calendar';
 
 export type State<Range extends boolean | undefined = undefined> = {
