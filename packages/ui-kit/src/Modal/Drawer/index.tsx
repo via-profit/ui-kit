@@ -135,7 +135,7 @@ const Drawer: React.FC<DrawerProps> = props => {
           }),
         }}
       >
-        <overridesMap.Container>
+        <overridesMap.Container anchor={anchor}>
           {hasHeader && (
             <overridesMap.Header
               showCloseButton={showCloseButton}
@@ -146,8 +146,8 @@ const Drawer: React.FC<DrawerProps> = props => {
             </overridesMap.Header>
           )}
 
-          <overridesMap.Content>{children}</overridesMap.Content>
-          {hasFooter && <overridesMap.Footer>{footer}</overridesMap.Footer>}
+          <overridesMap.Content anchor={anchor}>{children}</overridesMap.Content>
+          {hasFooter && <overridesMap.Footer anchor={anchor}>{footer}</overridesMap.Footer>}
         </overridesMap.Container>
       </BaseModal>
     </>

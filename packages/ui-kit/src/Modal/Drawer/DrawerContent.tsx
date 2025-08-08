@@ -1,7 +1,17 @@
 import React from 'react';
 import styled from '@emotion/styled';
 
-export type DrawerContentProps = React.HTMLAttributes<HTMLDivElement>;
+import type { AnchorVariant } from './DrawerInner';
+
+export type DrawerContentProps = React.HTMLAttributes<HTMLDivElement> & {
+  /**
+   * Drawer position\
+   * \
+   * **Varians:** `bottom` `right` `left` `top`\
+   * **Default:** `bottom`
+   */
+  readonly anchor: AnchorVariant;
+};
 
 const StyledDrawerContent = styled.div`
   overflow-y: auto;

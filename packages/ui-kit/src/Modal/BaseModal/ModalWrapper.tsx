@@ -153,7 +153,7 @@ const ModalWrapper: React.FC<ModalWrapperProps> = props => {
           if (alreadyMounted) {
             dispatch(actionSetState({ isOpen: true }));
           }
-        }, 15);
+        }, 120);
 
         return;
       }

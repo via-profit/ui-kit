@@ -1,10 +1,16 @@
 import React from 'react';
 import styled from '@emotion/styled';
 
-export type SurfaceHeaderProps = React.HTMLAttributes<HTMLDivElement>;
+export type SurfaceHeaderProps = React.HTMLAttributes<HTMLDivElement> & {
+  readonly noPadding?: boolean;
+};
 
-const StyledHeader = styled.div`
-  padding: 1rem 1rem 0 1rem;
+type StyledProps = {
+  readonly $noPadding?: boolean;
+};
+
+const StyledHeader = styled.div<StyledProps>`
+  padding: ${({ $noPadding }) => ($noPadding ? '0' : '1rem 1rem 0 1rem')};
   font-size: 1.3rem;
   font-weight: 600;
   border-top-left-radius: inherit;
@@ -15,10 +21,10 @@ const SurfaceHeader: React.ForwardRefRenderFunction<HTMLDivElement, SurfaceHeade
   props,
   ref,
 ) => {
-  const { children, ...nativeProps } = props;
+  const { children, noPadding, ...nativeProps } = props;
 
   return (
-    <StyledHeader {...nativeProps} ref={ref}>
+    <StyledHeader $noPadding={noPadding} {...nativeProps} ref={ref}>
       {children}
     </StyledHeader>
   );
