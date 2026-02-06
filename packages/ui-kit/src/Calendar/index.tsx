@@ -126,7 +126,7 @@ export type CalendarProps<Range extends boolean | undefined = undefined> = {
   /**
    * Label for the Today button. If label passed, then button will be rendered
    */
-  readonly toodayButtonLabel?: string;
+  readonly todayButtonLabel?: string;
 
   /**
    * Heading
@@ -325,7 +325,7 @@ const Calendar = <Range extends boolean | undefined = undefined>(
     changeYearButtonTooltip,
     initialView = createDefaultState(false).calendarCurrentView,
     resetButtonLabel,
-    toodayButtonLabel,
+    todayButtonLabel,
     heading,
     subheading,
     footer,
@@ -438,70 +438,47 @@ const Calendar = <Range extends boolean | undefined = undefined>(
   }, [value, calendarValue, isSameDay, dispatch]);
 
   /**
-   * Handle click on Day button
+   * Handles click on a day cell.
+   * Range selection follows a simple two‑click model:
+   * 1) First click sets the start date.
+   * 2) Second click sets the end date.
+   * If a full range is already selected, a new click starts a new range.
    */
   const handleCellDateClick = React.useCallback(
     (selectedDate: Date) => () => {
-      if (typeof onChange === 'function') {
-        if (range) {
-          const [fromDate, toDate] = calendarValue as CalendarValue<true>;
+      if (!onChange) return;
 
-          dispatch({
-            type: 'setPartial',
-            payload: { calendarDate: selectedDate },
-          });
+      // Single-date mode
+      if (!range) {
+        onChange(selectedDate as any);
 
-          if (selectedDate.getTime() >= toDate.getTime()) {
-            onChange([fromDate, selectedDate] as any);
+        return;
+      }
 
-            return;
-          }
+      const [from, to] = calendarValue as CalendarValue<true>;
 
-          if (selectedDate.getTime() < fromDate.getTime()) {
-            onChange([selectedDate, toDate] as any);
+      // No range selected yet → first click
+      if (!from && !to) {
+        onChange([selectedDate, selectedDate] as any);
 
-            return;
-          }
+        return;
+      }
 
-          if (
-            selectedDate.getTime() > fromDate.getTime() &&
-            selectedDate.getTime() < toDate.getTime()
-          ) {
-            const oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
-            const daysBetweenFromDate = Math.round(
-              Math.abs((fromDate.getTime() - selectedDate.getTime()) / oneDay),
-            );
-            const daysBetweenToDate = Math.round(
-              Math.abs((toDate.getTime() - selectedDate.getTime()) / oneDay),
-            );
-
-            if (daysBetweenToDate <= daysBetweenFromDate) {
-              onChange([fromDate, selectedDate] as any);
-
-              return;
-            }
-
-            if (daysBetweenToDate > daysBetweenFromDate) {
-              onChange([selectedDate, toDate] as any);
-
-              return;
-            }
-          }
-
-          throw new Error('Oooops. I don`t know whats is it');
+      // Only start date selected → second click
+      if (from && (!to || from.getTime() === to.getTime())) {
+        if (selectedDate < from) {
+          // User clicked before the start → swap
+          onChange([selectedDate, from] as any);
         } else {
-          onChange(selectedDate as any);
+          // Normal forward range
+          onChange([from, selectedDate] as any);
         }
+
+        return;
       }
 
-      if (!calendarValue) {
-        dispatch({
-          type: 'setPartial',
-          payload: {
-            calendarValue: selectedDate,
-          },
-        });
-      }
+      // Full range already selected → start a new range
+      onChange([selectedDate, selectedDate] as any);
     },
     [onChange, calendarValue, range],
   );
@@ -702,19 +679,24 @@ const Calendar = <Range extends boolean | undefined = undefined>(
         {calendarCurrentView === 'days' && (
           <overridesMap.DateContainer>
             {getWeeks(calendarDate).map(week => (
-              <overridesMap.WeekRow key={week.weekNumber.toString()}>
+              <overridesMap.WeekRow key={week.weekNumber}>
                 {week.days.map(day => {
                   if (day.date.getMonth() === calendarDate.getMonth()) {
                     const badge = badges.find(b => isSameDay(b.date, day.date));
-                    const a = Array.isArray(calendarValue)
-                      ? calendarValue
-                      : [calendarValue, calendarValue];
-                    const isSelected = isSameDay(a[0], day.date) || isSameDay(a[1], day.date);
 
-                    const fill = Array.isArray(calendarValue)
-                      ? day.date.getTime() > calendarValue[0].getTime() &&
-                        day.date.getTime() < calendarValue[1].getTime()
-                      : false;
+                    // Normalize range order
+                    const [from, to] = Array.isArray(calendarValue)
+                      ? calendarValue[0].getTime() <= calendarValue[1].getTime()
+                        ? calendarValue
+                        : [calendarValue[1], calendarValue[0]]
+                      : [calendarValue, calendarValue];
+
+                    const fill =
+                      Array.isArray(calendarValue) &&
+                      day.date.getTime() >= from.getTime() &&
+                      day.date.getTime() <= to.getTime();
+
+                    const isSelected = isSameDay(from, day.date) || isSameDay(to, day.date);
 
                     return (
                       <overridesMap.Cell
@@ -723,11 +705,12 @@ const Calendar = <Range extends boolean | undefined = undefined>(
                         isDisabled={day.isDisabled}
                         accentColor={accentColor}
                         isSelected={isSelected}
-                        onClick={handleCellDateClick(day.date)}
                         fill={fill}
+                        onClick={handleCellDateClick(day.date)}
                       >
                         {getDayLabel(day.date)}
-                        {typeof badge !== 'undefined' && (
+
+                        {badge && (
                           <overridesMap.DayBadge
                             badgeContent={badge.badgeContent}
                             isToday={day.isToday}
@@ -746,13 +729,13 @@ const Calendar = <Range extends boolean | undefined = undefined>(
         )}
       </overridesMap.Body>
       {(typeof resetButtonLabel !== 'undefined' ||
-        typeof toodayButtonLabel !== 'undefined' ||
+        typeof todayButtonLabel !== 'undefined' ||
         typeof footer !== 'undefined') && (
         <overridesMap.Footer>
           {typeof footer !== 'undefined' && <>{footer}</>}
-          {typeof toodayButtonLabel !== 'undefined' && (
+          {typeof todayButtonLabel !== 'undefined' && (
             <overridesMap.ControlButton onClick={handleToday}>
-              {toodayButtonLabel}
+              {todayButtonLabel}
             </overridesMap.ControlButton>
           )}
           {typeof resetButtonLabel !== 'undefined' && (

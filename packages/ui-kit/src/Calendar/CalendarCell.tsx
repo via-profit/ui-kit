@@ -29,7 +29,7 @@ export interface CalendarCellProps extends React.ButtonHTMLAttributes<HTMLButton
   readonly fill?: boolean;
 }
 
-const Btn = styled(Button)<{ $fill?: boolean }>`
+const Btn = styled(Button)<{ $fill?: boolean; $isSelected?: boolean }>`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -40,11 +40,25 @@ const Btn = styled(Button)<{ $fill?: boolean }>`
   min-width: 0;
   outline: none;
   position: relative;
-  border-radius: ${({ theme, $fill }) => ($fill ? 0 : theme.shape.radiusFactor * 3)}em;
-  ${({ $fill, theme }) =>
+  border-radius: ${({ theme }) => theme.shape.radiusFactor * 3}em;
+  ${({ $fill, theme, $isSelected }) =>
     $fill &&
+    !$isSelected &&
     css`
-      background-color: ${theme.color.accentPrimary.alpha(0.2).toString()};
+      background-color: none;
+      position: relative;
+
+      &:before {
+        position: absolute;
+        border-radius: ${theme.shape.radiusFactor * 0.8}em;
+        inset: 0.6em;
+        content: '';
+        background-color: ${theme.color.accentPrimary.alpha(0.9).toString()};
+      }
+      & > span {
+        position: relative;
+        color: ${theme.color.accentPrimaryContrast.toString()};
+      }
     `};
 `;
 
@@ -59,6 +73,7 @@ const CalendarCell: React.ForwardRefRenderFunction<HTMLButtonElement, CalendarCe
       iconOnly
       type="button"
       $fill={fill}
+      $isSelected={isSelected}
       variant={isSelected ? 'standard' : isToday ? 'outlined' : 'plain'}
       color={isSelected || isToday ? accentColor : 'default'}
       tabIndex={isDisabled ? -1 : restProps.tabIndex}

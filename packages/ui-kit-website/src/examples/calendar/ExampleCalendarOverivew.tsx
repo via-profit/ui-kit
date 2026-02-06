@@ -38,7 +38,7 @@ const ExampleCalendarOverivew: React.FC = () => {
             accentColor: 'primary',
           },
         ]}
-        toodayButtonLabel={intl.formatMessage({ defaultMessage: 'Сегодня' })}
+        todayButtonLabel={intl.formatMessage({ defaultMessage: 'Сегодня' })}
         heading={intl.formatMessage({ defaultMessage: 'Календарь' })}
         // subheading={intl.formatMessage(
         //   { defaultMessage: 'Выбрана дата: {value}' },

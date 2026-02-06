@@ -326,7 +326,7 @@ const DatePicker: React.FC<DatePickerProps> = props => {
             changeMonthButtonTooltip={changeMonthButtonTooltip}
             changeYearButtonTooltip={changeYearButtonTooltip}
             resetButtonLabel={resetButtonLabel}
-            toodayButtonLabel={toodayButtonLabel}
+            todayButtonLabel={toodayButtonLabel}
             heading={heading}
             subheading={subheading}
             initialView={initialView}

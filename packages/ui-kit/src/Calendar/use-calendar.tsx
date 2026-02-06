@@ -109,8 +109,8 @@ export const useCalendar = (props: UseCalendarProps): UseCalendarPayload => {
 
   const isDisabled = React.useCallback(
     (dateValue: Date) => {
-      const min = minDate.getTime() || 0;
-      const max = maxDate.getTime() || Number.MAX_VALUE;
+      const min = minDate.getTime();
+      const max = maxDate.getTime();
       const current = dateValue.getTime();
 
       return current > max || current < min;
@@ -118,18 +118,25 @@ export const useCalendar = (props: UseCalendarProps): UseCalendarPayload => {
     [maxDate, minDate],
   );
 
-  const calculateWeekNumber = React.useCallback((dt: Date) => {
-    const tdt = new Date(dt.valueOf());
-    const dayn = (dt.getDay() + 6) % 7;
-    tdt.setDate(tdt.getDate() - dayn + 3);
+  const calculateWeekNumber = React.useCallback((date: Date, weekStartDay: number) => {
+    // Clone the date without time
+    const d = new Date(date.getFullYear(), date.getMonth(), date.getDate());
 
-    const firstThursday = tdt.valueOf();
-    tdt.setMonth(0, 1);
-    if (tdt.getDay() !== 4) {
-      tdt.setMonth(0, 1 + ((4 - tdt.getDay() + 7) % 7));
-    }
+    // Day of week for the given date (0–6)
+    const day = d.getDay();
 
-    return 1 + Math.ceil((firstThursday - tdt.getTime()) / 604800000);
+    // Offset from the configured week start
+    const diff = (day - weekStartDay + 7) % 7;
+
+    // First day of the current week
+    const weekStart = new Date(d);
+    weekStart.setDate(d.getDate() - diff);
+
+    // First day of the year
+    const yearStart = new Date(d.getFullYear(), 0, 1);
+
+    // Week number = number of full weeks since the beginning of the year
+    return Math.floor((weekStart.getTime() - yearStart.getTime()) / 604800000) + 1;
   }, []);
 
   const weekDaysMap: Record<WeekDayName, number> = React.useMemo(
@@ -152,9 +159,7 @@ export const useCalendar = (props: UseCalendarProps): UseCalendarPayload => {
         return dateNum.toString();
       }
 
-      const numStr = `0${dateNum}`;
-
-      return numStr.substring(numStr.length - 2);
+      return dateNum.toString().padStart(2, '0');
     },
     [displayLeadingZero],
   );
@@ -212,165 +217,43 @@ export const useCalendar = (props: UseCalendarProps): UseCalendarPayload => {
 
   const getWeeks = React.useCallback(
     (needleDate: Date) => {
-      const list: Week[] = [];
-      const startOfDate = new Date(needleDate.getFullYear(), needleDate.getMonth(), 1, 0, 0, 0, 0);
-      const lastOfDate = new Date(needleDate.getFullYear(), needleDate.getMonth() + 1, 0, 0, 0, 0);
-      const startDayNum = weekDaysMap[weekStartDay as WeekDayName];
+      const year = needleDate.getFullYear();
+      const month = needleDate.getMonth();
 
-      const week = new Set<Date>();
-      const d = new Date(needleDate);
+      const firstDay = new Date(year, month, 1);
+      const lastDay = new Date(year, month + 1, 0);
 
-      for (let dateNum = 1; dateNum < lastOfDate.getDate() + 1; dateNum++) {
-        d.setDate(dateNum);
+      const startOffset = (firstDay.getDay() - weekDaysMap[weekStartDay] + 7) % 7;
 
-        // if is start of the week then set a new week
-        if (d.getDay() === startDayNum) {
-          const days: Day[] = [...week].map(day => ({
-            date: day,
-            isToday: isToday(day),
-            isDisabled: isDisabled(day),
-          }));
-          if (days.length) {
-            list.push({
-              weekNumber: calculateWeekNumber(days[0].date),
-              days,
-            });
-          }
-          week.clear();
-        }
+      const startDate = new Date(year, month, 1 - startOffset);
 
-        week.add(new Date(d.getFullYear(), d.getMonth(), d.getDate(), 0, 0, 0, 0));
+      const endOffset = (weekDaysMap[weekStartDay] + 6 - lastDay.getDay() + 7) % 7;
 
-        // if is last of iteration
-        if (dateNum === lastOfDate.getDate()) {
-          const days: Day[] = [...week].map(day => ({
-            date: day,
-            isToday: isToday(day),
-            isDisabled: isDisabled(day),
-          }));
+      const endDate = new Date(year, month, lastDay.getDate() + endOffset);
 
-          if (days.length) {
-            list.push({
-              weekNumber: calculateWeekNumber(days[0].date),
-              days,
-            });
-          }
+      const weeks: Week[] = [];
+      const current = new Date(startDate);
 
-          week.clear();
-        }
-      }
-
-      // Fill the prev days
-      if (list[0].days.length < 7) {
-        const fillDays = 7 - list[0].days.length;
-        const days = list[0].days;
-        for (let fillIndex = 0; fillIndex < fillDays; fillIndex++) {
-          const day = new Date(
-            startOfDate.getFullYear(),
-            startOfDate.getMonth(),
-            -fillIndex,
-            0,
-            0,
-            0,
-            0,
-          );
-          days.unshift({
-            date: day,
-            isDisabled: isDisabled(day),
-            isToday: isToday(day),
-          });
-        }
-        list[0] = {
-          days,
-          weekNumber: calculateWeekNumber(days[0].date),
-        };
-      }
-
-      // fill the next days
-      if (list[list.length - 1].days.length < 7) {
-        const fillDays = 7 - list[list.length - 1].days.length;
-        const days = list[list.length - 1].days;
-        for (let fillIndex = 0; fillIndex < fillDays; fillIndex++) {
-          const day = new Date(
-            lastOfDate.getFullYear(),
-            lastOfDate.getMonth() + 1,
-            fillIndex + 1,
-            0,
-            0,
-            0,
-            0,
-          );
-          days.push({
-            date: day,
-            isDisabled: isDisabled(day),
-            isToday: isToday(day),
-          });
-        }
-        list[list.length - 1] = {
-          days,
-          weekNumber: calculateWeekNumber(days[0].date),
-        };
-      }
-
-      // if weeks length is 4 only
-      // then prepend week
-      if (list.length === 4) {
-        const fillDays = 7;
+      while (current <= endDate) {
         const days: Day[] = [];
-        const firstWeek = list[0];
-        const firstDate = firstWeek.days[0].date;
 
-        for (let fillIndex = 0; fillIndex < fillDays; fillIndex++) {
-          const day = new Date(
-            firstDate.getFullYear(),
-            firstDate.getMonth(),
-            firstDate.getDate() - fillIndex,
-            0,
-            0,
-            0,
-            0,
-          );
-          days.unshift({
-            date: day,
-            isDisabled: isDisabled(day),
-            isToday: isToday(day),
+        for (let i = 0; i < 7; i++) {
+          const d = new Date(current);
+          days.push({
+            date: d,
+            isToday: isToday(d),
+            isDisabled: isDisabled(d),
           });
+          current.setDate(current.getDate() + 1);
         }
-        list.unshift({
+
+        weeks.push({
+          weekNumber: calculateWeekNumber(days[0].date, weekDaysMap[weekStartDay]),
           days,
-          weekNumber: calculateWeekNumber(days[0].date),
         });
       }
 
-      // if weeks length is 5 only
-      // then append week
-      if (list.length === 5) {
-        const lastWeek = list[list.length - 1];
-        const lastDate = lastWeek.days[lastWeek.days.length - 1].date;
-        const days: Day[] = [];
-        for (let fillIndex = 0; fillIndex < 7; fillIndex++) {
-          const day = new Date(
-            lastDate.getFullYear(),
-            lastDate.getMonth(),
-            lastDate.getDate() + fillIndex + 1,
-            0,
-            0,
-            0,
-            0,
-          );
-          days.push({
-            date: day,
-            isDisabled: isDisabled(day),
-            isToday: isToday(day),
-          });
-        }
-        list.push({
-          days,
-          weekNumber: calculateWeekNumber(days[0].date),
-        });
-      }
-
-      return list;
+      return weeks;
     },
     [weekDaysMap, weekStartDay, isToday, isDisabled, calculateWeekNumber],
   );

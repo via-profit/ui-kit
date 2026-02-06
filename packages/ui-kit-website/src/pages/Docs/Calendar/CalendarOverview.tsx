@@ -13,16 +13,16 @@ const Buttons: React.FC = () => (
   <>
     <Surface>
       <ExampleCalendarOverivew />
-      {/*<RenderMarkdown*/}
-      {/*  overrides={{*/}
-      {/*    ExampleCalendarOverivew,*/}
-      {/*    ExampleCalendarOverrides,*/}
-      {/*    ExampleCalendarCustomControls,*/}
-      {/*    ExampleCalendarHooks,*/}
-      {/*  }}*/}
-      {/*>*/}
-      {/*  {content}*/}
-      {/*</RenderMarkdown>*/}
+      <RenderMarkdown
+        overrides={{
+          ExampleCalendarOverivew,
+          ExampleCalendarOverrides,
+          ExampleCalendarCustomControls,
+          ExampleCalendarHooks,
+        }}
+      >
+        {content}
+      </RenderMarkdown>
     </Surface>
     <TableOfContent content={content} />
   </>
