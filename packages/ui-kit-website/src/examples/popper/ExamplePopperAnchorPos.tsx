@@ -89,7 +89,7 @@ const ExamplePopperAnchorPos: React.FC = () => {
           anchorPos={anchorPos}
           anchorElement={anchorElement}
           isOpen
-          zindex={theme.zIndex.header - 1}
+          zIndex={theme.zIndex.header - 1}
         >
           <Surface>Popper content</Surface>
         </Popper>

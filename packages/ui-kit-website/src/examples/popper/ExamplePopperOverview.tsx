@@ -35,8 +35,9 @@ const ExampleMenuAnchorPos: React.FC = () => {
         </Button>
         <Popper
           anchorElement={anchorElement}
+          anchorPos="bottom"
           isOpen={Boolean(anchorElement)}
-          zindex={zIndex.header - 1}
+          zIndex={zIndex.header - 1}
         >
           <Surface>
             <FormattedMessage defaultMessage="Какой-либо контент" />

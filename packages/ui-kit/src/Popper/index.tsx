@@ -3,24 +3,15 @@ import ReactDOM from 'react-dom';
 
 import Container, { PopperContainerProps } from './PopperContainer';
 
-export type AnchorPos =
-  | 'auto'
-  | 'auto-start-end'
-  | 'top-start'
-  | 'top-end'
-  | 'top'
-  | 'bottom'
-  | 'top-start-end'
-  | 'bottom-start-end'
-  | 'bottom-start'
-  | 'bottom-end'
-  | 'static';
+export type AnchorPos = 'top' | 'bottom' | 'left' | 'right';
 
 export interface PopperProps extends React.HTMLAttributes<HTMLDivElement> {
   readonly isOpen: boolean;
   readonly anchorElement?: HTMLElement | null;
   readonly anchorPos?: AnchorPos;
-  readonly zindex?: number;
+  readonly zIndex?: number;
+  readonly autoFlip?: boolean;
+  readonly offset?: number;
   /**
    * Overridable components map
    */
@@ -43,26 +34,17 @@ const Popper: React.ForwardRefRenderFunction<HTMLDivElement, PopperProps> = (pro
     isOpen,
     children,
     anchorElement,
-    zindex,
+    zIndex,
     overrides,
-    anchorPos = 'auto',
+    anchorPos = 'bottom',
+    autoFlip = true,
+    offset = 0,
     ...nativeProps
   } = props;
+  const [actualPlacement, setActualPlacement] = React.useState<AnchorPos>(anchorPos);
   const [style, setStyle] = React.useState<React.CSSProperties | null>(null);
   const [domLoaded, setDomLoaded] = React.useState(false);
-
-  const disablePortal = React.useMemo(() => anchorPos === 'static', [anchorPos]);
-
-  if (anchorPos !== 'static' && typeof anchorElement === 'undefined') {
-    throw new Error(
-      '[@via-profit/ui-kit] When the «anchorPos» is «satic» then «anchorElement» most be an element or null, but got undefined',
-    );
-  }
-  // if (anchorPos === 'static' && !disablePortal) {
-  //   throw new Error(
-  //     '[@via-profit/ui-kit] When the «anchorPos» is «satic» then «disablePortal» most be false',
-  //   );
-  // }
+  const popperRef = React.useRef<HTMLDivElement | null>(null);
 
   const overridesMap = React.useMemo(
     () => ({
@@ -71,14 +53,18 @@ const Popper: React.ForwardRefRenderFunction<HTMLDivElement, PopperProps> = (pro
     [overrides],
   );
 
+  React.useEffect(() => {
+    if (actualPlacement !== anchorPos) {
+      setActualPlacement(anchorPos);
+    }
+  }, [actualPlacement, anchorPos]);
+
   /**
    * Client render detection
    */
   React.useEffect(() => {
-    if (!disablePortal) {
-      setDomLoaded(true);
-    }
-  }, [disablePortal]);
+    setDomLoaded(true);
+  }, []);
 
   const portalEl = React.useMemo(() => {
     if (typeof window === 'undefined') {
@@ -98,241 +84,154 @@ const Popper: React.ForwardRefRenderFunction<HTMLDivElement, PopperProps> = (pro
     return newNode;
   }, []);
 
-  const calculateStyles = React.useCallback(() => {
-    // For a static placement
-    if (anchorPos === 'static') {
-      setStyle({
-        // backgroundColor: 'rgba(123, 255, 0, 0.5)',
-        position: 'static',
-      });
+  const getPositionStyle = React.useCallback(
+    (place: string, anchorRect: DOMRect, popperRect: DOMRect) => {
+      const baseStyle = {
+        left: anchorRect.left,
+        top: anchorRect.top,
+      };
 
-      return;
-    }
-
-    // For a dinamic position
-    if (anchorElement) {
-      const anchorRect = anchorElement.getBoundingClientRect();
-
-      switch (anchorPos) {
-        case 'bottom-start':
-          setStyle({
-            position: 'absolute',
-            left: Math.floor(anchorRect.left + window.scrollX),
-            top: Math.floor(anchorRect.top + window.scrollY + anchorRect.height),
-            height: Math.floor(window.innerHeight - anchorRect.top - anchorRect.height - 5),
-            width: Math.floor(window.innerWidth - anchorRect.left - 15),
-            // backgroundColor: 'rgba(255, 0, 0, .5)',
-            display: 'flex',
-            alignItems: 'flex-start',
-            justifyContent: 'flex-start',
-          });
-          break;
-        case 'top-start':
-          setStyle({
-            position: 'absolute',
-            left: Math.floor(anchorRect.left + window.scrollX),
-            top: window.scrollY,
-            height: anchorRect.top,
-            width: Math.floor(window.innerWidth - anchorRect.left - 15),
-            display: 'flex',
-            alignItems: 'flex-end',
-            justifyContent: 'flex-start',
-            // backgroundColor: 'rgba(0, 102, 255, 0.5)',
-          });
-          break;
+      switch (place) {
         case 'top':
-          setStyle({
-            position: 'absolute',
-            left: Math.floor(anchorRect.left + window.scrollX),
-            top: window.scrollY,
-            height: anchorRect.top,
-            width: anchorRect.width,
-            // backgroundColor: 'rgba(208, 255, 0, 0.5)',
-            display: 'flex',
-            alignItems: 'center',
-            flexDirection: 'column',
-            justifyContent: 'flex-end',
-          });
-          break;
+          return {
+            left: anchorRect.left + anchorRect.width / 2 - popperRect.width / 2,
+            top: anchorRect.top - popperRect.height - offset,
+          };
         case 'bottom':
-          setStyle({
-            position: 'absolute',
-            left: Math.floor(anchorRect.left + window.scrollX),
-            top: Math.floor(anchorRect.top + window.scrollY + anchorRect.height),
-            height: Math.floor(window.innerHeight - anchorRect.top - anchorRect.height - 5),
-            width: anchorRect.width,
-            // backgroundColor: 'rgba(0, 247, 255, 0.5)',
-            display: 'flex',
-            alignItems: 'center',
-            flexDirection: 'column',
-            justifyContent: 'flex-start',
-          });
-          break;
-        case 'top-end':
-          setStyle({
-            position: 'absolute',
-            left: 0,
-            width: Math.floor(anchorRect.left + window.scrollX + anchorRect.width),
-            top: window.scrollY,
-            height: anchorRect.top,
-            display: 'flex',
-            alignItems: 'flex-end',
-            justifyContent: 'flex-end',
-            // backgroundColor: 'rgba(174, 0, 255, 0.5)',
-          });
-          break;
-        case 'bottom-end':
-          setStyle({
-            position: 'absolute',
-            left: 0,
-            width: Math.floor(anchorRect.left + window.scrollX + anchorRect.width),
-            top: Math.floor(anchorRect.top + window.scrollY + anchorRect.height),
-            height: Math.floor(window.innerHeight - anchorRect.top - anchorRect.height - 5),
-            display: 'flex',
-            alignItems: 'flex-start',
-            justifyContent: 'flex-end',
-            // backgroundColor: 'rgba(174, 0, 255, 0.5)',
-          });
-          break;
-        case 'top-start-end':
-          setStyle({
-            position: 'absolute',
-            left: Math.floor(anchorRect.left + window.scrollX),
-            top: window.scrollY,
-            height: anchorRect.top,
-            width: anchorRect.width,
-            // backgroundColor: 'rgba(0, 102, 255, 0.5)',
-            display: 'flex',
-            alignItems: 'stretch',
-            flexDirection: 'column',
-            justifyContent: 'flex-end',
-          });
-          break;
-        case 'bottom-start-end':
-          setStyle({
-            position: 'absolute',
-            left: Math.floor(anchorRect.left + window.scrollX),
-            top: Math.floor(anchorRect.top + window.scrollY + anchorRect.height),
-            height: Math.floor(window.innerHeight - anchorRect.top - anchorRect.height - 5),
-            width: anchorRect.width,
-            // backgroundColor: 'rgba(255, 81, 0, 0.5)',
-            display: 'flex',
-            alignItems: 'stretch',
-            flexDirection: 'column',
-            justifyContent: 'flex-start',
-          });
-          break;
-        case 'auto-start-end':
-          {
-            if (
-              anchorRect.top >
-              Math.floor(window.innerHeight - anchorRect.top - anchorRect.height - 5)
-            ) {
-              setStyle({
-                position: 'absolute',
-                left: Math.floor(anchorRect.left + window.scrollX),
-                top: window.scrollY,
-                height: anchorRect.top,
-                width: anchorRect.width,
-                display: 'flex',
-                alignItems: 'stretch',
-                flexDirection: 'column',
-                justifyContent: 'flex-end',
-                // backgroundColor: 'rgba(0, 102, 255, 0.5)',
-              });
-            } else {
-              setStyle({
-                position: 'absolute',
-                left: Math.floor(anchorRect.left + window.scrollX),
-                top: Math.floor(anchorRect.top + window.scrollY + anchorRect.height),
-                height: Math.floor(window.innerHeight - anchorRect.top - anchorRect.height - 5),
-                width: anchorRect.width,
-                display: 'flex',
-                alignItems: 'stretch',
-                flexDirection: 'column',
-                justifyContent: 'flex-start',
-                // backgroundColor: 'rgba(255, 187, 0, 0.5)',
-              });
-            }
-          }
-          break;
-        case 'auto':
+          return {
+            left: anchorRect.left + anchorRect.width / 2 - popperRect.width / 2,
+            top: anchorRect.bottom + offset,
+          };
+        case 'left':
+          return {
+            left: anchorRect.left - popperRect.width - offset,
+            top: anchorRect.top + anchorRect.height / 2 - popperRect.height / 2,
+          };
+        case 'right':
+          return {
+            left: anchorRect.right + offset,
+            top: anchorRect.top + anchorRect.height / 2 - popperRect.height / 2,
+          };
         default:
-          {
-            if (
-              anchorRect.top >
-              Math.floor(window.innerHeight - anchorRect.top - anchorRect.height - 5)
-            ) {
-              setStyle({
-                position: 'absolute',
-                left: Math.floor(anchorRect.left + window.scrollX),
-                top: window.scrollY,
-                height: anchorRect.top,
-                width: Math.floor(window.innerWidth - anchorRect.left - 15),
-                display: 'flex',
-                alignItems: 'flex-end',
-                // backgroundColor: 'rgba(0, 102, 255, 0.5)',
-              });
-            } else {
-              setStyle({
-                position: 'absolute',
-                left: Math.floor(anchorRect.left + window.scrollX),
-                top: Math.floor(anchorRect.top + window.scrollY + anchorRect.height),
-                height: Math.floor(window.innerHeight - anchorRect.top - anchorRect.height - 5),
-                width: Math.floor(window.innerWidth - anchorRect.left - 15),
-                // backgroundColor: 'rgba(255, 0, 0, .5)',
-                display: 'flex',
-                alignItems: 'flex-start',
-              });
-            }
-          }
+          return baseStyle;
+      }
+    },
+    [],
+  );
 
-          break;
+  const checkIfViewportFits = React.useCallback(
+    (style: { left: number; top: number }, popperRect: DOMRect, viewport: any) => {
+      const left = style.left;
+      const top = style.top;
+      const right = left + popperRect.width;
+      const bottom = top + popperRect.height;
+
+      return left >= 0 && top >= 0 && right <= viewport.width && bottom <= viewport.height;
+    },
+    [],
+  );
+
+  const getPreferredPlacements = React.useCallback(
+    (preferredPlacement: AnchorPos, anchorRect: DOMRect, popperRect: DOMRect, viewport: any) => {
+      const placementsOrder: Record<AnchorPos, string[]> = {
+        top: ['top', 'bottom', 'left', 'right'],
+        bottom: ['bottom', 'top', 'left', 'right'],
+        left: ['left', 'right', 'top', 'bottom'],
+        right: ['right', 'left', 'top', 'bottom'],
+      };
+
+      if(!autoFlip) {
+        return {
+          found: false,
+          placement: preferredPlacement,
+          style: getPositionStyle(preferredPlacement, anchorRect, popperRect),
+        };
       }
 
+      const order = placementsOrder[preferredPlacement] || placementsOrder.bottom;
+
+      for (const place of order) {
+        const style = getPositionStyle(place, anchorRect, popperRect);
+        const fits = checkIfViewportFits(style, popperRect, viewport);
+
+        if (fits) {
+          return { found: true, placement: place as AnchorPos, style };
+        }
+      }
+
+      return {
+        found: false,
+        placement: preferredPlacement,
+        style: getPositionStyle(preferredPlacement, anchorRect, popperRect),
+      };
+    },
+    [checkIfViewportFits, getPositionStyle],
+  );
+
+  const calculatePosition = React.useCallback(() => {
+    if (!anchorElement || !popperRef.current) {
       return;
     }
 
-    setStyle(null);
-  }, [anchorElement, anchorPos]);
+    const anchorRect = anchorElement.getBoundingClientRect();
+    const popperRect = popperRef.current.getBoundingClientRect();
+    const viewport = {
+      width: window.innerWidth,
+      height: window.innerHeight,
+    };
+    const placements = getPreferredPlacements(actualPlacement, anchorRect, popperRect, viewport);
+
+    if (placements.found) {
+      setActualPlacement(placements.placement);
+      setStyle(placements.style);
+    } else {
+      setStyle(placements.style);
+    }
+  }, [actualPlacement, anchorElement, getPreferredPlacements]);
 
   React.useEffect(() => {
-    window.addEventListener('resize', calculateStyles);
-    window.addEventListener('scroll', calculateStyles);
+    window.addEventListener('resize', calculatePosition);
+    window.addEventListener('scroll', calculatePosition);
 
     return () => {
-      window.removeEventListener('resize', calculateStyles);
-      window.removeEventListener('scroll', calculateStyles);
+      window.removeEventListener('resize', calculatePosition);
+      window.removeEventListener('scroll', calculatePosition);
     };
-  }, [calculateStyles]);
+  }, [calculatePosition]);
 
   React.useEffect(() => {
-    if (isOpen && (anchorElement || anchorPos === 'static')) {
-      calculateStyles();
+    if (anchorElement && isOpen && popperRef.current) {
+      calculatePosition();
     }
-  }, [isOpen, anchorElement, anchorPos, calculateStyles]);
+  }, [isOpen, calculatePosition, anchorElement]);
 
   const renderNode = React.useCallback(
     () => (
       <overridesMap.Container
         {...nativeProps}
         style={{ ...style, ...nativeProps.style }}
-        zIndex={zindex}
-        disablePortal={disablePortal}
-        ref={ref}
+        zIndex={zIndex}
+        ref={el => {
+          popperRef.current = el;
+
+          if (ref) {
+            if (typeof ref === 'function') {
+              ref(el);
+            }
+            if (typeof ref === 'object') {
+              ref.current = el;
+            }
+          }
+        }}
       >
         {style && children}
       </overridesMap.Container>
     ),
-    [children, disablePortal, nativeProps, overridesMap, ref, style, zindex],
+    [children, nativeProps, overridesMap, ref, style, zIndex],
   );
 
-  if (!isOpen || !style) {
+  if (!isOpen) {
     return null;
-  }
-
-  if (disablePortal) {
-    return renderNode();
   }
 
   return domLoaded && portalEl ? ReactDOM.createPortal(renderNode(), portalEl, PORTAL_ID) : null;

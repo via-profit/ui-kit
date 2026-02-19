@@ -12,12 +12,9 @@ type StyleProps = {
 };
 
 const StyledContainer = styled.div<StyleProps>`
+  position: fixed;
   z-index: ${({ theme, $zIndex, $disablePortal }) =>
     typeof $zIndex !== 'undefined' ? $zIndex : $disablePortal ? undefined : theme.zIndex.modal};
-  pointer-events: none;
-  & > * {
-    pointer-events: all;
-  }
 `;
 
 const PopperContainer: React.ForwardRefRenderFunction<HTMLDivElement, PopperContainerProps> = (

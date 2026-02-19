@@ -687,7 +687,7 @@ const MenuContainer = React.forwardRef(
         <overridesMap.Popper
           isOpen={Boolean(isOpen)}
           ref={menuPopperRef}
-          zindex={zIndex}
+          zIndex={zIndex}
           anchorPos={anchorPos}
           anchorElement={anchorElement}
         >
