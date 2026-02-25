@@ -263,7 +263,12 @@
         "ignore": []
       }
     ],
-    "prettier/prettier": "warn"
+    "prettier/prettier":  [
+  "warn",
+  {
+    "endOfLine": "auto"
+  }
+]
   },
   "settings": {
     "react": {
