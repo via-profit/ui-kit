@@ -159,9 +159,7 @@ export interface CalendarOverrides {
   /**
    * Element container
    */
-  readonly Body?: React.ComponentType<
-    CalendarBodyProps & React.RefAttributes<HTMLDivElement>
-  >;
+  readonly Body?: React.ComponentType<CalendarBodyProps & React.RefAttributes<HTMLDivElement>>;
 
   /**
    * Day element

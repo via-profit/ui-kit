@@ -63,9 +63,7 @@ export interface TextFieldOverrides {
   /**
    * Native `input` component
    */
-  readonly Input?: React.ComponentType<
-    TextFieldInputProps & React.RefAttributes<HTMLInputElement>
-  >;
+  readonly Input?: React.ComponentType<TextFieldInputProps & React.RefAttributes<HTMLInputElement>>;
 
   /**
    * Component for display error text

@@ -116,7 +116,7 @@ const Popper: React.ForwardRefRenderFunction<HTMLDivElement, PopperProps> = (pro
           return baseStyle;
       }
     },
-    [],
+    [offset],
   );
 
   const checkIfViewportFits = React.useCallback(
@@ -140,7 +140,7 @@ const Popper: React.ForwardRefRenderFunction<HTMLDivElement, PopperProps> = (pro
         right: ['right', 'left', 'top', 'bottom'],
       };
 
-      if(!autoFlip) {
+      if (!autoFlip) {
         return {
           found: false,
           placement: preferredPlacement,
@@ -165,7 +165,7 @@ const Popper: React.ForwardRefRenderFunction<HTMLDivElement, PopperProps> = (pro
         style: getPositionStyle(preferredPlacement, anchorRect, popperRect),
       };
     },
-    [checkIfViewportFits, getPositionStyle],
+    [autoFlip, checkIfViewportFits, getPositionStyle],
   );
 
   const calculatePosition = React.useCallback(() => {
