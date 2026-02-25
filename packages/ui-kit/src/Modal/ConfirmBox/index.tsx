@@ -45,7 +45,7 @@ export interface ConfirmBoxOverrides {
   /**
    * Element container
    */
-  readonly Container?: React.ForwardRefExoticComponent<
+  readonly Container?: React.ComponentType<
     ConfirmBoxContainerProps & React.RefAttributes<HTMLDivElement>
   >;
   /**

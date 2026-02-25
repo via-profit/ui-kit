@@ -59,7 +59,7 @@ export interface BaseModalProps {
 }
 
 export interface BaseModalOverrides {
-  readonly Overlay?: React.ForwardRefExoticComponent<
+  readonly Overlay?: React.ComponentType<
     ModalOverlayProps & React.RefAttributes<HTMLDivElement>
   >;
   readonly Inner?: React.ForwardRefExoticComponent<

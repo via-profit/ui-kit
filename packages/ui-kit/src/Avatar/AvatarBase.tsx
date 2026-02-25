@@ -66,7 +66,7 @@ export interface AvatarBaseOverrides {
   /**
    * Element container
    */
-  readonly Container?: React.ForwardRefExoticComponent<
+  readonly Container?: React.ComponentType<
     AvatarContainerProps & React.RefAttributes<HTMLSpanElement>
   >;
   /**

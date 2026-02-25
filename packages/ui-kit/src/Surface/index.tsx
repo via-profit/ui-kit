@@ -49,7 +49,7 @@ export interface SurfaceOverrides {
   /**
    * Surface container component
    */
-  readonly Container?: React.ForwardRefExoticComponent<
+  readonly Container?: React.ComponentType<
     SurfaceContainerProps & React.RefAttributes<HTMLDivElement>
   >;
   /**

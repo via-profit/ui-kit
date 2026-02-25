@@ -70,7 +70,7 @@ export interface SwitchOverrides {
   /**
    * Element container
    */
-  readonly Container?: React.ForwardRefExoticComponent<
+  readonly Container?: React.ComponentType<
     SwitchContainerProps & React.RefAttributes<HTMLSpanElement>
   >;
 

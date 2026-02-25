@@ -22,7 +22,7 @@ export interface PopperOverrides {
   /**
    * Popper Container
    */
-  readonly Container?: React.ForwardRefExoticComponent<
+  readonly Container?: React.ComponentType<
     PopperContainerProps & React.RefAttributes<HTMLDivElement>
   >;
 }

@@ -44,7 +44,7 @@ export interface BadgeBaseOverrides {
   /**
    * Element container
    */
-  readonly Container?: React.ForwardRefExoticComponent<
+  readonly Container?: React.ComponentType<
     BadgeContainerProps & React.RefAttributes<HTMLSpanElement>
   >;
   /**

@@ -34,7 +34,7 @@ export interface MessageBoxOverrides {
   /**
    * Element container
    */
-  readonly Container?: React.ForwardRefExoticComponent<
+  readonly Container?: React.ComponentType<
     MessageBoxContainerProps & React.RefAttributes<HTMLDivElement>
   >;
   /**

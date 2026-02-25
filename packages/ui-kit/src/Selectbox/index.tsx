@@ -157,7 +157,7 @@ export interface SelectboxOverrides {
   /**
    * Container element
    */
-  readonly Container?: React.ForwardRefExoticComponent<
+  readonly Container?: React.ComponentType<
     SelectboxContainerProps & React.RefAttributes<HTMLDivElement>
   >;
   /**

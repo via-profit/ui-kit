@@ -50,7 +50,7 @@ export interface HighlightedOverrides {
   /**
    * Container element
    */
-  readonly Container?: React.ForwardRefExoticComponent<
+  readonly Container?: React.ComponentType<
     HighlightedContainerProps & React.RefAttributes<HTMLSpanElement>
   >;
 

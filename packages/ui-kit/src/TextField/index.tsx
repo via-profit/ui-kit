@@ -63,7 +63,7 @@ export interface TextFieldOverrides {
   /**
    * Native `input` component
    */
-  readonly Input?: React.ForwardRefExoticComponent<
+  readonly Input?: React.ComponentType<
     TextFieldInputProps & React.RefAttributes<HTMLInputElement>
   >;
 

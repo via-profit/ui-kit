@@ -56,7 +56,7 @@ export interface ButtonBaseOverrides {
   /**
    * Element container
    */
-  readonly Container?: React.ForwardRefExoticComponent<
+  readonly Container?: React.ComponentType<
     ButtonContainerProps & React.RefAttributes<HTMLButtonElement>
   >;
   /**

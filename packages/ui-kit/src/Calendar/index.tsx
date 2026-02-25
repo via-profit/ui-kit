@@ -159,7 +159,7 @@ export interface CalendarOverrides {
   /**
    * Element container
    */
-  readonly Body?: React.ForwardRefExoticComponent<
+  readonly Body?: React.ComponentType<
     CalendarBodyProps & React.RefAttributes<HTMLDivElement>
   >;
 

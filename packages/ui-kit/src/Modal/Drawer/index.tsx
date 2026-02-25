@@ -51,7 +51,7 @@ export interface DrawerOverrides {
   /**
    * Element container
    */
-  readonly Container?: React.ForwardRefExoticComponent<
+  readonly Container?: React.ComponentType<
     DrawerContainerProps & React.RefAttributes<HTMLDivElement>
   >;
   /**

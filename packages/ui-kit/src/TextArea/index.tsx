@@ -63,7 +63,7 @@ export interface TextAreaOverrides {
   /**
    * Native `input` component
    */
-  readonly Input?: React.ForwardRefExoticComponent<
+  readonly Input?: React.ComponentType<
     TextAreaInputProps & React.RefAttributes<HTMLTextAreaElement>
   >;
 

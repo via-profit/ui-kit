@@ -48,7 +48,7 @@ export interface AccordionOverrides {
   /**
    * Accordion container component
    */
-  readonly Container?: React.ForwardRefExoticComponent<
+  readonly Container?: React.ComponentType<
     AccordionContainerProps & React.RefAttributes<HTMLDivElement>
   >;
   /**
