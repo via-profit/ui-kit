@@ -15,7 +15,7 @@ const PopperOverview: React.FC = () => (
       <RenderMarkdown
         overrides={{
           ExamplePopperOverview,
-          ExamplePopperAnchorPos,
+          // ExamplePopperAnchorPos,
           ExamplePopperOutsideClick,
           ExamplePopperModal,
         }}
