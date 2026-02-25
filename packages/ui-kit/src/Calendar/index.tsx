@@ -144,6 +144,9 @@ export type CalendarProps<Range extends boolean | undefined = undefined> = {
    */
   readonly initialView?: CalendarView;
 
+  /**
+   * Posibility calendar views list
+   */
   readonly views?: readonly CalendarView[];
 
   /**
