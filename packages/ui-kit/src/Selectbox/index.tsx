@@ -163,42 +163,42 @@ export interface SelectboxOverrides {
   /**
    * Base element
    */
-  readonly Button?: React.ForwardRefExoticComponent<
+  readonly Button?: React.ComponentType<
     SelectboxButtonProps & React.RefAttributes<HTMLButtonElement>
   >;
 
   /**
    * Icon
    */
-  readonly Icon?: React.ForwardRefExoticComponent<
+  readonly Icon?: React.ComponentType<
     SelectboxChevronIconProps & React.RefAttributes<SVGElement>
   >;
 
   /**
    * Component for display error text
    */
-  readonly ErrorText?: React.ForwardRefExoticComponent<
+  readonly ErrorText?: React.ComponentType<
     TextFieldErrorTextProps & React.RefAttributes<HTMLDivElement>
   >;
 
   /**
    * label component
    */
-  readonly Label?: React.ForwardRefExoticComponent<
+  readonly Label?: React.ComponentType<
     TextFieldLabelProps & React.RefAttributes<HTMLLabelElement>
   >;
 
   /**
    * label asterisk component
    */
-  readonly Asterisk?: React.ForwardRefExoticComponent<
+  readonly Asterisk?: React.ComponentType<
     TextFieldLabelAsteriskProps & React.RefAttributes<HTMLSpanElement>
   >;
 
   /**
    * button wrapper component
    */
-  readonly ButtonWrapper?: React.ForwardRefExoticComponent<
+  readonly ButtonWrapper?: React.ComponentType<
     SelectboxButtonWrapperProps & React.RefAttributes<HTMLDivElement>
   >;
 }

@@ -51,28 +51,28 @@ export interface ConfirmBoxOverrides {
   /**
    * Element ontent
    */
-  readonly Content?: React.ForwardRefExoticComponent<
+  readonly Content?: React.ComponentType<
     ConfirmBoxContentProps & React.RefAttributes<HTMLDivElement>
   >;
 
   /**
    * Element footer
    */
-  readonly Footer?: React.ForwardRefExoticComponent<
+  readonly Footer?: React.ComponentType<
     ConfirmBoxFooterProps & React.RefAttributes<HTMLDivElement>
   >;
 
   /**
    * Element header
    */
-  readonly Header?: React.ForwardRefExoticComponent<
+  readonly Header?: React.ComponentType<
     ConfirmBoxHeaderProps & React.RefAttributes<HTMLDivElement>
   >;
 
   /**
    * Overlay element
    */
-  readonly Overlay?: React.ForwardRefExoticComponent<
+  readonly Overlay?: React.ComponentType<
     ModalOverlayProps & React.RefAttributes<HTMLDivElement>
   >;
 }

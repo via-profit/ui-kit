@@ -68,42 +68,42 @@ export interface TextFieldOverrides {
   /**
    * Component for display error text
    */
-  readonly ErrorText?: React.ForwardRefExoticComponent<
+  readonly ErrorText?: React.ComponentType<
     TextFieldErrorTextProps & React.RefAttributes<HTMLDivElement>
   >;
 
   /**
    * Icons wrapper component
    */
-  readonly IconWrapper?: React.ForwardRefExoticComponent<
+  readonly IconWrapper?: React.ComponentType<
     TextFieldIconWrapperProps & React.RefAttributes<HTMLDivElement>
   >;
 
   /**
    * input field wrapper component
    */
-  readonly InputWrapper?: React.ForwardRefExoticComponent<
+  readonly InputWrapper?: React.ComponentType<
     TextFieldInputWrapperProps & React.RefAttributes<HTMLDivElement>
   >;
 
   /**
    * label component
    */
-  readonly Label?: React.ForwardRefExoticComponent<
+  readonly Label?: React.ComponentType<
     TextFieldLabelProps & React.RefAttributes<HTMLLabelElement>
   >;
 
   /**
    * label asterisk component
    */
-  readonly Asterisk?: React.ForwardRefExoticComponent<
+  readonly Asterisk?: React.ComponentType<
     TextFieldLabelAsteriskProps & React.RefAttributes<HTMLSpanElement>
   >;
 
   /**
    * label component
    */
-  readonly Container?: React.ForwardRefExoticComponent<
+  readonly Container?: React.ComponentType<
     TextFieldContainerProps & React.RefAttributes<HTMLDivElement>
   >;
 }

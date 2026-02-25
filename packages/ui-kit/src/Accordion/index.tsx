@@ -54,19 +54,19 @@ export interface AccordionOverrides {
   /**
    * Accordion header component
    */
-  readonly Header?: React.ForwardRefExoticComponent<
+  readonly Header?: React.ComponentType<
     AccordionHeaderProps & React.RefAttributes<HTMLDivElement>
   >;
   /**
    * Accordion content component
    */
-  readonly Content?: React.ForwardRefExoticComponent<
+  readonly Content?: React.ComponentType<
     AccordionContentProps & React.RefAttributes<HTMLDivElement>
   >;
   /**
    * Accordion footer component
    */
-  readonly Actions?: React.ForwardRefExoticComponent<
+  readonly Actions?: React.ComponentType<
     AccordionActionsProps & React.RefAttributes<HTMLDivElement>
   >;
 }

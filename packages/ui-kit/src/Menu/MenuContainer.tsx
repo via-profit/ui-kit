@@ -169,7 +169,7 @@ export interface MenuOverrides {
   /**
    * Popper wrapper
    */
-  readonly Popper?: React.ForwardRefExoticComponent<
+  readonly Popper?: React.ComponentType<
     PopperProps & React.RefAttributes<HTMLDivElement>
   >;
 }

@@ -15,14 +15,11 @@ const ExampleCalendarOverivew: React.FC = () => {
   return (
     <div>
       <pre>{JSON.stringify(value, null, 2)}</pre>
+
       <Calendar
         range={true}
         value={value}
-        onChange={([a, b]) => {
-
-
-          onChange([a, b])
-        }}
+        onChange={onChange}
         badges={[
           {
             date: new Date(new Date().getFullYear(), new Date().getMonth(), 26),

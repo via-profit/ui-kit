@@ -8,13 +8,13 @@ import InnerContainer, { ModalInnerContainerProps } from './ModalInnerContainer'
 interface RenderModalProps {
   readonly children: React.ReactNode | readonly React.ReactNode[];
   readonly overrides: {
-    readonly Overlay?: React.ForwardRefExoticComponent<
+    readonly Overlay?: React.ComponentType<
       ModalOverlayProps & React.RefAttributes<HTMLDivElement>
     >;
-    readonly Inner?: React.ForwardRefExoticComponent<
+    readonly Inner?: React.ComponentType<
       ModalInnerProps & React.RefAttributes<HTMLDivElement>
     >;
-    readonly InnerContainer?: React.ForwardRefExoticComponent<
+    readonly InnerContainer?: React.ComponentType<
       ModalInnerContainerProps & React.RefAttributes<HTMLDivElement>
     >;
   };

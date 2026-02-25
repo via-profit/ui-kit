@@ -29,11 +29,11 @@ const CalendarYearCell: React.ForwardRefRenderFunction<HTMLButtonElement, Calend
   const { children, isSelected, accentColor, ...restProps } = props;
   const myRef = React.useRef<HTMLButtonElement | null>(null);
 
-  React.useEffect(() => {
-    if (isSelected && myRef.current) {
-      myRef.current.scrollIntoView({ behavior: 'instant' });
-    }
-  }, [isSelected]);
+  // React.useEffect(() => {
+  //   if (isSelected && myRef.current) {
+  //     myRef.current.scrollIntoView({ behavior: 'instant' });
+  //   }
+  // }, [isSelected]);
 
   return (
     <Btn
