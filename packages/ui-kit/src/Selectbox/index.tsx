@@ -43,7 +43,7 @@ export interface SelectboxProps<T, Multiple extends boolean | undefined = undefi
   /**
    * Anchor position\
    * \
-   * Default: `auto-start-end`
+   * Default: `bottom`
    */
   readonly anchorPos?: AnchorPos;
 
@@ -230,7 +230,7 @@ const Selectbox = React.forwardRef(
       multiple,
       isOpen = false,
       isLoading = false,
-      anchorPos = 'auto-start-end',
+      anchorPos = 'bottom',
       fullWidth = false,
       children,
       onChange,
@@ -381,7 +381,7 @@ const Selectbox = React.forwardRef(
                   onChange(item);
                 }
               }}
-              closeOnSelect={multiple ? false : true}
+              closeOnSelect={!multiple}
               onRequestClose={evt => {
                 if (evt?.target !== anchorElement) {
                   onRequestClose(evt);
