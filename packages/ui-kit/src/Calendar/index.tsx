@@ -591,9 +591,12 @@ const Calendar = <Range extends boolean | undefined = undefined>(
       type: 'setPartial',
       payload: {
         calendarDate: today,
+        calendarValue: range ? [today, today] : today,
       },
     });
-  }, []);
+
+    handleCellDateClick(today)();
+  }, [handleCellDateClick, range]);
 
   const weeks = React.useMemo(
     () => (calendarCurrentView === 'days' ? getWeeks(calendarDate) : []),

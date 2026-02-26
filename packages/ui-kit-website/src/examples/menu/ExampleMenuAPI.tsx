@@ -21,14 +21,14 @@ const ExampleMenuAPI: React.FC = () => {
 
   return (
     <>
-      <Button variant="standard" iconOnly onClick={() => menuRef.current?.hightlightPrevItem()}>
+      <Button variant="standard" iconOnly onClick={() => menuRef.current?.highlightPrevItem()}>
         <IconLeft />
       </Button>
-      <Button variant="standard" iconOnly onClick={() => menuRef.current?.hightlightNextItem()}>
+      <Button variant="standard" iconOnly onClick={() => menuRef.current?.highlightNextItem()}>
         <IconRight />
       </Button>
 
-      <Button variant="standard" onClick={() => menuRef.current?.selectHightlightedItem()}>
+      <Button variant="standard" onClick={() => menuRef.current?.selectHighlightedItem()}>
         Select highlighted item in list
       </Button>
       <Button variant="standard" onClick={() => menuRef.current?.focus()}>

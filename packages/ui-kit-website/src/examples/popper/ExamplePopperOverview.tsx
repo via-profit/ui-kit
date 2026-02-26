@@ -9,13 +9,20 @@ import { FormattedMessage } from 'react-intl';
 const StyledAnchorContainer = styled.div`
   width: 22em;
   height: 22em;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+
   background-color: ${({ theme }) => theme.color.backgroundPrimary.toString()};
   border-radius: ${({ theme }) => theme.shape.radiusFactor}em;
+  overflow: auto;
 `;
 
+const Inner = styled.div`
+  height: 160em;
+  width: 160em;
+`;
+
+const StyledButton = styled(Button)`
+  margin: 16em;
+`;
 const ExampleMenuAnchorPos: React.FC = () => {
   const [anchorElement, setAnchorElement] = React.useState<HTMLButtonElement | null>(null);
   const { zIndex } = useTheme();
@@ -23,26 +30,28 @@ const ExampleMenuAnchorPos: React.FC = () => {
   return (
     <>
       <StyledAnchorContainer>
-        <Button
-          color="primary"
-          onClick={event => setAnchorElement(anchorElement ? null : event.currentTarget)}
-        >
-          {anchorElement ? (
-            <FormattedMessage defaultMessage="Скрыть" />
-          ) : (
-            <FormattedMessage defaultMessage="Показать" />
-          )}
-        </Button>
-        <Popper
-          anchorElement={anchorElement}
-          anchorPos="bottom"
-          isOpen={Boolean(anchorElement)}
-          zIndex={zIndex.header - 1}
-        >
-          <Surface>
-            <FormattedMessage defaultMessage="Какой-либо контент" />
-          </Surface>
-        </Popper>
+        <Inner>
+          <StyledButton
+            color="primary"
+            onClick={event => setAnchorElement(anchorElement ? null : event.currentTarget)}
+          >
+            {anchorElement ? (
+              <FormattedMessage defaultMessage="Скрыть" />
+            ) : (
+              <FormattedMessage defaultMessage="Показать" />
+            )}
+          </StyledButton>
+          <Popper
+            anchorElement={anchorElement}
+            anchorPos="bottom"
+            isOpen={Boolean(anchorElement)}
+            zIndex={zIndex.header - 1}
+          >
+            <Surface>
+              <FormattedMessage defaultMessage="Какой-либо контент" />
+            </Surface>
+          </Popper>
+        </Inner>
       </StyledAnchorContainer>
     </>
   );

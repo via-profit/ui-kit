@@ -2,7 +2,7 @@ import React from 'react';
 
 import useContext, { actionSetmenuState } from './context';
 import List, { MenuListProps } from './MenuList';
-import Popper, { AnchorPos, PopperProps } from '../Popper';
+import Popper, { AnchorPos, PopperProps, PositionStrategy } from '../Popper';
 import type { MenuItemCommonProps } from './MenuItem';
 import ClickOutside from '../ClickOutside';
 
@@ -106,9 +106,49 @@ export interface MenuProps<T, Multiple extends boolean | undefined = undefined> 
   /**
    * Anchor position\
    * \
-   * Default: `auto`
+   * Default: `bottom`
    */
   readonly anchorPos?: AnchorPos;
+
+  /**
+   * When enabled, the popper will automatically try to find the best placement
+   * if the preferred placement doesn't fit in the viewport.
+   * The component will iterate through possible placements until it finds one that fits.
+   *
+   * **Default**: `true`
+   * ```
+   */
+  readonly autoFlip?: boolean;
+
+  /**
+   * Additional offset (in pixels) from the anchor element.
+   * Positive values move the popper away from the anchor, negative values move it closer.
+   *
+   * @default `0`
+   * ```
+   */
+  readonly offset?: number;
+
+  /**
+   * The positioning strategy to use.
+   * - `'fixed'`: Positions relative to the viewport. Works reliably in all cases.
+   * - `'absolute'`: Positions relative to the nearest positioned ancestor.
+   *                 When using 'absolute', make sure a parent element has `position: relative`.
+   *
+   * **Default**: `'`absolute`'`
+   * ```
+   */
+  readonly positionStrategy?: PositionStrategy;
+
+  /**
+   * Minimum distance (in pixels) that the popper must maintain from the viewport edges.
+   * Used to prevent the popper from being positioned too close to the screen boundaries.
+   * The popper will try to flip to another placement if it cannot maintain this margin.
+   *
+   * **Default**: `8`
+   * ```
+   */
+  readonly viewportMargin?: number;
 
   /**
    * Should menu will be closed when item selected\
@@ -116,13 +156,6 @@ export interface MenuProps<T, Multiple extends boolean | undefined = undefined> 
    * **Default**: if **multiple** is true then `false` otherwise - `true`
    */
   readonly closeOnSelect?: boolean;
-
-  /**
-   * Do not use react portal\
-   * \
-   * **Default**: `false`
-   */
-  // readonly disablePortal?: boolean;
 
   /**
    * Popper z-index\
@@ -169,9 +202,7 @@ export interface MenuOverrides {
   /**
    * Popper wrapper
    */
-  readonly Popper?: React.ComponentType<
-    PopperProps & React.RefAttributes<HTMLDivElement>
-  >;
+  readonly Popper?: React.ComponentType<PopperProps & React.RefAttributes<HTMLDivElement>>;
 }
 
 export type MenuRef = {
@@ -194,34 +225,34 @@ export type MenuRef = {
   selectItem: (index: number) => void;
 
   /**
-   * Hightlight specified item by index
+   * Highlight specified item by index
    */
   highlightIndex: (index: number) => void;
 
   /**
    * Highlight the previous item relative to the currently highlighted one
    */
-  hightlightPrevItem: () => void;
+  highlightPrevItem: () => void;
 
   /**
    * Highlight the next item relative to the currently highlighted one
    */
-  hightlightNextItem: () => void;
+  highlightNextItem: () => void;
 
   /**
    * Highlight the first item in list
    */
-  hightlightFirstItem: () => void;
+  highlightFirstItem: () => void;
 
   /**
    * Highlight the last item in list
    */
-  hightlightLastItem: () => void;
+  highlightLastItem: () => void;
 
   /**
    * Select highlighted item in list
    */
-  selectHightlightedItem: () => void;
+  selectHighlightedItem: () => void;
 
   /**
    * Returns the list HTML container
@@ -260,6 +291,10 @@ const MenuContainer = React.forwardRef(
       closeOutsideClick = true,
       isOpen = false,
       anchorPos = 'bottom',
+      positionStrategy,
+      autoFlip,
+      viewportMargin,
+      offset,
       multiple = false,
       autofocus = true,
       closeOnSelect = !multiple,
@@ -461,12 +496,12 @@ const MenuContainer = React.forwardRef(
         focus: () => menuListRef.current?.focus(),
         scrollToIndex: (idx: number) => scrollToIndex(idx),
         highlightIndex: (idx: number) => highlightIndex(idx),
-        hightlightPrevItem: () => hightlightPrevItem(),
-        hightlightNextItem: () => hightlightNextItem(),
-        hightlightFirstItem: () => hightlightFirstItem(),
-        hightlightLastItem: () => hightlightLastItem(),
+        highlightPrevItem: () => hightlightPrevItem(),
+        highlightNextItem: () => hightlightNextItem(),
+        highlightFirstItem: () => hightlightFirstItem(),
+        highlightLastItem: () => hightlightLastItem(),
         scrollToFirstSelected: () => scrollToFirstSelected(),
-        selectHightlightedItem: () => selectHightlightedItem(),
+        selectHighlightedItem: () => selectHightlightedItem(),
         selectItem: (idx: number) => selectItem(idx),
         getListElement: () => menuListRef.current,
       }),
@@ -626,10 +661,10 @@ const MenuContainer = React.forwardRef(
     React.useEffect(() => {
       const indexes = getSelectedIndexes();
 
-      // If elements in selectedIndexesRef and indexes are not equale
+      // If elements in selectedIndexesRef and indexes are not equal
       if (
-        (selectedIndexesRef.current.length === indexes.length &&
-          selectedIndexesRef.current.every(value => indexes.includes(value))) === false
+        !(selectedIndexesRef.current.length === indexes.length &&
+          selectedIndexesRef.current.every(value => indexes.includes(value)))
       ) {
         selectedIndexesRef.current = indexes;
         dispatch({
@@ -688,6 +723,10 @@ const MenuContainer = React.forwardRef(
           zIndex={zIndex}
           anchorPos={anchorPos}
           anchorElement={anchorElement}
+          positionStrategy={positionStrategy}
+          autoFlip={autoFlip}
+          viewportMargin={viewportMargin}
+          offset={offset}
         >
           <overridesMap.List
             isOpen={Boolean(isOpen)}

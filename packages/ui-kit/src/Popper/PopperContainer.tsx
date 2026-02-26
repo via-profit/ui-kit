@@ -25,7 +25,7 @@ const PopperContainer: React.ForwardRefRenderFunction<HTMLDivElement, PopperCont
   props,
   ref,
 ) => {
-  const { children, disablePortal, zIndex, positionStrategy = 'absolute', ...nativeProps } = props;
+  const { children, disablePortal, zIndex, positionStrategy = 'fixed', ...nativeProps } = props;
 
   return (
     <StyledContainer

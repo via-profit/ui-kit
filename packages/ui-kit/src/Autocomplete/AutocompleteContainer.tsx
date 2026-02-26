@@ -6,7 +6,7 @@ import Button from '../Button';
 import Spinner from '../LoadingIndicator/Spinner';
 import useContext, { actionSetPartial } from './context';
 import IconClear from './IconClear';
-import type { AnchorPos } from '../Popper';
+import { AnchorPos, PositionStrategy } from '../Popper';
 import type { MenuItemCommonProps } from '../Menu/MenuItem';
 import { mouseEventMap } from '../ClickOutside';
 
@@ -28,7 +28,7 @@ export interface AutocompleteProps<T, Multiple extends boolean | undefined = und
   readonly isOpen?: boolean;
 
   /**
-   * Loading indicator visiblility\
+   * Loading indicator visibility\
    * If `true` then visible, otherwise - hidden
    */
   /**
@@ -37,6 +37,46 @@ export interface AutocompleteProps<T, Multiple extends boolean | undefined = und
    * Default: `auto-start-end`
    */
   readonly anchorPos?: AnchorPos;
+
+  /**
+   * When enabled, the popper will automatically try to find the best placement
+   * if the preferred placement doesn't fit in the viewport.
+   * The component will iterate through possible placements until it finds one that fits.
+   *
+   * **Default**: `true`
+   * ```
+   */
+  readonly autoFlip?: boolean;
+
+  /**
+   * Additional offset (in pixels) from the anchor element.
+   * Positive values move the popper away from the anchor, negative values move it closer.
+   *
+   * @default `0`
+   * ```
+   */
+  readonly offset?: number;
+
+  /**
+   * The positioning strategy to use.
+   * - `'fixed'`: Positions relative to the viewport. Works reliably in all cases.
+   * - `'absolute'`: Positions relative to the nearest positioned ancestor.
+   *                 When using 'absolute', make sure a parent element has `position: relative`.
+   *
+   * **Default**: `fixed`
+   * ```
+   */
+  readonly positionStrategy?: PositionStrategy;
+
+  /**
+   * Minimum distance (in pixels) that the popper must maintain from the viewport edges.
+   * Used to prevent the popper from being positioned too close to the screen boundaries.
+   * The popper will try to flip to another placement if it cannot maintain this margin.
+   *
+   * **Default**: `8`
+   * ```
+   */
+  readonly viewportMargin?: number;
 
   /**
    * Text field loading state\
@@ -190,6 +230,10 @@ const Autocomplete = React.forwardRef(
       clearOnBlur = true,
       anchorPos = 'bottom',
       openOnFocus = true,
+      autoFlip,
+      viewportMargin,
+      offset,
+      positionStrategy,
       requiredAsterisk,
       startIcon,
       fullWidth,
@@ -262,14 +306,14 @@ const Autocomplete = React.forwardRef(
           case 'NumpadEnter':
             if (currentOpen) {
               event.preventDefault();
-              menuRef.current?.selectHightlightedItem();
+              menuRef.current?.selectHighlightedItem();
             }
             break;
 
           case 'ArrowUp':
             {
               event.preventDefault();
-              menuRef.current?.hightlightPrevItem();
+              menuRef.current?.highlightPrevItem();
             }
             break;
 
@@ -281,7 +325,7 @@ const Autocomplete = React.forwardRef(
               }
 
               if (currentOpen) {
-                menuRef.current?.hightlightNextItem();
+                menuRef.current?.highlightNextItem();
               }
             }
 
@@ -290,7 +334,7 @@ const Autocomplete = React.forwardRef(
           case 'Home':
             {
               event.preventDefault();
-              menuRef.current?.hightlightFirstItem();
+              menuRef.current?.highlightFirstItem();
             }
 
             break;
@@ -298,7 +342,7 @@ const Autocomplete = React.forwardRef(
           case 'End':
             {
               event.preventDefault();
-              menuRef.current?.hightlightLastItem();
+              menuRef.current?.highlightLastItem();
             }
 
             break;
@@ -612,6 +656,10 @@ const Autocomplete = React.forwardRef(
               value={currentValue as Value<T, Multiple>}
               isOpen={currentOpen}
               autofocus={false}
+              autoFlip={autoFlip}
+              viewportMargin={viewportMargin}
+              offset={offset}
+              positionStrategy={positionStrategy}
               anchorElement={anchorElement}
               closeOutsideClick={false}
               getOptionSelected={getOptionSelected}
@@ -642,14 +690,18 @@ const Autocomplete = React.forwardRef(
             filteredItems,
             currentValue,
             currentOpen,
+            autoFlip,
+            viewportMargin,
+            offset,
+            positionStrategy,
             anchorElement,
             getOptionSelected,
             onRequestClose,
+            onChange,
             dispatch,
             applyFilterForItems,
             selectedItemToString,
             items,
-            onChange,
             children,
             inputValue,
           ],
