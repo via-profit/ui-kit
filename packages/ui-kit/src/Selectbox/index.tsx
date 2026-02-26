@@ -170,9 +170,7 @@ export interface SelectboxOverrides {
   /**
    * Icon
    */
-  readonly Icon?: React.ComponentType<
-    SelectboxChevronIconProps & React.RefAttributes<SVGElement>
-  >;
+  readonly Icon?: React.ComponentType<SelectboxChevronIconProps & React.RefAttributes<SVGElement>>;
 
   /**
    * Component for display error text
@@ -184,9 +182,7 @@ export interface SelectboxOverrides {
   /**
    * label component
    */
-  readonly Label?: React.ComponentType<
-    TextFieldLabelProps & React.RefAttributes<HTMLLabelElement>
-  >;
+  readonly Label?: React.ComponentType<TextFieldLabelProps & React.RefAttributes<HTMLLabelElement>>;
 
   /**
    * label asterisk component

@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import Container, { PopperContainerProps } from './PopperContainer';
+import Container, { PopperContainerProps, PositionStrategy } from './PopperContainer';
 
 /**
  * Base directions for popper positioning.
@@ -175,17 +175,38 @@ export interface PopperProps extends React.HTMLAttributes<HTMLDivElement> {
 
   /**
    * The positioning strategy to use.
-   * - `'fixed'`: Positions relative to the viewport, useful for cases where the popper should stay in place during scroll (default)
-   * - `'absolute'`: Positions relative to the document
+   * - `'fixed'`: Positions relative to the viewport. Works reliably in all cases.
+   * - `'absolute'`: Positions relative to the nearest positioned ancestor.
+   *                 When using 'absolute', make sure a parent element has `position: relative`.
    *
-   * @default 'fixed'
+   * @default 'absolute'
    * @example
    * ```tsx
-   * <Popper positionStrategy="fixed">...</Popper>
-   * <Popper positionStrategy="absolute">...</Popper>
+   * <Popper positionStrategy="absolute">...</Popper> // Relative to positioned parent  (recommended)
+   * <Popper positionStrategy="fixed">...</Popper> // Relative to viewport
    * ```
    */
-  readonly positionStrategy?: 'absolute' | 'fixed';
+  readonly positionStrategy?: PositionStrategy;
+
+  /**
+   * Minimum distance (in pixels) that the popper must maintain from the viewport edges.
+   * Used to prevent the popper from being positioned too close to the screen boundaries.
+   * The popper will try to flip to another placement if it cannot maintain this margin.
+   *
+   * @default 8
+   * @example
+   * ```tsx
+   * // Larger margin for better visibility
+   * <Popper viewportMargin={16}>...</Popper>
+   *
+   * // No margin (allow touching edges)
+   * <Popper viewportMargin={0}>...</Popper>
+   *
+   * // Different margins for different devices
+   * <Popper viewportMargin={isMobile ? 8 : 16}>...</Popper>
+   * ```
+   */
+  readonly viewportMargin?: number;
 
   /**
    * Overridable components map for customizing the popper's internal structure.
@@ -236,7 +257,8 @@ const Popper: React.ForwardRefRenderFunction<HTMLDivElement, PopperProps> = (pro
     zIndex,
     overrides,
     anchorPos = 'auto',
-    positionStrategy = 'fixed',
+    positionStrategy = 'absolute',
+    viewportMargin = 30,
     autoFlip = true,
     offset = 0,
     ...nativeProps
@@ -245,6 +267,7 @@ const Popper: React.ForwardRefRenderFunction<HTMLDivElement, PopperProps> = (pro
   const [style, setStyle] = React.useState<React.CSSProperties | null>(null);
   const [domLoaded, setDomLoaded] = React.useState(false);
   const popperRef = React.useRef<HTMLDivElement | null>(null);
+  const [isVisible, setIsVisible] = React.useState(false);
 
   const overridesMap = React.useMemo(
     () => ({
@@ -279,127 +302,123 @@ const Popper: React.ForwardRefRenderFunction<HTMLDivElement, PopperProps> = (pro
     const newNode = window.document.createElement('div');
     newNode.setAttribute('id', PORTAL_ID);
 
+    // Важно для absolute позиционирования
+    if (positionStrategy === 'absolute') {
+      newNode.style.position = 'relative';
+    }
+
     window.document.body.appendChild(newNode);
 
     return newNode;
-  }, []);
+  }, [positionStrategy]);
 
   const getPositionStyle = React.useCallback(
-    (place: AnchorPos, anchorRect: DOMRect, popperRect: DOMRect) => {
-      const baseStyle = {
-        left: anchorRect.left,
-        top: anchorRect.top,
-      };
+    (props: {
+      readonly place: AnchorPos;
+      readonly anchorRect: DOMRect;
+      readonly popperRect: DOMRect;
+      readonly forViewportCheck?: boolean;
+    }) => {
+      const { place, anchorRect, popperRect, forViewportCheck = false } = props;
+      const [direction, modifier = ''] = place.split('-');
 
-      switch (place) {
+      let left = anchorRect.left;
+      let top = anchorRect.top;
+
+      // Вычисляем позицию относительно viewport
+      switch (direction) {
         case 'top':
-          return {
-            left: anchorRect.left + anchorRect.width / 2 - popperRect.width / 2,
-            top: anchorRect.top - popperRect.height - offset,
-          };
-        case 'top-start':
-          return {
-            left: anchorRect.left,
-            top: anchorRect.top - popperRect.height - offset,
-          };
-        case 'top-end':
-          return {
-            left: anchorRect.right - popperRect.width,
-            top: anchorRect.top - popperRect.height - offset,
-          };
-        case 'top-left':
-          return {
-            left: anchorRect.left - popperRect.width - offset,
-            top: anchorRect.top - popperRect.height - offset,
-          };
-        case 'top-right':
-          return {
-            left: anchorRect.right + offset,
-            top: anchorRect.top - popperRect.height - offset,
-          };
+          top = anchorRect.top - popperRect.height - offset;
+
+          if (modifier === 'left' || modifier === 'start') {
+            left = anchorRect.left;
+          } else if (modifier === 'right' || modifier === 'end') {
+            left = anchorRect.right - popperRect.width;
+          } else {
+            left = anchorRect.left + (anchorRect.width - popperRect.width) / 2;
+          }
+          break;
+
         case 'bottom':
-          return {
-            left: anchorRect.left + anchorRect.width / 2 - popperRect.width / 2,
-            top: anchorRect.bottom + offset,
-          };
-        case 'bottom-start':
-          return {
-            left: anchorRect.left,
-            top: anchorRect.bottom + offset,
-          };
-        case 'bottom-end':
-          return {
-            left: anchorRect.right - popperRect.width + offset,
-            top: anchorRect.bottom + offset,
-          };
-        case 'bottom-left':
-          return {
-            left: anchorRect.left - popperRect.width - offset,
-            top: anchorRect.bottom + offset,
-          };
-        case 'bottom-right':
-          return {
-            left: anchorRect.right + offset,
-            top: anchorRect.bottom + offset,
-          };
+          top = anchorRect.bottom + offset;
+
+          if (modifier === 'left' || modifier === 'start') {
+            left = anchorRect.left;
+          } else if (modifier === 'right' || modifier === 'end') {
+            left = anchorRect.right - popperRect.width;
+          } else {
+            left = anchorRect.left + (anchorRect.width - popperRect.width) / 2;
+          }
+          break;
+
         case 'left':
-          return {
-            left: anchorRect.left - popperRect.width - offset,
-            top: anchorRect.top + anchorRect.height / 2 - popperRect.height / 2,
-          };
-        case 'left-bottom':
-          return {
-            left: anchorRect.left - popperRect.width - offset,
-            top: anchorRect.bottom - popperRect.height,
-          };
-        case 'left-top':
-          return {
-            left: anchorRect.left - popperRect.width - offset,
-            top: anchorRect.top - offset,
-          };
+          left = anchorRect.left - popperRect.width - offset;
+
+          if (modifier === 'top' || modifier === 'start') {
+            top = anchorRect.top;
+          } else if (modifier === 'bottom' || modifier === 'end') {
+            top = anchorRect.bottom - popperRect.height;
+          } else {
+            top = anchorRect.top + (anchorRect.height - popperRect.height) / 2;
+          }
+          break;
+
         case 'right':
-          return {
-            left: anchorRect.right + offset,
-            top: anchorRect.top + anchorRect.height / 2 - popperRect.height / 2,
-          };
-        case 'right-top':
-          return {
-            left: anchorRect.right + offset,
-            top: anchorRect.top - offset,
-          };
-        case 'right-bottom':
-          return {
-            left: anchorRect.right + offset,
-            top: anchorRect.bottom - popperRect.height,
-          };
+          left = anchorRect.right + offset;
+
+          if (modifier === 'top' || modifier === 'start') {
+            top = anchorRect.top;
+          } else if (modifier === 'bottom' || modifier === 'end') {
+            top = anchorRect.bottom - popperRect.height;
+          } else {
+            top = anchorRect.top + (anchorRect.height - popperRect.height) / 2;
+          }
+          break;
+
         default:
-          return baseStyle;
+          left = anchorRect.left + (anchorRect.width - popperRect.width) / 2;
+          top = anchorRect.bottom + offset;
       }
+
+      // Возвращаем viewport координаты для проверки или финальные координаты
+      if (forViewportCheck) {
+        return { left, top };
+      }
+
+      // Для финального позиционирования учитываем стратегию
+      if (positionStrategy === 'absolute') {
+        return {
+          left: left + window.scrollX,
+          top: top + window.scrollY,
+        };
+      }
+
+      return { left, top };
     },
-    [offset],
+    [offset, positionStrategy],
   );
 
   const checkIfViewportFits = React.useCallback(
-    (style: { left: number; top: number }, popperRect: DOMRect, viewport: any) => {
+    (style: { left: number; top: number }, popperRect: DOMRect) => {
       const left = style.left;
       const top = style.top;
       const right = left + popperRect.width;
       const bottom = top + popperRect.height;
 
-      const MARGIN = 8;
+      const viewportWidth = window.innerWidth;
+      const viewportHeight = window.innerHeight;
 
-      return (
-        left >= MARGIN &&
-        top >= MARGIN &&
-        right <= viewport.width - MARGIN &&
-        bottom <= viewport.height - MARGIN
-      );
+      const isWithinHorizontal = left >= viewportMargin && right <= viewportWidth - viewportMargin;
+      const isWithinVertical = top >= viewportMargin && bottom <= viewportHeight - viewportMargin;
+      const hasValidPosition = left >= 0 && top >= 0;
+
+      return hasValidPosition && isWithinHorizontal && isWithinVertical;
     },
-    [],
+    [viewportMargin],
   );
 
   const placementsOrder = React.useMemo(() => {
-    const basePlacements: Record<Direction, readonly (Modifier | Direction)[]> = {
+    const basePlacements: Record<string, readonly AnchorPos[]> = {
       top: ['top', 'top-left', 'top-right', 'top-start', 'top-end'],
       bottom: ['bottom', 'bottom-left', 'bottom-right', 'bottom-start', 'bottom-end'],
       left: ['left', 'left-top', 'left-bottom'],
@@ -416,7 +435,7 @@ const Popper: React.ForwardRefRenderFunction<HTMLDivElement, PopperProps> = (pro
     const order: Record<string, AnchorPos[]> = {};
 
     allPlacements.forEach(placement => {
-      const [direction] = placement.split('-') as [Direction];
+      const [direction] = placement.split('-') as [string];
 
       // Приоритет: то же направление > противоположное > остальные
       const opposite =
@@ -431,41 +450,32 @@ const Popper: React.ForwardRefRenderFunction<HTMLDivElement, PopperProps> = (pro
       order[placement] = [
         placement,
         ...basePlacements[direction].filter(p => p !== placement),
-        ...basePlacements[opposite],
+        ...(basePlacements[opposite] || []),
         ...(direction !== 'left' && direction !== 'right' ? basePlacements.left : []),
         ...(direction !== 'left' && direction !== 'right' ? basePlacements.right : []),
-      ];
+      ] as AnchorPos[];
     });
 
     return order;
   }, []);
 
   const getPreferredPlacements = React.useCallback(
-    (preferredPlacement: AnchorPos, anchorRect: DOMRect, popperRect: DOMRect, viewport: any) => {
+    (preferredPlacement: AnchorPos, anchorRect: DOMRect, popperRect: DOMRect) => {
       // Обработка auto placement
       if (preferredPlacement.startsWith('auto')) {
         const [, preferredDirection = 'bottom'] = preferredPlacement.split('-');
 
-        // Все возможные placements
         const allPlacements: AnchorPos[] = [
-          'bottom',
-          'bottom-start',
-          'bottom-end',
-          'bottom-left',
-          'bottom-right',
-          'top',
-          'top-left',
-          'top-right',
-          'left',
-          'left-top',
-          'left-bottom',
-          'right',
-          'right-top',
-          'right-bottom',
+          /* eslint-disable prettier/prettier */
+          'bottom', 'bottom-start', 'bottom-end', 'bottom-left', 'bottom-right',
+          'top', 'top-left', 'top-right', 'top-start', 'top-end',
+          'left', 'left-top', 'left-bottom',
+          'right', 'right-top', 'right-bottom',
+          /* eslint-enable prettier/prettier */
         ];
 
-        // Сортируем: сначала указанное направление, потом остальные
-        const sortedPlacements = allPlacements.sort((a, b) => {
+        // Сортируем: сначала указанное направление
+        const sortedPlacements = [...allPlacements].sort((a, b) => {
           const aDir = a.split('-')[0];
           const bDir = b.split('-')[0];
 
@@ -476,41 +486,94 @@ const Popper: React.ForwardRefRenderFunction<HTMLDivElement, PopperProps> = (pro
         });
 
         for (const place of sortedPlacements) {
-          const style = getPositionStyle(place, anchorRect, popperRect);
-          const fits = checkIfViewportFits(style, popperRect, viewport);
+          // Используем forViewportCheck=true для получения viewport координат
+          const viewportStyle = getPositionStyle({
+            place,
+            anchorRect,
+            popperRect,
+            forViewportCheck: true,
+          });
+          const fits = checkIfViewportFits(viewportStyle, popperRect);
 
           if (fits) {
-            return { found: true, placement: place, style };
+            // Когда нашли подходящее место, получаем финальные координаты
+            const finalStyle = getPositionStyle({
+              place,
+              anchorRect,
+              popperRect,
+              forViewportCheck: false,
+            });
+
+            return {
+              ///
+              found: true,
+              placement: place,
+              style: finalStyle,
+            };
           }
         }
       }
 
       if (!autoFlip) {
+        const finalStyle = getPositionStyle({
+          place: preferredPlacement,
+          anchorRect,
+          popperRect,
+          forViewportCheck: false,
+        });
+
         return {
           found: false,
           placement: preferredPlacement,
-          style: getPositionStyle(preferredPlacement, anchorRect, popperRect),
+          style: finalStyle,
         };
       }
 
       const order = placementsOrder[preferredPlacement] || placementsOrder.bottom;
 
       for (const place of order) {
-        const style = getPositionStyle(place, anchorRect, popperRect);
-        const fits = checkIfViewportFits(style, popperRect, viewport);
+        // Используем forViewportCheck=true для проверки
+        const viewportStyle = getPositionStyle({
+          place,
+          anchorRect,
+          popperRect,
+          forViewportCheck: true,
+        });
+        const fits = checkIfViewportFits(viewportStyle, popperRect);
 
         if (fits) {
-          return { found: true, placement: place as AnchorPos, style };
+          // Когда нашли подходящее место, получаем финальные координаты
+          const finalStyle = getPositionStyle({
+            place,
+            anchorRect,
+            popperRect,
+            forViewportCheck: false,
+          });
+
+          return {
+            ///
+            found: true,
+            placement: place,
+            style: finalStyle,
+          };
         }
       }
+
+      // Если ничего не подошло, возвращаем оригинальный placement с финальными координатами
+      const finalStyle = getPositionStyle({
+        place: preferredPlacement,
+        anchorRect,
+        popperRect,
+        forViewportCheck: false,
+      });
 
       return {
         found: false,
         placement: preferredPlacement,
-        style: getPositionStyle(preferredPlacement, anchorRect, popperRect),
+        style: finalStyle,
       };
     },
-    [autoFlip, checkIfViewportFits, getPositionStyle, placementsOrder],
+    [autoFlip, getPositionStyle, checkIfViewportFits, placementsOrder],
   );
 
   const calculatePosition = React.useCallback(() => {
@@ -520,12 +583,8 @@ const Popper: React.ForwardRefRenderFunction<HTMLDivElement, PopperProps> = (pro
 
     const anchorRect = anchorElement.getBoundingClientRect();
     const popperRect = popperRef.current.getBoundingClientRect();
-    const viewport = {
-      width: window.innerWidth,
-      height: window.innerHeight,
-    };
 
-    const placements = getPreferredPlacements(anchorPos, anchorRect, popperRect, viewport);
+    const placements = getPreferredPlacements(actualPlacement, anchorRect, popperRect);
 
     if (placements.found) {
       setActualPlacement(placements.placement);
@@ -533,21 +592,23 @@ const Popper: React.ForwardRefRenderFunction<HTMLDivElement, PopperProps> = (pro
     } else {
       setStyle(placements.style);
     }
-  }, [anchorElement, getPreferredPlacements, anchorPos]);
+
+    // setIsPositionCalculated(true);
+  }, [actualPlacement, anchorElement, getPreferredPlacements]);
 
   React.useEffect(() => {
-    const event = () => {
+    const handleEvent = () => {
       if (isOpen) {
         calculatePosition();
       }
     };
 
-    window.addEventListener('resize', event);
-    window.addEventListener('scroll', event);
+    // window.addEventListener('resize', handleEvent);
+    window.addEventListener('scroll', handleEvent);
 
     return () => {
-      window.removeEventListener('resize', event);
-      window.removeEventListener('scroll', event);
+      // window.removeEventListener('resize', handleEvent);
+      window.removeEventListener('scroll', handleEvent);
     };
   }, [calculatePosition, isOpen]);
 
@@ -558,28 +619,92 @@ const Popper: React.ForwardRefRenderFunction<HTMLDivElement, PopperProps> = (pro
   }, [isOpen, calculatePosition, anchorElement]);
 
   // Используйте ResizeObserver для отслеживания изменений размера содержимого
-  React.useEffect(() => {
-    if (!popperRef.current || !isOpen) return;
+  // React.useEffect(() => {
+  //   if (!popperRef.current || !isOpen) {
+  //     return;
+  //   }
+  //
+  //   const resizeObserver = new ResizeObserver(() => {
+  //     console.log('resize observer');
+  //     // window.requestAnimationFrame(() => {
+  //     //   calculatePosition();
+  //     // });
+  //   });
+  //
+  //   resizeObserver.observe(popperRef.current);
+  //
+  //   return () => {
+  //     resizeObserver.disconnect();
+  //   };
+  // }, [isOpen, calculatePosition, children]);
 
-    const resizeObserver = new ResizeObserver(() => {
-      calculatePosition();
+  // Очистка при закрытии
+  React.useEffect(() => {
+    if (!isOpen) {
+      setIsVisible(false);
+      // setIsPositionCalculated(false);
+      setStyle(null);
+    }
+  }, [isOpen]);
+
+  // Отслеживаем изменения в DOM, которые могут повлиять на позицию
+  React.useEffect(() => {
+    if (!isOpen || !anchorElement) return;
+
+    const observer = new MutationObserver(() => {
+      window.requestAnimationFrame(() => {
+        calculatePosition();
+      });
     });
 
-    resizeObserver.observe(popperRef.current);
+    observer.observe(anchorElement, {
+      attributes: true,
+      childList: true,
+      subtree: true,
+    });
 
-    // eslint-disable-next-line consistent-return
     return () => {
-      resizeObserver.disconnect();
+      observer.disconnect();
     };
-  }, [isOpen, calculatePosition]);
+  }, [isOpen, anchorElement, calculatePosition]);
+
+  const getTransformOrigin = React.useCallback((placement: AnchorPos): string => {
+    if (placement.startsWith('top')) {
+      return 'bottom center';
+    }
+    if (placement.startsWith('bottom')) {
+      return 'top center';
+    }
+    if (placement.startsWith('left')) {
+      return 'right center';
+    }
+    if (placement.startsWith('right')) {
+      return 'left center';
+    }
+
+    return 'top center';
+  }, []);
 
   const renderNode = React.useCallback(
     () => (
       <overridesMap.Container
         {...nativeProps}
-        positionStrategy={positionStrategy}
-        style={{ ...style, ...nativeProps.style }}
+        style={{
+          ...style,
+          ...nativeProps.style,
+          opacity: isVisible ? 1 : 0,
+          transform: isVisible ? 'scale(1)' : 'scale(0.95)',
+          transition: 'opacity 0.2s ease-in-out, transform 0.2s ease-in-out',
+          transformOrigin: getTransformOrigin(actualPlacement),
+          pointerEvents: isVisible ? 'auto' : 'none',
+          // Для fixed стратегии добавляем будет ли виден скролл
+          ...(positionStrategy === 'fixed' && {
+            zIndex: zIndex,
+          }),
+        }}
         zIndex={zIndex}
+        data-placement={actualPlacement}
+        data-popper-strategy={positionStrategy}
         ref={el => {
           popperRef.current = el;
 
@@ -596,14 +721,60 @@ const Popper: React.ForwardRefRenderFunction<HTMLDivElement, PopperProps> = (pro
         {children}
       </overridesMap.Container>
     ),
-    [children, nativeProps, overridesMap, positionStrategy, ref, style, zIndex],
+    [
+      overridesMap,
+      nativeProps,
+      style,
+      isVisible,
+      getTransformOrigin,
+      actualPlacement,
+      positionStrategy,
+      zIndex,
+      children,
+      ref,
+    ],
   );
+
+  // Удалите дублирующийся useEffect с calculatePosition
+  // Оставьте только useLayoutEffect для первоначального расчета
+  React.useLayoutEffect(() => {
+    if (anchorElement && isOpen && popperRef.current) {
+      // Сбрасываем видимость
+      setIsVisible(false);
+      // setIsPositionCalculated(false);
+
+      // Синхронно рассчитываем позицию
+      const anchorRect = anchorElement.getBoundingClientRect();
+      const popperRect = popperRef.current.getBoundingClientRect();
+
+      const placements = getPreferredPlacements(actualPlacement, anchorRect, popperRect);
+
+      if (placements.found) {
+        setActualPlacement(placements.placement);
+        setStyle(placements.style);
+      } else {
+        setStyle(placements.style);
+      }
+
+      // setIsPositionCalculated(true);
+
+      // Небольшая задержка для плавного появления
+      requestAnimationFrame(() => {
+        setIsVisible(true);
+      });
+    }
+  }, [isOpen, anchorElement, actualPlacement, getPreferredPlacements]);
 
   if (!isOpen) {
     return null;
   }
 
-  return domLoaded && portalEl ? ReactDOM.createPortal(renderNode(), portalEl, PORTAL_ID) : null;
+  if (positionStrategy === 'fixed') {
+    return domLoaded && portalEl ? ReactDOM.createPortal(renderNode(), portalEl, PORTAL_ID) : null;
+  }
+
+  // Для absolute стратегии - рендерим рядом с anchor (in-place)
+  return renderNode();
 };
 
 export default React.forwardRef(Popper);

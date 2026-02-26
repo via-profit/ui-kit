@@ -110,6 +110,7 @@ const ExamplePopperAnchorPos: React.FC = () => {
         <StyledAnchorElement ref={setAnchorElement} />
         <Popper
           anchorPos={anchorPos}
+          positionStrategy="absolute"
           anchorElement={anchorElement}
           isOpen
           zIndex={theme.zIndex.header - 1}

@@ -1,20 +1,21 @@
 import React from 'react';
 import styled from '@emotion/styled';
 
+export type PositionStrategy = 'absolute' | 'fixed';
+
 export interface PopperContainerProps extends React.HTMLAttributes<HTMLDivElement> {
   readonly zIndex?: number;
   readonly disablePortal?: boolean;
-  readonly positionStrategy?: 'absolute' | 'fixed';
+  readonly positionStrategy?: PositionStrategy;
 }
 
 type StyleProps = {
   readonly $zIndex?: number;
   readonly $disablePortal?: boolean;
-  readonly $positionStrategy: 'absolute' | 'fixed';
+  readonly $positionStrategy: PositionStrategy;
 };
 
 const StyledContainer = styled.div<StyleProps>`
-
   position: ${({ $positionStrategy }) => $positionStrategy};
   z-index: ${({ theme, $zIndex, $disablePortal }) =>
     typeof $zIndex !== 'undefined' ? $zIndex : $disablePortal ? undefined : theme.zIndex.modal};
@@ -24,7 +25,7 @@ const PopperContainer: React.ForwardRefRenderFunction<HTMLDivElement, PopperCont
   props,
   ref,
 ) => {
-  const { children, disablePortal, zIndex, positionStrategy = 'fixed', ...nativeProps } = props;
+  const { children, disablePortal, zIndex, positionStrategy = 'absolute', ...nativeProps } = props;
 
   return (
     <StyledContainer

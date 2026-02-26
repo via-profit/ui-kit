@@ -142,8 +142,7 @@
         "requireStringLiterals": true
       }
     ],
-    // "quotes": ["warn", "single"],
-    "quotes": "off",
+     "quotes": ["warn", "single"],
     // Expected blank line before return statement
     "padding-line-between-statements": [
       "warn",
