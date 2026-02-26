@@ -20,6 +20,7 @@ const ExampleCalendarOverivew: React.FC = () => {
         range={true}
         value={value}
         onChange={onChange}
+        markToday
         badges={[
           {
             date: new Date(new Date().getFullYear(), new Date().getMonth(), 26),

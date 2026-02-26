@@ -36,6 +36,7 @@ const Btn = styled(Button)<{ $fill?: boolean; $isSelected?: boolean }>`
   font-size: 0.8em;
   width: 3em;
   height: 3em;
+  padding: 1em;
   margin: 0;
   min-width: 0;
   outline: none;
@@ -45,7 +46,7 @@ const Btn = styled(Button)<{ $fill?: boolean; $isSelected?: boolean }>`
     $fill &&
     !$isSelected &&
     css`
-      background-color: none;
+      background-color: transparent;
       position: relative;
 
       &:before {

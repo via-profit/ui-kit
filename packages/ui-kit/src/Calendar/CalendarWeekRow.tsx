@@ -1,16 +1,17 @@
 import React from 'react';
 import styled from '@emotion/styled';
 
-export type CalendarWeekRowProps = React.HTMLAttributes<HTMLDivElement>;
+export type CalendarWeekRowProps = React.HTMLAttributes<HTMLSpanElement>;
 
-const StyledCalendarWeekRow = styled.div`
+const StyledCalendarWeekRow = styled.span`
   display: flex;
   flex-direction: row;
   justify-content: center;
   align-items: stretch;
+  color: inherit;
 `;
 
-const CalendarWeekRow: React.ForwardRefRenderFunction<HTMLDivElement, CalendarWeekRowProps> = (
+const CalendarWeekRow: React.ForwardRefRenderFunction<HTMLSpanElement, CalendarWeekRowProps> = (
   props,
   ref,
 ) => {

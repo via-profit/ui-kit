@@ -2,7 +2,10 @@ import React from 'react';
 
 import Body, { CalendarBodyProps } from './CalendarBody';
 import Cell, { CalendarCellProps } from './CalendarCell';
+import WeekDayCell, { CalendarWeekCellProps } from './CalendarWeekDayCell';
 import EmptyCell, { CalendarEmptyCellProps } from './CalendarEmptyCell';
+import WeekRowButton, { CalendarWeekRowButtonProps } from './CalendarWeekRowButton';
+import WeekDayWeekNumber, { CalendarWeekDayWeekNumberProps } from './CalendarWeekDayWeekNumber';
 import Paper, { CalendarPaperProps } from './CalendarPaper';
 import Header, { CalendarHeaderProps } from './CalendarHeader';
 import WeekRow, { CalendarWeekRowProps } from './CalendarWeekRow';
@@ -20,7 +23,7 @@ import Subheading, { CalendarSubheadingProps } from './CalendarSubheading';
 import IconPrev, { CalendarIconPrevProps } from './CalendarIconPrev';
 import IconNext, { CalendarIconNextProps } from './IconChevronRight';
 import WeekDaysBar, { CalendarWeekDaysBarProps, WeekNameLabelFormat } from './CalendarWeekDaysBar';
-import { CalendarValue, useCalendar, WeekDayName } from './use-calendar';
+import { CalendarValue, useCalendar, Week, WeekDayName } from './use-calendar';
 import { CalendarView as CalendarViewName, createDefaultState, reducer, State } from './reducer';
 
 export * from './use-calendar';
@@ -171,6 +174,26 @@ export interface CalendarOverrides {
    */
   readonly Cell?: React.ComponentType<CalendarCellProps & React.RefAttributes<HTMLButtonElement>>;
 
+  /**
+   * Day element
+   */
+  readonly WeekDayCell?: React.ComponentType<
+    CalendarWeekCellProps & React.RefAttributes<HTMLSpanElement>
+  >;
+
+  /**
+   * Number of the week in weeks selector
+   */
+  readonly WeekDayWeekNumber?: React.ComponentType<
+    CalendarWeekDayWeekNumberProps & React.RefAttributes<HTMLSpanElement>
+  >;
+
+  /**
+   * The button to select the week in the `weeks` view
+   */
+  readonly WeekRowButton?: React.ComponentType<
+    CalendarWeekRowButtonProps & React.RefAttributes<HTMLButtonElement>
+  >;
   /**
    * Empty cell element
    */
@@ -353,6 +376,9 @@ const Calendar = <Range extends boolean | undefined = undefined>(
       IconPrev: overrides?.IconPrev || IconPrev,
       IconNext: overrides?.IconNext || IconNext,
       WeekDaysBar: overrides?.WeekDaysBar || WeekDaysBar,
+      WeekDayCell: overrides?.WeekDayCell || WeekDayCell,
+      WeekRowButton: overrides?.WeekRowButton || WeekRowButton,
+      WeekDayWeekNumber: overrides?.WeekDayWeekNumber || WeekDayWeekNumber,
     }),
     [overrides],
   );
@@ -494,7 +520,14 @@ const Calendar = <Range extends boolean | undefined = undefined>(
       newDate.setMinutes(0);
       newDate.setMilliseconds(0);
 
-      const nextView = calendarViewVariants.includes('days') ? 'days' : undefined;
+      let nextView: CalendarViewName | undefined = undefined;
+
+      if (calendarViewVariants.includes('days')) {
+        nextView = 'days';
+      }
+      if (calendarViewVariants.includes('months')) {
+        nextView = 'months';
+      }
 
       dispatch({
         type: 'setPartial',
@@ -598,10 +631,36 @@ const Calendar = <Range extends boolean | undefined = undefined>(
     handleCellDateClick(today)();
   }, [handleCellDateClick, range]);
 
-  const weeks = React.useMemo(
-    () => (calendarCurrentView === 'days' ? getWeeks(calendarDate) : []),
-    [calendarCurrentView, calendarDate, getWeeks],
+  const handleClickWeek = React.useCallback(
+    (week: Week) => () => {
+      if (range) {
+        const days = week.days;
+        const dates = [days[0].date, days[days.length - 1].date];
+
+        let nextView: CalendarViewName | undefined = undefined;
+
+        if (calendarViewVariants.includes('days')) {
+          nextView = 'days';
+        }
+
+        dispatch({
+          type: 'setPartial',
+          payload: {
+            calendarDate: dates[0],
+            calendarValue: dates as CalendarValue<Range>,
+            calendarCurrentView: nextView ?? calendarCurrentView,
+          },
+        });
+
+        if (typeof onChange === 'function') {
+          onChange(dates as CalendarValue<Range>);
+        }
+      }
+    },
+    [calendarCurrentView, calendarViewVariants, onChange, range],
   );
+
+  const weeks = React.useMemo(() => getWeeks(calendarDate), [calendarDate, getWeeks]);
 
   const yearsRange = React.useMemo(
     () => (calendarCurrentView === 'years' ? getYearsRange(minDate, maxDate) : []),
@@ -635,7 +694,7 @@ const Calendar = <Range extends boolean | undefined = undefined>(
             iconOnly
             onClick={handleChangeMonthClick('prev')}
             title={prevMonthButtonTooltip}
-            disabled={calendarCurrentView !== 'days'}
+            disabled={!['days', 'weeks'].includes(calendarCurrentView)}
           >
             <overridesMap.IconPrev />
           </overridesMap.ControlButton>
@@ -659,7 +718,7 @@ const Calendar = <Range extends boolean | undefined = undefined>(
             iconOnly
             onClick={handleChangeMonthClick('next')}
             title={nextMonthButtonTooltip}
-            disabled={calendarCurrentView !== 'days'}
+            disabled={!['days', 'weeks'].includes(calendarCurrentView)}
           >
             <overridesMap.IconNext />
           </overridesMap.ControlButton>
@@ -714,6 +773,59 @@ const Calendar = <Range extends boolean | undefined = undefined>(
             })}
           </overridesMap.MonthsSelector>
         )}
+        {calendarCurrentView === 'weeks' && (
+          <overridesMap.DateContainer>
+            {getWeeks(calendarDate).map(week => {
+              let isSelected = false;
+
+              if (range) {
+                const [from, to] = normalizedRange;
+
+                const a = week.days[0].date;
+                const b = week.days[week.days.length - 1].date;
+                if (isSameDay(from, a) && isSameDay(to, b)) {
+                  isSelected = true;
+                }
+              }
+
+              return (
+                <overridesMap.WeekRowButton
+                  key={week.weekNumber}
+                  isSelected={isSelected}
+                  onClick={handleClickWeek(week)}
+                  accentColor={accentColor}
+                  week={week}
+                >
+                  <overridesMap.WeekDayWeekNumber week={week}>
+                    {week.weekNumber}
+                  </overridesMap.WeekDayWeekNumber>
+                  {week.days.map(day => {
+                    const badge = badges.find(b => isSameDay(b.date, day.date));
+                    const inCurrentMonth = day.date.getMonth() === calendarDate.getMonth();
+
+                    return (
+                      <overridesMap.WeekDayCell
+                        key={day.date.getTime()}
+                        isToday={markToday && day.isToday}
+                        inCurrentMonth={inCurrentMonth}
+                      >
+                        {getDayLabel(day.date)}
+
+                        {badge && (
+                          <overridesMap.DayBadge
+                            badgeContent={badge.badgeContent}
+                            isToday={day.isToday}
+                            accentColor={badge.accentColor}
+                          />
+                        )}
+                      </overridesMap.WeekDayCell>
+                    );
+                  })}
+                </overridesMap.WeekRowButton>
+              );
+            })}
+          </overridesMap.DateContainer>
+        )}
         {calendarCurrentView === 'days' && (
           <overridesMap.DateContainer>
             {getWeeks(calendarDate).map(week => (
@@ -767,6 +879,18 @@ const Calendar = <Range extends boolean | undefined = undefined>(
         typeof footer !== 'undefined') && (
         <overridesMap.Footer>
           {typeof footer !== 'undefined' && <>{footer}</>}
+          <overridesMap.ControlButton
+            onClick={() =>
+              dispatch({
+                type: 'setPartial',
+                payload: {
+                  calendarCurrentView: 'weeks',
+                },
+              })
+            }
+          >
+            Week
+          </overridesMap.ControlButton>
           {typeof todayButtonLabel !== 'undefined' && (
             <overridesMap.ControlButton onClick={handleToday}>
               {todayButtonLabel}
