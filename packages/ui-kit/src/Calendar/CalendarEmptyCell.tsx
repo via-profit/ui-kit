@@ -10,7 +10,6 @@ const Elem = styled.span`
   font-size: 0.8em;
   width: 3em;
   height: 3em;
-  padding: 1em;
   margin: 0;
   min-width: 0;
   outline: none;
