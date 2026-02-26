@@ -49,31 +49,31 @@ export interface SurfaceOverrides {
   /**
    * Surface container component
    */
-  readonly Container?: React.ForwardRefExoticComponent<
+  readonly Container?: React.ComponentType<
     SurfaceContainerProps & React.RefAttributes<HTMLDivElement>
   >;
   /**
    * Surface header component
    */
-  readonly Header?: React.ForwardRefExoticComponent<
+  readonly Header?: React.ComponentType<
     SurfaceHeaderProps & React.RefAttributes<HTMLDivElement>
   >;
   /**
    * Surface subheader component
    */
-  readonly Subheader?: React.ForwardRefExoticComponent<
+  readonly Subheader?: React.ComponentType<
     SurfaceSubheaderProps & React.RefAttributes<HTMLDivElement>
   >;
   /**
    * Surface content component
    */
-  readonly Content?: React.ForwardRefExoticComponent<
+  readonly Content?: React.ComponentType<
     SurfaceContentProps & React.RefAttributes<HTMLDivElement>
   >;
   /**
    * Surface footer component
    */
-  readonly Footer?: React.ForwardRefExoticComponent<
+  readonly Footer?: React.ComponentType<
     SurfaceFooterProps & React.RefAttributes<HTMLDivElement>
   >;
 }

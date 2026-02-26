@@ -44,27 +44,27 @@ export interface BadgeBaseOverrides {
   /**
    * Element container
    */
-  readonly Container?: React.ForwardRefExoticComponent<
+  readonly Container?: React.ComponentType<
     BadgeContainerProps & React.RefAttributes<HTMLSpanElement>
   >;
   /**
    * icon wrapper
    */
-  readonly IconWrapper?: React.ForwardRefExoticComponent<
+  readonly IconWrapper?: React.ComponentType<
     BadgeIconWrapperProps & React.RefAttributes<HTMLSpanElement>
   >;
 
   /**
    * text wrapper
    */
-  readonly TextWrapper?: React.ForwardRefExoticComponent<
+  readonly TextWrapper?: React.ComponentType<
     BadgeTextWrapperProps & React.RefAttributes<HTMLSpanElement>
   >;
 
   /**
    * Icon delete
    */
-  readonly ButtonDelete?: React.ForwardRefExoticComponent<
+  readonly ButtonDelete?: React.ComponentType<
     BadgeDeleteButtonProps & React.RefAttributes<HTMLButtonElement>
   >;
 }

@@ -50,21 +50,21 @@ export interface HighlightedOverrides {
   /**
    * Container element
    */
-  readonly Container?: React.ForwardRefExoticComponent<
+  readonly Container?: React.ComponentType<
     HighlightedContainerProps & React.RefAttributes<HTMLSpanElement>
   >;
 
   /**
    * Mark element (HTML <mark>)
    */
-  readonly Mark?: React.ForwardRefExoticComponent<
+  readonly Mark?: React.ComponentType<
     HighlightedMarkProps & React.RefAttributes<HTMLElement>
   >;
 
   /**
    * Text element (HTML <span>)regex
    */
-  readonly Text?: React.ForwardRefExoticComponent<
+  readonly Text?: React.ComponentType<
     HighlightedTextProps & React.RefAttributes<HTMLSpanElement>
   >;
 }

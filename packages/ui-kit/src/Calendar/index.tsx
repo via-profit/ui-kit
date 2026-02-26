@@ -145,6 +145,11 @@ export type CalendarProps<Range extends boolean | undefined = undefined> = {
   readonly initialView?: CalendarView;
 
   /**
+   * Posibility calendar views list
+   */
+  readonly views?: readonly CalendarView[];
+
+  /**
    * Custom footer elements
    */
   readonly footer?: JSX.Element;
@@ -159,140 +164,126 @@ export interface CalendarOverrides {
   /**
    * Element container
    */
-  readonly Body?: React.ForwardRefExoticComponent<
-    CalendarBodyProps & React.RefAttributes<HTMLDivElement>
-  >;
+  readonly Body?: React.ComponentType<CalendarBodyProps & React.RefAttributes<HTMLDivElement>>;
 
   /**
    * Day element
    */
-  readonly Cell?: React.ForwardRefExoticComponent<
-    CalendarCellProps & React.RefAttributes<HTMLButtonElement>
-  >;
+  readonly Cell?: React.ComponentType<CalendarCellProps & React.RefAttributes<HTMLButtonElement>>;
 
   /**
    * Empty cell element
    */
-  readonly EmptyCell?: React.ForwardRefExoticComponent<
+  readonly EmptyCell?: React.ComponentType<
     CalendarEmptyCellProps & React.RefAttributes<HTMLButtonElement>
   >;
 
   /**
    * Common container element
    */
-  readonly Paper?: React.ForwardRefExoticComponent<
-    CalendarPaperProps & React.RefAttributes<HTMLDivElement>
-  >;
+  readonly Paper?: React.ComponentType<CalendarPaperProps & React.RefAttributes<HTMLDivElement>>;
 
   /**
    * Header wrapper element
    */
-  readonly Header?: React.ForwardRefExoticComponent<
-    CalendarHeaderProps & React.RefAttributes<HTMLDivElement>
-  >;
+  readonly Header?: React.ComponentType<CalendarHeaderProps & React.RefAttributes<HTMLDivElement>>;
 
   /**
    * Week row container element
    */
-  readonly WeekRow?: React.ForwardRefExoticComponent<
+  readonly WeekRow?: React.ComponentType<
     CalendarWeekRowProps & React.RefAttributes<HTMLDivElement>
   >;
 
   /**
    * Days wrapper element
    */
-  readonly DateContainer?: React.ForwardRefExoticComponent<
+  readonly DateContainer?: React.ComponentType<
     CalendarDateContainerProps & React.RefAttributes<HTMLDivElement>
   >;
 
   /**
    * Toolbar wrapper element
    */
-  readonly Toolbar?: React.ForwardRefExoticComponent<
+  readonly Toolbar?: React.ComponentType<
     CalendarToolbarProps & React.RefAttributes<HTMLDivElement>
   >;
 
   /**
    * Years list element (year view)
    */
-  readonly YearsSelector?: React.ForwardRefExoticComponent<
+  readonly YearsSelector?: React.ComponentType<
     CalendarYearsSelectorProps & React.RefAttributes<HTMLDivElement>
   >;
 
   /**
    * Monthes list element (month view)
    */
-  readonly MonthsSelector?: React.ForwardRefExoticComponent<
+  readonly MonthsSelector?: React.ComponentType<
     CalendarMonthsSelectorProps & React.RefAttributes<HTMLDivElement>
   >;
 
   /**
    * Month cell element in monthes list
    */
-  readonly MonthCell?: React.ForwardRefExoticComponent<
+  readonly MonthCell?: React.ComponentType<
     CalendarMonthCellProps & React.RefAttributes<HTMLButtonElement>
   >;
 
   /**
    * Year cell element in years list
    */
-  readonly YearCell?: React.ForwardRefExoticComponent<
+  readonly YearCell?: React.ComponentType<
     CalendarYearCellProps & React.RefAttributes<HTMLButtonElement>
   >;
 
   /**
    * Badge of the day cell element
    */
-  readonly DayBadge?: React.ForwardRefExoticComponent<
+  readonly DayBadge?: React.ComponentType<
     CalendarDayBadgeProps & React.RefAttributes<HTMLSpanElement>
   >;
 
   /**
    * Footer container element
    */
-  readonly Footer?: React.ForwardRefExoticComponent<
-    CalendarFooterProps & React.RefAttributes<HTMLDivElement>
-  >;
+  readonly Footer?: React.ComponentType<CalendarFooterProps & React.RefAttributes<HTMLDivElement>>;
 
   /**
    * Common button element
    */
-  readonly ControlButton?: React.ForwardRefExoticComponent<
+  readonly ControlButton?: React.ComponentType<
     CalendarControlButtonProps & React.RefAttributes<HTMLButtonElement>
   >;
 
   /**
    * Heading element
    */
-  readonly Heading?: React.ForwardRefExoticComponent<
+  readonly Heading?: React.ComponentType<
     CalendarHeadingProps & React.RefAttributes<HTMLDivElement>
   >;
 
   /**
    * Subheading element
    */
-  readonly Subheading?: React.ForwardRefExoticComponent<
+  readonly Subheading?: React.ComponentType<
     CalendarSubheadingProps & React.RefAttributes<HTMLDivElement>
   >;
 
   /**
    * Prev icon element in prev month button
    */
-  readonly IconPrev?: React.ForwardRefExoticComponent<
-    CalendarIconPrevProps & React.RefAttributes<SVGElement>
-  >;
+  readonly IconPrev?: React.ComponentType<CalendarIconPrevProps & React.RefAttributes<SVGElement>>;
 
   /**
    * Next icon element in next month button
    */
-  readonly IconNext?: React.ForwardRefExoticComponent<
-    CalendarIconNextProps & React.RefAttributes<SVGElement>
-  >;
+  readonly IconNext?: React.ComponentType<CalendarIconNextProps & React.RefAttributes<SVGElement>>;
 
   /**
    * Weeks bar  element
    */
-  readonly WeekDaysBar?: React.ForwardRefExoticComponent<
+  readonly WeekDaysBar?: React.ComponentType<
     CalendarWeekDaysBarProps & React.RefAttributes<HTMLDivElement>
   >;
 }
@@ -323,7 +314,8 @@ const Calendar = <Range extends boolean | undefined = undefined>(
     nextMonthButtonTooltip,
     changeMonthButtonTooltip,
     changeYearButtonTooltip,
-    initialView = createDefaultState(false).calendarCurrentView,
+    initialView,
+    views,
     resetButtonLabel,
     todayButtonLabel,
     heading,
@@ -379,12 +371,16 @@ const Calendar = <Range extends boolean | undefined = undefined>(
     value: realValue,
     badges,
     initialView,
+    views,
   });
+
   const initialState: State<Range> = {
-    ...createDefaultState(range),
+    ...createDefaultState(range, {
+      initialView,
+      views,
+    }),
     calendarValue: realValue,
     calendarDate: Array.isArray(realValue) ? realValue[0] : realValue,
-    calendarCurrentView: initialView,
   };
 
   const [state, dispatch] = React.useReducer(reducer, initialState);
@@ -446,7 +442,9 @@ const Calendar = <Range extends boolean | undefined = undefined>(
    */
   const handleCellDateClick = React.useCallback(
     (selectedDate: Date) => () => {
-      if (!onChange) return;
+      if (!onChange) {
+        return;
+      }
 
       // Single-date mode
       if (!range) {
@@ -496,17 +494,21 @@ const Calendar = <Range extends boolean | undefined = undefined>(
       newDate.setMinutes(0);
       newDate.setMilliseconds(0);
 
-      if (calendarDate.getFullYear() !== newDate.getFullYear()) {
-        dispatch({
-          type: 'setPartial',
-          payload: {
-            calendarDate: newDate,
-            calendarCurrentView: 'days',
-          },
-        });
+      const nextView = calendarViewVariants.includes('days') ? 'days' : undefined;
+
+      dispatch({
+        type: 'setPartial',
+        payload: {
+          calendarDate: newDate,
+          calendarCurrentView: nextView ?? calendarCurrentView,
+        },
+      });
+
+      if (!nextView && typeof onChange === 'function') {
+        handleCellDateClick(newDate)();
       }
     },
-    [calendarDate],
+    [calendarCurrentView, calendarDate, calendarViewVariants, handleCellDateClick, onChange],
   );
 
   /**
@@ -521,17 +523,21 @@ const Calendar = <Range extends boolean | undefined = undefined>(
       newDate.setMinutes(0);
       newDate.setMilliseconds(0);
 
-      if (calendarDate.getMonth() !== newDate.getMonth()) {
-        dispatch({
-          type: 'setPartial',
-          payload: {
-            calendarDate: newDate,
-            calendarCurrentView: 'days',
-          },
-        });
+      const nextView = calendarViewVariants.includes('days') ? 'days' : undefined;
+
+      dispatch({
+        type: 'setPartial',
+        payload: {
+          calendarDate: newDate,
+          calendarCurrentView: nextView ?? calendarCurrentView,
+        },
+      });
+
+      if (!nextView && typeof onChange === 'function') {
+        handleCellDateClick(newDate)();
       }
     },
-    [calendarDate],
+    [calendarDate, calendarViewVariants, handleCellDateClick, onChange, calendarCurrentView],
   );
 
   /**
@@ -539,6 +545,10 @@ const Calendar = <Range extends boolean | undefined = undefined>(
    */
   const handleChangeView = React.useCallback(
     (selectedView: CalendarView) => () => {
+      if (!calendarViewVariants.includes(selectedView)) {
+        return;
+      }
+
       dispatch({
         type: 'setPartial',
         payload: {
@@ -546,7 +556,7 @@ const Calendar = <Range extends boolean | undefined = undefined>(
         },
       });
     },
-    [],
+    [calendarViewVariants],
   );
 
   /**
@@ -584,6 +594,31 @@ const Calendar = <Range extends boolean | undefined = undefined>(
       },
     });
   }, []);
+
+  const weeks = React.useMemo(
+    () => (calendarCurrentView === 'days' ? getWeeks(calendarDate) : []),
+    [calendarCurrentView, calendarDate, getWeeks],
+  );
+
+  const yearsRange = React.useMemo(
+    () => (calendarCurrentView === 'years' ? getYearsRange(minDate, maxDate) : []),
+    [calendarCurrentView, minDate, maxDate, getYearsRange],
+  );
+
+  const monthsRange = React.useMemo(
+    () => (calendarCurrentView === 'months' ? getMonthsRange(minDate, maxDate) : []),
+    [calendarCurrentView, minDate, maxDate, getMonthsRange],
+  );
+
+  const normalizedRange = React.useMemo(() => {
+    const [from, to] = Array.isArray(calendarValue)
+      ? calendarValue[0].getTime() <= calendarValue[1].getTime()
+        ? calendarValue
+        : [calendarValue[1], calendarValue[0]]
+      : [calendarValue, calendarValue];
+
+    return [from, to];
+  }, [calendarValue]);
 
   return (
     <overridesMap.Paper>
@@ -628,18 +663,19 @@ const Calendar = <Range extends boolean | undefined = undefined>(
         </overridesMap.Toolbar>
       </overridesMap.Header>
 
-      <overridesMap.WeekDaysBar
-        locale={locale}
-        week={getWeeks(calendarDate)[0]}
-        format={weekDayLabelFormat || 'short'}
-      />
+      {calendarCurrentView === 'days' && (
+        <overridesMap.WeekDaysBar
+          locale={locale}
+          week={weeks[0]}
+          format={weekDayLabelFormat || 'short'}
+        />
+      )}
 
       <overridesMap.Body>
         {calendarCurrentView === 'years' && (
           <overridesMap.YearsSelector>
-            {getYearsRange(minDate, maxDate).map(year => {
-              const a = Array.isArray(calendarValue) ? calendarValue : [calendarValue];
-              const isSelected = a.find(d => d.getFullYear() === year) !== undefined;
+            {yearsRange.map(year => {
+              const isSelected = calendarDate.getFullYear() === year;
 
               return (
                 <overridesMap.YearCell
@@ -659,13 +695,12 @@ const Calendar = <Range extends boolean | undefined = undefined>(
 
         {calendarCurrentView === 'months' && (
           <overridesMap.MonthsSelector>
-            {getMonthsRange(minDate, maxDate).map(monthIndex => {
-              const a = Array.isArray(calendarValue) ? calendarValue : [calendarValue];
-              const isSelected = a.find(d => d.getMonth() === monthIndex) !== undefined;
+            {monthsRange.map(monthIndex => {
+              const isSelected = calendarDate.getMonth() === monthIndex;
 
               return (
                 <overridesMap.MonthCell
-                  key={monthIndex}
+                  key={monthIndex + monthsRange[monthIndex]}
                   accentColor={accentColor}
                   isSelected={isSelected}
                   onClick={handleMonthSelected(monthIndex)}
@@ -685,11 +720,7 @@ const Calendar = <Range extends boolean | undefined = undefined>(
                     const badge = badges.find(b => isSameDay(b.date, day.date));
 
                     // Normalize range order
-                    const [from, to] = Array.isArray(calendarValue)
-                      ? calendarValue[0].getTime() <= calendarValue[1].getTime()
-                        ? calendarValue
-                        : [calendarValue[1], calendarValue[0]]
-                      : [calendarValue, calendarValue];
+                    const [from, to] = normalizedRange;
 
                     const fill =
                       Array.isArray(calendarValue) &&

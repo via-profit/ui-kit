@@ -51,34 +51,34 @@ export interface DrawerOverrides {
   /**
    * Element container
    */
-  readonly Container?: React.ForwardRefExoticComponent<
+  readonly Container?: React.ComponentType<
     DrawerContainerProps & React.RefAttributes<HTMLDivElement>
   >;
   /**
    * Element ontent
    */
-  readonly Content?: React.ForwardRefExoticComponent<
+  readonly Content?: React.ComponentType<
     DrawerContentProps & React.RefAttributes<HTMLDivElement>
   >;
 
   /**
    * Element footer
    */
-  readonly Footer?: React.ForwardRefExoticComponent<
+  readonly Footer?: React.ComponentType<
     DrawerFooterProps & React.RefAttributes<HTMLDivElement>
   >;
 
   /**
    * Element header
    */
-  readonly Header?: React.ForwardRefExoticComponent<
+  readonly Header?: React.ComponentType<
     DrawerHeaderProps & React.RefAttributes<HTMLDivElement>
   >;
 
   /**
    * Overlay element
    */
-  readonly Overlay?: React.ForwardRefExoticComponent<
+  readonly Overlay?: React.ComponentType<
     ModalOverlayProps & React.RefAttributes<HTMLDivElement>
   >;
 }

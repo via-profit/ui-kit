@@ -142,7 +142,7 @@ export interface AutocompleteOverrides {
   /**
    * Element wrapper
    */
-  readonly TextField?: React.ForwardRefExoticComponent<
+  readonly TextField?: React.ComponentType<
     AutocompleteTextFieldProps & React.RefAttributes<HTMLDivElement>
   >;
 }

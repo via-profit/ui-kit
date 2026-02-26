@@ -56,20 +56,20 @@ export interface ButtonBaseOverrides {
   /**
    * Element container
    */
-  readonly Container?: React.ForwardRefExoticComponent<
+  readonly Container?: React.ComponentType<
     ButtonContainerProps & React.RefAttributes<HTMLButtonElement>
   >;
   /**
    * icon wrapper
    */
-  readonly IconWrapper?: React.ForwardRefExoticComponent<
+  readonly IconWrapper?: React.ComponentType<
     ButtonIconWrapperProps & React.RefAttributes<HTMLSpanElement>
   >;
 
   /**
    * text wrapper
    */
-  readonly TextWrapper?: React.ForwardRefExoticComponent<
+  readonly TextWrapper?: React.ComponentType<
     ButtonTextWrapperProps & React.RefAttributes<HTMLSpanElement>
   >;
 }

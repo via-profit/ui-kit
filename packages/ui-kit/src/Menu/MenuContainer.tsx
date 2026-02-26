@@ -164,14 +164,12 @@ export interface MenuOverrides {
   /**
    * Element wrapper
    */
-  readonly List?: React.ForwardRefExoticComponent<
-    MenuListProps & React.RefAttributes<HTMLDivElement>
-  >;
+  readonly List?: React.ComponentType<MenuListProps & React.RefAttributes<HTMLDivElement>>;
 
   /**
    * Popper wrapper
    */
-  readonly Popper?: React.ForwardRefExoticComponent<
+  readonly Popper?: React.ComponentType<
     PopperProps & React.RefAttributes<HTMLDivElement>
   >;
 }

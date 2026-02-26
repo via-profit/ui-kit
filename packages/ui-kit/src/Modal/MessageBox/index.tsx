@@ -34,34 +34,34 @@ export interface MessageBoxOverrides {
   /**
    * Element container
    */
-  readonly Container?: React.ForwardRefExoticComponent<
+  readonly Container?: React.ComponentType<
     MessageBoxContainerProps & React.RefAttributes<HTMLDivElement>
   >;
   /**
    * Element ontent
    */
-  readonly Content?: React.ForwardRefExoticComponent<
+  readonly Content?: React.ComponentType<
     MessageBoxContentProps & React.RefAttributes<HTMLDivElement>
   >;
 
   /**
    * Element footer
    */
-  readonly Footer?: React.ForwardRefExoticComponent<
+  readonly Footer?: React.ComponentType<
     MessageBoxFooterProps & React.RefAttributes<HTMLDivElement>
   >;
 
   /**
    * Element header
    */
-  readonly Header?: React.ForwardRefExoticComponent<
+  readonly Header?: React.ComponentType<
     MessageBoxHeaderProps & React.RefAttributes<HTMLDivElement>
   >;
 
   /**
    * Overlay header
    */
-  readonly Overlay?: React.ForwardRefExoticComponent<
+  readonly Overlay?: React.ComponentType<
     ModalOverlayProps & React.RefAttributes<HTMLDivElement>
   >;
 }

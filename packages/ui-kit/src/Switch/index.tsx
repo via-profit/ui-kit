@@ -70,56 +70,56 @@ export interface SwitchOverrides {
   /**
    * Element container
    */
-  readonly Container?: React.ForwardRefExoticComponent<
+  readonly Container?: React.ComponentType<
     SwitchContainerProps & React.RefAttributes<HTMLSpanElement>
   >;
 
   /**
    * Element toggle
    */
-  readonly ToggleWrapper?: React.ForwardRefExoticComponent<
+  readonly ToggleWrapper?: React.ComponentType<
     SwitchToggleWrapperProps & React.RefAttributes<HTMLSpanElement>
   >;
 
   /**
    * text wrapper
    */
-  readonly TextWrapper?: React.ForwardRefExoticComponent<
+  readonly TextWrapper?: React.ComponentType<
     SwitchTextWrapperProps & React.RefAttributes<HTMLSpanElement>
   >;
 
   /**
    * Dot wrapper
    */
-  readonly Dot?: React.ForwardRefExoticComponent<
+  readonly Dot?: React.ComponentType<
     SwitchDotProps & React.RefAttributes<HTMLSpanElement>
   >;
 
   /**
    * Toggle track wrapper
    */
-  readonly Track?: React.ForwardRefExoticComponent<
+  readonly Track?: React.ComponentType<
     SwitchTrackProps & React.RefAttributes<HTMLSpanElement>
   >;
 
   /**
    * error text wrapper
    */
-  readonly ErrorText?: React.ForwardRefExoticComponent<
+  readonly ErrorText?: React.ComponentType<
     SwitchErrorTextProps & React.RefAttributes<HTMLSpanElement>
   >;
 
   /**
    * error text wrapper
    */
-  readonly Asterisk?: React.ForwardRefExoticComponent<
+  readonly Asterisk?: React.ComponentType<
     SwitchAsteriskProps & React.RefAttributes<HTMLSpanElement>
   >;
 
   /**
    * the main cwitch wrapper
    */
-  readonly Wrapper?: React.ForwardRefExoticComponent<
+  readonly Wrapper?: React.ComponentType<
     SwitchWrapperProps & React.RefAttributes<HTMLSpanElement>
   >;
 }

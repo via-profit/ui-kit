@@ -45,7 +45,7 @@ const AnchorButton: React.FC<AnchorButtonProps> = props => {
 
 const ExamplePopperAnchorPos: React.FC = () => {
   const theme = useTheme();
-  const [anchorPos, setAnchorPos] = React.useState<AnchorPos>('auto');
+  const [anchorPos, setAnchorPos] = React.useState<AnchorPos>('bottom');
   const [anchorElement, setAnchorElement] = React.useState<HTMLDivElement | null>(null);
 
   return (
@@ -56,12 +56,24 @@ const ExamplePopperAnchorPos: React.FC = () => {
           isActive={anchorPos === 'auto'}
           onChange={() => setAnchorPos('auto')}
         />
-        <AnchorButton
-          value="auto-start-end"
-          isActive={anchorPos === 'auto-start-end'}
-          onChange={() => setAnchorPos('auto-start-end')}
-        />
       </div>
+
+      <AnchorButton
+        value="left"
+        isActive={anchorPos === 'left'}
+        onChange={() => setAnchorPos('left')}
+      />
+      <AnchorButton
+        value="left-top"
+        isActive={anchorPos === 'left-top'}
+        onChange={() => setAnchorPos('left-top')}
+      />
+
+      <AnchorButton
+        value="top-left"
+        isActive={anchorPos === 'top-left'}
+        onChange={() => setAnchorPos('top-left')}
+      />
       <AnchorButton
         value="top-start"
         isActive={anchorPos === 'top-start'}
@@ -73,14 +85,25 @@ const ExamplePopperAnchorPos: React.FC = () => {
         onChange={() => setAnchorPos('top')}
       />
       <AnchorButton
-        value="top-start-end"
-        isActive={anchorPos === 'top-start-end'}
-        onChange={() => setAnchorPos('top-start-end')}
-      />
-      <AnchorButton
         value="top-end"
         isActive={anchorPos === 'top-end'}
         onChange={() => setAnchorPos('top-end')}
+      />
+      <AnchorButton
+        value="top-right"
+        isActive={anchorPos === 'top-right'}
+        onChange={() => setAnchorPos('top-right')}
+      />
+
+      <AnchorButton
+        value="right-top"
+        isActive={anchorPos === 'right-top'}
+        onChange={() => setAnchorPos('right-top')}
+      />
+      <AnchorButton
+        value="right"
+        isActive={anchorPos === 'right'}
+        onChange={() => setAnchorPos('right')}
       />
 
       <StyledAnchorContainer>
@@ -94,7 +117,16 @@ const ExamplePopperAnchorPos: React.FC = () => {
           <Surface>Popper content</Surface>
         </Popper>
       </StyledAnchorContainer>
-
+      <AnchorButton
+        value="left-bottom"
+        isActive={anchorPos === 'left-bottom'}
+        onChange={() => setAnchorPos('left-bottom')}
+      />
+      <AnchorButton
+        value="bottom-left"
+        isActive={anchorPos === 'bottom-left'}
+        onChange={() => setAnchorPos('bottom-left')}
+      />
       <AnchorButton
         value="bottom-start"
         isActive={anchorPos === 'bottom-start'}
@@ -106,14 +138,21 @@ const ExamplePopperAnchorPos: React.FC = () => {
         onChange={() => setAnchorPos('bottom')}
       />
       <AnchorButton
-        value="bottom-start-end"
-        isActive={anchorPos === 'bottom-start-end'}
-        onChange={() => setAnchorPos('bottom-start-end')}
-      />
-      <AnchorButton
         value="bottom-end"
         isActive={anchorPos === 'bottom-end'}
         onChange={() => setAnchorPos('bottom-end')}
+      />
+
+      <AnchorButton
+        value="bottom-right"
+        isActive={anchorPos === 'bottom-right'}
+        onChange={() => setAnchorPos('bottom-right')}
+      />
+
+      <AnchorButton
+        value="right-bottom"
+        isActive={anchorPos === 'right-bottom'}
+        onChange={() => setAnchorPos('right-bottom')}
       />
     </>
   );

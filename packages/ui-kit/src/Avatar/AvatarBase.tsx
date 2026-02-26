@@ -66,26 +66,26 @@ export interface AvatarBaseOverrides {
   /**
    * Element container
    */
-  readonly Container?: React.ForwardRefExoticComponent<
+  readonly Container?: React.ComponentType<
     AvatarContainerProps & React.RefAttributes<HTMLSpanElement>
   >;
   /**
    * icon wrapper
    */
-  readonly IconWrapper?: React.ForwardRefExoticComponent<
+  readonly IconWrapper?: React.ComponentType<
     AvatarIconWrapperProps & React.RefAttributes<HTMLSpanElement>
   >;
 
   /**
    * text wrapper
    */
-  readonly TextWrapper?: React.ForwardRefExoticComponent<
+  readonly TextWrapper?: React.ComponentType<
     AvatarTextWrapperProps & React.RefAttributes<HTMLSpanElement>
   >;
   /**
    * picture tag
    */
-  readonly Picture?: React.ForwardRefExoticComponent<
+  readonly Picture?: React.ComponentType<
     AvatarPictureProps & React.RefAttributes<HTMLPictureElement>
   >;
 }
