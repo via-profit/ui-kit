@@ -12,7 +12,6 @@ import content from '@via-profit/ui-kit/docs/calendar/README.md';
 const Buttons: React.FC = () => (
   <>
     <Surface>
-      <ExampleCalendarOverivew />
       <RenderMarkdown
         overrides={{
           ExampleCalendarOverivew,

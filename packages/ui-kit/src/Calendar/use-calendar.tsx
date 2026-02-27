@@ -1,6 +1,6 @@
 import React from 'react';
 
-export type CalendarValue<Multiple> = Multiple extends undefined ? Date : [Date, Date];
+export type CalendarValue<Range> = Range extends undefined ? Date | null : [Date | null, Date | null];
 
 export type WeekDayName =
   | 'sunday'

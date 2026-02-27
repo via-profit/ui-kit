@@ -18,6 +18,7 @@ const items: Item[] = [...new Array(30).keys()].map(i => ({
 const ExampleMenuAPI: React.FC = () => {
   const [value, setValue] = React.useState<Item | null>(null);
   const menuRef = React.useRef<MenuRef | null>(null);
+  const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
 
   return (
     <>
@@ -31,7 +32,13 @@ const ExampleMenuAPI: React.FC = () => {
       <Button variant="standard" onClick={() => menuRef.current?.selectHighlightedItem()}>
         Select highlighted item in list
       </Button>
-      <Button variant="standard" onClick={() => menuRef.current?.focus()}>
+      <Button
+        variant="standard"
+        onClick={el => {
+          setAnchorEl(el.currentTarget);
+          menuRef.current?.focus();
+        }}
+      >
         Focus
       </Button>
       <div>{!value ? <>Value is null</> : <>Selected value is «{value.name}»</>}</div>
@@ -39,7 +46,8 @@ const ExampleMenuAPI: React.FC = () => {
       <Menu
         ref={menuRef}
         isOpen
-        anchorPos="static"
+        anchorElement={anchorEl}
+        anchorPos="bottom"
         value={value}
         items={items}
         getOptionSelected={({ item, value }) => item.id === value.id}

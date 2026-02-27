@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useImperativeHandle } from 'react';
 
 import Body, { CalendarBodyProps } from './CalendarBody';
 import Cell, { CalendarCellProps } from './CalendarCell';
@@ -24,28 +24,26 @@ import IconPrev, { CalendarIconPrevProps } from './CalendarIconPrev';
 import IconNext, { CalendarIconNextProps } from './IconChevronRight';
 import WeekDaysBar, { CalendarWeekDaysBarProps, WeekNameLabelFormat } from './CalendarWeekDaysBar';
 import { CalendarValue, useCalendar, Week, WeekDayName } from './use-calendar';
-import { CalendarView as CalendarViewName, createDefaultState, reducer, State } from './reducer';
 
 export * from './use-calendar';
 export * from './CalendarWeekDaysBar';
-export type CalendarView = CalendarViewName;
-
-export type CalendarProps<Range extends boolean | undefined = undefined> = {
-  readonly range?: Range;
+export type CalendarView = 'days' | 'months' | 'years' | 'weeks';
+export type CalendarProps<IsRangeValue extends boolean | undefined = undefined> = {
+  readonly range?: IsRangeValue;
   /**
    * Selected date
    */
-  readonly value?: CalendarValue<Range>;
+  readonly value?: CalendarValue<IsRangeValue> | null;
 
   /**
    * selected value if your component should not be controlled
    */
-  readonly defaultValue?: CalendarValue<Range>;
+  readonly defaultValue?: CalendarValue<IsRangeValue> | null;
 
   /**
    * It will be called at the moment of selecting the given
    */
-  readonly onChange: (dates: CalendarValue<Range>) => void;
+  readonly onChange: (dates: NonNullable<CalendarValue<IsRangeValue>>) => void;
 
   /**
    * calendar locale\
@@ -146,6 +144,8 @@ export type CalendarProps<Range extends boolean | undefined = undefined> = {
    * **Default:** `days`
    */
   readonly initialView?: CalendarView;
+
+  readonly view?: CalendarView;
 
   /**
    * Posibility calendar views list
@@ -317,594 +317,743 @@ export type CalendarBadge = {
   readonly accentColor?: 'primary' | 'secondary' | string;
 };
 
-const Calendar = <Range extends boolean | undefined = undefined>(
-  props: CalendarProps<Range>,
-): React.ReactNode => {
-  const {
-    minDate = new Date(new Date().getFullYear() - 100, 0, 1, 0, 0, 0),
-    maxDate = new Date(new Date().getFullYear() + 100, 0, 1, 0, 0, 0),
-    weekStartDay = 'monday',
-    locale = 'ru-RU',
-    displayLeadingZero = false,
-    onChange,
-    badges = [],
-    value,
-    defaultValue,
-    markToday,
-    weekDayLabelFormat = 'short',
-    accentColor = 'primary',
-    prevMonthButtonTooltip,
-    nextMonthButtonTooltip,
-    changeMonthButtonTooltip,
-    changeYearButtonTooltip,
-    initialView,
-    views,
-    resetButtonLabel,
-    todayButtonLabel,
-    heading,
-    subheading,
-    footer,
-    overrides,
-    range = false,
-  } = props;
-
-  if (typeof value !== 'undefined' && typeof onChange === 'undefined') {
-    throw new Error(
-      'You provided a `value` prop to a form field without an `onChange` handler. This will render a read-only field. If the field should be mutable use `defaultValue`. Otherwise, set either `onChange`.',
-    );
-  }
-
-  const overridesMap = React.useMemo(
-    () => ({
-      Body: overrides?.Body || Body,
-      Cell: overrides?.Cell || Cell,
-      EmptyCell: overrides?.EmptyCell || EmptyCell,
-      Paper: overrides?.Paper || Paper,
-      Header: overrides?.Header || Header,
-      WeekRow: overrides?.WeekRow || WeekRow,
-      DateContainer: overrides?.DateContainer || DateContainer,
-      Toolbar: overrides?.Toolbar || Toolbar,
-      YearsSelector: overrides?.YearsSelector || YearsSelector,
-      MonthsSelector: overrides?.MonthsSelector || MonthsSelector,
-      MonthCell: overrides?.MonthCell || MonthCell,
-      YearCell: overrides?.YearCell || YearCell,
-      DayBadge: overrides?.DayBadge || DayBadge,
-      Footer: overrides?.Footer || Footer,
-      ControlButton: overrides?.ControlButton || ControlButton,
-      Heading: overrides?.Heading || Heading,
-      Subheading: overrides?.Subheading || Subheading,
-      IconPrev: overrides?.IconPrev || IconPrev,
-      IconNext: overrides?.IconNext || IconNext,
-      WeekDaysBar: overrides?.WeekDaysBar || WeekDaysBar,
-      WeekDayCell: overrides?.WeekDayCell || WeekDayCell,
-      WeekRowButton: overrides?.WeekRowButton || WeekRowButton,
-      WeekDayWeekNumber: overrides?.WeekDayWeekNumber || WeekDayWeekNumber,
-    }),
-    [overrides],
-  );
-
-  const realValue: CalendarValue<Range> = React.useMemo(
-    () =>
-      typeof value !== 'undefined'
-        ? value
-        : typeof defaultValue !== 'undefined'
-          ? defaultValue
-          : (new Date() as CalendarValue<Range>),
-    [value, defaultValue],
-  );
-
-  const initialProps = React.useRef({
-    value: realValue,
-    badges,
-    initialView,
-    views,
-  });
-
-  const initialState: State<Range> = {
-    ...createDefaultState(range, {
-      initialView,
-      views,
-    }),
-    calendarValue: realValue,
-    calendarDate: Array.isArray(realValue) ? realValue[0] : realValue,
-  };
-
-  const [state, dispatch] = React.useReducer(reducer, initialState);
-
-  const {
-    isSameDay,
-    getWeeks,
-    getDayLabel,
-    getMonthLabel,
-    getYearLabel,
-    getYearsRange,
-    getMonthsRange,
-  } = useCalendar({
-    minDate,
-    maxDate,
-    weekStartDay,
-    locale,
-    displayLeadingZero,
-  });
-
-  const { calendarCurrentView, calendarViewVariants, calendarValue, calendarDate } = state;
-
-  /**
-   * Prev and next month buttons
-   */
-  const handleChangeMonthClick = React.useCallback(
-    (type: 'prev' | 'next') => () => {
-      const newDate =
-        type === 'prev'
-          ? new Date(calendarDate.getFullYear(), calendarDate.getMonth() - 1, 1)
-          : new Date(calendarDate.getFullYear(), calendarDate.getMonth() + 1, 1);
-
-      dispatch({ type: 'setPartial', payload: { calendarDate: newDate } });
-    },
-    [calendarDate],
-  );
-
-  /**
-   * Date props was changed
-   */
-  React.useEffect(() => {
-    if (typeof value !== 'undefined') {
-      dispatch({
-        type: 'setPartial',
-        payload: {
-          calendarValue: value,
-          // calendarDate: Array.isArray(value) ? value[0] : value,
-        },
-      });
-    }
-  }, [value, calendarValue, isSameDay, dispatch]);
-
-  /**
-   * Handles click on a day cell.
-   * Range selection follows a simple two‑click model:
-   * 1) First click sets the start date.
-   * 2) Second click sets the end date.
-   * If a full range is already selected, a new click starts a new range.
-   */
-  const handleCellDateClick = React.useCallback(
-    (selectedDate: Date) => () => {
-      if (!onChange) {
-        return;
-      }
-
-      // Single-date mode
-      if (!range) {
-        onChange(selectedDate as any);
-
-        return;
-      }
-
-      const [from, to] = calendarValue as CalendarValue<true>;
-
-      // No range selected yet → first click
-      if (!from && !to) {
-        onChange([selectedDate, selectedDate] as any);
-
-        return;
-      }
-
-      // Only start date selected → second click
-      if (from && (!to || from.getTime() === to.getTime())) {
-        if (selectedDate < from) {
-          // User clicked before the start → swap
-          onChange([selectedDate, from] as any);
-        } else {
-          // Normal forward range
-          onChange([from, selectedDate] as any);
-        }
-
-        return;
-      }
-
-      // Full range already selected → start a new range
-      onChange([selectedDate, selectedDate] as any);
-    },
-    [onChange, calendarValue, range],
-  );
-
-  /**
-   * Handle of click on year item
-   */
-  const handleYearSelected = React.useCallback(
-    (selectedYear: number) => () => {
-      const newDate = new Date(calendarDate);
-      newDate.setFullYear(selectedYear);
-      newDate.setMonth(calendarDate.getMonth());
-      newDate.setDate(1);
-      newDate.setHours(0);
-      newDate.setMinutes(0);
-      newDate.setMilliseconds(0);
-
-      let nextView: CalendarViewName | undefined = undefined;
-
-      if (calendarViewVariants.includes('days')) {
-        nextView = 'days';
-      }
-      if (calendarViewVariants.includes('months')) {
-        nextView = 'months';
-      }
-
-      dispatch({
-        type: 'setPartial',
-        payload: {
-          calendarDate: newDate,
-          calendarCurrentView: nextView ?? calendarCurrentView,
-        },
-      });
-
-      if (!nextView && typeof onChange === 'function') {
-        handleCellDateClick(newDate)();
-      }
-    },
-    [calendarCurrentView, calendarDate, calendarViewVariants, handleCellDateClick, onChange],
-  );
-
-  /**
-   * Handle of click on month item
-   */
-  const handleMonthSelected = React.useCallback(
-    (monthIndex: number) => () => {
-      const newDate = new Date(calendarDate);
-      newDate.setMonth(monthIndex);
-      newDate.setDate(1);
-      newDate.setHours(0);
-      newDate.setMinutes(0);
-      newDate.setMilliseconds(0);
-
-      const nextView = calendarViewVariants.includes('days') ? 'days' : undefined;
-
-      dispatch({
-        type: 'setPartial',
-        payload: {
-          calendarDate: newDate,
-          calendarCurrentView: nextView ?? calendarCurrentView,
-        },
-      });
-
-      if (!nextView && typeof onChange === 'function') {
-        handleCellDateClick(newDate)();
-      }
-    },
-    [calendarDate, calendarViewVariants, handleCellDateClick, onChange, calendarCurrentView],
-  );
-
-  /**
-   * Manual view changing
-   */
-  const handleChangeView = React.useCallback(
-    (selectedView: CalendarView) => () => {
-      if (!calendarViewVariants.includes(selectedView)) {
-        return;
-      }
-
-      dispatch({
-        type: 'setPartial',
-        payload: {
-          calendarCurrentView: selectedView,
-        },
-      });
-    },
-    [calendarViewVariants],
-  );
-
-  /**
-   * Handle click on «Reset» button
-   */
-  const handleReset = React.useCallback(() => {
-    dispatch({
-      type: 'setPartial',
-      payload: {
-        calendarCurrentView: initialProps.current.initialView,
-        calendarDate: initialProps.current.value as any,
-        calendarValue: initialProps.current.value,
-      },
-    });
-
-    if (typeof onChange === 'function') {
-      onChange(initialProps.current.value);
-    }
-  }, [onChange]);
-
-  /**
-   * Handle click on «Today» button
-   */
-  const handleToday = React.useCallback(() => {
-    const today = new Date();
-    today.setHours(0);
-    today.setMinutes(0);
-    today.setSeconds(0);
-    today.setMilliseconds(0);
-
-    dispatch({
-      type: 'setPartial',
-      payload: {
-        calendarDate: today,
-        calendarValue: range ? [today, today] : today,
-      },
-    });
-
-    handleCellDateClick(today)();
-  }, [handleCellDateClick, range]);
-
-  const handleClickWeek = React.useCallback(
-    (week: Week) => () => {
-      if (range) {
-        const days = week.days;
-        const dates = [days[0].date, days[days.length - 1].date];
-
-        let nextView: CalendarViewName | undefined = undefined;
-
-        if (calendarViewVariants.includes('days')) {
-          nextView = 'days';
-        }
-
-        dispatch({
-          type: 'setPartial',
-          payload: {
-            calendarDate: dates[0],
-            calendarValue: dates as CalendarValue<Range>,
-            calendarCurrentView: nextView ?? calendarCurrentView,
-          },
-        });
-
-        if (typeof onChange === 'function') {
-          onChange(dates as CalendarValue<Range>);
-        }
-      }
-    },
-    [calendarCurrentView, calendarViewVariants, onChange, range],
-  );
-
-  const weeks = React.useMemo(() => getWeeks(calendarDate), [calendarDate, getWeeks]);
-
-  const yearsRange = React.useMemo(
-    () => (calendarCurrentView === 'years' ? getYearsRange(minDate, maxDate) : []),
-    [calendarCurrentView, minDate, maxDate, getYearsRange],
-  );
-
-  const monthsRange = React.useMemo(
-    () => (calendarCurrentView === 'months' ? getMonthsRange(minDate, maxDate) : []),
-    [calendarCurrentView, minDate, maxDate, getMonthsRange],
-  );
-
-  const normalizedRange = React.useMemo(() => {
-    const [from, to] = Array.isArray(calendarValue)
-      ? calendarValue[0].getTime() <= calendarValue[1].getTime()
-        ? calendarValue
-        : [calendarValue[1], calendarValue[0]]
-      : [calendarValue, calendarValue];
-
-    return [from, to];
-  }, [calendarValue]);
-
-  return (
-    <overridesMap.Paper>
-      <overridesMap.Header>
-        {typeof heading !== 'undefined' && <overridesMap.Heading>{heading}</overridesMap.Heading>}
-        {typeof subheading !== 'undefined' && (
-          <overridesMap.Subheading>{subheading}</overridesMap.Subheading>
-        )}
-        <overridesMap.Toolbar>
-          <overridesMap.ControlButton
-            iconOnly
-            onClick={handleChangeMonthClick('prev')}
-            title={prevMonthButtonTooltip}
-            disabled={!['days', 'weeks'].includes(calendarCurrentView)}
-          >
-            <overridesMap.IconPrev />
-          </overridesMap.ControlButton>
-          <overridesMap.ControlButton
-            title={changeMonthButtonTooltip}
-            isActive={calendarCurrentView === 'months'}
-            disabled={!calendarViewVariants.includes('months')}
-            onClick={handleChangeView(calendarCurrentView === 'months' ? 'days' : 'months')}
-          >
-            {getMonthLabel(calendarDate)}
-          </overridesMap.ControlButton>
-          <overridesMap.ControlButton
-            isActive={calendarCurrentView === 'years'}
-            disabled={!calendarViewVariants.includes('years')}
-            title={changeYearButtonTooltip}
-            onClick={handleChangeView(calendarCurrentView === 'years' ? 'days' : 'years')}
-          >
-            {getYearLabel(calendarDate)}
-          </overridesMap.ControlButton>
-          <overridesMap.ControlButton
-            iconOnly
-            onClick={handleChangeMonthClick('next')}
-            title={nextMonthButtonTooltip}
-            disabled={!['days', 'weeks'].includes(calendarCurrentView)}
-          >
-            <overridesMap.IconNext />
-          </overridesMap.ControlButton>
-        </overridesMap.Toolbar>
-      </overridesMap.Header>
-
-      {calendarCurrentView === 'days' && (
-        <overridesMap.WeekDaysBar
-          locale={locale}
-          week={weeks[0]}
-          format={weekDayLabelFormat || 'short'}
-        />
-      )}
-
-      <overridesMap.Body>
-        {calendarCurrentView === 'years' && (
-          <overridesMap.YearsSelector>
-            {yearsRange.map(year => {
-              const isSelected = calendarDate.getFullYear() === year;
-
-              return (
-                <overridesMap.YearCell
-                  key={year}
-                  accentColor={accentColor}
-                  isSelected={isSelected}
-                  onClick={handleYearSelected(year)}
-                >
-                  {getYearLabel(
-                    new Date(year, calendarDate.getMonth(), calendarDate.getDate(), 0, 0, 0, 0),
-                  )}
-                </overridesMap.YearCell>
-              );
-            })}
-          </overridesMap.YearsSelector>
-        )}
-
-        {calendarCurrentView === 'months' && (
-          <overridesMap.MonthsSelector>
-            {monthsRange.map(monthIndex => {
-              const isSelected = calendarDate.getMonth() === monthIndex;
-
-              return (
-                <overridesMap.MonthCell
-                  key={monthIndex + monthsRange[monthIndex]}
-                  accentColor={accentColor}
-                  isSelected={isSelected}
-                  onClick={handleMonthSelected(monthIndex)}
-                >
-                  {getMonthLabel(new Date(calendarDate.getFullYear(), monthIndex, 1, 0, 0, 0, 0))}
-                </overridesMap.MonthCell>
-              );
-            })}
-          </overridesMap.MonthsSelector>
-        )}
-        {calendarCurrentView === 'weeks' && (
-          <overridesMap.DateContainer>
-            {getWeeks(calendarDate).map(week => {
-              let isSelected = false;
-
-              if (range) {
-                const [from, to] = normalizedRange;
-
-                const a = week.days[0].date;
-                const b = week.days[week.days.length - 1].date;
-                if (isSameDay(from, a) && isSameDay(to, b)) {
-                  isSelected = true;
-                }
-              }
-
-              return (
-                <overridesMap.WeekRowButton
-                  key={week.weekNumber}
-                  isSelected={isSelected}
-                  onClick={handleClickWeek(week)}
-                  accentColor={accentColor}
-                  week={week}
-                >
-                  <overridesMap.WeekDayWeekNumber week={week}>
-                    {week.weekNumber}
-                  </overridesMap.WeekDayWeekNumber>
-                  {week.days.map(day => {
-                    const badge = badges.find(b => isSameDay(b.date, day.date));
-                    const inCurrentMonth = day.date.getMonth() === calendarDate.getMonth();
-
-                    return (
-                      <overridesMap.WeekDayCell
-                        key={day.date.getTime()}
-                        isToday={markToday && day.isToday}
-                        inCurrentMonth={inCurrentMonth}
-                      >
-                        {getDayLabel(day.date)}
-
-                        {badge && (
-                          <overridesMap.DayBadge
-                            badgeContent={badge.badgeContent}
-                            isToday={day.isToday}
-                            accentColor={badge.accentColor}
-                          />
-                        )}
-                      </overridesMap.WeekDayCell>
-                    );
-                  })}
-                </overridesMap.WeekRowButton>
-              );
-            })}
-          </overridesMap.DateContainer>
-        )}
-        {calendarCurrentView === 'days' && (
-          <overridesMap.DateContainer>
-            {getWeeks(calendarDate).map(week => (
-              <overridesMap.WeekRow key={week.weekNumber}>
-                {week.days.map(day => {
-                  if (day.date.getMonth() === calendarDate.getMonth()) {
-                    const badge = badges.find(b => isSameDay(b.date, day.date));
-
-                    // Normalize range order
-                    const [from, to] = normalizedRange;
-
-                    const fill =
-                      Array.isArray(calendarValue) &&
-                      day.date.getTime() >= from.getTime() &&
-                      day.date.getTime() <= to.getTime();
-
-                    const isSelected = isSameDay(from, day.date) || isSameDay(to, day.date);
-
-                    return (
-                      <overridesMap.Cell
-                        key={day.date.getTime()}
-                        isToday={markToday && day.isToday}
-                        isDisabled={day.isDisabled}
-                        accentColor={accentColor}
-                        isSelected={isSelected}
-                        fill={fill}
-                        onClick={handleCellDateClick(day.date)}
-                      >
-                        {getDayLabel(day.date)}
-
-                        {badge && (
-                          <overridesMap.DayBadge
-                            badgeContent={badge.badgeContent}
-                            isToday={day.isToday}
-                            accentColor={badge.accentColor}
-                          />
-                        )}
-                      </overridesMap.Cell>
-                    );
-                  }
-
-                  return <overridesMap.EmptyCell key={day.date.getTime()} />;
-                })}
-              </overridesMap.WeekRow>
-            ))}
-          </overridesMap.DateContainer>
-        )}
-      </overridesMap.Body>
-      {(typeof resetButtonLabel !== 'undefined' ||
-        typeof todayButtonLabel !== 'undefined' ||
-        typeof footer !== 'undefined') && (
-        <overridesMap.Footer>
-          {typeof footer !== 'undefined' && <>{footer}</>}
-          <overridesMap.ControlButton
-            onClick={() =>
-              dispatch({
-                type: 'setPartial',
-                payload: {
-                  calendarCurrentView: 'weeks',
-                },
-              })
-            }
-          >
-            Week
-          </overridesMap.ControlButton>
-          {typeof todayButtonLabel !== 'undefined' && (
-            <overridesMap.ControlButton onClick={handleToday}>
-              {todayButtonLabel}
-            </overridesMap.ControlButton>
-          )}
-          {typeof resetButtonLabel !== 'undefined' && (
-            <overridesMap.ControlButton onClick={handleReset}>
-              {resetButtonLabel}
-            </overridesMap.ControlButton>
-          )}
-        </overridesMap.Footer>
-      )}
-    </overridesMap.Paper>
-  );
+export type CalendarRef<IsRangeValue extends boolean | undefined = undefined> = {
+  readonly setView: (view: CalendarView) => void;
+  readonly setValue: (value: CalendarValue<IsRangeValue> | null) => void;
+  readonly setCalendarDate: (date: Date) => void;
 };
 
-export default Calendar;
+// const isValidValue = (value: unknown | null | undefined): value is Date | [Date, Date] => {
+//   if (typeof value === 'undefined' || value === null) {
+//     return false;
+//   }
+//
+//   if (value instanceof Date) {
+//     return true;
+//   }
+//
+//   return (
+//     value instanceof Array &&
+//     value.length === 2 &&
+//     value[0] instanceof Date &&
+//     value[1] instanceof Date
+//   );
+// };
+
+const isRangeValue = (value: unknown): value is CalendarValue<true> => {
+  if (value instanceof Array) {
+    return value.every(v => v instanceof Date || v === null);
+  }
+
+  return false;
+};
+
+// const isFilledRangeValue = (value: unknown): value is [Date, Date] => {
+//   if (isRangeValue(value)) {
+//     return value.length === 2 && value.every(v => v instanceof Date);
+//   }
+//
+//   return false;
+// };
+//
+// const isNotFilledRangeValue = (value: unknown): value is CalendarValue<true> => {
+//   if (isRangeValue(value)) {
+//     return (
+//       value.length === 2 &&
+//       value.some(v => v instanceof Date) &&
+//       !value.every(v => v instanceof Date)
+//     );
+//   }
+//
+//   return false;
+// };
+
+const isNotRangeValue = (value: unknown): value is Date => !isRangeValue(value);
+
+const computeViews = (inputViews?: readonly CalendarView[]): readonly CalendarView[] =>
+  inputViews || ['days', 'months', 'years', 'weeks'];
+
+const computeView = (inputParams: {
+  inputView: CalendarView | undefined;
+  inputInitialView: CalendarView | undefined;
+  inputViews: readonly CalendarView[] | undefined;
+}): CalendarView => {
+  const { inputView, inputViews, inputInitialView } = inputParams;
+  if (typeof inputView === 'undefined' && inputViews) {
+    return inputViews[0];
+  }
+
+  if (inputViews && typeof inputView === 'string') {
+    if (!inputViews.includes(inputView)) {
+      throw new Error('Property views must be contained property initialView');
+    }
+  }
+
+  if (typeof inputView === 'string') {
+    return inputView;
+  }
+
+  return inputInitialView ?? inputView ?? 'days';
+};
+
+const computeCalendarDate = (params: {
+  readonly inputValue?: Date | CalendarValue<true> | null;
+  readonly defaultValue?: Date | CalendarValue<true> | null;
+}): Date => {
+  const { inputValue, defaultValue } = params;
+  const today = new Date();
+  if (inputValue) {
+    if (isRangeValue(inputValue) && inputValue[0]) {
+      return inputValue[0];
+    }
+  }
+
+  if (isRangeValue(defaultValue) && defaultValue[0]) {
+    return defaultValue[0];
+  }
+
+  return today;
+};
+
+const Calendar = React.forwardRef(
+  <IsRangeValue extends boolean | undefined = undefined>(
+    props: CalendarProps<IsRangeValue>,
+    ref: React.Ref<CalendarRef<IsRangeValue>>,
+  ): React.ReactNode => {
+    const {
+      minDate = new Date(new Date().getFullYear() - 100, 0, 1, 0, 0, 0),
+      maxDate = new Date(new Date().getFullYear() + 100, 0, 1, 0, 0, 0),
+      weekStartDay = 'monday',
+      locale = 'ru-RU',
+      displayLeadingZero = false,
+      onChange,
+      badges = [],
+      markToday,
+      weekDayLabelFormat = 'short',
+      accentColor = 'primary',
+      prevMonthButtonTooltip,
+      nextMonthButtonTooltip,
+      changeMonthButtonTooltip,
+      changeYearButtonTooltip,
+      defaultValue,
+      value: inputValue,
+      initialView: inputInitialView,
+      view: inputView,
+      views: inputViews,
+      resetButtonLabel,
+      todayButtonLabel,
+      heading,
+      subheading,
+      footer,
+      overrides,
+      range = false,
+    } = props;
+
+    /**
+     * Validations
+     */
+    if (range) {
+      if (defaultValue && isNotRangeValue(defaultValue)) {
+        throw new Error('The default value must be an array of dates([Date, Date])');
+      }
+
+      if (inputValue && isNotRangeValue(inputValue)) {
+        throw new Error('The value must be an array of dates([Date, Date])');
+      }
+    } else {
+      if (defaultValue && isRangeValue(defaultValue)) {
+        throw new Error('The default value must be a Date instance');
+      }
+
+      if (inputValue && isRangeValue(inputValue)) {
+        throw new Error('The value must be a Date instance');
+      }
+    }
+
+    if (!inputValue && typeof onChange === 'undefined') {
+      throw new Error(
+        'You provided a `value` prop to a form field without an `onChange` handler. This will render a read-only field. If the field should be mutable use `defaultValue`. Otherwise, set either `onChange`.',
+      );
+    }
+
+    if (inputView && inputInitialView) {
+      throw new Error('You can not use view and initialView at the same time.');
+    }
+
+    /**
+     * Overrides
+     */
+    const overridesMap = React.useMemo(
+      () => ({
+        Body: overrides?.Body || Body,
+        Cell: overrides?.Cell || Cell,
+        EmptyCell: overrides?.EmptyCell || EmptyCell,
+        Paper: overrides?.Paper || Paper,
+        Header: overrides?.Header || Header,
+        WeekRow: overrides?.WeekRow || WeekRow,
+        DateContainer: overrides?.DateContainer || DateContainer,
+        Toolbar: overrides?.Toolbar || Toolbar,
+        YearsSelector: overrides?.YearsSelector || YearsSelector,
+        MonthsSelector: overrides?.MonthsSelector || MonthsSelector,
+        MonthCell: overrides?.MonthCell || MonthCell,
+        YearCell: overrides?.YearCell || YearCell,
+        DayBadge: overrides?.DayBadge || DayBadge,
+        Footer: overrides?.Footer || Footer,
+        ControlButton: overrides?.ControlButton || ControlButton,
+        Heading: overrides?.Heading || Heading,
+        Subheading: overrides?.Subheading || Subheading,
+        IconPrev: overrides?.IconPrev || IconPrev,
+        IconNext: overrides?.IconNext || IconNext,
+        WeekDaysBar: overrides?.WeekDaysBar || WeekDaysBar,
+        WeekDayCell: overrides?.WeekDayCell || WeekDayCell,
+        WeekRowButton: overrides?.WeekRowButton || WeekRowButton,
+        WeekDayWeekNumber: overrides?.WeekDayWeekNumber || WeekDayWeekNumber,
+      }),
+      [overrides],
+    );
+
+    /**
+     * Inside date value
+     */
+    const [calendarDate, setCalendarDate] = React.useState<Date>(() =>
+      computeCalendarDate({
+        defaultValue,
+        inputValue,
+      }),
+    );
+
+    /**
+     * Selected value
+     */
+    const [value, setValue] = React.useState<[Date | null, Date | null] | Date | null>(
+      inputValue ?? defaultValue ?? null,
+    );
+
+    /**
+     * Current view mode
+     */
+    const [view, setView] = React.useState<CalendarView>(() =>
+      computeView({
+        inputViews,
+        inputInitialView,
+        inputView,
+      }),
+    );
+
+    /**
+     * List of possibility views
+     */
+    const [views, setViews] = React.useState<readonly CalendarView[]>(() =>
+      computeViews(inputViews),
+    );
+
+    /**
+     * API
+     */
+    useImperativeHandle(
+      ref,
+      () => ({
+        setView,
+        // setViews,
+        setValue,
+        setCalendarDate,
+      }),
+      [],
+    );
+
+    const {
+      isSameDay,
+      getWeeks,
+      getDayLabel,
+      getMonthLabel,
+      getYearLabel,
+      getYearsRange,
+      getMonthsRange,
+    } = useCalendar({
+      minDate,
+      maxDate,
+      weekStartDay,
+      locale,
+      displayLeadingZero,
+    });
+
+    /**
+     * value was changed
+     */
+    React.useEffect(() => {
+      if (inputValue && JSON.stringify(inputValue) !== JSON.stringify(value)) {
+        setValue(inputValue);
+
+        if (isRangeValue(inputValue) && inputValue[0] instanceof Date) {
+          setCalendarDate(inputValue[0]);
+        } else {
+          setCalendarDate(inputValue as Date);
+        }
+      }
+    }, [value, inputValue]);
+
+    /**
+     * Prev and next month buttons
+     */
+    const handleChangeMonthClick = React.useCallback(
+      (type: 'prev' | 'next') => () => {
+        const newDate =
+          type === 'prev'
+            ? new Date(calendarDate.getFullYear(), calendarDate.getMonth() - 1, 1)
+            : new Date(calendarDate.getFullYear(), calendarDate.getMonth() + 1, 1);
+
+        setCalendarDate(newDate);
+      },
+      [calendarDate],
+    );
+
+    /**
+     * Handles click on a day cell.
+     * Range selection follows a simple two‑click model:
+     * 1) First click sets the start date.
+     * 2) Second click sets the end date.
+     * If a full range is already selected, a new click starts a new range.
+     */
+    const handleCellDateClick = React.useCallback(
+      (selectedDate: Date) => () => {
+        if (!onChange) {
+          return;
+        }
+
+        // Single-date mode
+        if (!range) {
+          onChange(selectedDate as any);
+          if (!inputValue) {
+            setValue(selectedDate);
+          }
+
+          return;
+        }
+
+        // Range-date mode
+        const [from, to] = (value as CalendarValue<true> | null) ?? [];
+
+        // No range selected yet → first click
+        if (!from && !to) {
+          setValue([selectedDate, null]);
+
+          return;
+        }
+
+        // Only start date selected → second click
+        if (from && (!to || from.getTime() === to.getTime())) {
+          if (selectedDate < from) {
+            // User clicked before the start → swap
+            // onChange([selectedDate, from] as any);
+            if (!inputValue) {
+              setValue([selectedDate, from]);
+            }
+          } else {
+            // Normal forward range
+            onChange([from, selectedDate] as any);
+            if (!inputValue) {
+              setValue([from, selectedDate]);
+            }
+          }
+
+          return;
+        }
+
+        // Full range already selected → start a new range
+        onChange([selectedDate, selectedDate] as any);
+        if (!inputValue) {
+          setValue([selectedDate, selectedDate]);
+        }
+      },
+      [onChange, range, value, inputValue],
+    );
+
+    /**
+     * Handle of click on year item
+     */
+    const handleYearSelected = React.useCallback(
+      (selectedYear: number) => () => {
+        const newDate = new Date(calendarDate);
+        newDate.setFullYear(selectedYear);
+        newDate.setMonth(calendarDate.getMonth());
+        newDate.setDate(1);
+        newDate.setHours(0);
+        newDate.setMinutes(0);
+        newDate.setMilliseconds(0);
+
+        let nextView: CalendarView | undefined = undefined;
+
+        if (views.includes('days')) {
+          nextView = 'days';
+        }
+        if (views.includes('months')) {
+          nextView = 'months';
+        }
+
+        setCalendarDate(newDate);
+        if (nextView) {
+          setView(nextView);
+        }
+
+        if (!nextView && typeof onChange === 'function') {
+          handleCellDateClick(newDate)();
+        }
+      },
+      [calendarDate, views, handleCellDateClick, onChange],
+    );
+
+    /**
+     * Handle of click on month item
+     */
+    const handleMonthSelected = React.useCallback(
+      (monthIndex: number) => () => {
+        const newDate = new Date(calendarDate);
+        newDate.setMonth(monthIndex);
+        newDate.setDate(1);
+        newDate.setHours(0);
+        newDate.setMinutes(0);
+        newDate.setMilliseconds(0);
+
+        const nextView = views.includes('days') ? 'days' : undefined;
+
+        setCalendarDate(newDate);
+        if (nextView) {
+          setView(nextView);
+        }
+
+        if (!nextView && typeof onChange === 'function') {
+          handleCellDateClick(newDate)();
+        }
+      },
+      [calendarDate, views, handleCellDateClick, onChange],
+    );
+
+    /**
+     * Manual view changing
+     */
+    const handleChangeView = React.useCallback(
+      (selectedView: CalendarView) => () => {
+        if (!views.includes(selectedView)) {
+          return;
+        }
+
+        setView(selectedView);
+      },
+      [views],
+    );
+
+    /**
+     * Handle click on «Reset» button
+     */
+    const handleReset = React.useCallback(() => {
+      // setCalendarCurrentView(initialProps.current.view);
+      // dispatch({
+      //   type: 'setPartial',
+      //   payload: {
+      //     calendarCurrentView: initialProps.current.view,
+      //     calendarDate: initialProps.current.value as any,
+      //     calendarValue: initialProps.current.value,
+      //   },
+      // });
+      // if (typeof onChange === 'function') {
+      //   onChange(initialProps.current.value);
+      // }
+    }, []);
+
+    /**
+     * Handle click on «Today» button
+     */
+    const handleToday = React.useCallback(() => {
+      const today = new Date();
+      today.setHours(0);
+      today.setMinutes(0);
+      today.setSeconds(0);
+      today.setMilliseconds(0);
+
+      setCalendarDate(today);
+
+      setValue(range ? [today, today] : today);
+
+      handleCellDateClick(today)();
+    }, [handleCellDateClick, range]);
+
+    const handleClickWeek = React.useCallback(
+      (week: Week) => () => {
+        const days = week.days;
+        const dates = [days[0].date, days[days.length - 1].date];
+        setCalendarDate(dates[0]);
+
+        /// set view
+        let nextView: CalendarView | undefined = undefined;
+        if (views.includes('days')) {
+          nextView = 'days';
+        }
+        if (nextView) {
+          setView(nextView);
+        }
+
+        /// set value
+        if (range) {
+          setValue(dates as CalendarValue<IsRangeValue>);
+
+          if (typeof onChange === 'function') {
+            onChange(dates as NonNullable<CalendarValue<IsRangeValue>>);
+          }
+        } else {
+          setValue(dates[0]);
+
+          if (typeof onChange === 'function') {
+            onChange(dates[0] as any);
+          }
+        }
+      },
+      [views, onChange, range],
+    );
+
+    const weeks = React.useMemo(() => getWeeks(calendarDate), [calendarDate, getWeeks]);
+
+    const yearsRange = React.useMemo(
+      () => (view === 'years' ? getYearsRange(minDate, maxDate) : []),
+      [view, minDate, maxDate, getYearsRange],
+    );
+
+    const monthsRange = React.useMemo(
+      () => (view === 'months' ? getMonthsRange(minDate, maxDate) : []),
+      [view, minDate, maxDate, getMonthsRange],
+    );
+
+    return (
+      <overridesMap.Paper>
+        <overridesMap.Header>
+          {typeof heading !== 'undefined' && <overridesMap.Heading>{heading}</overridesMap.Heading>}
+          {typeof subheading !== 'undefined' && (
+            <overridesMap.Subheading>{subheading}</overridesMap.Subheading>
+          )}
+          <overridesMap.Toolbar>
+            <overridesMap.ControlButton
+              iconOnly
+              onClick={handleChangeMonthClick('prev')}
+              title={prevMonthButtonTooltip}
+              disabled={!['days', 'weeks'].includes(view)}
+            >
+              <overridesMap.IconPrev />
+            </overridesMap.ControlButton>
+            <overridesMap.ControlButton
+              title={changeMonthButtonTooltip}
+              isActive={view === 'months'}
+              disabled={!views.includes('months')}
+              onClick={handleChangeView(view === 'months' ? 'days' : 'months')}
+            >
+              {getMonthLabel(calendarDate)}
+            </overridesMap.ControlButton>
+            <overridesMap.ControlButton
+              isActive={view === 'years'}
+              disabled={!views.includes('years')}
+              title={changeYearButtonTooltip}
+              onClick={handleChangeView(view === 'years' ? 'days' : 'years')}
+            >
+              {getYearLabel(calendarDate)}
+            </overridesMap.ControlButton>
+            <overridesMap.ControlButton
+              iconOnly
+              onClick={handleChangeMonthClick('next')}
+              title={nextMonthButtonTooltip}
+              disabled={!['days', 'weeks'].includes(view)}
+            >
+              <overridesMap.IconNext />
+            </overridesMap.ControlButton>
+          </overridesMap.Toolbar>
+        </overridesMap.Header>
+
+        {view === 'days' && (
+          <overridesMap.WeekDaysBar
+            locale={locale}
+            week={weeks[0]}
+            format={weekDayLabelFormat || 'short'}
+          />
+        )}
+
+        <overridesMap.Body>
+          {view === 'years' && (
+            <overridesMap.YearsSelector>
+              {yearsRange.map(year => {
+                const isSelected = calendarDate.getFullYear() === year;
+
+                return (
+                  <overridesMap.YearCell
+                    key={year}
+                    accentColor={accentColor}
+                    isSelected={isSelected}
+                    onClick={handleYearSelected(year)}
+                  >
+                    {getYearLabel(
+                      new Date(year, calendarDate.getMonth(), calendarDate.getDate(), 0, 0, 0, 0),
+                    )}
+                  </overridesMap.YearCell>
+                );
+              })}
+            </overridesMap.YearsSelector>
+          )}
+
+          {view === 'months' && (
+            <overridesMap.MonthsSelector>
+              {monthsRange.map(monthIndex => {
+                const isSelected = calendarDate.getMonth() === monthIndex;
+
+                return (
+                  <overridesMap.MonthCell
+                    key={monthIndex + monthsRange[monthIndex]}
+                    accentColor={accentColor}
+                    isSelected={isSelected}
+                    onClick={handleMonthSelected(monthIndex)}
+                  >
+                    {getMonthLabel(new Date(calendarDate.getFullYear(), monthIndex, 1, 0, 0, 0, 0))}
+                  </overridesMap.MonthCell>
+                );
+              })}
+            </overridesMap.MonthsSelector>
+          )}
+          {view === 'weeks' && (
+            <overridesMap.DateContainer>
+              {getWeeks(calendarDate).map(week => {
+                let isSelected = false;
+                if (isRangeValue(value)) {
+                  const [from, to] = value;
+
+                  if (from && to) {
+                    if (
+                      isSameDay(from, week.days[0].date) &&
+                      isSameDay(to, week.days[week.days.length - 1].date)
+                    ) {
+                      isSelected = true;
+                    }
+                  }
+                }
+
+                return (
+                  <overridesMap.WeekRowButton
+                    key={week.weekNumber}
+                    isSelected={isSelected}
+                    onClick={handleClickWeek(week)}
+                    accentColor={accentColor}
+                    week={week}
+                  >
+                    <overridesMap.WeekDayWeekNumber week={week}>
+                      {week.weekNumber}
+                    </overridesMap.WeekDayWeekNumber>
+                    {week.days.map(day => {
+                      const badge = badges.find(b => isSameDay(b.date, day.date));
+                      const inCurrentMonth = day.date.getMonth() === calendarDate.getMonth();
+
+                      return (
+                        <overridesMap.WeekDayCell
+                          key={day.date.getTime()}
+                          isToday={markToday && day.isToday}
+                          inCurrentMonth={inCurrentMonth}
+                        >
+                          {getDayLabel(day.date)}
+
+                          {badge && (
+                            <overridesMap.DayBadge
+                              badgeContent={badge.badgeContent}
+                              isToday={day.isToday}
+                              accentColor={badge.accentColor}
+                            />
+                          )}
+                        </overridesMap.WeekDayCell>
+                      );
+                    })}
+                  </overridesMap.WeekRowButton>
+                );
+              })}
+            </overridesMap.DateContainer>
+          )}
+          {view === 'days' && (
+            <overridesMap.DateContainer>
+              {getWeeks(calendarDate).map(week => (
+                <overridesMap.WeekRow key={week.weekNumber}>
+                  {week.days.map(day => {
+                    if (day.date.getMonth() === calendarDate.getMonth()) {
+                      const badge = badges.find(b => isSameDay(b.date, day.date));
+                      let fill = false;
+                      let isSelected: boolean;
+
+                      if (isRangeValue(value)) {
+                        const [from, to] = value;
+
+                        if (from && to) {
+                          fill =
+                            day.date.getTime() >= from.getTime() &&
+                            day.date.getTime() <= to.getTime();
+                        }
+                        isSelected = Boolean(
+                          (from && isSameDay(from, day.date)) || (to && isSameDay(to, day.date)),
+                        );
+                      } else {
+                        isSelected = Boolean(value && isSameDay(value, day.date));
+                      }
+
+                      return (
+                        <overridesMap.Cell
+                          key={day.date.getTime()}
+                          isToday={markToday && day.isToday}
+                          isDisabled={day.isDisabled}
+                          accentColor={accentColor}
+                          isSelected={isSelected}
+                          fill={fill}
+                          onClick={handleCellDateClick(day.date)}
+                        >
+                          {getDayLabel(day.date)}
+
+                          {badge && (
+                            <overridesMap.DayBadge
+                              badgeContent={badge.badgeContent}
+                              isToday={day.isToday}
+                              accentColor={badge.accentColor}
+                            />
+                          )}
+                        </overridesMap.Cell>
+                      );
+                    }
+
+                    return <overridesMap.EmptyCell key={day.date.getTime()} />;
+                  })}
+                </overridesMap.WeekRow>
+              ))}
+            </overridesMap.DateContainer>
+          )}
+        </overridesMap.Body>
+        {(typeof resetButtonLabel !== 'undefined' ||
+          typeof todayButtonLabel !== 'undefined' ||
+          typeof footer !== 'undefined') && (
+          <overridesMap.Footer>
+            {typeof footer !== 'undefined' && <>{footer}</>}
+            <overridesMap.ControlButton
+              onClick={() => {
+                setView('weeks');
+              }}
+            >
+              Week
+            </overridesMap.ControlButton>
+            {typeof todayButtonLabel !== 'undefined' && (
+              <overridesMap.ControlButton onClick={handleToday}>
+                {todayButtonLabel}
+              </overridesMap.ControlButton>
+            )}
+            {typeof resetButtonLabel !== 'undefined' && (
+              <overridesMap.ControlButton onClick={handleReset}>
+                {resetButtonLabel}
+              </overridesMap.ControlButton>
+            )}
+          </overridesMap.Footer>
+        )}
+      </overridesMap.Paper>
+    );
+  },
+);
+
+Calendar.displayName = 'Calendar';
+
+export default Calendar as <IsRangeValue extends boolean | undefined = undefined>(
+  props: CalendarProps<IsRangeValue> & { ref?: React.Ref<CalendarRef<IsRangeValue>> },
+) => JSX.Element;

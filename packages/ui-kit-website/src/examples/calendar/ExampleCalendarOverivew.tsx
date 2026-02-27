@@ -1,25 +1,34 @@
 import React from 'react';
-import Calendar from '@via-profit/ui-kit/src/Calendar';
+import Calendar, { CalendarRef } from '@via-profit/ui-kit/src/Calendar';
 import { useIntl } from 'react-intl';
+import Button from '@via-profit/ui-kit/src/Button';
 
 const ExampleCalendarOverivew: React.FC = () => {
   const intl = useIntl();
-  const [value, onChange] = React.useState<[Date, Date]>(() => {
-    const currentDate = new Date();
-    const nextDate = new Date(currentDate);
-    nextDate.setDate(nextDate.getDate() + 6);
-
-    return [currentDate, nextDate];
-  });
+  const calendarRef = React.useRef<CalendarRef<true> | null>(null);
 
   return (
     <div>
-      <pre>{JSON.stringify(value, null, 2)}</pre>
+      <Button
+        onClick={() => {
+          const d = new Date(new Date().getFullYear(), 4, 9);
 
+          calendarRef.current?.setValue([d, d]);
+          calendarRef.current?.setCalendarDate(d);
+        }}
+      >
+        set may, 9th
+      </Button>
+      <Button onClick={() => calendarRef.current?.setView('weeks')}>set view as weeks</Button>
+      <Button onClick={() => calendarRef.current?.setView('months')}>set view as months</Button>
       <Calendar
-        range={true}
-        value={value}
-        onChange={onChange}
+        range
+        ref={calendarRef}
+        view={'days'}
+        views={['months', 'days', 'weeks', 'years']}
+        onChange={value => {
+          console.log(value);
+        }}
         markToday
         badges={[
           {

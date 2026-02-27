@@ -56,7 +56,7 @@ const AnchorButton: React.FC<AnchorButtonProps> = props => {
 
 const ExampleMenuAnchorPos: React.FC = () => {
   const [value, setValue] = React.useState<Item | null>(null);
-  const [anchorPos, setAnchorPos] = React.useState<AnchorPos>('auto-start-end');
+  const [anchorPos, setAnchorPos] = React.useState<AnchorPos>('bottom');
   const [anchorElement, setAnchorElement] = React.useState<HTMLDivElement | null>(null);
   const theme = useTheme();
 
@@ -68,11 +68,6 @@ const ExampleMenuAnchorPos: React.FC = () => {
           isActive={anchorPos === 'auto'}
           onChange={() => setAnchorPos('auto')}
         />
-        <AnchorButton
-          value="auto-start-end"
-          isActive={anchorPos === 'auto-start-end'}
-          onChange={() => setAnchorPos('auto-start-end')}
-        />
       </div>
       <AnchorButton
         value="top-start"
@@ -83,11 +78,6 @@ const ExampleMenuAnchorPos: React.FC = () => {
         value="top"
         isActive={anchorPos === 'top'}
         onChange={() => setAnchorPos('top')}
-      />
-      <AnchorButton
-        value="top-start-end"
-        isActive={anchorPos === 'top-start-end'}
-        onChange={() => setAnchorPos('top-start-end')}
       />
       <AnchorButton
         value="top-end"
@@ -124,11 +114,6 @@ const ExampleMenuAnchorPos: React.FC = () => {
         value="bottom"
         isActive={anchorPos === 'bottom'}
         onChange={() => setAnchorPos('bottom')}
-      />
-      <AnchorButton
-        value="bottom-start-end"
-        isActive={anchorPos === 'bottom-start-end'}
-        onChange={() => setAnchorPos('bottom-start-end')}
       />
       <AnchorButton
         value="bottom-end"
