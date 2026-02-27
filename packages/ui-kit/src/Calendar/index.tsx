@@ -21,7 +21,7 @@ import ControlButton, { CalendarControlButtonProps } from './CalendarControlButt
 import Heading, { CalendarHeadingProps } from './CalendarHeading';
 import Subheading, { CalendarSubheadingProps } from './CalendarSubheading';
 import IconPrev, { CalendarIconPrevProps } from './CalendarIconPrev';
-import IconNext, { CalendarIconNextProps } from './IconChevronRight';
+import IconNext, { CalendarIconNextProps } from './CalendarIconNext';
 import WeekDaysBar, { CalendarWeekDaysBarProps, WeekNameLabelFormat } from './CalendarWeekDaysBar';
 import { CalendarValue, useCalendar, Week, WeekDayName } from './use-calendar';
 
@@ -323,23 +323,6 @@ export type CalendarRef<IsRangeValue extends boolean | undefined = undefined> = 
   readonly setCalendarDate: (date: Date) => void;
 };
 
-// const isValidValue = (value: unknown | null | undefined): value is Date | [Date, Date] => {
-//   if (typeof value === 'undefined' || value === null) {
-//     return false;
-//   }
-//
-//   if (value instanceof Date) {
-//     return true;
-//   }
-//
-//   return (
-//     value instanceof Array &&
-//     value.length === 2 &&
-//     value[0] instanceof Date &&
-//     value[1] instanceof Date
-//   );
-// };
-
 const isRangeValue = (value: unknown): value is CalendarValue<true> => {
   if (value instanceof Array) {
     return value.every(v => v instanceof Date || v === null);
@@ -347,26 +330,6 @@ const isRangeValue = (value: unknown): value is CalendarValue<true> => {
 
   return false;
 };
-
-// const isFilledRangeValue = (value: unknown): value is [Date, Date] => {
-//   if (isRangeValue(value)) {
-//     return value.length === 2 && value.every(v => v instanceof Date);
-//   }
-//
-//   return false;
-// };
-//
-// const isNotFilledRangeValue = (value: unknown): value is CalendarValue<true> => {
-//   if (isRangeValue(value)) {
-//     return (
-//       value.length === 2 &&
-//       value.some(v => v instanceof Date) &&
-//       !value.every(v => v instanceof Date)
-//     );
-//   }
-//
-//   return false;
-// };
 
 const isNotRangeValue = (value: unknown): value is Date => !isRangeValue(value);
 
@@ -543,9 +506,13 @@ const Calendar = React.forwardRef(
     /**
      * List of possibility views
      */
-    const [views, setViews] = React.useState<readonly CalendarView[]>(() =>
-      computeViews(inputViews),
-    );
+    const [views] = React.useState<readonly CalendarView[]>(() => computeViews(inputViews));
+
+    const resetVariablesRef = React.useRef({
+      calendarDate,
+      value,
+      view,
+    });
 
     /**
      * API
@@ -746,19 +713,14 @@ const Calendar = React.forwardRef(
      * Handle click on «Reset» button
      */
     const handleReset = React.useCallback(() => {
-      // setCalendarCurrentView(initialProps.current.view);
-      // dispatch({
-      //   type: 'setPartial',
-      //   payload: {
-      //     calendarCurrentView: initialProps.current.view,
-      //     calendarDate: initialProps.current.value as any,
-      //     calendarValue: initialProps.current.value,
-      //   },
-      // });
-      // if (typeof onChange === 'function') {
-      //   onChange(initialProps.current.value);
-      // }
-    }, []);
+      setCalendarDate(resetVariablesRef.current.calendarDate);
+      setValue(resetVariablesRef.current.value);
+      setView(resetVariablesRef.current.view);
+
+      if (typeof onChange === 'function') {
+        onChange(resetVariablesRef.current.value as CalendarValue<IsRangeValue>);
+      }
+    }, [onChange]);
 
     /**
      * Handle click on «Today» button
@@ -976,7 +938,7 @@ const Calendar = React.forwardRef(
                     if (day.date.getMonth() === calendarDate.getMonth()) {
                       const badge = badges.find(b => isSameDay(b.date, day.date));
                       let fill = false;
-                      let isSelected: boolean;
+                      let isSelected: boolean = false;
 
                       if (isRangeValue(value)) {
                         const [from, to] = value;
@@ -989,7 +951,7 @@ const Calendar = React.forwardRef(
                         isSelected = Boolean(
                           (from && isSameDay(from, day.date)) || (to && isSameDay(to, day.date)),
                         );
-                      } else {
+                      } else if (isNotRangeValue(value)) {
                         isSelected = Boolean(value && isSameDay(value, day.date));
                       }
 
@@ -1016,7 +978,11 @@ const Calendar = React.forwardRef(
                       );
                     }
 
-                    return <overridesMap.EmptyCell key={day.date.getTime()} />;
+                    return (
+                      <overridesMap.EmptyCell key={day.date.getTime()}>
+                        {getDayLabel(day.date)}
+                      </overridesMap.EmptyCell>
+                    );
                   })}
                 </overridesMap.WeekRow>
               ))}
@@ -1028,13 +994,6 @@ const Calendar = React.forwardRef(
           typeof footer !== 'undefined') && (
           <overridesMap.Footer>
             {typeof footer !== 'undefined' && <>{footer}</>}
-            <overridesMap.ControlButton
-              onClick={() => {
-                setView('weeks');
-              }}
-            >
-              Week
-            </overridesMap.ControlButton>
             {typeof todayButtonLabel !== 'undefined' && (
               <overridesMap.ControlButton onClick={handleToday}>
                 {todayButtonLabel}

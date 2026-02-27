@@ -7,6 +7,8 @@ const Elem = styled.span`
   display: flex;
   align-items: center;
   justify-content: center;
+  cursor: default;
+  user-select: none;
   font-size: 0.8em;
   width: 3em;
   height: 3em;
@@ -15,6 +17,7 @@ const Elem = styled.span`
   outline: none;
   position: relative;
   font-weight: 400;
+  color: ${({ theme }) => theme.color.textSecondary.alpha(0.5).toString()};
 `;
 
 const CalendarEmptyCell: React.ForwardRefRenderFunction<HTMLSpanElement, CalendarEmptyCellProps> = (

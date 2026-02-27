@@ -25,6 +25,7 @@ const ExampleCalendarOverivew: React.FC = () => {
         range
         ref={calendarRef}
         view={'days'}
+        resetButtonLabel='reset'
         views={['months', 'days', 'weeks', 'years']}
         onChange={value => {
           console.log(value);
