@@ -1,10 +1,12 @@
 import React from 'react';
+import styled from '@emotion/styled';
 
 import useContext, { actionSetmenuState } from './context';
 import List, { MenuListProps } from './MenuList';
 import Popper, { AnchorPos, PopperProps, PositionStrategy } from '../Popper';
 import type { MenuItemCommonProps } from './MenuItem';
 import ClickOutside from '../ClickOutside';
+import { VirtualizedList } from './VirtualizedList';
 
 export type AnchorElement<E extends HTMLElement = HTMLElement> = E;
 
@@ -15,6 +17,13 @@ export type Children<T> = (
   },
   itemProps: MenuItemCommonProps,
 ) => React.ReactNode;
+
+const VirtualizedItem = styled.div`
+  width: 100%;
+  & > div {
+    width: 100%;
+  }
+`;
 
 export interface MenuProps<T, Multiple extends boolean | undefined = undefined> {
   /**
@@ -663,8 +672,10 @@ const MenuContainer = React.forwardRef(
 
       // If elements in selectedIndexesRef and indexes are not equal
       if (
-        !(selectedIndexesRef.current.length === indexes.length &&
-          selectedIndexesRef.current.every(value => indexes.includes(value)))
+        !(
+          selectedIndexesRef.current.length === indexes.length &&
+          selectedIndexesRef.current.every(value => indexes.includes(value))
+        )
       ) {
         selectedIndexesRef.current = indexes;
         dispatch({
@@ -733,22 +744,20 @@ const MenuContainer = React.forwardRef(
             ref={menuListRef}
             onKeyDown={listKeydownEvent}
           >
-            {items.map((item, index) =>
-              children(
-                {
-                  item,
-                  index,
-                },
-                {
-                  key: index,
-                  onMouseEnter: itemMouseEnterHandler(index, hoveredIndex),
-                  onMouseLeave: itemMouseLeaveHandler(index, hoveredIndex),
-                  onClick: itemClickHandler(index),
-                  selected: selectedIndexes.includes(index),
-                  hovered: hoveredIndex === index || markedIndex === index,
-                },
-              ),
-            )}
+            <VirtualizedList isOpen={Boolean(isOpen)} items={items} itemHeight={2.3 * 16} height={250}>
+              {({ index, style, item }) => (
+                <VirtualizedItem key={index} style={style}>
+                  {children({ index, item } as { index: number; item: T }, {
+                    key: index,
+                    onMouseEnter: itemMouseEnterHandler(index, hoveredIndex),
+                    onMouseLeave: itemMouseLeaveHandler(index, hoveredIndex),
+                    onClick: itemClickHandler(index),
+                    selected: selectedIndexes.includes(index),
+                    hovered: hoveredIndex === index || markedIndex === index,
+                  })}
+                </VirtualizedItem>
+              )}
+            </VirtualizedList>
           </overridesMap.List>
         </overridesMap.Popper>
       </ClickOutside>
