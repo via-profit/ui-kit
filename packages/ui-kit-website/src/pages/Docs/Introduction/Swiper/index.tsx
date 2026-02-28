@@ -3,9 +3,8 @@ import React, {
   useRef,
   useEffect,
   useCallback,
-  useMemo,
-  useImperativeHandle,
   forwardRef,
+  useImperativeHandle,
 } from 'react';
 import styled from '@emotion/styled';
 import Button from '@via-profit/ui-kit/src/Button';
@@ -21,8 +20,8 @@ type Props = {
   loop?: boolean;
   autoplay?: boolean;
   autoplayInterval?: number;
-  inertia?: boolean;
-  slidesPerView?: number;
+  dragThreshold?: number; // базовый threshold
+  snap?: boolean;
 };
 
 const Container = styled.div`
@@ -46,11 +45,11 @@ const Wrapper = styled.div`
 const Track = styled.div<{ dragging: boolean }>`
   display: flex;
   height: 100%;
-  transition: ${p => (p.dragging ? 'none' : 'transform 0.35s cubic-bezier(0.22, 0.61, 0.36, 1)')};
+  transition: ${p => (p.dragging ? 'none' : 'transform 0.3s ease')};
 `;
 
-const Slide = styled.div<{ width: number }>`
-  flex: 0 0 ${p => p.width}%;
+const Slide = styled.div`
+  flex: 0 0 100%;
   height: 100%;
   background: #f0f0f0;
   border: 1px solid #ddd;
@@ -80,8 +79,8 @@ const Swiper = forwardRef<SwiperRef, Props>(
       loop = true,
       autoplay = false,
       autoplayInterval = 3000,
-      inertia = true,
-      slidesPerView = 1,
+      dragThreshold = 50,
+      snap = true,
     },
     ref,
   ) => {
@@ -89,8 +88,8 @@ const Swiper = forwardRef<SwiperRef, Props>(
 
     const [index, setIndex] = useState(0);
     const [offset, setOffset] = useState(0);
-    const dragging = useRef(false);
 
+    const dragging = useRef(false);
     const startX = useRef(0);
     const lastX = useRef(0);
     const lastTime = useRef(0);
@@ -99,12 +98,10 @@ const Swiper = forwardRef<SwiperRef, Props>(
 
     const wrapperRef = useRef<HTMLDivElement | null>(null);
 
-    const slideWidthPercent = 100 / slidesPerView;
-
     const onPointerDown = (e: React.PointerEvent) => {
       if (!wrapperRef.current) return;
 
-      width.current = wrapperRef.current.offsetWidth / slidesPerView;
+      width.current = wrapperRef.current.offsetWidth;
       dragging.current = true;
 
       startX.current = e.clientX;
@@ -131,7 +128,7 @@ const Swiper = forwardRef<SwiperRef, Props>(
 
       if (!loop) {
         if (index === 0 && delta > 0) delta *= 0.3;
-        if (index === total - slidesPerView && delta < 0) delta *= 0.3;
+        if (index === total - 1 && delta < 0) delta *= 0.3;
       }
 
       setOffset(delta);
@@ -141,26 +138,33 @@ const Swiper = forwardRef<SwiperRef, Props>(
       if (!dragging.current) return;
 
       const delta = lastX.current - startX.current;
-      const threshold = width.current * 0.25;
+
+      const v = Math.abs(velocity.current);
+      const velocityFactor = Math.min(v * 250, 0.65);
+
+      const effectiveThreshold = dragThreshold * (1 - velocityFactor);
+      const clampedThreshold = Math.max(20, Math.min(effectiveThreshold, dragThreshold));
 
       let next = index;
 
-      if (Math.abs(delta) > threshold) {
+      if (Math.abs(delta) > clampedThreshold) {
         next = delta < 0 ? index + 1 : index - 1;
-      } else if (inertia && Math.abs(velocity.current) > 0.4) {
-        next = velocity.current < 0 ? index + 1 : index - 1;
       }
 
       if (loop) {
         next = (next + total) % total;
       } else {
-        next = Math.max(0, Math.min(total - slidesPerView, next));
+        next = Math.max(0, Math.min(total - 1, next));
       }
 
-      setIndex(next);
-      setOffset(0);
-      dragging.current = false;
+      if (snap) {
+        setIndex(next);
+        setOffset(0);
+      } else {
+        setIndex(next);
+      }
 
+      dragging.current = false;
       (e.target as HTMLElement).releasePointerCapture(e.pointerId);
     };
 
@@ -168,37 +172,31 @@ const Swiper = forwardRef<SwiperRef, Props>(
       if (!autoplay) return;
 
       const id = setInterval(() => {
-        setIndex(i =>
-          loop ? (i + 1) % total : Math.min(i + 1, total - slidesPerView),
-        );
+        setIndex(i => (loop ? (i + 1) % total : Math.min(i + 1, total - 1)));
       }, autoplayInterval);
 
       return () => clearInterval(id);
-    }, [autoplay, autoplayInterval, loop, total, slidesPerView]);
+    }, [autoplay, autoplayInterval, loop, total]);
 
     const next = useCallback(() => {
-      setIndex(i =>
-        loop ? (i + 1) % total : Math.min(i + 1, total - slidesPerView),
-      );
-    }, [loop, total, slidesPerView]);
+      setIndex(i => (loop ? (i + 1) % total : Math.min(i + 1, total - 1)));
+    }, [loop, total]);
 
     const prev = useCallback(() => {
-      setIndex(i =>
-        loop ? (i - 1 + total) % total : Math.max(i - 1, 0),
-      );
+      setIndex(i => (loop ? (i - 1 + total) % total : Math.max(i - 1, 0)));
     }, [loop, total]);
 
     const goTo = useCallback(
       (i: number) => {
         if (loop) setIndex((i + total) % total);
-        else setIndex(Math.max(0, Math.min(total - slidesPerView, i)));
+        else setIndex(Math.max(0, Math.min(total - 1, i)));
       },
-      [loop, total, slidesPerView],
+      [loop, total],
     );
 
     useImperativeHandle(ref, () => ({ next, prev, goTo }), [next, prev, goTo]);
 
-    const trackX = `calc(${-(index * slideWidthPercent)}% + ${offset}px)`;
+    const trackX = `calc(${-(index * 100)}% + ${offset}px)`;
 
     return (
       <>
@@ -211,9 +209,7 @@ const Swiper = forwardRef<SwiperRef, Props>(
           >
             <Track dragging={dragging.current} style={{ transform: `translateX(${trackX})` }}>
               {React.Children.map(children, (child, i) => (
-                <Slide key={i} width={slideWidthPercent}>
-                  {child}
-                </Slide>
+                <Slide key={i}>{child}</Slide>
               ))}
             </Track>
           </Wrapper>
