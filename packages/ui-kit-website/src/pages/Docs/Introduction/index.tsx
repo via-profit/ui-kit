@@ -2,25 +2,25 @@ import React from 'react';
 import MarkdownRender from '~/components/RenderMarkdown';
 import Surface from '@via-profit/ui-kit/src/Surface';
 import content from '@via-profit/ui-kit/docs/README.md';
-import Swiper, { Slide } from './Swiper';
+import Swiper, { SwiperSlide } from '@via-profit/ui-kit/src/Swiper';
 
 const Introduction: React.FC = () => {
   const modifiedContent = content.replace(/\.\//g, './docs/');
 
   return (
     <Surface>
-      <Swiper>
-        <Slide key={1} style={{ background: '#ff6b6b' }}>
+      <Swiper dragged={false}>
+        <SwiperSlide key={1} style={{ background: '#ff6b6b' }}>
           Слайд 1
-        </Slide>
+        </SwiperSlide>
 
-        <Slide key={2} style={{ background: '#4ecdc4' }}>
+        <SwiperSlide key={2} style={{ background: '#4ecdc4' }}>
           Слайд 2
-        </Slide>
+        </SwiperSlide>
 
-        <Slide key={3} style={{ background: '#ffe66d' }}>
+        <SwiperSlide key={3} style={{ background: '#ffe66d' }}>
           Слайд 3
-        </Slide>
+        </SwiperSlide>
       </Swiper>
 
       <MarkdownRender>{modifiedContent}</MarkdownRender>

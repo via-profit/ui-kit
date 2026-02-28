@@ -55,9 +55,7 @@ export interface SurfaceOverrides {
   /**
    * Surface header component
    */
-  readonly Header?: React.ComponentType<
-    SurfaceHeaderProps & React.RefAttributes<HTMLDivElement>
-  >;
+  readonly Header?: React.ComponentType<SurfaceHeaderProps & React.RefAttributes<HTMLDivElement>>;
   /**
    * Surface subheader component
    */
@@ -67,15 +65,11 @@ export interface SurfaceOverrides {
   /**
    * Surface content component
    */
-  readonly Content?: React.ComponentType<
-    SurfaceContentProps & React.RefAttributes<HTMLDivElement>
-  >;
+  readonly Content?: React.ComponentType<SurfaceContentProps & React.RefAttributes<HTMLDivElement>>;
   /**
    * Surface footer component
    */
-  readonly Footer?: React.ComponentType<
-    SurfaceFooterProps & React.RefAttributes<HTMLDivElement>
-  >;
+  readonly Footer?: React.ComponentType<SurfaceFooterProps & React.RefAttributes<HTMLDivElement>>;
 }
 
 const Surface: React.ForwardRefRenderFunction<HTMLDivElement, SurfaceProps> = (props, ref) => {
@@ -108,7 +102,7 @@ const Surface: React.ForwardRefRenderFunction<HTMLDivElement, SurfaceProps> = (p
 
   if (!hasHeader && hasSubheader) {
     console.warn(
-      `[@via-profit/ui-kit] Surface component. If you use a subheader, then you should add a header`,
+      '[@via-profit/ui-kit] Surface component. If you use a subheader, then you should add a header',
     );
   }
 

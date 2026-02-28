@@ -24,6 +24,7 @@ import IconPrev, { CalendarIconPrevProps } from './CalendarIconPrev';
 import IconNext, { CalendarIconNextProps } from './CalendarIconNext';
 import WeekDaysBar, { CalendarWeekDaysBarProps, WeekNameLabelFormat } from './CalendarWeekDaysBar';
 import { CalendarValue, useCalendar, Week, WeekDayName } from './use-calendar';
+import Swiper, { SwiperRef, SwiperSlide } from '@via-profit/ui-kit/src/Swiper';
 
 export * from './use-calendar';
 export * from './CalendarWeekDaysBar';
@@ -475,6 +476,8 @@ const Calendar = React.forwardRef(
       [overrides],
     );
 
+    const swiperRef = React.useRef<SwiperRef | null>(null);
+
     /**
      * Inside date value
      */
@@ -488,7 +491,7 @@ const Calendar = React.forwardRef(
     /**
      * Selected value
      */
-    const [value, setValue] = React.useState<[Date | null, Date | null] | Date | null>(
+    const [value, setValue] = React.useState<CalendarValue<IsRangeValue> | null>(
       inputValue ?? defaultValue ?? null,
     );
 
@@ -502,6 +505,19 @@ const Calendar = React.forwardRef(
         inputView,
       }),
     );
+
+    const selectView = React.useCallback((view: CalendarView) => {
+      setView(view);
+
+      const viewMap: Record<CalendarView, number> = {
+        days: 0,
+        months: 1,
+        years: 2,
+        weeks: 3,
+      };
+
+      swiperRef.current?.goToIndex(viewMap[view]);
+    }, []);
 
     /**
      * List of possibility views
@@ -520,7 +536,7 @@ const Calendar = React.forwardRef(
     useImperativeHandle(
       ref,
       () => ({
-        setView,
+        setView: selectView,
         // setViews,
         setValue,
         setCalendarDate,
@@ -591,7 +607,7 @@ const Calendar = React.forwardRef(
         if (!range) {
           onChange(selectedDate as any);
           if (!inputValue) {
-            setValue(selectedDate);
+            setValue(selectedDate as CalendarValue<IsRangeValue>);
           }
 
           return;
@@ -602,7 +618,7 @@ const Calendar = React.forwardRef(
 
         // No range selected yet → first click
         if (!from && !to) {
-          setValue([selectedDate, null]);
+          setValue([selectedDate, null] as CalendarValue<IsRangeValue>);
 
           return;
         }
@@ -611,15 +627,15 @@ const Calendar = React.forwardRef(
         if (from && (!to || from.getTime() === to.getTime())) {
           if (selectedDate < from) {
             // User clicked before the start → swap
-            // onChange([selectedDate, from] as any);
+            // onChange([selectedDate, from] as NonNullable<CalendarValue<IsRangeValue>>);
             if (!inputValue) {
-              setValue([selectedDate, from]);
+              setValue([selectedDate, from] as CalendarValue<IsRangeValue>);
             }
           } else {
             // Normal forward range
-            onChange([from, selectedDate] as any);
+            onChange([from, selectedDate] as NonNullable<CalendarValue<IsRangeValue>>);
             if (!inputValue) {
-              setValue([from, selectedDate]);
+              setValue([from, selectedDate] as CalendarValue<IsRangeValue>);
             }
           }
 
@@ -627,9 +643,9 @@ const Calendar = React.forwardRef(
         }
 
         // Full range already selected → start a new range
-        onChange([selectedDate, selectedDate] as any);
+        onChange([selectedDate, selectedDate] as NonNullable<CalendarValue<IsRangeValue>>);
         if (!inputValue) {
-          setValue([selectedDate, selectedDate]);
+          setValue([selectedDate, selectedDate] as CalendarValue<IsRangeValue>);
         }
       },
       [onChange, range, value, inputValue],
@@ -659,14 +675,14 @@ const Calendar = React.forwardRef(
 
         setCalendarDate(newDate);
         if (nextView) {
-          setView(nextView);
+          selectView(nextView);
         }
 
         if (!nextView && typeof onChange === 'function') {
           handleCellDateClick(newDate)();
         }
       },
-      [calendarDate, views, handleCellDateClick, onChange],
+      [calendarDate, views, onChange, selectView, handleCellDateClick],
     );
 
     /**
@@ -685,28 +701,14 @@ const Calendar = React.forwardRef(
 
         setCalendarDate(newDate);
         if (nextView) {
-          setView(nextView);
+          selectView(nextView);
         }
 
         if (!nextView && typeof onChange === 'function') {
           handleCellDateClick(newDate)();
         }
       },
-      [calendarDate, views, handleCellDateClick, onChange],
-    );
-
-    /**
-     * Manual view changing
-     */
-    const handleChangeView = React.useCallback(
-      (selectedView: CalendarView) => () => {
-        if (!views.includes(selectedView)) {
-          return;
-        }
-
-        setView(selectedView);
-      },
-      [views],
+      [calendarDate, views, onChange, selectView, handleCellDateClick],
     );
 
     /**
@@ -715,12 +717,12 @@ const Calendar = React.forwardRef(
     const handleReset = React.useCallback(() => {
       setCalendarDate(resetVariablesRef.current.calendarDate);
       setValue(resetVariablesRef.current.value);
-      setView(resetVariablesRef.current.view);
+      selectView(resetVariablesRef.current.view);
 
       if (typeof onChange === 'function') {
-        onChange(resetVariablesRef.current.value as CalendarValue<IsRangeValue>);
+        onChange(resetVariablesRef.current.value as NonNullable<CalendarValue<IsRangeValue>>);
       }
-    }, [onChange]);
+    }, [onChange, selectView]);
 
     /**
      * Handle click on «Today» button
@@ -734,7 +736,7 @@ const Calendar = React.forwardRef(
 
       setCalendarDate(today);
 
-      setValue(range ? [today, today] : today);
+      setValue((range ? [today, today] : today) as CalendarValue<IsRangeValue>);
 
       handleCellDateClick(today)();
     }, [handleCellDateClick, range]);
@@ -751,7 +753,7 @@ const Calendar = React.forwardRef(
           nextView = 'days';
         }
         if (nextView) {
-          setView(nextView);
+          selectView(nextView);
         }
 
         /// set value
@@ -762,26 +764,26 @@ const Calendar = React.forwardRef(
             onChange(dates as NonNullable<CalendarValue<IsRangeValue>>);
           }
         } else {
-          setValue(dates[0]);
+          setValue(dates[0] as CalendarValue<IsRangeValue>);
 
           if (typeof onChange === 'function') {
             onChange(dates[0] as any);
           }
         }
       },
-      [views, onChange, range],
+      [views, range, selectView, onChange],
     );
 
     const weeks = React.useMemo(() => getWeeks(calendarDate), [calendarDate, getWeeks]);
 
     const yearsRange = React.useMemo(
-      () => (view === 'years' ? getYearsRange(minDate, maxDate) : []),
-      [view, minDate, maxDate, getYearsRange],
+      () => getYearsRange(minDate, maxDate),
+      [minDate, maxDate, getYearsRange],
     );
 
     const monthsRange = React.useMemo(
-      () => (view === 'months' ? getMonthsRange(minDate, maxDate) : []),
-      [view, minDate, maxDate, getMonthsRange],
+      () => getMonthsRange(minDate, maxDate),
+      [minDate, maxDate, getMonthsRange],
     );
 
     return (
@@ -804,7 +806,7 @@ const Calendar = React.forwardRef(
               title={changeMonthButtonTooltip}
               isActive={view === 'months'}
               disabled={!views.includes('months')}
-              onClick={handleChangeView(view === 'months' ? 'days' : 'months')}
+              onClick={() => selectView(view === 'months' ? 'days' : 'months')}
             >
               {getMonthLabel(calendarDate)}
             </overridesMap.ControlButton>
@@ -812,7 +814,7 @@ const Calendar = React.forwardRef(
               isActive={view === 'years'}
               disabled={!views.includes('years')}
               title={changeYearButtonTooltip}
-              onClick={handleChangeView(view === 'years' ? 'days' : 'years')}
+              onClick={() => selectView(view === 'years' ? 'days' : 'years')}
             >
               {getYearLabel(calendarDate)}
             </overridesMap.ControlButton>
@@ -836,158 +838,166 @@ const Calendar = React.forwardRef(
         )}
 
         <overridesMap.Body>
-          {view === 'years' && (
-            <overridesMap.YearsSelector>
-              {yearsRange.map(year => {
-                const isSelected = calendarDate.getFullYear() === year;
-
-                return (
-                  <overridesMap.YearCell
-                    key={year}
-                    accentColor={accentColor}
-                    isSelected={isSelected}
-                    onClick={handleYearSelected(year)}
-                  >
-                    {getYearLabel(
-                      new Date(year, calendarDate.getMonth(), calendarDate.getDate(), 0, 0, 0, 0),
-                    )}
-                  </overridesMap.YearCell>
-                );
-              })}
-            </overridesMap.YearsSelector>
-          )}
-
-          {view === 'months' && (
-            <overridesMap.MonthsSelector>
-              {monthsRange.map(monthIndex => {
-                const isSelected = calendarDate.getMonth() === monthIndex;
-
-                return (
-                  <overridesMap.MonthCell
-                    key={monthIndex + monthsRange[monthIndex]}
-                    accentColor={accentColor}
-                    isSelected={isSelected}
-                    onClick={handleMonthSelected(monthIndex)}
-                  >
-                    {getMonthLabel(new Date(calendarDate.getFullYear(), monthIndex, 1, 0, 0, 0, 0))}
-                  </overridesMap.MonthCell>
-                );
-              })}
-            </overridesMap.MonthsSelector>
-          )}
-          {view === 'weeks' && (
-            <overridesMap.DateContainer>
-              {getWeeks(calendarDate).map(week => {
-                let isSelected = false;
-                if (isRangeValue(value)) {
-                  const [from, to] = value;
-
-                  if (from && to) {
-                    if (
-                      isSameDay(from, week.days[0].date) &&
-                      isSameDay(to, week.days[week.days.length - 1].date)
-                    ) {
-                      isSelected = true;
-                    }
-                  }
-                }
-
-                return (
-                  <overridesMap.WeekRowButton
-                    key={week.weekNumber}
-                    isSelected={isSelected}
-                    onClick={handleClickWeek(week)}
-                    accentColor={accentColor}
-                    week={week}
-                  >
-                    <overridesMap.WeekDayWeekNumber week={week}>
-                      {week.weekNumber}
-                    </overridesMap.WeekDayWeekNumber>
+          <Swiper draggable={false} ref={swiperRef}>
+            {/* 0 - DAYS */}
+            <SwiperSlide>
+              <overridesMap.DateContainer>
+                {getWeeks(calendarDate).map(week => (
+                  <overridesMap.WeekRow key={week.weekNumber}>
                     {week.days.map(day => {
-                      const badge = badges.find(b => isSameDay(b.date, day.date));
-                      const inCurrentMonth = day.date.getMonth() === calendarDate.getMonth();
+                      if (day.date.getMonth() === calendarDate.getMonth()) {
+                        const badge = badges.find(b => isSameDay(b.date, day.date));
+                        let fill = false;
+                        let isSelected: boolean = false;
 
-                      return (
-                        <overridesMap.WeekDayCell
-                          key={day.date.getTime()}
-                          isToday={markToday && day.isToday}
-                          inCurrentMonth={inCurrentMonth}
-                        >
-                          {getDayLabel(day.date)}
+                        if (isRangeValue(value)) {
+                          const [from, to] = value;
 
-                          {badge && (
-                            <overridesMap.DayBadge
-                              badgeContent={badge.badgeContent}
-                              isToday={day.isToday}
-                              accentColor={badge.accentColor}
-                            />
-                          )}
-                        </overridesMap.WeekDayCell>
-                      );
-                    })}
-                  </overridesMap.WeekRowButton>
-                );
-              })}
-            </overridesMap.DateContainer>
-          )}
-          {view === 'days' && (
-            <overridesMap.DateContainer>
-              {getWeeks(calendarDate).map(week => (
-                <overridesMap.WeekRow key={week.weekNumber}>
-                  {week.days.map(day => {
-                    if (day.date.getMonth() === calendarDate.getMonth()) {
-                      const badge = badges.find(b => isSameDay(b.date, day.date));
-                      let fill = false;
-                      let isSelected: boolean = false;
-
-                      if (isRangeValue(value)) {
-                        const [from, to] = value;
-
-                        if (from && to) {
-                          fill =
-                            day.date.getTime() >= from.getTime() &&
-                            day.date.getTime() <= to.getTime();
+                          if (from && to) {
+                            fill =
+                              day.date.getTime() >= from.getTime() &&
+                              day.date.getTime() <= to.getTime();
+                          }
+                          isSelected = Boolean(
+                            (from && isSameDay(from, day.date)) || (to && isSameDay(to, day.date)),
+                          );
+                        } else if (isNotRangeValue(value)) {
+                          isSelected = Boolean(value && isSameDay(value, day.date));
                         }
-                        isSelected = Boolean(
-                          (from && isSameDay(from, day.date)) || (to && isSameDay(to, day.date)),
+
+                        return (
+                          <overridesMap.Cell
+                            key={day.date.getTime()}
+                            isToday={markToday && day.isToday}
+                            isDisabled={day.isDisabled}
+                            accentColor={accentColor}
+                            isSelected={isSelected}
+                            fill={fill}
+                            onClick={handleCellDateClick(day.date)}
+                          >
+                            {getDayLabel(day.date)}
+
+                            {badge && (
+                              <overridesMap.DayBadge
+                                badgeContent={badge.badgeContent}
+                                isToday={day.isToday}
+                                accentColor={badge.accentColor}
+                              />
+                            )}
+                          </overridesMap.Cell>
                         );
-                      } else if (isNotRangeValue(value)) {
-                        isSelected = Boolean(value && isSameDay(value, day.date));
                       }
 
                       return (
-                        <overridesMap.Cell
-                          key={day.date.getTime()}
-                          isToday={markToday && day.isToday}
-                          isDisabled={day.isDisabled}
-                          accentColor={accentColor}
-                          isSelected={isSelected}
-                          fill={fill}
-                          onClick={handleCellDateClick(day.date)}
-                        >
+                        <overridesMap.EmptyCell key={day.date.getTime()}>
                           {getDayLabel(day.date)}
-
-                          {badge && (
-                            <overridesMap.DayBadge
-                              badgeContent={badge.badgeContent}
-                              isToday={day.isToday}
-                              accentColor={badge.accentColor}
-                            />
-                          )}
-                        </overridesMap.Cell>
+                        </overridesMap.EmptyCell>
                       );
-                    }
+                    })}
+                  </overridesMap.WeekRow>
+                ))}
+              </overridesMap.DateContainer>
+            </SwiperSlide>
+            {/* 1 - MONTHS */}
+            <SwiperSlide>
+              <overridesMap.MonthsSelector>
+                {monthsRange.map(monthIndex => {
+                  const isSelected = calendarDate.getMonth() === monthIndex;
 
-                    return (
-                      <overridesMap.EmptyCell key={day.date.getTime()}>
-                        {getDayLabel(day.date)}
-                      </overridesMap.EmptyCell>
-                    );
-                  })}
-                </overridesMap.WeekRow>
-              ))}
-            </overridesMap.DateContainer>
-          )}
+                  return (
+                    <overridesMap.MonthCell
+                      key={monthIndex + monthsRange[monthIndex]}
+                      accentColor={accentColor}
+                      isSelected={isSelected}
+                      onClick={handleMonthSelected(monthIndex)}
+                    >
+                      {getMonthLabel(
+                        new Date(calendarDate.getFullYear(), monthIndex, 1, 0, 0, 0, 0),
+                      )}
+                    </overridesMap.MonthCell>
+                  );
+                })}
+              </overridesMap.MonthsSelector>
+            </SwiperSlide>
+
+            {/* 2 - YEARS */}
+            <SwiperSlide>
+              <overridesMap.YearsSelector>
+                {yearsRange.map(year => {
+                  const isSelected = calendarDate.getFullYear() === year;
+
+                  return (
+                    <overridesMap.YearCell
+                      key={year}
+                      accentColor={accentColor}
+                      isSelected={isSelected}
+                      onClick={handleYearSelected(year)}
+                    >
+                      {getYearLabel(
+                        new Date(year, calendarDate.getMonth(), calendarDate.getDate(), 0, 0, 0, 0),
+                      )}
+                    </overridesMap.YearCell>
+                  );
+                })}
+              </overridesMap.YearsSelector>
+            </SwiperSlide>
+            {/* 3 - WEEKS */}
+            <SwiperSlide>
+              <overridesMap.DateContainer>
+                {getWeeks(calendarDate).map(week => {
+                  let isSelected = false;
+                  if (isRangeValue(value)) {
+                    const [from, to] = value;
+
+                    if (from && to) {
+                      if (
+                        isSameDay(from, week.days[0].date) &&
+                        isSameDay(to, week.days[week.days.length - 1].date)
+                      ) {
+                        isSelected = true;
+                      }
+                    }
+                  }
+
+                  return (
+                    <overridesMap.WeekRowButton
+                      key={week.weekNumber}
+                      isSelected={isSelected}
+                      onClick={handleClickWeek(week)}
+                      accentColor={accentColor}
+                      week={week}
+                    >
+                      <overridesMap.WeekDayWeekNumber week={week}>
+                        {week.weekNumber}
+                      </overridesMap.WeekDayWeekNumber>
+                      {week.days.map(day => {
+                        const badge = badges.find(b => isSameDay(b.date, day.date));
+                        const inCurrentMonth = day.date.getMonth() === calendarDate.getMonth();
+
+                        return (
+                          <overridesMap.WeekDayCell
+                            key={day.date.getTime()}
+                            isToday={markToday && day.isToday}
+                            inCurrentMonth={inCurrentMonth}
+                          >
+                            {getDayLabel(day.date)}
+
+                            {badge && (
+                              <overridesMap.DayBadge
+                                badgeContent={badge.badgeContent}
+                                isToday={day.isToday}
+                                accentColor={badge.accentColor}
+                              />
+                            )}
+                          </overridesMap.WeekDayCell>
+                        );
+                      })}
+                    </overridesMap.WeekRowButton>
+                  );
+                })}
+              </overridesMap.DateContainer>
+            </SwiperSlide>
+          </Swiper>
         </overridesMap.Body>
         {(typeof resetButtonLabel !== 'undefined' ||
           typeof todayButtonLabel !== 'undefined' ||
