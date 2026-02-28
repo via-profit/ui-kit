@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import styled from '@emotion/styled';
 import Button from '@via-profit/ui-kit/src/Button';
 
@@ -20,14 +20,13 @@ const SliderWrapper = styled.div`
   overflow: hidden;
   touch-action: pan-y;
   height: 100%;
-  user-select: none; /* Предотвращает выделение текста при перетаскивании мышью */
+  user-select: none;
 `;
 
 const SliderTrack = styled.div<{ isDragging: boolean }>`
   display: flex;
   height: 100%;
   transition: ${props => (props.isDragging ? 'none' : 'transform 0.3s ease')};
-  /* cursor: ${props => (props.isDragging ? 'grabbing' : 'grab')}; */
 `;
 
 export const Slide = styled.div`
@@ -67,230 +66,88 @@ const ControlButton = styled(Button)`
 
 const Swiper: React.FC<Props> = ({ children }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [touchStart, setTouchStart] = useState<number | null>(null);
-  const [touchCurrent, setTouchCurrent] = useState<number | null>(null);
-  const [isDragging, setIsDragging] = useState(false);
-  const [dragOffset, setDragOffset] = useState(0);
+  const [offset, setOffset] = useState(0);
 
-  const sliderRef = useRef<HTMLDivElement | null>(null);
-  const trackRef = useRef<HTMLDivElement | null>(null);
+  const isDragging = useRef(false);
+  const startX = useRef(0);
+  const lastX = useRef(0);
+  const width = useRef(0);
 
-  const minSwipeDistance = 50;
+  const wrapperRef = useRef<HTMLDivElement | null>(null);
 
-  // Сброс смещения при изменении индекса
-  useEffect(() => {
-    if (!isDragging) {
-      setDragOffset(0);
-    }
-  }, [currentIndex, isDragging]);
+  const minSwipe = 50;
 
-  // Блокируем контекстное меню на треке во время драга
-  useEffect(() => {
-    const preventContextMenu = (e: MouseEvent) => {
-      if (isDragging) {
-        e.preventDefault();
-      }
-    };
+  const onPointerDown = (e: React.PointerEvent) => {
+    if (!wrapperRef.current) return;
 
-    document.addEventListener('contextmenu', preventContextMenu);
+    width.current = wrapperRef.current.offsetWidth;
+    isDragging.current = true;
+    startX.current = e.clientX;
+    lastX.current = e.clientX;
 
-    return () => {
-      document.removeEventListener('contextmenu', preventContextMenu);
-    };
-  }, [isDragging]);
-
-  const handleDragStart = (clientX: number) => {
-    setIsDragging(true);
-    setTouchStart(clientX);
-    setTouchCurrent(clientX);
-    setDragOffset(0);
+    (e.target as HTMLElement).setPointerCapture(e.pointerId);
   };
 
-  const handleDragMove = (clientX: number) => {
-    if (!isDragging || touchStart === null) return;
+  const onPointerMove = (e: React.PointerEvent) => {
+    if (!isDragging.current) return;
 
-    setTouchCurrent(clientX);
-    const delta = clientX - touchStart;
+    lastX.current = e.clientX;
+    const delta = lastX.current - startX.current;
 
-    // Вычисляем новое смещение в процентах
-    let newOffset = (delta / (sliderRef.current?.offsetWidth || 1)) * 100;
+    let newOffset = delta;
 
-    // Ограничиваем смещение, чтобы нельзя было утащить дальше границ
-    const maxDrag = 100; // максимум 100% вправо (предыдущий слайд)
-    const minDrag = -100; // минимум -100% влево (следующий слайд)
+    if (currentIndex === 0 && delta > 0) newOffset = delta * 0.3;
+    if (currentIndex === children.length - 1 && delta < 0) newOffset = delta * 0.3;
 
-    // Применяем ограничения
-    newOffset = Math.max(minDrag, Math.min(maxDrag, newOffset));
-
-    // Добавляем сопротивление на границах (эффект пружины)
-    if (currentIndex === 0 && newOffset > 0) {
-      // Сопротивление при попытке утащить первый слайд вправо
-      newOffset = newOffset * 0.3;
-    } else if (currentIndex === children.length - 1 && newOffset < 0) {
-      // Сопротивление при попытке утащить последний слайд влево
-      newOffset = newOffset * 0.3;
-    }
-
-    setDragOffset(newOffset);
+    setOffset(newOffset);
   };
 
-  const handleDragEnd = () => {
-    if (!isDragging || touchStart === null || touchCurrent === null) {
-      setIsDragging(false);
+  const onPointerUp = (e: React.PointerEvent) => {
+    if (!isDragging.current) return;
 
-      return;
-    }
+    const delta = lastX.current - startX.current;
 
-    const delta = touchCurrent - touchStart;
-    const swipeDistance = Math.abs(delta);
-
-    // Определяем, нужно ли переключать слайд
-    if (swipeDistance > minSwipeDistance) {
+    if (Math.abs(delta) > minSwipe) {
       if (delta < 0 && currentIndex < children.length - 1) {
-        // Свайп влево
-        setCurrentIndex(prev => prev + 1);
+        setCurrentIndex(i => i + 1);
       } else if (delta > 0 && currentIndex > 0) {
-        // Свайп вправо
-        setCurrentIndex(prev => prev - 1);
-      } else {
-        // Если достигнут край, возвращаем с анимацией
-        setDragOffset(0);
+        setCurrentIndex(i => i - 1);
       }
-    } else {
-      // Если свайп был слишком коротким, возвращаемся к текущему слайду
-      setDragOffset(0);
     }
 
-    setIsDragging(false);
-    setTouchStart(null);
-    setTouchCurrent(null);
+    setOffset(0);
+    isDragging.current = false;
+
+    (e.target as HTMLElement).releasePointerCapture(e.pointerId);
   };
 
-  // Обработчики для сенсорных устройств
-  const onTouchStart = (e: React.TouchEvent) => {
-    e.preventDefault();
-    handleDragStart(e.targetTouches[0].clientX);
-  };
+  const goNext = useCallback(() => {
+    setCurrentIndex(i => Math.min(i + 1, children.length - 1));
+  }, [children.length]);
 
-  const onTouchMove = (e: React.TouchEvent) => {
-    if (!isDragging) return;
-    e.preventDefault(); // Предотвращаем скролл страницы
-    handleDragMove(e.targetTouches[0].clientX);
-  };
+  const goPrev = useCallback(() => {
+    setCurrentIndex(i => Math.max(i - 1, 0));
+  }, []);
 
-  const onTouchEnd = () => {
-    handleDragEnd();
-  };
-
-  const onTouchCancel = () => {
-    if (isDragging) {
-      handleDragEnd();
-    }
-  };
-
-  // Обработчики для мыши (ПК)
-  const onMouseDown = (e: React.MouseEvent) => {
-    e.preventDefault();
-    // Запоминаем начальную позицию мыши
-    handleDragStart(e.clientX);
-  };
-
-  const onMouseMove = (e: React.MouseEvent) => {
-    if (!isDragging) return;
-    e.preventDefault();
-    handleDragMove(e.clientX);
-  };
-
-  const onMouseUp = () => {
-    if (isDragging) {
-      handleDragEnd();
-    }
-  };
-
-  const onMouseLeave = () => {
-    if (isDragging) {
-      handleDragEnd();
-    }
-  };
-
-  // Глобальные обработчики для мыши (чтобы ловить события даже за пределами компонента)
-  useEffect(() => {
-    if (!isDragging) return;
-
-    const handleGlobalMouseMove = (e: MouseEvent) => {
-      e.preventDefault();
-      handleDragMove(e.clientX);
-    };
-
-    const handleGlobalMouseUp = () => {
-      handleDragEnd();
-    };
-
-    const handleGlobalMouseLeave = () => {
-      handleDragEnd();
-    };
-
-    // Добавляем глобальные обработчики
-    document.addEventListener('mousemove', handleGlobalMouseMove);
-    document.addEventListener('mouseup', handleGlobalMouseUp);
-    document.addEventListener('mouseleave', handleGlobalMouseLeave);
-
-    return () => {
-      // Удаляем глобальные обработчики
-      document.removeEventListener('mousemove', handleGlobalMouseMove);
-      document.removeEventListener('mouseup', handleGlobalMouseUp);
-      document.removeEventListener('mouseleave', handleGlobalMouseLeave);
-    };
-  }, [isDragging, touchStart, touchCurrent, currentIndex]);
-
-  const goToNext = () => {
-    setCurrentIndex(prev => Math.min(prev + 1, children.length - 1));
-  };
-
-  const goToPrev = () => {
-    setCurrentIndex(prev => Math.max(prev - 1, 0));
-  };
-
-  // Вычисляем позицию трека
-  const getTrackPosition = () => {
-    const basePosition = -currentIndex * 100;
-    if (isDragging) {
-      return basePosition + dragOffset;
-    }
-
-    return basePosition;
-  };
+  const trackX = `calc(${-currentIndex * 100}% + ${offset}px)`;
 
   return (
     <SliderContainer>
       <SliderWrapper
-        ref={sliderRef}
-        // Сенсорные события
-        onTouchStart={onTouchStart}
-        onTouchMove={onTouchMove}
-        onTouchEnd={onTouchEnd}
-        onTouchCancel={onTouchCancel}
-        // События мыши
-        onMouseDown={onMouseDown}
-        onMouseMove={onMouseMove}
-        onMouseUp={onMouseUp}
-        onMouseLeave={onMouseLeave}
-        // Стили для курсора
-        // style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
+        ref={wrapperRef}
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={onPointerUp}
       >
-        <SliderTrack
-          ref={trackRef}
-          isDragging={isDragging}
-          style={{ transform: `translateX(${getTrackPosition()}%)` }}
-        >
+        <SliderTrack isDragging={isDragging.current} style={{ transform: `translateX(${trackX})` }}>
           {React.Children.map(children, child => (
-            <Slide style={{ pointerEvents: isDragging ? 'none' : 'auto' }}>{child}</Slide>
+            <Slide>{child}</Slide>
           ))}
         </SliderTrack>
       </SliderWrapper>
 
       <SliderControls>
-        <ControlButton type="button" onClick={goToPrev} disabled={currentIndex === 0}>
+        <ControlButton type="button" onClick={goPrev} disabled={currentIndex === 0}>
           ←
         </ControlButton>
         <span>
@@ -298,7 +155,7 @@ const Swiper: React.FC<Props> = ({ children }) => {
         </span>
         <ControlButton
           type="button"
-          onClick={goToNext}
+          onClick={goNext}
           disabled={currentIndex === children.length - 1}
         >
           →
