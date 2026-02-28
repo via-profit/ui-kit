@@ -1,168 +1,235 @@
-import React, { useState, useRef, useCallback } from 'react';
+import React, {
+  useState,
+  useRef,
+  useEffect,
+  useCallback,
+  useMemo,
+  useImperativeHandle,
+  forwardRef,
+} from 'react';
 import styled from '@emotion/styled';
 import Button from '@via-profit/ui-kit/src/Button';
 
-type Props = {
-  readonly children: readonly React.ReactNode[];
+export type SwiperRef = {
+  next(): void;
+  prev(): void;
+  goTo(index: number): void;
 };
 
-const SliderContainer = styled.div`
+type Props = {
+  children: React.ReactNode[];
+  loop?: boolean;
+  autoplay?: boolean;
+  autoplayInterval?: number;
+  inertia?: boolean;
+  slidesPerView?: number;
+};
+
+const Container = styled.div`
   width: 100%;
   max-width: 600px;
   height: 200px;
-  background-color: gray;
   margin: 0 auto;
   overflow: hidden;
+  background: gray;
   position: relative;
 `;
 
-const SliderWrapper = styled.div`
+const Wrapper = styled.div`
+  width: 100%;
+  height: 100%;
   overflow: hidden;
   touch-action: pan-y;
-  height: 100%;
   user-select: none;
 `;
 
-const SliderTrack = styled.div<{ isDragging: boolean }>`
+const Track = styled.div<{ dragging: boolean }>`
   display: flex;
   height: 100%;
-  transition: ${props => (props.isDragging ? 'none' : 'transform 0.3s ease')};
+  transition: ${p => (p.dragging ? 'none' : 'transform 0.35s cubic-bezier(0.22, 0.61, 0.36, 1)')};
 `;
 
-export const Slide = styled.div`
-  flex: 0 0 100%;
+const Slide = styled.div<{ width: number }>`
+  flex: 0 0 ${p => p.width}%;
   height: 100%;
+  background: #f0f0f0;
+  border: 1px solid #ddd;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #f0f0f0;
-  border: 1px solid #ddd;
-  font-size: 24px;
-  user-select: none;
+  font-size: 22px;
   box-sizing: border-box;
 `;
 
-const SliderControls = styled.div`
+const Controls = styled.div`
   display: flex;
   justify-content: center;
-  align-items: center;
   gap: 20px;
   margin-top: 15px;
 `;
 
-const ControlButton = styled(Button)`
+const Btn = styled(Button)`
   padding: 8px 16px;
   font-size: 18px;
-  cursor: pointer;
-  border: 1px solid #ccc;
-  background: #fff;
-  border-radius: 4px;
-
-  &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
 `;
 
-const Swiper: React.FC<Props> = ({ children }) => {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [offset, setOffset] = useState(0);
+const Swiper = forwardRef<SwiperRef, Props>(
+  (
+    {
+      children,
+      loop = true,
+      autoplay = false,
+      autoplayInterval = 3000,
+      inertia = true,
+      slidesPerView = 1,
+    },
+    ref,
+  ) => {
+    const total = children.length;
 
-  const isDragging = useRef(false);
-  const startX = useRef(0);
-  const lastX = useRef(0);
-  const width = useRef(0);
+    const [index, setIndex] = useState(0);
+    const [offset, setOffset] = useState(0);
+    const dragging = useRef(false);
 
-  const wrapperRef = useRef<HTMLDivElement | null>(null);
+    const startX = useRef(0);
+    const lastX = useRef(0);
+    const lastTime = useRef(0);
+    const velocity = useRef(0);
+    const width = useRef(0);
 
-  const minSwipe = 50;
+    const wrapperRef = useRef<HTMLDivElement | null>(null);
 
-  const onPointerDown = (e: React.PointerEvent) => {
-    if (!wrapperRef.current) return;
+    const slideWidthPercent = 100 / slidesPerView;
 
-    width.current = wrapperRef.current.offsetWidth;
-    isDragging.current = true;
-    startX.current = e.clientX;
-    lastX.current = e.clientX;
+    const onPointerDown = (e: React.PointerEvent) => {
+      if (!wrapperRef.current) return;
 
-    (e.target as HTMLElement).setPointerCapture(e.pointerId);
-  };
+      width.current = wrapperRef.current.offsetWidth / slidesPerView;
+      dragging.current = true;
 
-  const onPointerMove = (e: React.PointerEvent) => {
-    if (!isDragging.current) return;
+      startX.current = e.clientX;
+      lastX.current = e.clientX;
+      lastTime.current = performance.now();
+      velocity.current = 0;
 
-    lastX.current = e.clientX;
-    const delta = lastX.current - startX.current;
+      (e.target as HTMLElement).setPointerCapture(e.pointerId);
+    };
 
-    let newOffset = delta;
+    const onPointerMove = (e: React.PointerEvent) => {
+      if (!dragging.current) return;
 
-    if (currentIndex === 0 && delta > 0) newOffset = delta * 0.3;
-    if (currentIndex === children.length - 1 && delta < 0) newOffset = delta * 0.3;
+      const now = performance.now();
+      const dx = e.clientX - lastX.current;
+      const dt = now - lastTime.current;
 
-    setOffset(newOffset);
-  };
+      if (dt > 0) velocity.current = dx / dt;
 
-  const onPointerUp = (e: React.PointerEvent) => {
-    if (!isDragging.current) return;
+      lastX.current = e.clientX;
+      lastTime.current = now;
 
-    const delta = lastX.current - startX.current;
+      let delta = lastX.current - startX.current;
 
-    if (Math.abs(delta) > minSwipe) {
-      if (delta < 0 && currentIndex < children.length - 1) {
-        setCurrentIndex(i => i + 1);
-      } else if (delta > 0 && currentIndex > 0) {
-        setCurrentIndex(i => i - 1);
+      if (!loop) {
+        if (index === 0 && delta > 0) delta *= 0.3;
+        if (index === total - slidesPerView && delta < 0) delta *= 0.3;
       }
-    }
 
-    setOffset(0);
-    isDragging.current = false;
+      setOffset(delta);
+    };
 
-    (e.target as HTMLElement).releasePointerCapture(e.pointerId);
-  };
+    const onPointerUp = (e: React.PointerEvent) => {
+      if (!dragging.current) return;
 
-  const goNext = useCallback(() => {
-    setCurrentIndex(i => Math.min(i + 1, children.length - 1));
-  }, [children.length]);
+      const delta = lastX.current - startX.current;
+      const threshold = width.current * 0.25;
 
-  const goPrev = useCallback(() => {
-    setCurrentIndex(i => Math.max(i - 1, 0));
-  }, []);
+      let next = index;
 
-  const trackX = `calc(${-currentIndex * 100}% + ${offset}px)`;
+      if (Math.abs(delta) > threshold) {
+        next = delta < 0 ? index + 1 : index - 1;
+      } else if (inertia && Math.abs(velocity.current) > 0.4) {
+        next = velocity.current < 0 ? index + 1 : index - 1;
+      }
 
-  return (
-    <SliderContainer>
-      <SliderWrapper
-        ref={wrapperRef}
-        onPointerDown={onPointerDown}
-        onPointerMove={onPointerMove}
-        onPointerUp={onPointerUp}
-      >
-        <SliderTrack isDragging={isDragging.current} style={{ transform: `translateX(${trackX})` }}>
-          {React.Children.map(children, child => (
-            <Slide>{child}</Slide>
-          ))}
-        </SliderTrack>
-      </SliderWrapper>
+      if (loop) {
+        next = (next + total) % total;
+      } else {
+        next = Math.max(0, Math.min(total - slidesPerView, next));
+      }
 
-      <SliderControls>
-        <ControlButton type="button" onClick={goPrev} disabled={currentIndex === 0}>
-          ←
-        </ControlButton>
-        <span>
-          {currentIndex + 1} / {children.length}
-        </span>
-        <ControlButton
-          type="button"
-          onClick={goNext}
-          disabled={currentIndex === children.length - 1}
-        >
-          →
-        </ControlButton>
-      </SliderControls>
-    </SliderContainer>
-  );
-};
+      setIndex(next);
+      setOffset(0);
+      dragging.current = false;
+
+      (e.target as HTMLElement).releasePointerCapture(e.pointerId);
+    };
+
+    useEffect(() => {
+      if (!autoplay) return;
+
+      const id = setInterval(() => {
+        setIndex(i =>
+          loop ? (i + 1) % total : Math.min(i + 1, total - slidesPerView),
+        );
+      }, autoplayInterval);
+
+      return () => clearInterval(id);
+    }, [autoplay, autoplayInterval, loop, total, slidesPerView]);
+
+    const next = useCallback(() => {
+      setIndex(i =>
+        loop ? (i + 1) % total : Math.min(i + 1, total - slidesPerView),
+      );
+    }, [loop, total, slidesPerView]);
+
+    const prev = useCallback(() => {
+      setIndex(i =>
+        loop ? (i - 1 + total) % total : Math.max(i - 1, 0),
+      );
+    }, [loop, total]);
+
+    const goTo = useCallback(
+      (i: number) => {
+        if (loop) setIndex((i + total) % total);
+        else setIndex(Math.max(0, Math.min(total - slidesPerView, i)));
+      },
+      [loop, total, slidesPerView],
+    );
+
+    useImperativeHandle(ref, () => ({ next, prev, goTo }), [next, prev, goTo]);
+
+    const trackX = `calc(${-(index * slideWidthPercent)}% + ${offset}px)`;
+
+    return (
+      <>
+        <Container>
+          <Wrapper
+            ref={wrapperRef}
+            onPointerDown={onPointerDown}
+            onPointerMove={onPointerMove}
+            onPointerUp={onPointerUp}
+          >
+            <Track dragging={dragging.current} style={{ transform: `translateX(${trackX})` }}>
+              {React.Children.map(children, (child, i) => (
+                <Slide key={i} width={slideWidthPercent}>
+                  {child}
+                </Slide>
+              ))}
+            </Track>
+          </Wrapper>
+        </Container>
+
+        <Controls>
+          <Btn type="button" onClick={prev}>
+            ←
+          </Btn>
+          <Btn type="button" onClick={next}>
+            →
+          </Btn>
+        </Controls>
+      </>
+    );
+  },
+);
 
 export default Swiper;
