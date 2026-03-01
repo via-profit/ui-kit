@@ -50,6 +50,7 @@ const StyledMenuList = styled.div<{ $isOpen: boolean }>`
   overflow-y: auto;
   padding: 0.4em;
   max-height: 18em;
+  min-width: 16em;
 `;
 
 const MenuList: React.ForwardRefRenderFunction<HTMLDivElement, MenuListProps> = (props, ref) => {

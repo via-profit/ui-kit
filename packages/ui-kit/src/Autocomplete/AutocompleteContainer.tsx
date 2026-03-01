@@ -261,7 +261,6 @@ const Autocomplete = React.forwardRef(
     const { state, dispatch } = useContext();
     const { currentOpen, filteredItems, inputValue, currentValue, anchorElement, currentLoading } =
       state;
-
     const overridesMap = React.useMemo(
       () => ({
         TextField: overrides?.TextField || TextField,

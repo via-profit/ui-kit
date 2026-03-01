@@ -1,12 +1,12 @@
 import React from 'react';
-import styled from '@emotion/styled';
 
 import useContext, { actionSetmenuState } from './context';
 import List, { MenuListProps } from './MenuList';
 import Popper, { AnchorPos, PopperProps, PositionStrategy } from '../Popper';
 import type { MenuItemCommonProps } from './MenuItem';
 import ClickOutside from '../ClickOutside';
-import { VirtualizedList } from './VirtualizedList';
+import VirtualizedList, { VirtualizedListRef } from './VirtualizedList';
+import VirtualizedItem from './VirtualizedItem';
 
 export type AnchorElement<E extends HTMLElement = HTMLElement> = E;
 
@@ -17,13 +17,6 @@ export type Children<T> = (
   },
   itemProps: MenuItemCommonProps,
 ) => React.ReactNode;
-
-const VirtualizedItem = styled.div`
-  width: 100%;
-  & > div {
-    width: 100%;
-  }
-`;
 
 export interface MenuProps<T, Multiple extends boolean | undefined = undefined> {
   /**
@@ -351,6 +344,7 @@ const MenuContainer = React.forwardRef(
     const isOpenRef = React.useRef(isOpen);
     const menuListRef = React.useRef<HTMLDivElement | null>(null);
     const menuPopperRef = React.useRef<HTMLDivElement | null>(null);
+    const virtListRef = React.useRef<VirtualizedListRef | null>(null);
     const {
       dispatch,
       state: { selectedIndexes, markedIndex, hoveredIndex },
@@ -359,12 +353,8 @@ const MenuContainer = React.forwardRef(
     const timeoutRef = React.useRef<NodeJS.Timeout | null>(null);
 
     const scrollToIndex = React.useCallback((index: number) => {
-      const option = menuListRef?.current?.children[index];
-      if (option) {
-        option.scrollIntoView({
-          behavior: 'auto',
-          block: 'nearest',
-        });
+      if (virtListRef.current) {
+        virtListRef.current.scrollToIndex(index);
       }
     }, []);
 
@@ -744,9 +734,14 @@ const MenuContainer = React.forwardRef(
             ref={menuListRef}
             onKeyDown={listKeydownEvent}
           >
-            <VirtualizedList isOpen={Boolean(isOpen)} items={items} itemHeight={2.3 * 16} height={250}>
-              {({ index, style, item }) => (
-                <VirtualizedItem key={index} style={style}>
+            <VirtualizedList ref={virtListRef} isOpen={Boolean(isOpen)} items={items} height={250}>
+              {({ index, style, item, setItemHeight }) => (
+                <VirtualizedItem
+                  key={index}
+                  style={style}
+                  setItemHeight={setItemHeight}
+                  index={index}
+                >
                   {children({ index, item } as { index: number; item: T }, {
                     key: index,
                     onMouseEnter: itemMouseEnterHandler(index, hoveredIndex),

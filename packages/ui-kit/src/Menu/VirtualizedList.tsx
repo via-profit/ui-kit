@@ -4,8 +4,9 @@ import styled from '@emotion/styled';
 export type VirtualizedListProps<T> = {
   readonly isOpen: boolean;
   readonly items: readonly T[];
-  readonly itemHeight: number;
   readonly height: number;
+  readonly overscan?: number;
+  readonly baseItemHeight?: number;
   readonly children: (params: ChildrenProps<T>) => React.ReactNode;
 };
 
@@ -13,94 +14,150 @@ export type ChildrenProps<T> = {
   readonly item: T;
   readonly index: number;
   readonly style: React.CSSProperties;
+  readonly setItemHeight: (index: number, height: number) => void;
 };
+
+const Container = styled.div<{ $height: number }>`
+  width: 100%;
+  max-height: ${({ $height }) => $height}px;
+  overflow-y: auto;
+  position: relative;
+`;
+
+const Wrapper = styled.div`
+  position: relative;
+`;
+
+const Inner = styled.div`
+  position: absolute;
+  left: 0;
+  right: 0;
+`;
 
 export type VirtualizedListRef = {
-  /// ..
+  readonly scrollToIndex: (index: number) => void;
 };
 
-const VirtualizeListContainer = styled.div<{ $isOpen: boolean }>`
-  min-width: 16em;
-  padding: 0.4em;
-  max-height: 18em;
-  transition: opacity 120ms ease-out;
-  opacity: ${props => (props.$isOpen ? 1 : 0)};
-  background-color: ${({ theme }) => theme.color.surface.toString()};
-  border-radius: ${({ theme }) => theme.shape.radiusFactor * 2}em;
-  box-shadow: 0 4px 24px ${({ theme }) => theme.color.surface.darken(50).alpha(0.6).toString()};
-  &:focus {
-    outline-style: solid;
-    outline-width: 0.14em;
-    outline-color: ${({ theme }) => theme.color.accentPrimary.toString()};
-  }
-`;
-const VirtualizeListWrapper = styled.div``;
-
-const VirtualizeListInner = styled.div``;
-
-export const VirtualizedList = React.forwardRef(
+const VirtualizedList = React.forwardRef(
   <T,>(props: VirtualizedListProps<T>, ref: React.ForwardedRef<VirtualizedListRef>) => {
-    const { items, itemHeight, height, children, isOpen, ...restProps } = props;
-
-    const containerRef = React.useRef<HTMLDivElement | null>(null);
+    const { items, height, children, baseItemHeight = 1, overscan = 5 } = props;
     const [scrollTop, setScrollTop] = React.useState(0);
-    const overscan = 5;
+    const [heights, setHeights] = React.useState<Map<number, number>>(new Map());
+    const containerRef = React.useRef<HTMLDivElement | null>(null);
 
-    const totalHeight = items.length * itemHeight;
-    const visibleCount = Math.ceil(height / itemHeight) + overscan;
+    const setItemHeight = React.useCallback((index: number, h: number) => {
+      setHeights(prev => {
+        if (prev.get(index) === h) {
+          return prev;
+        }
 
-    const startIndex = Math.max(0, Math.floor(scrollTop / itemHeight) - 1);
-    const endIndex = Math.min(items.length, startIndex + visibleCount);
+        const next = new Map(prev);
+        next.set(index, h);
 
-    const visibleItems = items.slice(startIndex, endIndex);
-
-    const onScroll = React.useCallback((e: React.UIEvent<HTMLDivElement>) => {
-      setScrollTop(e.currentTarget.scrollTop);
+        return next;
+      });
     }, []);
 
+    const offsets = React.useMemo(() => {
+      const arr: number[] = new Array(items.length);
+      let sum = 0;
+
+      for (let i = 0; i < items.length; i++) {
+        arr[i] = sum;
+        sum += heights.get(i) ?? baseItemHeight;
+      }
+
+      // offsetsRef.current = arr;
+
+      return arr;
+    }, [items.length, heights, baseItemHeight]);
+    const offsetsRef = React.useRef<number[]>([]);
+
+    React.useEffect(() => {
+      offsetsRef.current = offsets;
+    }, [offsets]);
+
+    const totalHeight =
+      offsets[items.length - 1] + (heights.get(items.length - 1) ?? baseItemHeight);
+
+    const findStartIndex = (scrollTop: number) => {
+      let low = 0;
+      let high = offsets.length - 1;
+
+      while (low <= high) {
+        const mid = (low + high) >> 1;
+        if (offsets[mid] <= scrollTop) low = mid + 1;
+        else high = mid - 1;
+      }
+
+      return Math.max(0, low - 1);
+    };
+
+    const startIndex = findStartIndex(scrollTop);
+
+    let endIndex = startIndex;
+    let acc = offsets[startIndex];
+
+    while (endIndex < items.length && acc < scrollTop + height) {
+      acc += heights.get(endIndex) ?? baseItemHeight;
+      endIndex++;
+    }
+
+    endIndex = Math.min(endIndex + overscan, items.length);
+    const pendingScrollIndex = React.useRef<number | null>(null);
+
+    const visibleItems = items.slice(startIndex, endIndex);
+    const scrollToIndex = React.useCallback((index: number) => {
+      pendingScrollIndex.current = index;
+    }, []);
+
+    React.useEffect(() => {
+      if (pendingScrollIndex.current !== null && containerRef.current) {
+        const index = pendingScrollIndex.current;
+        const top = offsetsRef.current[index] ?? 0;
+        containerRef.current.scrollTop = top;
+        pendingScrollIndex.current = null;
+      }
+    }, [offsets]);
+
+    React.useImperativeHandle(
+      ref,
+      () => ({
+        scrollToIndex,
+      }),
+      [scrollToIndex],
+    );
+    // console.log('здесь 2', offsets);
+
     return (
-      <VirtualizeListContainer
-        tabIndex={-1}
-        {...restProps}
-        $isOpen={isOpen}
+      <Container
+        $height={height}
+        onScroll={e => setScrollTop(e.currentTarget.scrollTop)}
         ref={containerRef}
-        onScroll={onScroll}
-        style={{
-          height,
-          overflowY: 'auto',
-          position: 'relative',
-        }}
       >
-        <VirtualizeListWrapper style={{ height: totalHeight, position: 'relative' }}>
-          <VirtualizeListInner
-            style={{
-              position: 'absolute',
-              top: startIndex * itemHeight,
-              left: 0,
-              right: 0,
-            }}
-          >
-            {visibleItems.map((item, i) =>
-              children({
+        <Wrapper style={{ height: totalHeight }}>
+          <Inner>
+            {visibleItems.map((item, i) => {
+              const index = startIndex + i;
+
+              return children({
                 item,
-                index: startIndex + i,
+                index,
+                setItemHeight,
                 style: {
-                  height: itemHeight,
-                  display: 'flex',
-                  alignItems: 'center',
-                  padding: '0 8px',
-                  boxSizing: 'border-box',
+                  position: 'absolute',
+                  top: offsets[index],
+                  height: heights.get(index) ?? baseItemHeight,
+                  width: '100%',
                 },
-              }),
-            )}
-          </VirtualizeListInner>
-        </VirtualizeListWrapper>
-      </VirtualizeListContainer>
+              });
+            })}
+          </Inner>
+        </Wrapper>
+      </Container>
     );
   },
 );
-VirtualizedList.displayName = 'VirtualizedList';
 
-export default VirtualizedList as <T>(
-  props: VirtualizedListProps<T> & { ref?: React.Ref<VirtualizedListRef> },
-) => JSX.Element;
+VirtualizedList.displayName = 'VirtualizedList';
+export default VirtualizedList;
