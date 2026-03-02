@@ -41,6 +41,10 @@ const Btn = styled(Button)<{ $fill?: boolean; $isSelected?: boolean }>`
   min-width: 0;
   outline: none;
   position: relative;
+  color: ${({ theme, $isSelected }) =>
+    $isSelected
+      ? theme.color.accentPrimaryContrast.toString()
+      : theme.color.textPrimary.toString()};
   border-radius: ${({ theme }) => theme.shape.radiusFactor * 3}em;
   ${({ $fill, theme, $isSelected }) =>
     $fill &&
@@ -48,7 +52,7 @@ const Btn = styled(Button)<{ $fill?: boolean; $isSelected?: boolean }>`
     css`
       background-color: transparent;
       position: relative;
-
+      color: ${theme.color.accentPrimaryContrast.toString()};
       &:before {
         position: absolute;
         border-radius: ${theme.shape.radiusFactor * 0.8}em;

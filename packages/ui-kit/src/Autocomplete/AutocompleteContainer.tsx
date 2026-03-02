@@ -551,18 +551,13 @@ const Autocomplete = React.forwardRef(
               onFocus={event => {
                 isFocusedRef.current = true;
 
-                if (
-                  openOnFocus &&
-                  !currentOpen &&
-                  filteredItems.length > 0
-                  // && inputValue.trim() !== ''
-                ) {
+                if (openOnFocus && !currentOpen && filteredItems.length > 0) {
                   onRequestOpen(event);
                 }
 
-                if (!openOnFocus && !currentOpen && inputValue !== '' && filteredItems.length > 0) {
-                  onRequestOpen(event);
-                }
+                // if (!openOnFocus && !currentOpen && inputValue !== '' && filteredItems.length > 0) {
+                //   onRequestOpen(event);
+                // }
 
                 if (typeof nativeInputProps.onFocus === 'function') {
                   nativeInputProps.onFocus(event);

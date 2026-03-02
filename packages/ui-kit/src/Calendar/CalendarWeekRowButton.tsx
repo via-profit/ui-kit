@@ -17,8 +17,6 @@ const StyleButton = styled(Button)`
   border-radius: ${({ theme }) => theme.shape.radiusFactor * 3}em;
 `;
 
-
-
 const CalendarWeekRowButton: React.ForwardRefRenderFunction<
   HTMLButtonElement,
   CalendarWeekRowButtonProps

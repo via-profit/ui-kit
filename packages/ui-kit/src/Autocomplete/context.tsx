@@ -1,6 +1,7 @@
 import React from 'react';
 
-import type { AnchorElement } from '../Menu';
+import type { AnchorElement, Value } from '../Menu';
+import { FilterItems, ItemToString } from './AutocompleteContainer';
 
 type State = {
   readonly currentOpen: boolean;
@@ -47,6 +48,34 @@ export const reducer: React.Reducer<State, Action> = (state, action) => {
     default:
       return state;
   }
+};
+
+export const createInitialState = <T, Multiple extends boolean | undefined = undefined>(params: {
+  readonly items: readonly T[];
+  readonly value: Value<T, Multiple> | null;
+  readonly selectedItemToString: ItemToString<T, Multiple>;
+  readonly isOpen?: boolean;
+  readonly filterItems: FilterItems<T> | undefined;
+}): State => {
+  const { filterItems, isOpen, items, selectedItemToString, value } = params;
+  const inputValue = !value
+    ? ''
+    : selectedItemToString(value as Multiple extends undefined ? T : readonly T[]);
+
+  const data = {
+    inputValue: inputValue,
+    query: inputValue.trim().toLocaleLowerCase(),
+  };
+
+  const filteredItems = filterItems ? filterItems(items, data) : items;
+
+  return {
+    ...defaultState,
+    filteredItems,
+    inputValue,
+    currentValue: value,
+    currentOpen: Boolean(isOpen),
+  };
 };
 
 const context = React.createContext<Context>({

@@ -10,7 +10,7 @@ export interface CalendarWeekDayWeekNumberProps extends React.HTMLAttributes<HTM
 const Cell = styled(CalendarEmptyCell)`
   font-weight: 800;
   position: relative;
-
+  color: ${({ theme }) => theme.color.textPrimary.toString()};
   &:before {
     position: absolute;
     content: '';

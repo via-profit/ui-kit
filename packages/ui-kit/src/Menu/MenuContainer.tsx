@@ -734,7 +734,7 @@ const MenuContainer = React.forwardRef(
             ref={menuListRef}
             onKeyDown={listKeydownEvent}
           >
-            <VirtualizedList ref={virtListRef} isOpen={Boolean(isOpen)} items={items} height={250}>
+            <VirtualizedList ref={virtListRef} isOpen={Boolean(isOpen)} items={items}>
               {({ index, style, item, setItemHeight }) => (
                 <VirtualizedItem
                   key={index}

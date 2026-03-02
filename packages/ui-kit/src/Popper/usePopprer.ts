@@ -78,20 +78,20 @@ export const findScrollableAncestor = (
 };
 
 export const usePopper = ({
-  anchorElement,
-  anchorPos = 'auto',
-  positionStrategy = 'fixed',
-  autoFlip = true,
-  offset = 0,
-  viewportMargin = 30,
-  isOpen = false,
-}: UsePopperProps): UsePopperResult => {
+                            anchorElement,
+                            anchorPos = 'auto',
+                            positionStrategy = 'fixed',
+                            autoFlip = true,
+                            offset = 0,
+                            viewportMargin = 30,
+                            isOpen = false,
+                          }: UsePopperProps): UsePopperResult => {
   const [actualPlacement, setActualPlacement] = React.useState<AnchorPos>(anchorPos);
   const [style, setStyle] = React.useState<React.CSSProperties | null>(null);
   const [isVisible, setIsVisible] = React.useState(false);
   const popperRef = React.useRef<HTMLDivElement | null>(null);
 
-  // Находим ближайший прокручиваемый предок
+  // Finding the nearest scrollable ancestor
   const scrollableAncestor = React.useMemo(() => {
     if (!anchorElement || typeof window === 'undefined') {
       return null;
@@ -100,14 +100,7 @@ export const usePopper = ({
     return findScrollableAncestor(anchorElement);
   }, [anchorElement]);
 
-  // Синхронизация actualPlacement с anchorPos
-  React.useEffect(() => {
-    if (actualPlacement !== anchorPos) {
-      setActualPlacement(anchorPos);
-    }
-  }, [actualPlacement, anchorPos]);
-
-  // Синхронизация actualPlacement с anchorPos
+  // Synchronizing actualPlacement with anchorPos
   React.useEffect(() => {
     if (actualPlacement !== anchorPos) {
       setActualPlacement(anchorPos);
@@ -127,7 +120,7 @@ export const usePopper = ({
       let left = anchorRect.left;
       let top = anchorRect.top;
 
-      // Вычисляем позицию относительно viewport
+      // Calculating the position relative to the viewport
       switch (direction) {
         case 'top':
           top = anchorRect.top - popperRect.height - offset;
@@ -182,12 +175,12 @@ export const usePopper = ({
           top = anchorRect.bottom + offset;
       }
 
-      // Возвращаем viewport координаты для проверки или финальные координаты
+      // Returning the viewport coordinates for verification or the final coordinates
       if (forViewportCheck) {
         return { left, top };
       }
 
-      // Для финального позиционирования учитываем стратегию
+      // For the final positioning, we take into account the strategy
       if (positionStrategy === 'absolute') {
         return {
           left: left + window.scrollX,
@@ -262,7 +255,7 @@ export const usePopper = ({
     allPlacements.forEach(placement => {
       const [direction] = placement.split('-') as [string];
 
-      // Приоритет: то же направление > противоположное > остальные
+      // Priority: same direction > opposite > the rest
       const opposite =
         direction === 'top'
           ? 'bottom'
@@ -286,7 +279,7 @@ export const usePopper = ({
 
   const getPreferredPlacements = React.useCallback(
     (preferredPlacement: AnchorPos, anchorRect: DOMRect, popperRect: DOMRect) => {
-      // Обработка auto placement
+      // Check the auto placements
       if (preferredPlacement.startsWith('auto')) {
         const [, preferredDirection = 'bottom'] = preferredPlacement.split('-');
 
@@ -309,7 +302,7 @@ export const usePopper = ({
           'right-bottom',
         ];
 
-        // Сортируем: сначала указанное направление
+        // Sorting placements
         const sortedPlacements = [...allPlacements].sort((a, b) => {
           const aDir = a.split('-')[0];
           const bDir = b.split('-')[0];
@@ -408,7 +401,6 @@ export const usePopper = ({
     if (!anchorElement || !popperRef.current) {
       return;
     }
-
     const anchorRect = anchorElement.getBoundingClientRect();
     const popperRect = popperRef.current.getBoundingClientRect();
 
@@ -431,7 +423,7 @@ export const usePopper = ({
     return 'top center';
   }, []);
 
-  // Очистка при закрытии
+  // Open / Close popper logic
   React.useEffect(() => {
     if (!isOpen) {
       setIsVisible(false);
@@ -452,27 +444,13 @@ export const usePopper = ({
     }
   }, [actualPlacement, anchorElement, getPreferredPlacements, isOpen]);
 
-  // Отслеживание скролла
-  // React.useEffect(() => {
-  //   const handleEvent = () => {
-  //     if (isOpen) {
-  //       calculatePosition();
-  //     }
-  //   };
-  //
-  //   window.addEventListener('scroll', handleEvent);
-  //
-  //   return () => {
-  //     window.removeEventListener('scroll', handleEvent);
-  //   };
-  // }, [calculatePosition, isOpen]);
-
-  // Отслеживание мутаций anchor элемента
+  // The anchor element changes
   React.useEffect(() => {
     if (!isOpen || !anchorElement) return;
 
     const observer = new MutationObserver(() => {
       window.requestAnimationFrame(() => {
+        // console.log('The anchor element was change');
         calculatePosition();
       });
     });
@@ -495,16 +473,17 @@ export const usePopper = ({
     }
 
     const handleScroll = () => {
+
       window.requestAnimationFrame(() => {
         calculatePosition();
       });
     };
 
-    // Добавляем слушатель скролла на прокручиваемый предок
+    // parent scroll listener
     if (scrollableAncestor instanceof HTMLElement) {
-      scrollableAncestor.addEventListener('scroll', handleScroll);
+      scrollableAncestor.addEventListener('scroll', handleScroll, { passive: true });
     } else if (scrollableAncestor === window) {
-      window.addEventListener('scroll', handleScroll);
+      window.addEventListener('scroll', handleScroll, { passive: true });
     }
 
     return () => {

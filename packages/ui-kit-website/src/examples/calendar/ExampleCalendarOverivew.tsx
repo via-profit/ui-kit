@@ -25,8 +25,8 @@ const ExampleCalendarOverivew: React.FC = () => {
         range
         ref={calendarRef}
         view={'days'}
-        resetButtonLabel='reset'
-        views={['months', 'days', 'weeks', 'years']}
+        resetButtonLabel="Reset"
+        views={['days', 'months', 'weeks', 'years']}
         onChange={value => {
           console.log(value);
         }}
@@ -46,6 +46,9 @@ const ExampleCalendarOverivew: React.FC = () => {
             accentColor: 'primary',
           },
         ]}
+        footer={<Button onClick={() => {
+          calendarRef?.current?.setView('weeks');
+        }}>Weeks</Button>}
         todayButtonLabel={intl.formatMessage({ defaultMessage: 'Сегодня' })}
         heading={intl.formatMessage({ defaultMessage: 'Календарь' })}
         // subheading={intl.formatMessage(

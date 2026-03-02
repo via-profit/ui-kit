@@ -321,10 +321,6 @@ const Popper: React.ForwardRefRenderFunction<HTMLDivElement, PopperProps> = (pro
           ...style,
           ...nativeProps.style,
           opacity: isVisible ? 1 : 0,
-          // transform: isVisible ? 'scale(1)' : 'scale(0.95)',
-          transition:
-            'opacity 120ms ease-in-out, left 120ms cubic-bezier(0.22, 0.61, 0.36, 1), top 120ms cubic-bezier(0.22, 0.61, 0.36, 1)',
-          // transformOrigin: getTransformOrigin(actualPlacement),
           pointerEvents: isVisible ? 'auto' : 'none',
           ...(positionStrategy === 'fixed' && {
             zIndex: zIndex,

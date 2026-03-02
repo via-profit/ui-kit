@@ -7,8 +7,6 @@ const Elem = styled.span`
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: default;
-  user-select: none;
   font-size: 0.8em;
   width: 3em;
   height: 3em;

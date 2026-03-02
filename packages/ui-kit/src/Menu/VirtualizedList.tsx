@@ -1,10 +1,11 @@
 import * as React from 'react';
 import styled from '@emotion/styled';
+import { MenuProps, MenuRef } from './MenuContainer';
 
 export type VirtualizedListProps<T> = {
   readonly isOpen: boolean;
   readonly items: readonly T[];
-  readonly height: number;
+  readonly maxHeight?: number;
   readonly overscan?: number;
   readonly baseItemHeight?: number;
   readonly children: (params: ChildrenProps<T>) => React.ReactNode;
@@ -17,9 +18,9 @@ export type ChildrenProps<T> = {
   readonly setItemHeight: (index: number, height: number) => void;
 };
 
-const Container = styled.div<{ $height: number }>`
+const Container = styled.div<{ $maxHeight: number }>`
   width: 100%;
-  max-height: ${({ $height }) => $height}px;
+  max-height: ${({ $maxHeight }) => $maxHeight}px;
   overflow-y: auto;
   position: relative;
 `;
@@ -40,7 +41,7 @@ export type VirtualizedListRef = {
 
 const VirtualizedList = React.forwardRef(
   <T,>(props: VirtualizedListProps<T>, ref: React.ForwardedRef<VirtualizedListRef>) => {
-    const { items, height, children, baseItemHeight = 1, overscan = 5 } = props;
+    const { items, children, baseItemHeight = 36, maxHeight = 36 * 8, overscan = 5 } = props;
     const [scrollTop, setScrollTop] = React.useState(0);
     const [heights, setHeights] = React.useState<Map<number, number>>(new Map());
     const containerRef = React.useRef<HTMLDivElement | null>(null);
@@ -98,7 +99,7 @@ const VirtualizedList = React.forwardRef(
     let endIndex = startIndex;
     let acc = offsets[startIndex];
 
-    while (endIndex < items.length && acc < scrollTop + height) {
+    while (endIndex < items.length && acc < scrollTop + maxHeight) {
       acc += heights.get(endIndex) ?? baseItemHeight;
       endIndex++;
     }
@@ -127,11 +128,10 @@ const VirtualizedList = React.forwardRef(
       }),
       [scrollToIndex],
     );
-    // console.log('здесь 2', offsets);
 
     return (
       <Container
-        $height={height}
+        $maxHeight={maxHeight}
         onScroll={e => setScrollTop(e.currentTarget.scrollTop)}
         ref={containerRef}
       >
@@ -160,4 +160,7 @@ const VirtualizedList = React.forwardRef(
 );
 
 VirtualizedList.displayName = 'VirtualizedList';
-export default VirtualizedList;
+
+export default VirtualizedList as <T>(
+  props: VirtualizedListProps<T> & { ref?: React.Ref<VirtualizedListRef> },
+) => JSX.Element;

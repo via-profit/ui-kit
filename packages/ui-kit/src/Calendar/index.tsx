@@ -254,12 +254,6 @@ export interface CalendarOverrides {
     CalendarMonthCellProps & React.RefAttributes<HTMLButtonElement>
   >;
 
-  /**
-   * Year cell element in years list
-   */
-  readonly YearCell?: React.ComponentType<
-    CalendarYearCellProps & React.RefAttributes<HTMLButtonElement>
-  >;
 
   /**
    * Badge of the day cell element
@@ -460,7 +454,6 @@ const Calendar = React.forwardRef(
         YearsSelector: overrides?.YearsSelector || YearsSelector,
         MonthsSelector: overrides?.MonthsSelector || MonthsSelector,
         MonthCell: overrides?.MonthCell || MonthCell,
-        YearCell: overrides?.YearCell || YearCell,
         DayBadge: overrides?.DayBadge || DayBadge,
         Footer: overrides?.Footer || Footer,
         ControlButton: overrides?.ControlButton || ControlButton,
@@ -506,23 +499,29 @@ const Calendar = React.forwardRef(
       }),
     );
 
-    const selectView = React.useCallback((view: CalendarView) => {
-      setView(view);
-
-      const viewMap: Record<CalendarView, number> = {
-        days: 0,
-        months: 1,
-        years: 2,
-        weeks: 3,
-      };
-
-      swiperRef.current?.goToIndex(viewMap[view]);
-    }, []);
+    // const getViewIndex = React.useCallback((selectedView: CalendarView) => {
+    //
+    //
+    //
+    // }, [views, view])
 
     /**
      * List of possibility views
      */
     const [views] = React.useState<readonly CalendarView[]>(() => computeViews(inputViews));
+
+    const selectView = React.useCallback(
+      (view: CalendarView) => {
+        setView(view);
+
+        const index = views.findIndex(v => v === view);
+
+        if (index > -1) {
+          swiperRef.current?.goToIndex(index);
+        }
+      },
+      [views],
+    );
 
     const resetVariablesRef = React.useRef({
       calendarDate,
@@ -541,7 +540,7 @@ const Calendar = React.forwardRef(
         setValue,
         setCalendarDate,
       }),
-      [],
+      [selectView],
     );
 
     const {
@@ -786,6 +785,194 @@ const Calendar = React.forwardRef(
       [minDate, maxDate, getMonthsRange],
     );
 
+    const renderViewDays = React.useCallback(
+      () => (
+        <overridesMap.DateContainer>
+          {getWeeks(calendarDate).map(week => (
+            <overridesMap.WeekRow key={week.weekNumber}>
+              {week.days.map(day => {
+                if (day.date.getMonth() === calendarDate.getMonth()) {
+                  const badge = badges.find(b => isSameDay(b.date, day.date));
+                  let fill = false;
+                  let isSelected: boolean = false;
+
+                  if (isRangeValue(value)) {
+                    const [from, to] = value;
+
+                    if (from && to) {
+                      fill =
+                        day.date.getTime() >= from.getTime() && day.date.getTime() <= to.getTime();
+                    }
+                    isSelected = Boolean(
+                      (from && isSameDay(from, day.date)) || (to && isSameDay(to, day.date)),
+                    );
+                  } else if (isNotRangeValue(value)) {
+                    isSelected = Boolean(value && isSameDay(value, day.date));
+                  }
+
+                  return (
+                    <overridesMap.Cell
+                      key={day.date.getTime()}
+                      isToday={markToday && day.isToday}
+                      isDisabled={day.isDisabled}
+                      accentColor={accentColor}
+                      isSelected={isSelected}
+                      fill={fill}
+                      onClick={handleCellDateClick(day.date)}
+                    >
+                      {getDayLabel(day.date)}
+
+                      {badge && (
+                        <overridesMap.DayBadge
+                          badgeContent={badge.badgeContent}
+                          isToday={day.isToday}
+                          accentColor={badge.accentColor}
+                        />
+                      )}
+                    </overridesMap.Cell>
+                  );
+                }
+
+                return (
+                  <overridesMap.EmptyCell key={day.date.getTime()}>
+                    {getDayLabel(day.date)}
+                  </overridesMap.EmptyCell>
+                );
+              })}
+            </overridesMap.WeekRow>
+          ))}
+        </overridesMap.DateContainer>
+      ),
+      [
+        accentColor,
+        badges,
+        calendarDate,
+        getDayLabel,
+        getWeeks,
+        handleCellDateClick,
+        isSameDay,
+        markToday,
+        overridesMap,
+        value,
+      ],
+    );
+
+    const renderViewMonths = React.useCallback(
+      () => (
+        <overridesMap.MonthsSelector>
+          {monthsRange.map(monthIndex => {
+            const isSelected = calendarDate.getMonth() === monthIndex;
+
+            return (
+              <overridesMap.MonthCell
+                key={monthIndex + monthsRange[monthIndex]}
+                accentColor={accentColor}
+                isSelected={isSelected}
+                onClick={handleMonthSelected(monthIndex)}
+              >
+                {getMonthLabel(new Date(calendarDate.getFullYear(), monthIndex, 1, 0, 0, 0, 0))}
+              </overridesMap.MonthCell>
+            );
+          })}
+        </overridesMap.MonthsSelector>
+      ),
+      [accentColor, calendarDate, getMonthLabel, handleMonthSelected, monthsRange, overridesMap],
+    );
+
+    const renderViewYears = React.useCallback(
+      () => (
+        <overridesMap.YearsSelector
+          accentColor={accentColor}
+          date={calendarDate}
+          onChange={y => handleYearSelected(y)()}
+          years={yearsRange}
+          locale={locale}
+          minDate={minDate}
+          maxDate={maxDate}
+        />
+      ),
+      [
+        accentColor,
+        calendarDate,
+        handleYearSelected,
+        locale,
+        maxDate,
+        minDate,
+        overridesMap,
+        yearsRange,
+      ],
+    );
+
+    const renderViewWeeks = React.useCallback(
+      () => (
+        <overridesMap.DateContainer>
+          {getWeeks(calendarDate).map(week => {
+            let isSelected = false;
+            if (isRangeValue(value)) {
+              const [from, to] = value;
+
+              if (from && to) {
+                if (
+                  isSameDay(from, week.days[0].date) &&
+                  isSameDay(to, week.days[week.days.length - 1].date)
+                ) {
+                  isSelected = true;
+                }
+              }
+            }
+
+            return (
+              <overridesMap.WeekRowButton
+                key={week.weekNumber}
+                isSelected={isSelected}
+                onClick={handleClickWeek(week)}
+                accentColor={accentColor}
+                week={week}
+              >
+                <overridesMap.WeekDayWeekNumber week={week}>
+                  {week.weekNumber}
+                </overridesMap.WeekDayWeekNumber>
+                {week.days.map(day => {
+                  const badge = badges.find(b => isSameDay(b.date, day.date));
+                  const inCurrentMonth = day.date.getMonth() === calendarDate.getMonth();
+
+                  return (
+                    <overridesMap.WeekDayCell
+                      key={day.date.getTime()}
+                      isToday={markToday && day.isToday}
+                      inCurrentMonth={inCurrentMonth}
+                    >
+                      {getDayLabel(day.date)}
+
+                      {badge && (
+                        <overridesMap.DayBadge
+                          badgeContent={badge.badgeContent}
+                          isToday={day.isToday}
+                          accentColor={badge.accentColor}
+                        />
+                      )}
+                    </overridesMap.WeekDayCell>
+                  );
+                })}
+              </overridesMap.WeekRowButton>
+            );
+          })}
+        </overridesMap.DateContainer>
+      ),
+      [
+        accentColor,
+        badges,
+        calendarDate,
+        getDayLabel,
+        getWeeks,
+        handleClickWeek,
+        isSameDay,
+        markToday,
+        overridesMap,
+        value,
+      ],
+    );
+
     return (
       <overridesMap.Paper>
         <overridesMap.Header>
@@ -802,22 +989,27 @@ const Calendar = React.forwardRef(
             >
               <overridesMap.IconPrev />
             </overridesMap.ControlButton>
-            <overridesMap.ControlButton
-              title={changeMonthButtonTooltip}
-              isActive={view === 'months'}
-              disabled={!views.includes('months')}
-              onClick={() => selectView(view === 'months' ? 'days' : 'months')}
-            >
-              {getMonthLabel(calendarDate)}
-            </overridesMap.ControlButton>
-            <overridesMap.ControlButton
-              isActive={view === 'years'}
-              disabled={!views.includes('years')}
-              title={changeYearButtonTooltip}
-              onClick={() => selectView(view === 'years' ? 'days' : 'years')}
-            >
-              {getYearLabel(calendarDate)}
-            </overridesMap.ControlButton>
+
+            {views.includes('months') && (
+              <overridesMap.ControlButton
+                title={changeMonthButtonTooltip}
+                isActive={view === 'months'}
+                onClick={() => selectView(view === 'months' ? 'days' : 'months')}
+              >
+                {getMonthLabel(calendarDate)}
+              </overridesMap.ControlButton>
+            )}
+
+            {views.includes('years') && (
+              <overridesMap.ControlButton
+                isActive={view === 'years'}
+                title={changeYearButtonTooltip}
+                onClick={() => selectView(view === 'years' ? 'days' : 'years')}
+              >
+                {getYearLabel(calendarDate)}
+              </overridesMap.ControlButton>
+            )}
+
             <overridesMap.ControlButton
               iconOnly
               onClick={handleChangeMonthClick('next')}
@@ -839,164 +1031,29 @@ const Calendar = React.forwardRef(
 
         <overridesMap.Body>
           <Swiper draggable={false} ref={swiperRef}>
-            {/* 0 - DAYS */}
-            <SwiperSlide>
-              <overridesMap.DateContainer>
-                {getWeeks(calendarDate).map(week => (
-                  <overridesMap.WeekRow key={week.weekNumber}>
-                    {week.days.map(day => {
-                      if (day.date.getMonth() === calendarDate.getMonth()) {
-                        const badge = badges.find(b => isSameDay(b.date, day.date));
-                        let fill = false;
-                        let isSelected: boolean = false;
+            {views.map(viewName => {
+              let renderedView;
+              switch (viewName) {
+                case 'days':
+                  renderedView = renderViewDays();
+                  break;
+                case 'weeks':
+                  renderedView = renderViewWeeks();
+                  break;
+                case 'months':
+                  renderedView = renderViewMonths();
+                  break;
+                case 'years':
+                  renderedView = renderViewYears();
+                  break;
 
-                        if (isRangeValue(value)) {
-                          const [from, to] = value;
+                default:
+                  renderedView = null;
+                  break;
+              }
 
-                          if (from && to) {
-                            fill =
-                              day.date.getTime() >= from.getTime() &&
-                              day.date.getTime() <= to.getTime();
-                          }
-                          isSelected = Boolean(
-                            (from && isSameDay(from, day.date)) || (to && isSameDay(to, day.date)),
-                          );
-                        } else if (isNotRangeValue(value)) {
-                          isSelected = Boolean(value && isSameDay(value, day.date));
-                        }
-
-                        return (
-                          <overridesMap.Cell
-                            key={day.date.getTime()}
-                            isToday={markToday && day.isToday}
-                            isDisabled={day.isDisabled}
-                            accentColor={accentColor}
-                            isSelected={isSelected}
-                            fill={fill}
-                            onClick={handleCellDateClick(day.date)}
-                          >
-                            {getDayLabel(day.date)}
-
-                            {badge && (
-                              <overridesMap.DayBadge
-                                badgeContent={badge.badgeContent}
-                                isToday={day.isToday}
-                                accentColor={badge.accentColor}
-                              />
-                            )}
-                          </overridesMap.Cell>
-                        );
-                      }
-
-                      return (
-                        <overridesMap.EmptyCell key={day.date.getTime()}>
-                          {getDayLabel(day.date)}
-                        </overridesMap.EmptyCell>
-                      );
-                    })}
-                  </overridesMap.WeekRow>
-                ))}
-              </overridesMap.DateContainer>
-            </SwiperSlide>
-            {/* 1 - MONTHS */}
-            <SwiperSlide>
-              <overridesMap.MonthsSelector>
-                {monthsRange.map(monthIndex => {
-                  const isSelected = calendarDate.getMonth() === monthIndex;
-
-                  return (
-                    <overridesMap.MonthCell
-                      key={monthIndex + monthsRange[monthIndex]}
-                      accentColor={accentColor}
-                      isSelected={isSelected}
-                      onClick={handleMonthSelected(monthIndex)}
-                    >
-                      {getMonthLabel(
-                        new Date(calendarDate.getFullYear(), monthIndex, 1, 0, 0, 0, 0),
-                      )}
-                    </overridesMap.MonthCell>
-                  );
-                })}
-              </overridesMap.MonthsSelector>
-            </SwiperSlide>
-
-            {/* 2 - YEARS */}
-            <SwiperSlide>
-              <overridesMap.YearsSelector>
-                {yearsRange.map(year => {
-                  const isSelected = calendarDate.getFullYear() === year;
-
-                  return (
-                    <overridesMap.YearCell
-                      key={year}
-                      accentColor={accentColor}
-                      isSelected={isSelected}
-                      onClick={handleYearSelected(year)}
-                    >
-                      {getYearLabel(
-                        new Date(year, calendarDate.getMonth(), calendarDate.getDate(), 0, 0, 0, 0),
-                      )}
-                    </overridesMap.YearCell>
-                  );
-                })}
-              </overridesMap.YearsSelector>
-            </SwiperSlide>
-            {/* 3 - WEEKS */}
-            <SwiperSlide>
-              <overridesMap.DateContainer>
-                {getWeeks(calendarDate).map(week => {
-                  let isSelected = false;
-                  if (isRangeValue(value)) {
-                    const [from, to] = value;
-
-                    if (from && to) {
-                      if (
-                        isSameDay(from, week.days[0].date) &&
-                        isSameDay(to, week.days[week.days.length - 1].date)
-                      ) {
-                        isSelected = true;
-                      }
-                    }
-                  }
-
-                  return (
-                    <overridesMap.WeekRowButton
-                      key={week.weekNumber}
-                      isSelected={isSelected}
-                      onClick={handleClickWeek(week)}
-                      accentColor={accentColor}
-                      week={week}
-                    >
-                      <overridesMap.WeekDayWeekNumber week={week}>
-                        {week.weekNumber}
-                      </overridesMap.WeekDayWeekNumber>
-                      {week.days.map(day => {
-                        const badge = badges.find(b => isSameDay(b.date, day.date));
-                        const inCurrentMonth = day.date.getMonth() === calendarDate.getMonth();
-
-                        return (
-                          <overridesMap.WeekDayCell
-                            key={day.date.getTime()}
-                            isToday={markToday && day.isToday}
-                            inCurrentMonth={inCurrentMonth}
-                          >
-                            {getDayLabel(day.date)}
-
-                            {badge && (
-                              <overridesMap.DayBadge
-                                badgeContent={badge.badgeContent}
-                                isToday={day.isToday}
-                                accentColor={badge.accentColor}
-                              />
-                            )}
-                          </overridesMap.WeekDayCell>
-                        );
-                      })}
-                    </overridesMap.WeekRowButton>
-                  );
-                })}
-              </overridesMap.DateContainer>
-            </SwiperSlide>
+              return <SwiperSlide key={viewName}>{renderedView}</SwiperSlide>;
+            })}
           </Swiper>
         </overridesMap.Body>
         {(typeof resetButtonLabel !== 'undefined' ||
