@@ -179,23 +179,21 @@ export const Swiper = React.forwardRef((props: SwiperProps, ref: React.Forwarded
   );
 
   return (
-    <>
-      <overridesMap.Container {...restProps}>
-        <overridesMap.Wrapper
-          ref={wrapperRef}
-          draggable={draggable}
-          onPointerDown={onPointerDown}
-          onPointerMove={onPointerMove}
-          onPointerUp={onPointerUp}
-        >
-          <overridesMap.Track dragging={isDragging} index={index} offset={offset}>
-            {slides.map((slide, i) => (
-              <React.Fragment key={i}>{slide}</React.Fragment>
-            ))}
-          </overridesMap.Track>
-        </overridesMap.Wrapper>
-      </overridesMap.Container>
-    </>
+    <overridesMap.Container {...restProps}>
+      <overridesMap.Wrapper
+        ref={wrapperRef}
+        draggable={draggable}
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={onPointerUp}
+      >
+        <overridesMap.Track dragging={isDragging} index={index} offset={offset}>
+          {slides.map((slide, i) => (
+            <React.Fragment key={i}>{slide}</React.Fragment>
+          ))}
+        </overridesMap.Track>
+      </overridesMap.Wrapper>
+    </overridesMap.Container>
   );
 });
 

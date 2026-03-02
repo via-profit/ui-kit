@@ -14,7 +14,6 @@ import Toolbar, { CalendarToolbarProps } from './CalendarToolbar';
 import YearsSelector, { CalendarYearsSelectorProps } from './CalendarYearsSelector';
 import MonthsSelector, { CalendarMonthsSelectorProps } from './CalendarMonthsSelector';
 import MonthCell, { CalendarMonthCellProps } from './CalendarMonthCell';
-import YearCell, { CalendarYearCellProps } from './CalendarYearCell';
 import DayBadge, { CalendarDayBadgeProps } from './CalendarDayBadge';
 import Footer, { CalendarFooterProps } from './CalendarFooter';
 import ControlButton, { CalendarControlButtonProps } from './CalendarControlButton';
@@ -25,6 +24,7 @@ import IconNext, { CalendarIconNextProps } from './CalendarIconNext';
 import WeekDaysBar, { CalendarWeekDaysBarProps, WeekNameLabelFormat } from './CalendarWeekDaysBar';
 import { CalendarValue, useCalendar, Week, WeekDayName } from './use-calendar';
 import Swiper, { SwiperRef, SwiperSlide } from '@via-profit/ui-kit/src/Swiper';
+import styled from '@emotion/styled';
 
 export * from './use-calendar';
 export * from './CalendarWeekDaysBar';
@@ -254,7 +254,6 @@ export interface CalendarOverrides {
     CalendarMonthCellProps & React.RefAttributes<HTMLButtonElement>
   >;
 
-
   /**
    * Badge of the day cell element
    */
@@ -311,6 +310,10 @@ export type CalendarBadge = {
   readonly badgeContent: React.ReactNode;
   readonly accentColor?: 'primary' | 'secondary' | string;
 };
+
+const StyledSwiper = styled(Swiper)`
+  height: 100%;
+`
 
 export type CalendarRef<IsRangeValue extends boolean | undefined = undefined> = {
   readonly setView: (view: CalendarView) => void;
@@ -973,6 +976,8 @@ const Calendar = React.forwardRef(
       ],
     );
 
+    const initialIndex = React.useMemo(() => views.findIndex(v => v === view), [views, view]);
+
     return (
       <overridesMap.Paper>
         <overridesMap.Header>
@@ -1030,7 +1035,7 @@ const Calendar = React.forwardRef(
         )}
 
         <overridesMap.Body>
-          <Swiper draggable={false} ref={swiperRef}>
+          <StyledSwiper draggable={false} ref={swiperRef} initialIndex={initialIndex}>
             {views.map(viewName => {
               let renderedView;
               switch (viewName) {
@@ -1054,7 +1059,7 @@ const Calendar = React.forwardRef(
 
               return <SwiperSlide key={viewName}>{renderedView}</SwiperSlide>;
             })}
-          </Swiper>
+          </StyledSwiper>
         </overridesMap.Body>
         {(typeof resetButtonLabel !== 'undefined' ||
           typeof todayButtonLabel !== 'undefined' ||

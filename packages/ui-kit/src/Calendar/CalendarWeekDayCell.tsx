@@ -16,7 +16,7 @@ const Cell = styled(CalendarEmptyCell)<{
   $isToday?: boolean;
   $inCurrentMonth?: boolean;
 }>`
-  color: ${({ theme }) => theme.color.textPrimary.toString()};
+  color: currentColor;
   ${({ $inCurrentMonth }) =>
     !$inCurrentMonth &&
     css`
