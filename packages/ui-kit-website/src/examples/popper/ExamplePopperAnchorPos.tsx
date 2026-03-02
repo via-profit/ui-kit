@@ -6,7 +6,7 @@ import styled from '@emotion/styled';
 import { useTheme } from '@emotion/react';
 
 const StyledAnchorContainer = styled.div`
-  width: 22em;
+  width: 34em;
   height: 22em;
   display: flex;
   justify-content: center;
@@ -16,7 +16,7 @@ const StyledAnchorContainer = styled.div`
 `;
 
 const StyledAnchorElement = styled.div`
-  width: 8em;
+  width: 16em;
   height: 8em;
   border-style: solid;
   border-width: 1px;
@@ -85,6 +85,11 @@ const ExamplePopperAnchorPos: React.FC = () => {
         onChange={() => setAnchorPos('top')}
       />
       <AnchorButton
+        value="top-fill"
+        isActive={anchorPos === 'top-fill'}
+        onChange={() => setAnchorPos('top-fill')}
+      />
+      <AnchorButton
         value="top-end"
         isActive={anchorPos === 'top-end'}
         onChange={() => setAnchorPos('top-end')}
@@ -137,6 +142,11 @@ const ExamplePopperAnchorPos: React.FC = () => {
         value="bottom"
         isActive={anchorPos === 'bottom'}
         onChange={() => setAnchorPos('bottom')}
+      />
+      <AnchorButton
+        value="bottom-fill"
+        isActive={anchorPos === 'bottom-fill'}
+        onChange={() => setAnchorPos('bottom-fill')}
       />
       <AnchorButton
         value="bottom-end"

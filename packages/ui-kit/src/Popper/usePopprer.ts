@@ -21,7 +21,7 @@ export interface UsePopperResult {
   readonly isVisible: boolean;
   readonly calculatePosition: () => void;
   readonly scrollableAncestor: HTMLElement | Window | null;
-  readonly getTransformOrigin: (placement: AnchorPos) => string;
+  // readonly getTransformOrigin: (placement: AnchorPos) => string;
   readonly setActualPlacement: React.Dispatch<React.SetStateAction<AnchorPos>>;
   readonly setStyle: React.Dispatch<React.SetStateAction<React.CSSProperties | null>>;
   readonly setIsVisible: React.Dispatch<React.SetStateAction<boolean>>;
@@ -78,14 +78,14 @@ export const findScrollableAncestor = (
 };
 
 export const usePopper = ({
-                            anchorElement,
-                            anchorPos = 'auto',
-                            positionStrategy = 'fixed',
-                            autoFlip = true,
-                            offset = 0,
-                            viewportMargin = 30,
-                            isOpen = false,
-                          }: UsePopperProps): UsePopperResult => {
+  anchorElement,
+  anchorPos = 'auto',
+  positionStrategy = 'fixed',
+  autoFlip = true,
+  offset = 0,
+  viewportMargin = 30,
+  isOpen = false,
+}: UsePopperProps): UsePopperResult => {
   const [actualPlacement, setActualPlacement] = React.useState<AnchorPos>(anchorPos);
   const [style, setStyle] = React.useState<React.CSSProperties | null>(null);
   const [isVisible, setIsVisible] = React.useState(false);
@@ -119,13 +119,16 @@ export const usePopper = ({
 
       let left = anchorRect.left;
       let top = anchorRect.top;
+      let width = undefined;
 
       // Calculating the position relative to the viewport
       switch (direction) {
         case 'top':
           top = anchorRect.top - popperRect.height - offset;
-
-          if (modifier === 'left' || modifier === 'start') {
+          if (modifier === 'fill') {
+            left = anchorRect.left;
+            width = anchorRect.width;
+          } else if (modifier === 'left' || modifier === 'start') {
             left = anchorRect.left;
           } else if (modifier === 'right' || modifier === 'end') {
             left = anchorRect.right - popperRect.width;
@@ -137,7 +140,10 @@ export const usePopper = ({
         case 'bottom':
           top = anchorRect.bottom + offset;
 
-          if (modifier === 'left' || modifier === 'start') {
+          if (modifier === 'fill') {
+            left = anchorRect.left;
+            width = anchorRect.width;
+          } else if (modifier === 'left' || modifier === 'start') {
             left = anchorRect.left;
           } else if (modifier === 'right' || modifier === 'end') {
             left = anchorRect.right - popperRect.width;
@@ -177,7 +183,7 @@ export const usePopper = ({
 
       // Returning the viewport coordinates for verification or the final coordinates
       if (forViewportCheck) {
-        return { left, top };
+        return { left, top, width };
       }
 
       // For the final positioning, we take into account the strategy
@@ -185,21 +191,22 @@ export const usePopper = ({
         return {
           left: left + window.scrollX,
           top: top + window.scrollY,
+          width,
         };
       }
 
-      return { left, top };
+      return { left, top, width };
     },
     [offset, positionStrategy],
   );
 
   const clampPopperToContainer = React.useCallback(
-    (style: { left: number; top: number }, _popperRect: DOMRect) => style,
+    (style: { left: number; top: number; width?: number }, _popperRect: DOMRect) => style,
     [],
   );
 
   const checkIfViewportFits = React.useCallback(
-    (style: { left: number; top: number }, popperRect: DOMRect) => {
+    (style: { left: number; top: number; width?: number }, popperRect: DOMRect) => {
       const left = style.left;
       const top = style.top;
       const right = left + popperRect.width;
@@ -273,6 +280,7 @@ export const usePopper = ({
         ...(direction !== 'left' && direction !== 'right' ? basePlacements.right : []),
       ] as AnchorPos[];
     });
+    // console.log(order);
 
     return order;
   }, []);
@@ -354,6 +362,51 @@ export const usePopper = ({
         };
       }
 
+      /**
+       * bottom-fill, top-fill
+       */
+      if (preferredPlacement.endsWith('fill')) {
+        const [preferredDirection = 'bottom'] = preferredPlacement.split('-');
+        const allPlacements: AnchorPos[] = ['top-fill', 'bottom-fill'];
+        const sortedPlacements = [...allPlacements].sort((a, b) => {
+          const aDir = a.split('-')[0];
+          const bDir = b.split('-')[0];
+
+          if (aDir === preferredDirection && bDir !== preferredDirection) return -1;
+          if (aDir !== preferredDirection && bDir === preferredDirection) return 1;
+
+          return 0;
+        });
+
+        for (const place of sortedPlacements) {
+          const viewportStyle = getPositionStyle({
+            place,
+            anchorRect,
+            popperRect,
+            forViewportCheck: true,
+          });
+          const fits = checkIfViewportFits(viewportStyle, popperRect);
+
+          if (fits) {
+            const finalStyle = getPositionStyle({
+              place,
+              anchorRect,
+              popperRect,
+              forViewportCheck: false,
+            });
+
+            return {
+              found: true,
+              placement: place,
+              style: clampPopperToContainer(finalStyle, popperRect),
+            };
+          }
+        }
+      }
+
+      /**
+       * Other
+       */
       const order = placementsOrder[preferredPlacement] || placementsOrder.bottom;
 
       for (const place of order) {
@@ -404,24 +457,22 @@ export const usePopper = ({
     const anchorRect = anchorElement.getBoundingClientRect();
     const popperRect = popperRef.current.getBoundingClientRect();
 
-    const placements = getPreferredPlacements(actualPlacement, anchorRect, popperRect);
+    const { style, placement, found } = getPreferredPlacements(anchorPos, anchorRect, popperRect);
 
-    if (placements.found) {
-      setActualPlacement(placements.placement);
-      setStyle(placements.style);
-    } else {
-      setStyle(placements.style);
+    if (found) {
+      setActualPlacement(placement);
     }
-  }, [actualPlacement, anchorElement, getPreferredPlacements]);
+    setStyle(style);
+  }, [anchorElement, anchorPos, getPreferredPlacements]);
 
-  const getTransformOrigin = React.useCallback((placement: AnchorPos): string => {
-    if (placement.startsWith('top')) return 'bottom center';
-    if (placement.startsWith('bottom')) return 'top center';
-    if (placement.startsWith('left')) return 'right center';
-    if (placement.startsWith('right')) return 'left center';
-
-    return 'top center';
-  }, []);
+  // const getTransformOrigin = React.useCallback((placement: AnchorPos): string => {
+  //   if (placement.startsWith('top')) return 'bottom center';
+  //   if (placement.startsWith('bottom')) return 'top center';
+  //   if (placement.startsWith('left')) return 'right center';
+  //   if (placement.startsWith('right')) return 'left center';
+  //
+  //   return 'top center';
+  // }, []);
 
   // Open / Close popper logic
   React.useEffect(() => {
@@ -429,20 +480,10 @@ export const usePopper = ({
       setIsVisible(false);
       setStyle(null);
     } else if (anchorElement && isOpen && popperRef.current) {
-      const anchorRect = anchorElement.getBoundingClientRect();
-      const popperRect = popperRef.current.getBoundingClientRect();
-
-      const placements = getPreferredPlacements(actualPlacement, anchorRect, popperRect);
-
-      if (placements.found) {
-        setActualPlacement(placements.placement);
-        setStyle(placements.style);
-      } else {
-        setStyle(placements.style);
-      }
+      calculatePosition();
       setIsVisible(true);
     }
-  }, [actualPlacement, anchorElement, getPreferredPlacements, isOpen]);
+  }, [actualPlacement, anchorElement, getPreferredPlacements, isOpen, calculatePosition]);
 
   // The anchor element changes
   React.useEffect(() => {
@@ -467,13 +508,15 @@ export const usePopper = ({
     };
   }, [isOpen, anchorElement, calculatePosition]);
 
+  /**
+   * On scroll - recalculate position
+   */
   React.useEffect(() => {
     if (!isOpen || !scrollableAncestor) {
       return;
     }
 
     const handleScroll = () => {
-
       window.requestAnimationFrame(() => {
         calculatePosition();
       });
@@ -495,6 +538,28 @@ export const usePopper = ({
     };
   }, [isOpen, scrollableAncestor, calculatePosition]);
 
+  /**
+   * On window resize - recalculate position
+   */
+  React.useEffect(() => {
+    if (!isOpen) {
+      return;
+    }
+
+    const handleResize = () => {
+      window.requestAnimationFrame(() => {
+        calculatePosition();
+      });
+    };
+
+    // parent scroll listener
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, [calculatePosition, isOpen]);
+
   return {
     actualPlacement,
     style,
@@ -502,7 +567,7 @@ export const usePopper = ({
     isVisible,
     scrollableAncestor,
     calculatePosition,
-    getTransformOrigin,
+    // getTransformOrigin,
     setActualPlacement,
     setStyle,
     setIsVisible,

@@ -228,7 +228,7 @@ const Autocomplete = React.forwardRef(
       isOpen = false,
       isLoading = false,
       clearOnBlur = true,
-      anchorPos = 'bottom',
+      anchorPos = 'bottom-fill',
       openOnFocus = true,
       autoFlip,
       viewportMargin,

@@ -226,7 +226,7 @@ const Selectbox = React.forwardRef(
       multiple,
       isOpen = false,
       isLoading = false,
-      anchorPos = 'bottom',
+      anchorPos = 'bottom-fill',
       fullWidth = false,
       children,
       onChange,

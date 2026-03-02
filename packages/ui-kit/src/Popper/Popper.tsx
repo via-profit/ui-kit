@@ -31,6 +31,7 @@ export type Direction = 'top' | 'left' | 'right' | 'bottom';
  * ```
  */
 export type AutoModifier = 'auto' | 'auto-top' | 'auto-bottom' | 'auto-left' | 'auto-right';
+// export type AutoModifier = 'auto' | 'auto-top' | 'auto-bottom' | 'auto-left' | 'auto-right';
 
 /**
  * Precise placement modifiers for fine-tuned positioning.
@@ -63,7 +64,13 @@ export type Modifier =
   | 'left-top' // Left edge, top side
   | 'left-bottom' // Left edge, bottom side
   | 'right-top' // Right edge, top side
-  | 'right-bottom'; // Right edge, bottom side
+  | 'right-bottom' // Right edge, bottom side
+  | 'bottom-fill'
+  | 'top-fill';
+
+type Di = 'top' | 'left' | 'right' | 'bottom';
+type Mod = 'start' | 'end' | 'left' | 'right';
+// type Au = 'auto';
 
 /**
  * Available placement options for the popper.
@@ -94,6 +101,7 @@ export type Modifier =
  * ```
  */
 export type AnchorPos = Direction | Modifier | AutoModifier;
+// export type AnchorPos = Di | `${Di}-${Mod}` | Au | `${Au}-${Di}`;
 
 export interface PopperProps extends React.HTMLAttributes<HTMLDivElement> {
   /**
@@ -266,7 +274,7 @@ const Popper: React.ForwardRefRenderFunction<HTMLDivElement, PopperProps> = (pro
 
   const [domLoaded, setDomLoaded] = React.useState(false);
 
-  const { actualPlacement, style, popperRef, isVisible, getTransformOrigin } = usePopper({
+  const { actualPlacement, style, popperRef, isVisible,  } = usePopper({
     anchorElement,
     anchorPos,
     positionStrategy,
@@ -322,6 +330,7 @@ const Popper: React.ForwardRefRenderFunction<HTMLDivElement, PopperProps> = (pro
           ...nativeProps.style,
           opacity: isVisible ? 1 : 0,
           pointerEvents: isVisible ? 'auto' : 'none',
+          // transformOrigin: getTransformOrigin(actualPlacement),
           ...(positionStrategy === 'fixed' && {
             zIndex: zIndex,
           }),
@@ -351,13 +360,13 @@ const Popper: React.ForwardRefRenderFunction<HTMLDivElement, PopperProps> = (pro
       nativeProps,
       style,
       isVisible,
-      getTransformOrigin,
+      // getTransformOrigin,
       actualPlacement,
       positionStrategy,
       zIndex,
       children,
-      ref,
       popperRef,
+      ref,
     ],
   );
 
@@ -369,7 +378,7 @@ const Popper: React.ForwardRefRenderFunction<HTMLDivElement, PopperProps> = (pro
     return domLoaded && portalEl ? ReactDOM.createPortal(renderNode(), portalEl, PORTAL_ID) : null;
   }
 
-  // Для absolute стратегии - рендерим рядом с anchor (in-place)
+
   return renderNode();
 };
 

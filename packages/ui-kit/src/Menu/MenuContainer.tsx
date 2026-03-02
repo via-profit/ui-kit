@@ -262,7 +262,7 @@ export type MenuRef = {
   getListElement: () => HTMLDivElement | null;
 };
 
-export type Value<T, Multiple> = Multiple extends undefined | undefined ? T | null : readonly T[];
+export type Value<T, Multiple> = Multiple extends undefined ? T | null : readonly T[];
 export type GetOptionSelected<T> = (payload: { readonly item: T; readonly value: T }) => boolean;
 
 export type OnSelectItem<T, Multiple extends boolean | undefined = undefined> = (
@@ -354,40 +354,41 @@ const MenuContainer = React.forwardRef(
 
     const scrollToIndex = React.useCallback((index: number) => {
       if (virtListRef.current) {
-        virtListRef.current.scrollToIndex(index);
+        virtListRef.current?.scrollToIndex(index);
       }
     }, []);
 
-    React.useEffect(() => {
-      let timeout: NodeJS.Timeout | null;
-      const recalc = () => {
-        if (timeout) {
-          clearTimeout(timeout);
-        }
-        timeout = setTimeout(() => {
-          if (anchorElement) {
-            // calculateElementPos();
-          }
-        }, 300);
-      };
-
-      window.addEventListener('resize', recalc);
-      window.addEventListener('scroll', recalc);
-
-      recalc();
-
-      return () => {
-        window.removeEventListener('resize', recalc);
-        window.removeEventListener('scroll', recalc);
-      };
-    }, [anchorElement, isOpen]);
+    // React.useEffect(() => {
+    //   let timeout: NodeJS.Timeout | null;
+    //   const recalc = () => {
+    //     if (timeout) {
+    //       clearTimeout(timeout);
+    //     }
+    //     timeout = setTimeout(() => {
+    //       if (anchorElement) {
+    //         // calculateElementPos();
+    //       }
+    //     }, 300);
+    //   };
+    //
+    //   window.addEventListener('resize', recalc);
+    //   window.addEventListener('scroll', recalc);
+    //
+    //   recalc();
+    //
+    //   return () => {
+    //     window.removeEventListener('resize', recalc);
+    //     window.removeEventListener('scroll', recalc);
+    //   };
+    // }, [anchorElement, isOpen]);
 
     /**
      * Scroll to first of selected item
      */
     const scrollToFirstSelected = React.useCallback(() => {
       const indexes = [...selectedIndexes];
-      // Sort array of indexes by DESC and get the index
+      //
+      // // Sort array of indexes by DESC and get the index
       const index = indexes.length ? [...indexes.sort()][0] : -1;
       dispatch({
         type: 'setMenuState',
@@ -395,7 +396,10 @@ const MenuContainer = React.forwardRef(
           markedIndex: index,
         },
       });
-      scrollToIndex(index);
+      if (index >= 0) {
+
+        scrollToIndex(index);
+      }
     }, [dispatch, selectedIndexes, scrollToIndex]);
 
     /**
@@ -459,26 +463,22 @@ const MenuContainer = React.forwardRef(
     const hightlightPrevItem = React.useCallback(() => {
       const index = Math.max(markedIndex - 1, 0);
       highlightIndex(index);
-      scrollToIndex(index);
-    }, [markedIndex, highlightIndex, scrollToIndex]);
+    }, [markedIndex, highlightIndex]);
 
     const hightlightNextItem = React.useCallback(() => {
       const index = Math.min(markedIndex + 1, items.length);
       highlightIndex(index);
-      scrollToIndex(index);
-    }, [markedIndex, items.length, highlightIndex, scrollToIndex]);
+    }, [markedIndex, items.length, highlightIndex]);
 
     const hightlightFirstItem = React.useCallback(() => {
       const index = 0;
       highlightIndex(index);
-      scrollToIndex(index);
-    }, [highlightIndex, scrollToIndex]);
+    }, [highlightIndex]);
 
     const hightlightLastItem = React.useCallback(() => {
       const index = items.length - 1;
       highlightIndex(index);
-      scrollToIndex(index);
-    }, [highlightIndex, scrollToIndex, items.length]);
+    }, [highlightIndex, items.length]);
 
     const selectHightlightedItem = React.useCallback(() => {
       if (markedIndex > -1) {
@@ -626,6 +626,10 @@ const MenuContainer = React.forwardRef(
       };
     }, [isOpen, onRequestClose, anchorElement, closeOutsideClick]);
 
+    const firstSelectedIndex = React.useMemo(
+      () => getSelectedIndexes()[0] ?? null,
+      [getSelectedIndexes],
+    );
     /**
      * Toggle menu open
      */
@@ -637,12 +641,22 @@ const MenuContainer = React.forwardRef(
           onRequestClose();
         }
         if (isOpen) {
-          scrollToFirstSelected();
+          if (selectedIndexes.length > 0) {
+            // console.log('select', selectedIndexes);
+            dispatch({
+              type: 'setMenuState',
+              payload: {
+                markedIndex: selectedIndexes[0],
+                // selectedIndexes: selectedIndexes,
+                // hoveredIndex: selectedIndexes[0],
+              },
+            });
+          }
 
           if (autofocus) {
-            setTimeout(() => {
+            requestAnimationFrame(() => {
               menuListRef.current?.focus();
-            }, 15);
+            });
           }
         }
 
@@ -652,7 +666,16 @@ const MenuContainer = React.forwardRef(
           dispatch(actionSetmenuState({ markedIndex: -1, hoveredIndex: -1 }));
         }
       }
-    }, [getSelectedIndexes, scrollToFirstSelected, isOpen, autofocus, dispatch, onRequestClose]);
+    }, [
+      getSelectedIndexes,
+      scrollToFirstSelected,
+      isOpen,
+      autofocus,
+      dispatch,
+      onRequestClose,
+      firstSelectedIndex,
+      selectedIndexes,
+    ]);
 
     /**
      * Mark selected items by values
@@ -734,9 +757,10 @@ const MenuContainer = React.forwardRef(
             ref={menuListRef}
             onKeyDown={listKeydownEvent}
           >
-            <VirtualizedList ref={virtListRef} isOpen={Boolean(isOpen)} items={items}>
-              {({ index, style, item, setItemHeight }) => (
+            <VirtualizedList ref={virtListRef} items={items} initialIndex={firstSelectedIndex}>
+              {({ index, style, item, setItemHeight, itemRef }) => (
                 <VirtualizedItem
+                  ref={itemRef}
                   key={index}
                   style={style}
                   setItemHeight={setItemHeight}

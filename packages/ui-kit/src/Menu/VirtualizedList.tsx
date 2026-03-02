@@ -1,14 +1,13 @@
 import * as React from 'react';
 import styled from '@emotion/styled';
-import { MenuProps, MenuRef } from './MenuContainer';
 
 export type VirtualizedListProps<T> = {
-  readonly isOpen: boolean;
   readonly items: readonly T[];
   readonly maxHeight?: number;
   readonly overscan?: number;
   readonly baseItemHeight?: number;
   readonly children: (params: ChildrenProps<T>) => React.ReactNode;
+  readonly initialIndex?: number;
 };
 
 export type ChildrenProps<T> = {
@@ -16,6 +15,7 @@ export type ChildrenProps<T> = {
   readonly index: number;
   readonly style: React.CSSProperties;
   readonly setItemHeight: (index: number, height: number) => void;
+  readonly itemRef: (el: HTMLElement | null) => void;
 };
 
 const Container = styled.div<{ $maxHeight: number }>`
@@ -41,11 +41,24 @@ export type VirtualizedListRef = {
 
 const VirtualizedList = React.forwardRef(
   <T,>(props: VirtualizedListProps<T>, ref: React.ForwardedRef<VirtualizedListRef>) => {
-    const { items, children, baseItemHeight = 36, maxHeight = 36 * 8, overscan = 5 } = props;
+    const {
+      items,
+      children,
+      baseItemHeight = 1,
+      maxHeight = 36 * 8,
+      overscan = 5,
+      initialIndex,
+    } = props;
     const [scrollTop, setScrollTop] = React.useState(0);
     const [heights, setHeights] = React.useState<Map<number, number>>(new Map());
+    const offsetsRef = React.useRef<number[]>([]);
     const containerRef = React.useRef<HTMLDivElement | null>(null);
+    const innerRef = React.useRef<HTMLDivElement | null>(null);
+    const itemRefs = React.useRef<(HTMLElement | null)[]>([]);
 
+    /**
+     * Items height cache
+     */
     const setItemHeight = React.useCallback((index: number, h: number) => {
       setHeights(prev => {
         if (prev.get(index) === h) {
@@ -59,6 +72,9 @@ const VirtualizedList = React.forwardRef(
       });
     }, []);
 
+    /**
+     * Calculate offsets
+     */
     const offsets = React.useMemo(() => {
       const arr: number[] = new Array(items.length);
       let sum = 0;
@@ -68,58 +84,129 @@ const VirtualizedList = React.forwardRef(
         sum += heights.get(i) ?? baseItemHeight;
       }
 
+      offsetsRef.current = arr;
       // offsetsRef.current = arr;
 
       return arr;
     }, [items.length, heights, baseItemHeight]);
-    const offsetsRef = React.useRef<number[]>([]);
 
+    /**
+     * Offsets cache
+     */
     React.useEffect(() => {
       offsetsRef.current = offsets;
     }, [offsets]);
 
-    const totalHeight =
-      offsets[items.length - 1] + (heights.get(items.length - 1) ?? baseItemHeight);
+    /**
+     * Calculate full list height
+     */
+    const totalHeight = React.useMemo(
+      () => offsets[items.length - 1] + (heights.get(items.length - 1) ?? baseItemHeight),
+      [baseItemHeight, heights, items.length, offsets],
+    );
 
-    const findStartIndex = (scrollTop: number) => {
-      let low = 0;
-      let high = offsets.length - 1;
+    const findStartIndex = React.useCallback(
+      (scrollTop: number) => {
+        let low = 0;
+        let high = offsets.length - 1;
 
-      while (low <= high) {
-        const mid = (low + high) >> 1;
-        if (offsets[mid] <= scrollTop) low = mid + 1;
-        else high = mid - 1;
+        while (low <= high) {
+          const mid = (low + high) >> 1;
+          if (offsets[mid] <= scrollTop) low = mid + 1;
+          else high = mid - 1;
+        }
+
+        return Math.max(0, low - 1);
+      },
+      [offsets],
+    );
+
+    const startIndex = React.useMemo(() => findStartIndex(scrollTop), [findStartIndex, scrollTop]);
+    const endIndex = React.useMemo(() => {
+      let acc = offsets[startIndex];
+      let end = startIndex;
+
+      while (end < items.length && acc < scrollTop + maxHeight) {
+        acc += heights.get(end) ?? baseItemHeight;
+        end++;
       }
 
-      return Math.max(0, low - 1);
-    };
+      return Math.min(end + overscan, items.length);
+    }, [
+      startIndex,
+      offsets,
+      scrollTop,
+      maxHeight,
+      heights,
+      baseItemHeight,
+      items.length,
+      overscan,
+    ]);
 
-    const startIndex = findStartIndex(scrollTop);
-
-    let endIndex = startIndex;
-    let acc = offsets[startIndex];
-
-    while (endIndex < items.length && acc < scrollTop + maxHeight) {
-      acc += heights.get(endIndex) ?? baseItemHeight;
-      endIndex++;
-    }
-
-    endIndex = Math.min(endIndex + overscan, items.length);
     const pendingScrollIndex = React.useRef<number | null>(null);
 
-    const visibleItems = items.slice(startIndex, endIndex);
-    const scrollToIndex = React.useCallback((index: number) => {
-      pendingScrollIndex.current = index;
-    }, []);
+    const visibleItems = React.useMemo(() => {
+      itemRefs.current = [];
+
+      return items.slice(startIndex, endIndex);
+    }, [endIndex, items, startIndex]);
 
     React.useEffect(() => {
       if (pendingScrollIndex.current !== null && containerRef.current) {
         const index = pendingScrollIndex.current;
-        const top = offsetsRef.current[index] ?? 0;
-        containerRef.current.scrollTop = top;
+        containerRef.current.scrollTop = offsetsRef.current[index] ?? 0;
         pendingScrollIndex.current = null;
       }
     }, [offsets]);
+
+    React.useEffect(() => {
+      const index = pendingScrollIndex.current;
+      if (index == null) {
+        return;
+      }
+
+      const el = itemRefs.current[index];
+      if (el) {
+        el.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+        pendingScrollIndex.current = null;
+      }
+    }, [visibleItems]);
+
+    const setItemRef = React.useCallback(
+      (index: number) => (el: HTMLElement | null) => {
+        itemRefs.current[index] = el;
+      },
+      [],
+    );
+
+    const scrollToIndex = React.useCallback((index: number) => {
+      const el = itemRefs.current[index];
+
+      if (el) {
+        requestAnimationFrame(() => {
+          el.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+        });
+
+        return;
+      }
+
+      // scroll container by offsets
+      if (containerRef.current) {
+        containerRef.current.scrollTop = offsetsRef.current[index] ?? 0;
+      }
+
+      // Pending while element are shown
+      pendingScrollIndex.current = index;
+    }, []);
+
+    /**
+     * Scroll to initial index
+     */
+    React.useEffect(() => {
+      if (typeof initialIndex === 'number' && initialIndex >= 0) {
+        pendingScrollIndex.current = initialIndex;
+      }
+    }, [initialIndex]);
 
     React.useImperativeHandle(
       ref,
@@ -136,13 +223,14 @@ const VirtualizedList = React.forwardRef(
         ref={containerRef}
       >
         <Wrapper style={{ height: totalHeight }}>
-          <Inner>
+          <Inner ref={innerRef}>
             {visibleItems.map((item, i) => {
               const index = startIndex + i;
 
               return children({
                 item,
                 index,
+                itemRef: setItemRef(index),
                 setItemHeight,
                 style: {
                   position: 'absolute',
