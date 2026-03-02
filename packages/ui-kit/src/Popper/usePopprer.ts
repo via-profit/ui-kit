@@ -199,9 +199,56 @@ export const usePopper = ({
     [offset, positionStrategy],
   );
 
+  // const clampPopperToContainer = React.useCallback(
+  //   (style: { left: number; top: number; width?: number }, _popperRect: DOMRect) => style,
+  //   [],
+  // );
   const clampPopperToContainer = React.useCallback(
-    (style: { left: number; top: number; width?: number }, _popperRect: DOMRect) => style,
-    [],
+    (style: { left: number; top: number; width?: number }, popperRect: DOMRect) => {
+      // Если нет scrollableAncestor, используем document.documentElement как fallback
+      const container =
+        scrollableAncestor instanceof HTMLElement ? scrollableAncestor : document.documentElement;
+
+      const containerRect = container.getBoundingClientRect();
+
+      // Базовые границы контейнера с учетом отступа
+      let minLeft = containerRect.left + viewportMargin;
+      let maxLeft = containerRect.right - popperRect.width - viewportMargin;
+      let minTop = containerRect.top + viewportMargin;
+      let maxTop = containerRect.bottom - popperRect.height - viewportMargin;
+
+      // Для fixed позиционирования добавляем ограничения viewport
+      if (positionStrategy === 'fixed') {
+        // Границы viewport с учетом отступа
+        const viewportMinLeft = viewportMargin;
+        const viewportMaxLeft = window.innerWidth - popperRect.width - viewportMargin;
+        const viewportMinTop = viewportMargin;
+        const viewportMaxTop = window.innerHeight - popperRect.height - viewportMargin;
+
+        // Берем пересечение границ контейнера и viewport
+        minLeft = Math.max(minLeft, viewportMinLeft);
+        maxLeft = Math.min(maxLeft, viewportMaxLeft);
+        minTop = Math.max(minTop, viewportMinTop);
+        maxTop = Math.min(maxTop, viewportMaxTop);
+      }
+
+      // Убеждаемся, что границы валидны (min не больше max)
+      const validMinLeft = Math.min(minLeft, maxLeft);
+      const validMaxLeft = Math.max(minLeft, maxLeft);
+      const validMinTop = Math.min(minTop, maxTop);
+      const validMaxTop = Math.max(minTop, maxTop);
+
+      // Ограничиваем позицию
+      const clampedLeft = Math.max(validMinLeft, Math.min(style.left, validMaxLeft));
+      const clampedTop = Math.max(validMinTop, Math.min(style.top, validMaxTop));
+
+      return {
+        left: clampedLeft,
+        top: clampedTop,
+        width: style.width,
+      };
+    },
+    [positionStrategy, scrollableAncestor, viewportMargin],
   );
 
   const checkIfViewportFits = React.useCallback(
