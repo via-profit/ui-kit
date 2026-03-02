@@ -127,7 +127,9 @@ export type DatePickerProps = Omit<TextFieldProps, 'value' | 'onChange' | 'overr
   /**
    * Initial name of the view
    */
-  readonly initialView?: CalendarView;
+  readonly view?: CalendarView;
+
+  readonly views?: readonly CalendarView[];
 
   /**
    * Custom footer elements
@@ -173,7 +175,8 @@ const DatePicker: React.FC<DatePickerProps> = props => {
     toodayButtonLabel,
     heading,
     subheading,
-    initialView,
+    view,
+    views,
     footer,
     overrides,
     ...restInputProps
@@ -328,7 +331,8 @@ const DatePicker: React.FC<DatePickerProps> = props => {
             todayButtonLabel={toodayButtonLabel}
             heading={heading}
             subheading={subheading}
-            initialView={initialView}
+            view={view}
+            views={views}
             footer={footer}
             value={currentValue || new Date()}
             onChange={date => {

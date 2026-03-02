@@ -18,7 +18,7 @@ import React from 'react';
 import DatePicker from '@via-profit/ui-kit/DatePicker';
 
 const ExampleDatePickerOverview: React.FC = () => {
-  const [value, setValue] = React.useState<null | Date>(null);
+  const [value, setValue] = React.useState<null | Date>(new Date());
 
   return (
     <DatePicker
@@ -34,6 +34,8 @@ export default ExampleDatePickerOverview;
 ```
 
 <ExampleDatePickerOverview />
+<br/>
+<ExampleDatePickerMonths />
 
 ## Хуки
 

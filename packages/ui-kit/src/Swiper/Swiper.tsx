@@ -189,6 +189,7 @@ export const Swiper = React.forwardRef((props: SwiperProps, ref: React.Forwarded
       >
         <overridesMap.Track dragging={isDragging} index={index} offset={offset}>
           {slides.map((slide, i) => (
+            // eslint-disable-next-line react/no-array-index-key
             <React.Fragment key={i}>{slide}</React.Fragment>
           ))}
         </overridesMap.Track>

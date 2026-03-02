@@ -21,7 +21,6 @@ export interface UsePopperResult {
   readonly isVisible: boolean;
   readonly calculatePosition: () => void;
   readonly scrollableAncestor: HTMLElement | Window | null;
-  // readonly getTransformOrigin: (placement: AnchorPos) => string;
   readonly setActualPlacement: React.Dispatch<React.SetStateAction<AnchorPos>>;
   readonly setStyle: React.Dispatch<React.SetStateAction<React.CSSProperties | null>>;
   readonly setIsVisible: React.Dispatch<React.SetStateAction<boolean>>;

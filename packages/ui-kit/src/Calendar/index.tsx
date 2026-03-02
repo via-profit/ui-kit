@@ -313,12 +313,13 @@ export type CalendarBadge = {
 
 const StyledSwiper = styled(Swiper)`
   height: 100%;
-`
+`;
 
 export type CalendarRef<IsRangeValue extends boolean | undefined = undefined> = {
   readonly setView: (view: CalendarView) => void;
   readonly setValue: (value: CalendarValue<IsRangeValue> | null) => void;
   readonly setCalendarDate: (date: Date) => void;
+  readonly reset: () => void;
 };
 
 const isRangeValue = (value: unknown): value is CalendarValue<true> => {
@@ -531,20 +532,6 @@ const Calendar = React.forwardRef(
       value,
       view,
     });
-
-    /**
-     * API
-     */
-    useImperativeHandle(
-      ref,
-      () => ({
-        setView: selectView,
-        // setViews,
-        setValue,
-        setCalendarDate,
-      }),
-      [selectView],
-    );
 
     const {
       isSameDay,
@@ -978,6 +965,20 @@ const Calendar = React.forwardRef(
 
     const initialIndex = React.useMemo(() => views.findIndex(v => v === view), [views, view]);
 
+    /**
+     * API
+     */
+    useImperativeHandle(
+      ref,
+      () => ({
+        setView: selectView,
+        reset: handleReset,
+        setValue,
+        setCalendarDate,
+      }),
+      [selectView, handleReset],
+    );
+
     return (
       <overridesMap.Paper>
         <overridesMap.Header>
@@ -999,7 +1000,14 @@ const Calendar = React.forwardRef(
               <overridesMap.ControlButton
                 title={changeMonthButtonTooltip}
                 isActive={view === 'months'}
-                onClick={() => selectView(view === 'months' ? 'days' : 'months')}
+                onClick={() => {
+                  if (view === 'months' && views.includes('days')) {
+                    selectView('days');
+                  }
+                  if (view !== 'months' && views.includes('months')) {
+                    selectView('months');
+                  }
+                }}
               >
                 {getMonthLabel(calendarDate)}
               </overridesMap.ControlButton>
@@ -1009,7 +1017,14 @@ const Calendar = React.forwardRef(
               <overridesMap.ControlButton
                 isActive={view === 'years'}
                 title={changeYearButtonTooltip}
-                onClick={() => selectView(view === 'years' ? 'days' : 'years')}
+                onClick={() => {
+                  if (view === 'years' && views.includes('days')) {
+                    selectView('days');
+                  }
+                  if (view !== 'years' && views.includes('years')) {
+                    selectView('years');
+                  }
+                }}
               >
                 {getYearLabel(calendarDate)}
               </overridesMap.ControlButton>
