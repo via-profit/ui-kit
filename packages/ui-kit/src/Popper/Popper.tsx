@@ -97,6 +97,7 @@ export type Modifier =
  * ```
  */
 export type AnchorPos = Direction | Modifier | AutoModifier;
+
 // export type AnchorPos = Di | `${Di}-${Mod}` | Au | `${Au}-${Di}`;
 
 export interface PopperProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -270,7 +271,7 @@ const Popper: React.ForwardRefRenderFunction<HTMLDivElement, PopperProps> = (pro
 
   const [domLoaded, setDomLoaded] = React.useState(false);
 
-  const { actualPlacement, style, popperRef, isVisible,  } = usePopper({
+  const { actualPlacement, style, popperRef } = usePopper({
     anchorElement,
     anchorPos,
     positionStrategy,
@@ -307,7 +308,6 @@ const Popper: React.ForwardRefRenderFunction<HTMLDivElement, PopperProps> = (pro
     const newNode = window.document.createElement('div');
     newNode.setAttribute('id', PORTAL_ID);
 
-    // Важно для absolute позиционирования
     if (positionStrategy === 'absolute') {
       newNode.style.position = 'relative';
     }
@@ -317,6 +317,18 @@ const Popper: React.ForwardRefRenderFunction<HTMLDivElement, PopperProps> = (pro
     return newNode;
   }, [positionStrategy]);
 
+  React.useEffect(() => {
+    if (anchorElement && isOpen) {
+      anchorElement.dataset.popperPositionStrategy = positionStrategy;
+      anchorElement.dataset.popperPlacement = actualPlacement;
+      anchorElement.dataset.popperIsOpen = isOpen.toString();
+    } else if (anchorElement && !isOpen) {
+      anchorElement.dataset.popperPositionStrategy = '';
+      anchorElement.dataset.popperPlacement = '';
+      anchorElement.dataset.popperIsOpen = '';
+    }
+  }, [anchorElement, positionStrategy, isOpen, actualPlacement]);
+
   const renderNode = React.useCallback(
     () => (
       <overridesMap.Container
@@ -324,8 +336,8 @@ const Popper: React.ForwardRefRenderFunction<HTMLDivElement, PopperProps> = (pro
         style={{
           ...style,
           ...nativeProps.style,
-          opacity: isVisible ? 1 : 0,
-          pointerEvents: isVisible ? 'auto' : 'none',
+          // opacity: isVisible ? 1 : 0,
+          // pointerEvents: isVisible ? 'auto' : 'none',
           // transformOrigin: getTransformOrigin(actualPlacement),
           ...(positionStrategy === 'fixed' && {
             zIndex: zIndex,
@@ -333,7 +345,7 @@ const Popper: React.ForwardRefRenderFunction<HTMLDivElement, PopperProps> = (pro
         }}
         zIndex={zIndex}
         positionStrategy={positionStrategy}
-        data-placement={actualPlacement}
+        data-popper-placement={actualPlacement}
         data-popper-strategy={positionStrategy}
         ref={el => {
           popperRef.current = el;
@@ -355,7 +367,7 @@ const Popper: React.ForwardRefRenderFunction<HTMLDivElement, PopperProps> = (pro
       overridesMap,
       nativeProps,
       style,
-      isVisible,
+      // isVisible,
       // getTransformOrigin,
       actualPlacement,
       positionStrategy,
@@ -373,7 +385,6 @@ const Popper: React.ForwardRefRenderFunction<HTMLDivElement, PopperProps> = (pro
   if (positionStrategy === 'fixed') {
     return domLoaded && portalEl ? ReactDOM.createPortal(renderNode(), portalEl, PORTAL_ID) : null;
   }
-
 
   return renderNode();
 };

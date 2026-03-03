@@ -343,7 +343,7 @@ const MenuContainer = React.forwardRef(
     const [currentAnchorElement, setAnchorElement] = React.useState(anchorElement);
     const isOpenRef = React.useRef(isOpen);
     const menuListRef = React.useRef<HTMLDivElement | null>(null);
-    const menuPopperRef = React.useRef<HTMLDivElement | null>(null);
+    // const popperRef = React.useRef<HTMLDivElement | null>(null);
     const virtListRef = React.useRef<VirtualizedListRef | null>(null);
     const {
       dispatch,
@@ -397,7 +397,6 @@ const MenuContainer = React.forwardRef(
         },
       });
       if (index >= 0) {
-
         scrollToIndex(index);
       }
     }, [dispatch, selectedIndexes, scrollToIndex]);
@@ -743,7 +742,7 @@ const MenuContainer = React.forwardRef(
       >
         <overridesMap.Popper
           isOpen={Boolean(isOpen)}
-          ref={menuPopperRef}
+          // ref={popperRef}
           zIndex={zIndex}
           anchorPos={anchorPos}
           anchorElement={anchorElement}

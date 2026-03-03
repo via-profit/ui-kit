@@ -12,7 +12,7 @@ const StyledMenuList = styled.div<{ $isOpen: boolean }>`
   opacity: ${props => (props.$isOpen ? 1 : 0)};
   background-color: ${({ theme }) => theme.color.surface.toString()};
   border-radius: ${({ theme }) => theme.shape.radiusFactor * 2}em;
-  box-shadow: 0 4px 24px ${({ theme }) => theme.color.surface.darken(50).alpha(0.6).toString()};
+  box-shadow: 0 0.25em 1.5em ${({ theme }) => theme.color.surface.darken(50).alpha(0.6).toString()};
   &:focus {
     outline-style: solid;
     outline-width: 0.14em;
@@ -50,17 +50,20 @@ const StyledMenuList = styled.div<{ $isOpen: boolean }>`
   overflow-y: auto;
   padding: 0.4em;
   max-height: 18em;
-  min-width: 16em;
 `;
 
-const MenuList: React.ForwardRefRenderFunction<HTMLDivElement, MenuListProps> = (props, ref) => {
-  const { isOpen, children, ...nativeProps } = props;
+export const MenuList = React.forwardRef(
+  (props: MenuListProps, ref: React.ForwardedRef<HTMLDivElement>) => {
+    const { isOpen, children, ...nativeProps } = props;
 
-  return (
-    <StyledMenuList tabIndex={-1} $isOpen={isOpen} {...nativeProps} ref={ref}>
-      {children}
-    </StyledMenuList>
-  );
-};
+    return (
+      <StyledMenuList tabIndex={-1} $isOpen={isOpen} {...nativeProps} ref={ref}>
+        {children}
+      </StyledMenuList>
+    );
+  },
+);
 
-export default React.forwardRef(MenuList);
+MenuList.displayName = 'MenuList';
+
+export default MenuList;
