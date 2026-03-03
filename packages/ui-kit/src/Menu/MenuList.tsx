@@ -1,11 +1,14 @@
 import React from 'react';
 import styled from '@emotion/styled';
+import { AnchorPos } from '../Popper';
+import { css } from '@emotion/react';
 
 export interface MenuListProps extends React.HTMLAttributes<HTMLDivElement> {
   readonly isOpen: boolean;
+  readonly anchorPos: AnchorPos;
 }
 
-const StyledMenuList = styled.div<{ $isOpen: boolean }>`
+const StyledMenuList = styled.div<{ $isOpen: boolean; $fixedWidth?: boolean }>`
   display: flex;
   flex-direction: column;
   transition: opacity 120ms ease-out;
@@ -50,14 +53,25 @@ const StyledMenuList = styled.div<{ $isOpen: boolean }>`
   overflow-y: auto;
   padding: 0.4em;
   max-height: 18em;
+  ${({ $fixedWidth }) =>
+    $fixedWidth &&
+    css`
+      min-width: 16em;
+    `}
 `;
 
 export const MenuList = React.forwardRef(
   (props: MenuListProps, ref: React.ForwardedRef<HTMLDivElement>) => {
-    const { isOpen, children, ...nativeProps } = props;
+    const { isOpen, anchorPos, children, ...nativeProps } = props;
 
     return (
-      <StyledMenuList tabIndex={-1} $isOpen={isOpen} {...nativeProps} ref={ref}>
+      <StyledMenuList
+        tabIndex={-1}
+        $isOpen={isOpen}
+        $fixedWidth={!['bottom-fill', 'top-fill'].includes(anchorPos)}
+        {...nativeProps}
+        ref={ref}
+      >
         {children}
       </StyledMenuList>
     );

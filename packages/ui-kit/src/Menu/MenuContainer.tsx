@@ -357,31 +357,6 @@ const MenuContainer = React.forwardRef(
         virtListRef.current?.scrollToIndex(index);
       }
     }, []);
-
-    // React.useEffect(() => {
-    //   let timeout: NodeJS.Timeout | null;
-    //   const recalc = () => {
-    //     if (timeout) {
-    //       clearTimeout(timeout);
-    //     }
-    //     timeout = setTimeout(() => {
-    //       if (anchorElement) {
-    //         // calculateElementPos();
-    //       }
-    //     }, 300);
-    //   };
-    //
-    //   window.addEventListener('resize', recalc);
-    //   window.addEventListener('scroll', recalc);
-    //
-    //   recalc();
-    //
-    //   return () => {
-    //     window.removeEventListener('resize', recalc);
-    //     window.removeEventListener('scroll', recalc);
-    //   };
-    // }, [anchorElement, isOpen]);
-
     /**
      * Scroll to first of selected item
      */
@@ -635,19 +610,15 @@ const MenuContainer = React.forwardRef(
     React.useEffect(() => {
       if (isOpenRef.current !== isOpen) {
         isOpenRef.current = Boolean(isOpen);
-        // setMenuOpen(Boolean(isOpen));
         if (!isOpen) {
           onRequestClose();
         }
         if (isOpen) {
           if (selectedIndexes.length > 0) {
-            // console.log('select', selectedIndexes);
             dispatch({
               type: 'setMenuState',
               payload: {
                 markedIndex: selectedIndexes[0],
-                // selectedIndexes: selectedIndexes,
-                // hoveredIndex: selectedIndexes[0],
               },
             });
           }
@@ -661,7 +632,6 @@ const MenuContainer = React.forwardRef(
 
         // Reset indexes
         if (!isOpen) {
-          // listVirtRef.current?.scrollToIndex(0);
           dispatch(actionSetmenuState({ markedIndex: -1, hoveredIndex: -1 }));
         }
       }
@@ -742,7 +712,6 @@ const MenuContainer = React.forwardRef(
       >
         <overridesMap.Popper
           isOpen={Boolean(isOpen)}
-          // ref={popperRef}
           zIndex={zIndex}
           anchorPos={anchorPos}
           anchorElement={anchorElement}
@@ -754,6 +723,7 @@ const MenuContainer = React.forwardRef(
           <overridesMap.List
             isOpen={Boolean(isOpen)}
             ref={menuListRef}
+            anchorPos={anchorPos}
             onKeyDown={listKeydownEvent}
           >
             <VirtualizedList ref={virtListRef} items={items} initialIndex={firstSelectedIndex}>
