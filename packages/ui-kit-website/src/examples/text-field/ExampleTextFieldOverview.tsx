@@ -1,5 +1,5 @@
 import React from 'react';
-import TextField from '@via-profit/ui-kit/src/TextField';
+import TextField, { TextFieldProps } from '@via-profit/ui-kit/src/TextField';
 import { useTheme } from '@via-profit/ui-kit/src/ThemeProvider';
 
 const ExampleTextFieldOverview: React.FC = () => {
@@ -11,6 +11,15 @@ const ExampleTextFieldOverview: React.FC = () => {
   const [isValid, setValidate] = React.useState(validate(value));
   const theme = useTheme();
 
+  const handleChange: React.ChangeEventHandler<HTMLInputElement> = React.useCallback(
+    event => {
+      const newValue = event.currentTarget.value;
+      setValue(newValue);
+      setValidate(validate(newValue));
+    },
+    [validate],
+  );
+
   return (
     <>
       <TextField
@@ -19,11 +28,7 @@ const ExampleTextFieldOverview: React.FC = () => {
         errorText="Is not a «potato»"
         error={!isValid}
         value={value}
-        onChange={event => {
-          const newValue = event.currentTarget.value;
-          setValue(newValue);
-          setValidate(validate(newValue));
-        }}
+        onChange={handleChange}
         endIcon={
           isValid ? (
             <svg

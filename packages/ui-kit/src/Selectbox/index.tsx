@@ -1,6 +1,6 @@
-import React, { ButtonHTMLAttributes } from 'react';
+import * as React from 'react';
 
-import Menu, { GetOptionSelected, MenuRef, OnRequestClose, Value } from '../Menu';
+import { GetOptionSelected, MenuRef, OnRequestClose, Value } from '../Menu';
 import type { MenuItemCommonProps } from '../Menu/MenuItem';
 import SelectboxItem from '../Menu/MenuItem';
 import Button, { SelectboxButtonProps } from './SelectboxButton';
@@ -13,12 +13,11 @@ import Asterisk, { TextFieldLabelAsteriskProps } from '../TextField/TextFieldLab
 import ErrorText, { TextFieldErrorTextProps } from '../TextField/TextFieldErrorText';
 import ButtonWrapper, { SelectboxButtonWrapperProps } from './SelectboxButtonWrapper';
 import Container, { SelectboxContainerProps } from './SelectboxContainer';
-import OverrideMenuList from '../Autocomplete/OverrideMenuList';
+import SelectboxMenu from './SelectboxMenu';
 
 export { SelectboxItem };
-
 export interface SelectboxProps<T, Multiple extends boolean | undefined = undefined>
-  extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'value' | 'onChange' | 'children'> {
+  extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'value' | 'onChange' | 'children'> {
   /**
    * Array of values
    */
@@ -216,6 +215,27 @@ export type OnChange<T, Multiple extends boolean | undefined = undefined> = (
   item: Value<T, Multiple>,
 ) => void;
 
+const DEFAULT_OVERRIDES = {
+  Button,
+  Icon,
+  Label,
+  Asterisk,
+  ErrorText,
+  ButtonWrapper,
+  Container,
+} as const;
+
+const generateGuid = (): string => {
+  const u = Date.now().toString(16) + Math.random().toString(16) + '0'.repeat(16);
+
+  return [
+    u.substring(0, 8),
+    u.substring(8, 12),
+    '4000-8' + u.substring(13, 16),
+    u.substring(16, 28),
+  ].join('-');
+};
+
 const Selectbox = React.forwardRef(
   <T, Multiple extends boolean | undefined = undefined>(
     props: SelectboxProps<T, Multiple>,
@@ -245,21 +265,26 @@ const Selectbox = React.forwardRef(
       notSetLabel = 'Not set',
       ...nativeButtonProps
     } = props;
+
     const menuRef = React.useRef<MenuRef | null>(null);
+    const [actualPlacement, setActualPlacement] = React.useState(anchorPos);
+    const [anchorElement, setAnchorElement] = React.useState<HTMLElement | null>(null);
+
     const overridesMap = React.useMemo(
       () => ({
-        Button: overrides?.Button || Button,
-        Icon: overrides?.Icon || Icon,
-        Label: overrides?.Label || Label,
-        Asterisk: overrides?.Asterisk || Asterisk,
-        ErrorText: overrides?.ErrorText || ErrorText,
-        ButtonWrapper: overrides?.ButtonWrapper || ButtonWrapper,
-        Container: overrides?.Container || Container,
+        ...DEFAULT_OVERRIDES,
+        ...overrides,
       }),
       [overrides],
     );
-    const [actualPlacement, setActualPlacement] = React.useState(anchorPos);
-    const [anchorElement, setAnchorElement] = React.useState<HTMLElement | null>(null);
+
+    const inputID = React.useMemo(() => {
+      if (typeof id === 'string') {
+        return id;
+      }
+
+      return generateGuid();
+    }, [id]);
 
     React.useEffect(() => {
       if (isOpen && menuRef.current) {
@@ -267,8 +292,42 @@ const Selectbox = React.forwardRef(
       }
     }, [isOpen]);
 
-    React.useEffect(() => {
-      const mouseDownEvent = (event: MouseEvent) => {
+    const renderValueAsString = React.useCallback(() => {
+      if ((!multiple && !value) || (multiple && (value as readonly T[]).length === 0)) {
+        return notSetLabel;
+      }
+
+      return selectedItemToString(value as Multiple extends undefined ? T : readonly T[]);
+    }, [multiple, selectedItemToString, value, notSetLabel]);
+
+    const handleButtonClick = React.useCallback(
+      (event: React.MouseEvent<HTMLButtonElement>) => {
+        if (isOpen) {
+          onRequestClose(event);
+        } else {
+          onRequestOpen(event);
+        }
+        nativeButtonProps.onClick?.(event);
+      },
+      [isOpen, nativeButtonProps, onRequestClose, onRequestOpen],
+    );
+
+    const setRefs = React.useCallback(
+      (el: HTMLButtonElement | null) => {
+        if (anchorElement !== el) {
+          setAnchorElement(el);
+        }
+        if (typeof ref === 'function') {
+          ref(el);
+        } else if (ref) {
+          ref.current = el;
+        }
+      },
+      [anchorElement, ref],
+    );
+
+    const handleMouseDown = React.useCallback(
+      (event: MouseEvent) => {
         let parentElem = event.target as Node;
         let needToClose = true;
 
@@ -283,45 +342,48 @@ const Selectbox = React.forwardRef(
         if (needToClose) {
           onRequestClose(event);
         }
-      };
+      },
+      [onRequestClose, anchorElement],
+    );
 
-      window.document.addEventListener(mouseEventMap.onMouseDown, mouseDownEvent);
+    React.useEffect(() => {
+      window.document.addEventListener(mouseEventMap.onMouseDown, handleMouseDown);
 
       return () => {
-        window.document.removeEventListener(mouseEventMap.onMouseDown, mouseDownEvent);
+        window.document.removeEventListener(mouseEventMap.onMouseDown, handleMouseDown);
       };
-    }, [onRequestClose, anchorElement]);
+    }, [handleMouseDown]);
 
-    const renderValueAsString = React.useCallback(() => {
-      if ((!multiple && !value) || (multiple && (value as readonly T[]).length === 0)) {
-        return notSetLabel;
-      }
+    const buttonProps = React.useMemo(
+      () => ({
+        fullWidth,
+        error,
+        isOpen,
+        anchorPos: actualPlacement,
+        endIcon: isLoading ? <Spinner /> : <overridesMap.Icon isOpen={isOpen} />,
+        ...nativeButtonProps,
+      }),
+      [fullWidth, error, isOpen, actualPlacement, isLoading, overridesMap, nativeButtonProps],
+    );
 
-      return selectedItemToString(value as Multiple extends undefined ? T : readonly T[]);
-    }, [multiple, selectedItemToString, value, notSetLabel]);
+    const labelProps = React.useMemo(
+      () => ({
+        htmlFor: inputID,
+        error,
+      }),
+      [inputID, error],
+    );
 
-    const inputID = React.useMemo(() => {
-      if (typeof id === 'string') {
-        return id;
-      }
-
-      const u = Date.now().toString(16) + Math.random().toString(16) + '0'.repeat(16);
-      const guid = [
-        u.substring(0, 8),
-        u.substring(8, 12),
-        '4000-8' + u.substring(13, 16),
-        u.substring(16, 28),
-      ].join('-');
-
-      return guid;
-    }, [id]);
+    if (!items?.length && !isLoading) {
+      return null;
+    }
 
     return (
       <overridesMap.Container>
-        {typeof label !== 'undefined' && label !== null && (
-          <overridesMap.Label htmlFor={inputID} error={error}>
+        {label != null && (
+          <overridesMap.Label {...labelProps}>
             {label}
-            {typeof requiredAsterisk !== 'undefined' && requiredAsterisk !== null && (
+            {requiredAsterisk != null && (
               <overridesMap.Asterisk>
                 {typeof requiredAsterisk === 'boolean' ? '*' : requiredAsterisk}
               </overridesMap.Asterisk>
@@ -329,87 +391,27 @@ const Selectbox = React.forwardRef(
           </overridesMap.Label>
         )}
         <overridesMap.ButtonWrapper fullWidth={fullWidth} error={error} isOpen={isOpen}>
-          <overridesMap.Button
-            fullWidth={fullWidth}
-            error={error}
-            isOpen={isOpen}
-            anchorPos={actualPlacement}
-            endIcon={isLoading ? <Spinner /> : <overridesMap.Icon isOpen={isOpen} />}
-            onClick={event => {
-              if (isOpen) {
-                onRequestClose(event);
-              } else {
-                onRequestOpen(event);
-              }
-
-              if (typeof nativeButtonProps.onClick === 'function') {
-                nativeButtonProps.onClick(event);
-              }
-            }}
-            {...nativeButtonProps}
-            ref={el => {
-              if (anchorElement !== el) {
-                setAnchorElement(el);
-              }
-              if (typeof ref === 'function') {
-                ref(el);
-              }
-              if (ref && typeof ref === 'object') {
-                ref.current = el;
-              }
-            }}
-          >
+          <overridesMap.Button {...buttonProps} onClick={handleButtonClick} ref={setRefs}>
             {renderValueAsString()}
           </overridesMap.Button>
         </overridesMap.ButtonWrapper>
         <overridesMap.ErrorText error={error}>{errorText}</overridesMap.ErrorText>
-        {React.useMemo(
-          () => (
-            <Menu
-              ref={menuRef}
-              offset={0}
-              anchorPos={actualPlacement}
-              onAnchorPosChanged={setActualPlacement}
-              multiple={multiple}
-              items={items as T[]}
-              value={value as Value<T, Multiple>}
-              isOpen={isOpen && items.length > 0}
-              autofocus
-              anchorElement={anchorElement}
-              closeOutsideClick={false}
-              getOptionSelected={getOptionSelected}
-              onSelectItem={item => {
-                if (typeof onChange === 'function') {
-                  onChange(item);
-                }
-              }}
-              overrides={{
-                List: OverrideMenuList,
-              }}
-              closeOnSelect={!multiple}
-              onRequestClose={evt => {
-                if (evt?.target !== anchorElement) {
-                  onRequestClose(evt);
-                  anchorElement?.focus();
-                }
-              }}
-            >
-              {({ index, item }, itemProps) => children({ index, item: item as T }, itemProps)}
-            </Menu>
-          ),
-          [
-            actualPlacement,
-            multiple,
-            items,
-            value,
-            isOpen,
-            anchorElement,
-            getOptionSelected,
-            onChange,
-            onRequestClose,
-            children,
-          ],
-        )}
+
+        <SelectboxMenu
+          actualPlacement={actualPlacement}
+          multiple={multiple}
+          items={items}
+          value={value}
+          isOpen={isOpen}
+          anchorElement={anchorElement}
+          getOptionSelected={getOptionSelected}
+          onChange={onChange}
+          onRequestClose={onRequestClose}
+          onAnchorPosChanged={setActualPlacement}
+          ref={menuRef}
+        >
+          {children}
+        </SelectboxMenu>
       </overridesMap.Container>
     );
   },

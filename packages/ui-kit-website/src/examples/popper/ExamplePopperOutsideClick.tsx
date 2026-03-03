@@ -25,7 +25,18 @@ const ExamplePopperOutsideClick: React.FC = () => {
         <FormattedMessage defaultMessage="Открыть Popper" />
       </Button>
 
-      <ClickOutside mouseEvent="onMouseUp" onOutsideClick={() => setAnchorElement(null)}>
+      <ClickOutside
+        mouseEvent="onMouseUp"
+        onOutsideClick={event => {
+          if (event && event.target instanceof HTMLElement) {
+            if (anchorElement && anchorElement.contains(event.target)) {
+              return;
+            }
+          }
+
+          setAnchorElement(null);
+        }}
+      >
         <Popper
           anchorPos="top"
           autoFlip={false}

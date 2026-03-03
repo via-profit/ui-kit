@@ -26,7 +26,7 @@ const StyledStandardButton = styled(ButtonBase)<StyledProps>`
       case disabled:
         return $background.darken(10).toString();
       default:
-        return $background.toString();
+        return $background.luminance(0.5).toString().toString();
     }
   }};
   ${({ $background }) => {
@@ -36,6 +36,28 @@ const StyledStandardButton = styled(ButtonBase)<StyledProps>`
       default:
         return $background.darken(20).alpha(0.5).toString();
     }
+  }};
+  box-shadow: ${({ $background }) => {
+    const color1 = $background.luminance(-0.5).alpha(0.4).toString();
+    const color2 = $background.luminance(-0.83).alpha(0.3).toString();
+    const color3 = $background.luminance(-0.1).toString();
+
+    return `${color1} 0 0.1em 0.1em, ${color2} 0 0.25em 0.81em -0.187em, ${color3} 0 -0.1em 0 inset`;
+  }};
+  background-image: ${({ $background, theme }) => {
+    if (theme.isDark) {
+      return `radial-gradient(
+        100% 100% at 100% 0,
+        ${$background.luminance(0.5).toString()} 0,
+        ${$background.luminance(-0.1).toString()} 100%
+      )`;
+    }
+
+    return `radial-gradient(
+      100% 100% at 100% 0,
+      ${$background.luminance(0.8).toString()} 0,
+      ${$background.toString()} 100%
+    )`;
   }};
   ${({ disabled, $background, theme }) =>
     !disabled &&
@@ -54,6 +76,33 @@ const StyledStandardButton = styled(ButtonBase)<StyledProps>`
           : theme.color.accentPrimary.toString()};
       }
     `}
+
+  &:hover {
+    box-shadow: ${({ $background, disabled }) => {
+      const color1 = $background.luminance(-0.6).alpha(0.4).toString();
+      const color2 = $background.luminance(-0.9).alpha(0.4).toString();
+      const color3 = $background.luminance(-0.3).alpha(0.3).toString();
+
+      if (disabled) {
+        return `${$background.luminance(-0.5).alpha(0.3).toString()} 0 0.187em 0.437em inset`;
+      }
+
+      return `${color1} 0 0.25em 0.5em, ${color2} 0 0.25em 0.6em -0.187em, ${color3} 0 -0.187em 0 inset`;
+    }};
+  }
+  &:active {
+    box-shadow: ${({ $background, theme }) => {
+      if (theme.isDark) {
+        const color = $background.luminance(-0.9).alpha(0.8).toString();
+
+        return `${color} 0 0.387em 0.537em inset`;
+      }
+
+      const color = $background.luminance(-0.5).alpha(0.3).toString();
+
+      return `${color} 0 0.187em 0.437em inset`;
+    }};
+  }
 `;
 
 const ButtonStandard: React.ForwardRefRenderFunction<HTMLButtonElement, ButtonStandardProps> = (

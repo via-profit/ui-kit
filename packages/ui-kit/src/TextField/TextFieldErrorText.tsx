@@ -57,4 +57,4 @@ const TextFieldErrorText: React.ForwardRefRenderFunction<
   );
 };
 
-export default React.forwardRef(TextFieldErrorText);
+export default React.memo(React.forwardRef(TextFieldErrorText));

@@ -61,9 +61,9 @@ export interface MenuProps<T, Multiple extends boolean | undefined = undefined> 
   /**
    * An HTML element. It's used to set the position of the menu.
    * \
-   * **Default**: `false`
+   * **Default**: `null`
    */
-  readonly anchorElement?: AnchorElement | null;
+  readonly anchorElement: AnchorElement | null;
 
   /**
    * A function that extract key for each item\
@@ -289,7 +289,7 @@ const MenuContainer = React.forwardRef(
     const {
       items,
       value,
-      anchorElement,
+      anchorElement = null,
       overrides,
       children,
       closeOutsideClick = true,
@@ -298,7 +298,7 @@ const MenuContainer = React.forwardRef(
       positionStrategy,
       autoFlip,
       viewportMargin,
-      offset,
+      offset = 8,
       multiple = false,
       autofocus = true,
       closeOnSelect = !multiple,

@@ -8,6 +8,7 @@ export type VirtualizedListProps<T> = {
   readonly baseItemHeight?: number;
   readonly children: (params: ChildrenProps<T>) => React.ReactNode;
   readonly initialIndex?: number;
+  readonly cacheSize?: number;
 };
 
 export type ChildrenProps<T> = {
@@ -44,9 +45,10 @@ const VirtualizedList = React.forwardRef(
     const {
       items,
       children,
-      baseItemHeight = 1,
+      baseItemHeight = 34.78,
       maxHeight = 36 * 8,
       overscan = 5,
+      cacheSize = 60,
       initialIndex,
     } = props;
     const [scrollTop, setScrollTop] = React.useState(0);
@@ -55,22 +57,42 @@ const VirtualizedList = React.forwardRef(
     const containerRef = React.useRef<HTMLDivElement | null>(null);
     const innerRef = React.useRef<HTMLDivElement | null>(null);
     const itemRefs = React.useRef<(HTMLElement | null)[]>([]);
+    const visibleRangeRef = React.useRef({ start: 0, end: 0 });
+
+    /**
+     * Clear heightcache
+     */
+    React.useEffect(() => {
+      setHeights(new Map());
+    }, [items]);
 
     /**
      * Items height cache
      */
-    const setItemHeight = React.useCallback((index: number, h: number) => {
-      setHeights(prev => {
-        if (prev.get(index) === h) {
-          return prev;
-        }
+    const setItemHeight = React.useCallback(
+      (index: number, h: number) => {
+        setHeights(prev => {
+          if (prev.get(index) === h) {
+            return prev;
+          }
 
-        const next = new Map(prev);
-        next.set(index, h);
+          const next = new Map(prev);
+          next.set(index, h);
 
-        return next;
-      });
-    }, []);
+          // over `cacheSize` item heights will be cleared
+          const { start, end } = visibleRangeRef.current;
+
+          for (const key of next.keys()) {
+            if (typeof key === 'number' && (key < start - cacheSize || key > end + cacheSize)) {
+              next.delete(key);
+            }
+          }
+
+          return next;
+        });
+      },
+      [cacheSize],
+    );
 
     /**
      * Calculate offsets
@@ -207,6 +229,13 @@ const VirtualizedList = React.forwardRef(
         pendingScrollIndex.current = initialIndex;
       }
     }, [initialIndex]);
+
+    /**
+     * Save visible range
+     */
+    React.useEffect(() => {
+      visibleRangeRef.current = { start: startIndex, end: endIndex };
+    }, [startIndex, endIndex]);
 
     React.useImperativeHandle(
       ref,

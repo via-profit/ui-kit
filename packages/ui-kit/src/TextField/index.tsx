@@ -106,153 +106,166 @@ export interface TextFieldOverrides {
   >;
 }
 
-const TextField: React.ForwardRefRenderFunction<HTMLDivElement, TextFieldProps> = (props, ref) => {
-  const {
-    error,
-    fullWidth,
-    inputRef,
-    label,
-    id,
-    errorText,
-    className,
-    style,
-    endIcon,
-    startIcon,
-    requiredAsterisk,
-    overrides,
-    onChange,
-    onFocus,
-    onBlur,
-    ...nativeInputProps
-  } = props;
-
-  const [focused, setFocused] = React.useState(false);
-  const inputID = React.useMemo(() => {
-    if (typeof id === 'string') {
-      return id;
-    }
-
-    const u = Date.now().toString(16) + Math.random().toString(16) + '0'.repeat(16);
-
-    return [
-      u.substring(0, 8),
-      u.substring(8, 12),
-      '4000-8' + u.substring(13, 16),
-      u.substring(16, 28),
-    ].join('-');
-  }, [id]);
-
-  const inputChange: React.ChangeEventHandler<HTMLInputElement> = React.useCallback(
-    event => {
-      if (onChange) {
-        onChange(event);
-      }
-    },
-    [onChange],
-  );
-
-  const inputFocus: React.FocusEventHandler<HTMLInputElement> = React.useCallback(
-    event => {
-      setFocused(true);
-      if (typeof onFocus === 'function') {
-        onFocus(event);
-      }
-    },
-    [onFocus],
-  );
-
-  const inputBlur: React.FocusEventHandler<HTMLInputElement> = React.useCallback(
-    event => {
-      setFocused(false);
-      if (typeof onBlur === 'function') {
-        onBlur(event);
-      }
-    },
-    [onBlur],
-  );
-
-  const hasStartIcon = React.useMemo(
-    () => typeof startIcon !== 'undefined' && startIcon !== null,
-    [startIcon],
-  );
-  const hasEndIcon = React.useMemo(
-    () => typeof endIcon !== 'undefined' && endIcon !== null,
-    [endIcon],
-  );
-
-  const overridesMap = React.useMemo(
-    () => ({
-      Label: overrides?.Label || Label,
-      Input: overrides?.Input || Input,
-      Asterisk: overrides?.Asterisk || Asterisk,
-      Container: overrides?.Container || Container,
-      ErrorText: overrides?.ErrorText || ErrorText,
-      IconWrapper: overrides?.IconWrapper || IconWrapper,
-      InputWrapper: overrides?.InputWrapper || InputWrapper,
-    }),
-    [overrides],
-  );
-
-  const renderAsterisk = React.useCallback(() => {
-    if (!requiredAsterisk) {
-      return null;
-    }
-
-    return (
-      <overridesMap.Asterisk>
-        {typeof requiredAsterisk === 'boolean' ? '*' : requiredAsterisk}
-      </overridesMap.Asterisk>
-    );
-  }, [overridesMap, requiredAsterisk]);
-
-  const renderLabel = React.useCallback(() => {
-    if (!label) {
-      return null;
-    }
-
-    return (
-      <overridesMap.Label htmlFor={inputID} error={error}>
-        {label}
-        {renderAsterisk()}
-      </overridesMap.Label>
-    );
-  }, [error, inputID, label, overridesMap, renderAsterisk]);
-
-  const renderIcon = React.useCallback(
-    (position: 'start' | 'end', icon?: React.ReactElement) => (
-      <overridesMap.IconWrapper position={position}>{icon}</overridesMap.IconWrapper>
-    ),
-    [overridesMap],
-  );
-
-  return (
-    <overridesMap.Container
-      ref={ref}
-      fullWidth={fullWidth}
-      className={className}
-      style={style}
-      focused={focused}
-    >
-      {renderLabel()}
-
-      <overridesMap.InputWrapper error={error} focused={focused} fullWidth={fullWidth}>
-        {hasStartIcon && renderIcon('start', startIcon)}
-
-        <overridesMap.Input
-          {...nativeInputProps}
-          hasStartIcon={hasStartIcon}
-          hasEndIcon={hasEndIcon}
-          ref={inputRef}
-          id={inputID}
-          onChange={inputChange}
-          onFocus={inputFocus}
-          onBlur={inputBlur}
-        />
-        {hasEndIcon && renderIcon('end', endIcon)}
-      </overridesMap.InputWrapper>
-      <overridesMap.ErrorText error={error}>{errorText}</overridesMap.ErrorText>
-    </overridesMap.Container>
-  );
+const defailtOverrides = {
+  Label,
+  Input,
+  Asterisk,
+  Container,
+  ErrorText,
+  IconWrapper,
+  InputWrapper,
 };
 
-export default React.forwardRef(TextField);
+const TextField = React.forwardRef(
+  (props: TextFieldProps, ref: React.ForwardedRef<HTMLDivElement>) => {
+    const {
+      error,
+      fullWidth,
+      inputRef,
+      label,
+      id,
+      errorText,
+      className,
+      style,
+      endIcon,
+      startIcon,
+      requiredAsterisk,
+      overrides,
+      onChange,
+      onFocus,
+      onBlur,
+      ...nativeInputProps
+    } = props;
+
+
+    const [focused, setFocused] = React.useState(false);
+    const inputID = React.useMemo(() => {
+      if (typeof id === 'string') {
+        return id;
+      }
+
+      const u = Date.now().toString(16) + Math.random().toString(16) + '0'.repeat(16);
+
+      return [
+        u.substring(0, 8),
+        u.substring(8, 12),
+        '4000-8' + u.substring(13, 16),
+        u.substring(16, 28),
+      ].join('-');
+    }, [id]);
+
+    const stableOnChange = React.useCallback(onChange ? onChange : () => undefined, [onChange]); // уже есть
+// const stableOnFocus = React.useCallback(onFocus, [onFocus]); // уже есть
+// const stableOnBlur = React.useCallback(onBlur, [onBlur]); // уже есть
+
+    const inputChange: React.ChangeEventHandler<HTMLInputElement> = React.useCallback(
+      event => {
+        if (stableOnChange) {
+          stableOnChange(event);
+        }
+      },
+      [stableOnChange],
+    );
+
+    const inputFocus: React.FocusEventHandler<HTMLInputElement> = React.useCallback(
+      event => {
+        setFocused(true);
+        if (typeof onFocus === 'function') {
+          onFocus(event);
+        }
+      },
+      [onFocus],
+    );
+
+    const inputBlur: React.FocusEventHandler<HTMLInputElement> = React.useCallback(
+      event => {
+        setFocused(false);
+        if (typeof onBlur === 'function') {
+          onBlur(event);
+        }
+      },
+      [onBlur],
+    );
+
+    const hasStartIcon = React.useMemo(
+      () => typeof startIcon !== 'undefined' && startIcon !== null,
+      [startIcon],
+    );
+    const hasEndIcon = React.useMemo(
+      () => typeof endIcon !== 'undefined' && endIcon !== null,
+      [endIcon],
+    );
+
+    const overridesMap = React.useMemo(
+      () => ({
+        ...defailtOverrides,
+        ...overrides,
+      }),
+      [overrides],
+    );
+
+    const renderAsterisk = React.useCallback(() => {
+      if (!requiredAsterisk) {
+        return null;
+      }
+
+      return (
+        <overridesMap.Asterisk>
+          {typeof requiredAsterisk === 'boolean' ? '*' : requiredAsterisk}
+        </overridesMap.Asterisk>
+      );
+    }, [overridesMap, requiredAsterisk]);
+
+    const renderLabel = React.useCallback(() => {
+      if (!label) {
+        return null;
+      }
+
+      return (
+        <overridesMap.Label htmlFor={inputID} error={error}>
+          {label}
+          {renderAsterisk()}
+        </overridesMap.Label>
+      );
+    }, [error, inputID, label, overridesMap, renderAsterisk]);
+
+    const renderIcon = React.useCallback(
+      (position: 'start' | 'end', icon?: React.ReactElement) => (
+        <overridesMap.IconWrapper position={position}>{icon}</overridesMap.IconWrapper>
+      ),
+      [overridesMap],
+    );
+
+    return (
+      <overridesMap.Container
+        ref={ref}
+        fullWidth={fullWidth}
+        className={className}
+        style={style}
+        focused={focused}
+      >
+        {renderLabel()}
+
+        <overridesMap.InputWrapper error={error} focused={focused} fullWidth={fullWidth}>
+          {hasStartIcon && renderIcon('start', startIcon)}
+
+          <overridesMap.Input
+            {...nativeInputProps}
+            hasStartIcon={hasStartIcon}
+            hasEndIcon={hasEndIcon}
+            ref={inputRef}
+            id={inputID}
+            onChange={inputChange}
+            onFocus={inputFocus}
+            onBlur={inputBlur}
+          />
+          {hasEndIcon && renderIcon('end', endIcon)}
+        </overridesMap.InputWrapper>
+        <overridesMap.ErrorText error={error}>{errorText}</overridesMap.ErrorText>
+      </overridesMap.Container>
+    );
+  },
+);
+
+TextField.displayName = 'TextField';
+export default React.memo(TextField);

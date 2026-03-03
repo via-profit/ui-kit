@@ -505,6 +505,7 @@ const Autocomplete = React.forwardRef(
                   <Button
                     iconOnly
                     type="button"
+                    variant="plain"
                     onClick={() => (currentLoading ? 'undefined' : clear())}
                   >
                     {currentLoading ? <Spinner /> : <IconClear />}

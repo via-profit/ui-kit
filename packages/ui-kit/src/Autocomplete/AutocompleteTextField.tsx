@@ -71,17 +71,23 @@ const StyledTextFieldInputWrapper = styled(TextFieldInputWrapper)<{
     `};
 `;
 
+type InputWrapperProps = TextFieldInputWrapperProps;
+
+type ContextState = {
+  readonly anchorPos?: AnchorPos;
+  readonly isOpen?: boolean;
+};
+const WrapperContext = React.createContext<ContextState>({ anchorPos: undefined, isOpen: false });
+
 const InputWrapper = React.forwardRef(function StyledInputWrapper(
-  props: TextFieldInputWrapperProps & {
-    readonly anchorPos?: AnchorPos;
-    readonly isOpen?: boolean;
-  },
+  props: InputWrapperProps,
   ref: React.ForwardedRef<HTMLDivElement>,
 ) {
-  const { anchorPos, isOpen, ...restProps } = props;
+  const ctx = React.useContext(WrapperContext);
+  const { anchorPos, isOpen } = ctx;
 
   return (
-    <StyledTextFieldInputWrapper $anchorPos={anchorPos} $isOpen={isOpen} ref={ref} {...restProps} />
+    <StyledTextFieldInputWrapper $anchorPos={anchorPos} $isOpen={isOpen} ref={ref} {...props} />
   );
 });
 
@@ -92,13 +98,15 @@ const AutocompleteTextField: React.ForwardRefRenderFunction<
   const { anchorPos, isOpen, ...restProps } = props;
 
   return (
-    <TextField
-      overrides={{
-        InputWrapper: p => <InputWrapper anchorPos={anchorPos} isOpen={isOpen} {...p} />,
-      }}
-      {...restProps}
-      ref={ref}
-    />
+    <WrapperContext.Provider value={{ anchorPos, isOpen }}>
+      <TextField
+        overrides={{
+          InputWrapper,
+        }}
+        {...restProps}
+        ref={ref}
+      />
+    </WrapperContext.Provider>
   );
 };
 

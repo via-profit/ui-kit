@@ -1,11 +1,103 @@
 import React from 'react';
-import { AnchorPos } from './Popper';
 import { PositionStrategy } from './PopperContainer';
 
-// import usePopperPosition from './usePopperPosition'
+/**
+ * Base directions for popper positioning.
+ * These are the primary axes around which the popper can be placed.
+ *
+ * @default 'bottom' (when used as anchorPos)
+ * @example
+ * ```tsx
+ * type Direction = 'top' | 'bottom' | 'left' | 'right';
+ * ```
+ */
+export type Direction = 'top' | 'left' | 'right' | 'bottom';
+
+/**
+ * Auto placement modifiers that enable intelligent positioning.
+ * The popper will automatically choose the best placement that fits in the viewport.
+ * - `auto`: Dynamically selects the optimal direction
+ * - `auto-top`, `auto-bottom`, `auto-left`, `auto-right`: Auto placement with priority given to the specified direction
+ *
+ * @example
+ * ```tsx
+ * // Will try to place on top first, but will flip if needed
+ * <Popper anchorPos="auto-top">...</Popper>
+ *
+ * // Will try all directions equally
+ * <Popper anchorPos="auto">...</Popper>
+ * ```
+ */
+export type AutoModifier = 'auto' | 'auto-top' | 'auto-bottom' | 'auto-left' | 'auto-right';
+// export type AutoModifier = 'auto' | 'auto-top' | 'auto-bottom' | 'auto-left' | 'auto-right';
+
+/**
+ * Precise placement modifiers for fine-tuned positioning.
+ * These combine a base direction with specific alignment options:
+ * - `start`/`end`: Aligns to the beginning or end of the anchor (useful for RTL layouts)
+ * - `left`/`right`: Horizontal alignment for vertical placements
+ * - `top`/`bottom`: Vertical alignment for horizontal placements
+ *
+ * @example
+ * ```tsx
+ * // Corner placements
+ * <Popper anchorPos="top-left">Aligns to top-left corner</Popper>
+ *
+ * // Logical placements (RTL-friendly)
+ * <Popper anchorPos="bottom-start">Aligns to bottom edge, start side</Popper>
+ *
+ * // Side alignments
+ * <Popper anchorPos="left-top">Aligns to left side, top edge</Popper>
+ * ```
+ */
+export type Modifier =
+  | 'top-start' // Top edge, start side (left in LTR, right in RTL)
+  | 'top-end' // Top edge, end side (right in LTR, left in RTL)
+  | 'top-left' // Top edge, left side (absolute)
+  | 'top-right' // Top edge, right side (absolute)
+  | 'bottom-end' // Bottom edge, end side (right in LTR, left in RTL)
+  | 'bottom-start' // Bottom edge, start side (left in LTR, right in RTL)
+  | 'bottom-right' // Bottom edge, right side (absolute)
+  | 'bottom-left' // Bottom edge, left side (absolute)
+  | 'left-top' // Left edge, top side
+  | 'left-bottom' // Left edge, bottom side
+  | 'right-top' // Right edge, top side
+  | 'right-bottom' // Right edge, bottom side
+  | 'bottom-fill'
+  | 'top-fill';
+
+/**
+ * Available placement options for the popper.
+ * Combines basic directions, precise modifiers, and auto-placement options
+ * to provide full control over popper positioning.
+ *
+ * Categories:
+ * - **Basic directions**: `top`, `bottom`, `left`, `right` - Centered placement
+ * - **Corner placements**: `top-left`, `top-right`, `bottom-left`, `bottom-right` - Aligned to corners
+ * - **Logical placements**: `top-start`, `top-end`, `bottom-start`, `bottom-end` - RTL-aware alignment
+ * - **Side alignments**: `left-top`, `left-bottom`, `right-top`, `right-bottom` - Edge-aligned
+ * - **Auto placements**: `auto`, `auto-top`, `auto-bottom`, `auto-left`, `auto-right` - Intelligent positioning
+ *
+ * @default 'bottom'
+ * @example
+ * ```tsx
+ * // Basic centered placement
+ * <Popper anchorPos="bottom">Centered below anchor</Popper>
+ *
+ * // Corner placement
+ * <Popper anchorPos="top-right">Attached to top-right corner</Popper>
+ *
+ * // Auto placement with priority
+ * <Popper anchorPos="auto-left">Try left first, then find best fit</Popper>
+ *
+ * // RTL-aware placement
+ * <Popper anchorPos="top-start">Respects text direction</Popper>
+ * ```
+ */
+export type AnchorPos = Direction | Modifier | AutoModifier;
 
 export interface UsePopperProps {
-  readonly anchorElement?: HTMLElement | null;
+  readonly anchorElement: HTMLElement | null;
   readonly anchorPos?: AnchorPos;
   readonly positionStrategy?: PositionStrategy;
   readonly autoFlip?: boolean;
@@ -23,7 +115,7 @@ export interface UsePopperResult {
   readonly scrollableAncestor: HTMLElement | Window | null;
   readonly setActualPlacement: React.Dispatch<React.SetStateAction<AnchorPos>>;
   readonly setStyle: React.Dispatch<React.SetStateAction<React.CSSProperties | null>>;
-  // readonly setIsVisible: React.Dispatch<React.SetStateAction<boolean>>;
+  readonly setIsVisible: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 /**
@@ -522,7 +614,7 @@ export const usePopper = ({
 
   /**
    * Open / Close popper logic
-    */
+   */
   React.useEffect(() => {
     if (!isOpen) {
       setIsVisible(false);
@@ -581,6 +673,7 @@ export const usePopper = ({
       window.addEventListener('scroll', handleScroll, { passive: true });
     }
 
+    // eslint-disable-next-line consistent-return
     return () => {
       if (scrollableAncestor instanceof HTMLElement) {
         scrollableAncestor.removeEventListener('scroll', handleScroll);
@@ -607,6 +700,7 @@ export const usePopper = ({
     // parent scroll listener
     window.addEventListener('resize', handleResize);
 
+    // eslint-disable-next-line consistent-return
     return () => {
       window.removeEventListener('resize', handleResize);
     };
@@ -619,10 +713,9 @@ export const usePopper = ({
     isVisible,
     scrollableAncestor,
     calculatePosition,
-    // getTransformOrigin,
     setActualPlacement,
     setStyle,
-    // setIsVisible,
+    setIsVisible,
   };
 };
 

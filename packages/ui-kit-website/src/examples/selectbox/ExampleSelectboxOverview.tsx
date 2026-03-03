@@ -18,6 +18,13 @@ const Container = styled.div`
   gap: 1em;
 `;
 
+const items = [...countries, ...countries, ...countries, ...countries, ...countries,...countries, ...countries, ...countries, ...countries, ...countries,...countries, ...countries, ...countries, ...countries, ...countries,...countries, ...countries, ...countries, ...countries, ...countries, 
+  ...countries, ...countries, ...countries, ...countries, ...countries,...countries, ...countries, ...countries, ...countries, ...countries,...countries, ...countries, ...countries, ...countries, ...countries,...countries, ...countries, ...countries, ...countries, ...countries,
+  ...countries, ...countries, ...countries, ...countries, ...countries,...countries, ...countries, ...countries, ...countries, ...countries,...countries, ...countries, ...countries, ...countries, ...countries,...countries, ...countries, ...countries, ...countries, ...countries,
+  ...countries, ...countries, ...countries, ...countries, ...countries,...countries, ...countries, ...countries, ...countries, ...countries,...countries, ...countries, ...countries, ...countries, ...countries,...countries, ...countries, ...countries, ...countries, ...countries,
+  ...countries, ...countries, ...countries, ...countries, ...countries,...countries, ...countries, ...countries, ...countries, ...countries,...countries, ...countries, ...countries, ...countries, ...countries,...countries, ...countries, ...countries, ...countries, ...countries,
+]
+
 const ExampleSelectboxOverview: React.FC = () => {
   const [value, setValue] = React.useState<Item | null>(null);
   const [isOpen, setIsOpen] = React.useState(false);
@@ -29,7 +36,7 @@ const ExampleSelectboxOverview: React.FC = () => {
         value={value}
         fullWidth
         startIcon={<IconBell />}
-        items={countries}
+        items={items}
         isOpen={isOpen}
         label="Field label"
         errorText="Some error"
@@ -44,9 +51,9 @@ const ExampleSelectboxOverview: React.FC = () => {
           }),
         }}
       >
-        {({ item }, itemProps) => (
-          <SelectboxItem {...itemProps} key={item.code}>
-            {item.name}
+        {({ item, index }, itemProps) => (
+          <SelectboxItem {...itemProps} key={item.code + index}>
+            {index +1} {item.name}
           </SelectboxItem>
         )}
       </Selectbox>

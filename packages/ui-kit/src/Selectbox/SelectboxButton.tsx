@@ -28,6 +28,10 @@ const StyledSelectboxButton = styled(Button)<StyleProps>`
   width: 100%;
   border-width: 1px;
   border-style: solid;
+  box-shadow: none;
+  &:hover {
+    box-shadow: none;
+  }
   border-color: ${({ theme }) =>
     theme.isDark
       ? theme.color.textPrimary.darken(100).toString()

@@ -182,7 +182,18 @@ const Example: React.FC = () => {
         Открыть Popper
       </Button>
 
-      <ClickOutside onOutsideClick={() => setAnchorElement(null)}>
+      <ClickOutside
+        onOutsideClick={event => {
+          // Проверяем, что не кликнули по кнопке
+          if (event && event.target instanceof HTMLElement) {
+            if (anchorElement && anchorElement.contains(event.target)) {
+              return;
+            }
+          }
+
+          setAnchorElement(null);
+        }}
+      >
         <Popper
           anchorPos="auto"
           anchorElement={anchorElement}
