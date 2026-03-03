@@ -1,15 +1,15 @@
 import React from 'react';
-import styled from '@emotion/styled';
 
-import Menu, { GetOptionSelected, MenuList, MenuRef, OnRequestClose, Value } from '../Menu';
+import Menu, { GetOptionSelected, MenuRef, OnRequestClose, Value, AnchorPos } from '../Menu';
 import TextField, { AutocompleteTextFieldProps } from './AutocompleteTextField';
 import Button from '../Button';
 import Spinner from '../LoadingIndicator/Spinner';
 import useContext, { actionSetPartial } from './context';
 import IconClear from './IconClear';
-import Popper, { AnchorPos, PopperProps, PositionStrategy } from '../Popper';
+import { PositionStrategy } from '../Popper';
 import type { MenuItemCommonProps } from '../Menu/MenuItem';
 import { mouseEventMap } from '../ClickOutside';
+import OverrideMenuList from './OverrideMenuList';
 
 export interface AutocompleteProps<T, Multiple extends boolean | undefined = undefined>
   extends Omit<AutocompleteTextFieldProps, 'value' | 'onChange' | 'children' | 'overrides'> {
@@ -35,7 +35,7 @@ export interface AutocompleteProps<T, Multiple extends boolean | undefined = und
   /**
    * Anchor position\
    * \
-   * Default: `auto-start-end`
+   * Default: `bottom-fill`
    */
   readonly anchorPos?: AnchorPos;
 
@@ -209,47 +209,6 @@ export type AutocompleteRef = {
 };
 //
 
-const StyledMenuList = styled(MenuList)`
-  &:focus {
-    outline: none;
-  }
-`;
-
-const StyledPopper = styled(Popper)`
-  --border-color: ${({ theme }) =>
-  theme.isDark
-    ? theme.color.textPrimary.darken(100).toString()
-    : theme.color.textPrimary.lighten(150).toString()};
-
-  &[data-popper-placement='bottom-fill'] {
-    ${StyledMenuList} {
-      border-top-left-radius: 0;
-      border-top-right-radius: 0;
-      border: 1px solid var( --border-color);
-      border-top: 0;
-      box-shadow: 0 1em 1.5em ${({ theme }) => theme.color.surface.darken(50).alpha(0.6).toString()};
-    }
-  }
-
-  &[data-popper-placement='top-fill'] {
-    ${StyledMenuList} {
-      border-bottom-left-radius: 0;
-      border-bottom-right-radius: 0;
-      border: 1px solid var( --border-color);
-      border-bottom: 0;
-      box-shadow: 0 -1em 1.5em
-        ${({ theme }) => theme.color.surface.darken(50).alpha(0.6).toString()};
-    }
-  }
-`;
-
-const OverridePopper = React.forwardRef(function SStyledPopper(
-  p: PopperProps,
-  r: React.ForwardedRef<HTMLDivElement>,
-) {
-  return <StyledPopper {...p} ref={r} />;
-});
-
 const Autocomplete = React.forwardRef(
   <T, Multiple extends boolean | undefined = undefined>(
     props: AutocompleteProps<T, Multiple>,
@@ -287,6 +246,7 @@ const Autocomplete = React.forwardRef(
       overrides,
       ...nativeInputProps
     } = props;
+    const [actualPlacement, setActualPlacement] = React.useState(anchorPos);
     const menuRef = React.useRef<MenuRef | null>(null);
     const fieldInputRef = React.useRef<HTMLInputElement | null>(null);
     const isFocusedRef = React.useRef(false);
@@ -531,6 +491,8 @@ const Autocomplete = React.forwardRef(
           () => (
             <overridesMap.TextField
               placeholder={placeholder}
+              anchorPos={actualPlacement}
+              isOpen={currentOpen}
               label={label}
               error={error}
               requiredAsterisk={requiredAsterisk}
@@ -674,7 +636,8 @@ const Autocomplete = React.forwardRef(
           () => (
             <Menu
               ref={menuRef}
-              anchorPos={anchorPos}
+              onAnchorPosChanged={setActualPlacement}
+              anchorPos={actualPlacement}
               multiple={multiple}
               items={filteredItems as T[]}
               value={currentValue as Value<T, Multiple>}
@@ -684,8 +647,7 @@ const Autocomplete = React.forwardRef(
               viewportMargin={viewportMargin}
               offset={0}
               overrides={{
-                Popper: OverridePopper,
-                List: StyledMenuList,
+                List: OverrideMenuList,
               }}
               positionStrategy={positionStrategy}
               anchorElement={anchorElement}
@@ -713,7 +675,7 @@ const Autocomplete = React.forwardRef(
             </Menu>
           ),
           [
-            anchorPos,
+            actualPlacement,
             multiple,
             filteredItems,
             currentValue,

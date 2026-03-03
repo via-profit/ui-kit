@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Container, { PopperContainerProps, PositionStrategy } from './PopperContainer';
-import { usePopper, UsePopperProps } from './usePopprer';
+import { usePopper } from './usePopprer';
 
 /**
  * Base directions for popper positioning.
@@ -139,6 +139,8 @@ export interface PopperProps extends React.HTMLAttributes<HTMLDivElement> {
    */
   readonly anchorPos?: AnchorPos;
 
+  readonly onAnchorPosChanged?: (anchorPos: AnchorPos) => void;
+
   /**
    * The z-index value for the popper container.
    * Used to control the stacking order of the popper relative to other elements.
@@ -266,12 +268,13 @@ const Popper: React.ForwardRefRenderFunction<HTMLDivElement, PopperProps> = (pro
     viewportMargin = 30,
     autoFlip = true,
     offset = 0,
+    onAnchorPosChanged,
     ...nativeProps
   } = props;
 
   const [domLoaded, setDomLoaded] = React.useState(false);
 
-  const { actualPlacement, style, popperRef } = usePopper({
+  const { actualPlacement, style, popperRef, isVisible } = usePopper({
     anchorElement,
     anchorPos,
     positionStrategy,
@@ -318,16 +321,22 @@ const Popper: React.ForwardRefRenderFunction<HTMLDivElement, PopperProps> = (pro
   }, [positionStrategy]);
 
   React.useEffect(() => {
-    if (anchorElement && isOpen) {
-      anchorElement.dataset.popperPositionStrategy = positionStrategy;
-      anchorElement.dataset.popperPlacement = actualPlacement;
-      anchorElement.dataset.popperIsOpen = isOpen.toString();
-    } else if (anchorElement && !isOpen) {
-      anchorElement.dataset.popperPositionStrategy = '';
-      anchorElement.dataset.popperPlacement = '';
-      anchorElement.dataset.popperIsOpen = '';
+    if (anchorPos !== actualPlacement && typeof onAnchorPosChanged === 'function') {
+      onAnchorPosChanged(actualPlacement);
     }
-  }, [anchorElement, positionStrategy, isOpen, actualPlacement]);
+  }, [anchorPos, actualPlacement, onAnchorPosChanged]);
+
+  // React.useEffect(() => {
+  //   if (anchorElement && isOpen) {
+  //     anchorElement.dataset.popperPositionStrategy = positionStrategy;
+  //     anchorElement.dataset.popperPlacement = actualPlacement;
+  //     anchorElement.dataset.popperIsOpen = isOpen.toString();
+  //   } else if (anchorElement && !isOpen) {
+  //     anchorElement.dataset.popperPositionStrategy = '';
+  //     anchorElement.dataset.popperPlacement = '';
+  //     anchorElement.dataset.popperIsOpen = '';
+  //   }
+  // }, [anchorElement, positionStrategy, isOpen, actualPlacement]);
 
   const renderNode = React.useCallback(
     () => (
@@ -336,8 +345,8 @@ const Popper: React.ForwardRefRenderFunction<HTMLDivElement, PopperProps> = (pro
         style={{
           ...style,
           ...nativeProps.style,
-          // opacity: isVisible ? 1 : 0,
-          // pointerEvents: isVisible ? 'auto' : 'none',
+          opacity: isVisible ? 1 : 0,
+          pointerEvents: isVisible ? 'auto' : 'none',
           // transformOrigin: getTransformOrigin(actualPlacement),
           ...(positionStrategy === 'fixed' && {
             zIndex: zIndex,
@@ -367,7 +376,7 @@ const Popper: React.ForwardRefRenderFunction<HTMLDivElement, PopperProps> = (pro
       overridesMap,
       nativeProps,
       style,
-      // isVisible,
+      isVisible,
       // getTransformOrigin,
       actualPlacement,
       positionStrategy,

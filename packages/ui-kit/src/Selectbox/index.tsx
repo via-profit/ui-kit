@@ -1,19 +1,19 @@
 import React, { ButtonHTMLAttributes } from 'react';
 
-import Menu, { MenuRef, Value, OnRequestClose, GetOptionSelected, MenuList } from '../Menu';
+import Menu, { GetOptionSelected, MenuRef, OnRequestClose, Value } from '../Menu';
+import type { MenuItemCommonProps } from '../Menu/MenuItem';
 import SelectboxItem from '../Menu/MenuItem';
 import Button, { SelectboxButtonProps } from './SelectboxButton';
 import Spinner from '../LoadingIndicator/Spinner';
 import Icon, { SelectboxChevronIconProps } from './SelectboxChevronIcon';
-import Popper, { AnchorPos, PopperProps } from '../Popper';
-import type { MenuItemCommonProps } from '../Menu/MenuItem';
+import { AnchorPos } from '../Popper';
 import { mouseEventMap } from '../ClickOutside';
 import Label, { TextFieldLabelProps } from '../TextField/TextFieldLabel';
 import Asterisk, { TextFieldLabelAsteriskProps } from '../TextField/TextFieldLabelAsterisk';
 import ErrorText, { TextFieldErrorTextProps } from '../TextField/TextFieldErrorText';
 import ButtonWrapper, { SelectboxButtonWrapperProps } from './SelectboxButtonWrapper';
 import Container, { SelectboxContainerProps } from './SelectboxContainer';
-import styled from '@emotion/styled';
+import OverrideMenuList from '../Autocomplete/OverrideMenuList';
 
 export { SelectboxItem };
 
@@ -216,47 +216,6 @@ export type OnChange<T, Multiple extends boolean | undefined = undefined> = (
   item: Value<T, Multiple>,
 ) => void;
 
-const StyledMenuList = styled(MenuList)`
-  &:focus {
-    outline: none;
-  }
-`;
-
-const StyledPopper = styled(Popper)`
-  --border-color: ${({ theme }) =>
-    theme.isDark
-      ? theme.color.textPrimary.darken(100).toString()
-      : theme.color.textPrimary.lighten(150).toString()};
-
-  &[data-popper-placement='bottom-fill'] {
-    ${StyledMenuList} {
-      border-top-left-radius: 0;
-      border-top-right-radius: 0;
-      border: 1px solid var( --border-color);
-      border-top: 0;
-      box-shadow: 0 1em 1.5em ${({ theme }) => theme.color.surface.darken(50).alpha(0.6).toString()};
-    }
-  }
-
-  &[data-popper-placement='top-fill'] {
-    ${StyledMenuList} {
-      border-bottom-left-radius: 0;
-      border-bottom-right-radius: 0;
-      border: 1px solid var( --border-color);
-      border-bottom: 0;
-      box-shadow: 0 -1em 1.5em
-        ${({ theme }) => theme.color.surface.darken(50).alpha(0.6).toString()};
-    }
-  }
-`;
-
-const OverridePopper = React.forwardRef(function SStyledPopper(
-  p: PopperProps,
-  r: React.ForwardedRef<HTMLDivElement>,
-) {
-  return <StyledPopper {...p} ref={r} />;
-});
-
 const Selectbox = React.forwardRef(
   <T, Multiple extends boolean | undefined = undefined>(
     props: SelectboxProps<T, Multiple>,
@@ -299,6 +258,7 @@ const Selectbox = React.forwardRef(
       }),
       [overrides],
     );
+    const [actualPlacement, setActualPlacement] = React.useState(anchorPos);
     const [anchorElement, setAnchorElement] = React.useState<HTMLElement | null>(null);
 
     React.useEffect(() => {
@@ -372,6 +332,8 @@ const Selectbox = React.forwardRef(
           <overridesMap.Button
             fullWidth={fullWidth}
             error={error}
+            isOpen={isOpen}
+            anchorPos={actualPlacement}
             endIcon={isLoading ? <Spinner /> : <overridesMap.Icon isOpen={isOpen} />}
             onClick={event => {
               if (isOpen) {
@@ -406,7 +368,8 @@ const Selectbox = React.forwardRef(
             <Menu
               ref={menuRef}
               offset={0}
-              anchorPos={anchorPos}
+              anchorPos={actualPlacement}
+              onAnchorPosChanged={setActualPlacement}
               multiple={multiple}
               items={items as T[]}
               value={value as Value<T, Multiple>}
@@ -421,8 +384,7 @@ const Selectbox = React.forwardRef(
                 }
               }}
               overrides={{
-                Popper: OverridePopper,
-                List: StyledMenuList,
+                List: OverrideMenuList,
               }}
               closeOnSelect={!multiple}
               onRequestClose={evt => {
@@ -436,16 +398,16 @@ const Selectbox = React.forwardRef(
             </Menu>
           ),
           [
-            items,
-            anchorPos,
+            actualPlacement,
             multiple,
+            items,
             value,
             isOpen,
+            anchorElement,
             getOptionSelected,
             onChange,
             onRequestClose,
             children,
-            anchorElement,
           ],
         )}
       </overridesMap.Container>

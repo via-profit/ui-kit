@@ -1,11 +1,12 @@
 import React from 'react';
+import styled from '@emotion/styled';
+import { css } from '@emotion/react';
 
 import TextField, { TextFieldProps } from '../TextField';
-import styled from '@emotion/styled';
 import TextFieldInputWrapper, {
   TextFieldInputWrapperProps,
 } from '../TextField/TextFieldInputWrapper';
-import { css } from '@emotion/react';
+import { AnchorPos } from '../Menu';
 
 export interface AutocompleteTextFieldProps extends TextFieldProps {
   /**
@@ -13,6 +14,10 @@ export interface AutocompleteTextFieldProps extends TextFieldProps {
    * If `true` then text field has been contained the loading indicator, otherwise - nop
    */
   readonly isLoading?: boolean;
+
+  readonly anchorPos?: AnchorPos;
+
+  readonly isOpen?: boolean;
 
   /**
    * Native <input> element reference
@@ -22,49 +27,79 @@ export interface AutocompleteTextFieldProps extends TextFieldProps {
     | React.RefCallback<HTMLInputElement>;
 }
 
-const StyledTextFieldInputWrapper = styled(TextFieldInputWrapper)<TextFieldInputWrapperProps>`
-  border-width: 1px;
-  border-style: solid;
-  border-color: ${({ theme }) =>
-    theme.isDark
-      ? theme.color.textPrimary.darken(100).toString()
-      : theme.color.textPrimary.lighten(150).toString()};
+const StyledTextFieldInputWrapper = styled(TextFieldInputWrapper)<{
+  $anchorPos?: AnchorPos;
+  $isOpen?: boolean;
+}>`
+  ${({ theme, $isOpen, $anchorPos }) =>
+    $isOpen &&
+    $anchorPos &&
+    ['bottom-fill', 'top-fill'].includes($anchorPos) &&
+    css`
+      border-width: 1px;
+      border-style: solid;
+      border-color: ${theme.isDark
+        ? theme.color.textPrimary.darken(100).toString()
+        : theme.color.textPrimary.lighten(150).toString()};
+    `};
 
-  ${({ focused }) =>
+  ${({ focused, $anchorPos, $isOpen }) =>
+    $isOpen &&
+    $anchorPos &&
+    ['bottom-fill', 'top-fill'].includes($anchorPos) &&
     focused &&
     css`
       outline: none;
     `};
-`;
 
-const StyledTextField = styled(TextField)<TextFieldProps>`
-  &[data-popper-placement='bottom-fill'] {
-    ${StyledTextFieldInputWrapper} {
+  ${({ $anchorPos, $isOpen }) =>
+    $isOpen &&
+    $anchorPos === 'bottom-fill' &&
+    css`
       border-bottom-left-radius: 0;
       border-bottom-right-radius: 0;
       border-bottom: 0;
-    }
-  }
+    `};
 
-  &[data-popper-placement='top-fill'] {
-    ${StyledTextFieldInputWrapper} {
+  ${({ $anchorPos, $isOpen }) =>
+    $isOpen &&
+    $anchorPos === 'top-fill' &&
+    css`
       border-top-left-radius: 0;
       border-top-right-radius: 0;
       border-top: 0;
-    }
-  }
+    `};
 `;
 
 const InputWrapper = React.forwardRef(function StyledInputWrapper(
-  props: TextFieldInputWrapperProps,
+  props: TextFieldInputWrapperProps & {
+    readonly anchorPos?: AnchorPos;
+    readonly isOpen?: boolean;
+  },
   ref: React.ForwardedRef<HTMLDivElement>,
 ) {
-  return <StyledTextFieldInputWrapper ref={ref} {...props} />;
+  const { anchorPos, isOpen, ...restProps } = props;
+
+  return (
+    <StyledTextFieldInputWrapper $anchorPos={anchorPos} $isOpen={isOpen} ref={ref} {...restProps} />
+  );
 });
 
 const AutocompleteTextField: React.ForwardRefRenderFunction<
   HTMLDivElement,
   AutocompleteTextFieldProps
-> = (props, ref) => <StyledTextField overrides={{ InputWrapper }} {...props} ref={ref} />;
+> = (props, ref) => {
+  const { anchorPos, isOpen, ...restProps } = props;
+
+  return (
+    <TextField
+      overrides={{
+        InputWrapper: p => <InputWrapper anchorPos={anchorPos} isOpen={isOpen} {...p} />,
+      }}
+      {...restProps}
+      ref={ref}
+    />
+  );
+};
 
 export default React.forwardRef(AutocompleteTextField);

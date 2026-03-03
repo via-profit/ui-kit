@@ -18,7 +18,7 @@ export interface UsePopperResult {
   readonly actualPlacement: AnchorPos;
   readonly style: React.CSSProperties | null;
   readonly popperRef: React.MutableRefObject<HTMLDivElement | null>;
-  // readonly isVisible: boolean;
+  readonly isVisible: boolean;
   readonly calculatePosition: () => void;
   readonly scrollableAncestor: HTMLElement | Window | null;
   readonly setActualPlacement: React.Dispatch<React.SetStateAction<AnchorPos>>;
@@ -87,7 +87,7 @@ export const usePopper = ({
 }: UsePopperProps): UsePopperResult => {
   const [actualPlacement, setActualPlacement] = React.useState<AnchorPos>(anchorPos);
   const [style, setStyle] = React.useState<React.CSSProperties | null>(null);
-  // const [isVisible, setIsVisible] = React.useState(false);
+  const [isVisible, setIsVisible] = React.useState(false);
   const popperRef = React.useRef<HTMLDivElement | null>(null);
 
   // Finding the nearest scrollable ancestor
@@ -522,12 +522,14 @@ export const usePopper = ({
 
   /**
    * Open / Close popper logic
-   */
+    */
   React.useEffect(() => {
     if (!isOpen) {
+      setIsVisible(false);
       setStyle(null);
     } else if (anchorElement && isOpen && popperRef.current) {
       calculatePosition();
+      setIsVisible(true);
     }
   }, [actualPlacement, anchorElement, getPreferredPlacements, isOpen, calculatePosition]);
 
@@ -614,7 +616,7 @@ export const usePopper = ({
     actualPlacement,
     style,
     popperRef,
-    // isVisible,
+    isVisible,
     scrollableAncestor,
     calculatePosition,
     // getTransformOrigin,

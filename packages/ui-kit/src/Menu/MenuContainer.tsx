@@ -112,6 +112,8 @@ export interface MenuProps<T, Multiple extends boolean | undefined = undefined> 
    */
   readonly anchorPos?: AnchorPos;
 
+  readonly onAnchorPosChanged?: (anchorPos: AnchorPos) => void;
+
   /**
    * When enabled, the popper will automatically try to find the best placement
    * if the preferred placement doesn't fit in the viewport.
@@ -304,8 +306,9 @@ const MenuContainer = React.forwardRef(
       zIndex,
       onSelectItem,
       getOptionSelected,
+      onAnchorPosChanged,
     } = props;
-
+    const [actualPlacement, setActualPlacement] = React.useState(anchorPos);
     const overridesMap = React.useMemo(
       () => ({
         List: overrides?.List || List,
@@ -713,7 +716,13 @@ const MenuContainer = React.forwardRef(
         <overridesMap.Popper
           isOpen={Boolean(isOpen)}
           zIndex={zIndex}
-          anchorPos={anchorPos}
+          anchorPos={actualPlacement}
+          onAnchorPosChanged={newPlacement => {
+            setActualPlacement(newPlacement);
+            if (typeof onAnchorPosChanged === 'function') {
+              onAnchorPosChanged(newPlacement);
+            }
+          }}
           anchorElement={anchorElement}
           positionStrategy={positionStrategy}
           autoFlip={autoFlip}
@@ -723,7 +732,7 @@ const MenuContainer = React.forwardRef(
           <overridesMap.List
             isOpen={Boolean(isOpen)}
             ref={menuListRef}
-            anchorPos={anchorPos}
+            anchorPos={actualPlacement}
             onKeyDown={listKeydownEvent}
           >
             <VirtualizedList ref={virtListRef} items={items} initialIndex={firstSelectedIndex}>

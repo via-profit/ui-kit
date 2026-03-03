@@ -1,21 +1,26 @@
 import React from 'react';
 import styled from '@emotion/styled';
-import { AnchorPos } from '../Popper';
 import { css } from '@emotion/react';
+
+import { AnchorPos } from '../Popper';
 
 export interface MenuListProps extends React.HTMLAttributes<HTMLDivElement> {
   readonly isOpen: boolean;
   readonly anchorPos: AnchorPos;
 }
 
-const StyledMenuList = styled.div<{ $isOpen: boolean; $fixedWidth?: boolean }>`
+const StyledMenuList = styled.div<{
+  $isOpen: boolean;
+  $fixedWidth?: boolean;
+  $anchorPos?: AnchorPos;
+}>`
   display: flex;
   flex-direction: column;
   transition: opacity 120ms ease-out;
   opacity: ${props => (props.$isOpen ? 1 : 0)};
   background-color: ${({ theme }) => theme.color.surface.toString()};
   border-radius: ${({ theme }) => theme.shape.radiusFactor * 2}em;
-  box-shadow: 0 0.25em 1.5em ${({ theme }) => theme.color.surface.darken(50).alpha(0.6).toString()};
+  box-shadow: 0 0.5em 1.5em ${({ theme }) => theme.color.surface.darken(50).alpha(0.6).toString()};
   &:focus {
     outline-style: solid;
     outline-width: 0.14em;
@@ -58,6 +63,12 @@ const StyledMenuList = styled.div<{ $isOpen: boolean; $fixedWidth?: boolean }>`
     css`
       min-width: 16em;
     `}
+
+  ${({ $anchorPos, theme }) =>
+    $anchorPos === 'top-fill' &&
+    css`
+      box-shadow: 0 -0.5em 1.5em ${theme.color.surface.darken(50).alpha(0.6).toString()};
+    `};
 `;
 
 export const MenuList = React.forwardRef(
@@ -68,6 +79,7 @@ export const MenuList = React.forwardRef(
       <StyledMenuList
         tabIndex={-1}
         $isOpen={isOpen}
+        $anchorPos={anchorPos}
         $fixedWidth={!['bottom-fill', 'top-fill'].includes(anchorPos)}
         {...nativeProps}
         ref={ref}
