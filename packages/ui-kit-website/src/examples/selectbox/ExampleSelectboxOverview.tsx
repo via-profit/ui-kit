@@ -31,7 +31,6 @@ const ExampleSelectboxOverview: React.FC = () => {
         startIcon={<IconBell />}
         items={countries}
         isOpen={isOpen}
-        error
         label="Field label"
         errorText="Some error"
         requiredAsterisk

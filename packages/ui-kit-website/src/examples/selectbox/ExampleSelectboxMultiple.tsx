@@ -1,6 +1,5 @@
 import React from 'react';
 import Selectbox, { SelectboxItem } from '@via-profit/ui-kit/src/Selectbox';
-import Highlighted from '@via-profit/ui-kit/src/Highlighted';
 import Badge from '@via-profit/ui-kit/src/Badge';
 import styled from '@emotion/styled';
 
@@ -40,7 +39,6 @@ const ExampleSelectboxMultiple: React.FC = () => {
         ))}
       </BadgeContainer>
       <Selectbox
-      overrides={{}}
         multiple
         value={value}
         items={countries}
