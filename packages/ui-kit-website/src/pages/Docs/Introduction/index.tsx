@@ -9,7 +9,7 @@ const Introduction: React.FC = () => {
 
   return (
     <Surface>
-      <Swiper dragged={false}>
+      <Swiper draggable={false}>
         <SwiperSlide key={1} style={{ background: '#ff6b6b' }}>
           Слайд 1
         </SwiperSlide>

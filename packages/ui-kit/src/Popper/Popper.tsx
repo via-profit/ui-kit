@@ -68,10 +68,6 @@ export type Modifier =
   | 'bottom-fill'
   | 'top-fill';
 
-type Di = 'top' | 'left' | 'right' | 'bottom';
-type Mod = 'start' | 'end' | 'left' | 'right';
-// type Au = 'auto';
-
 /**
  * Available placement options for the popper.
  * Combines basic directions, precise modifiers, and auto-placement options

@@ -62,6 +62,7 @@ type Item = {
 
 const SelectorContainer = styled.div`
   display: flex;
+  flex: 1;
   padding: 0.8em;
   height: 100%;
   width: 100%;
@@ -127,7 +128,7 @@ const CalendarYearsSelector: React.ForwardRefRenderFunction<
     return list;
   }, [date, getYearLabel, years]);
 
-  React.useEffect(() => {
+  React.useLayoutEffect(() => {
     if (containerRef.current) {
       setMaxHeight(containerRef.current.getBoundingClientRect().height);
     }

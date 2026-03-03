@@ -3,7 +3,7 @@ import DatePicker from '@via-profit/ui-kit/src/DatePicker';
 import { useIntl } from 'react-intl';
 
 const ExampleDatePickerOverview: React.FC = () => {
-  const [value, setValue] = React.useState<null | Date>(null);
+  const [value, setValue] = React.useState<null | Date>(new Date());
   const intl = useIntl();
 
   return (

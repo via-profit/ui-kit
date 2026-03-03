@@ -34,7 +34,7 @@ export type UseDatePickerFormatPayload = {
 
 export const useDatePickerFormat = (): UseDatePickerFormatPayload => {
   const templateValidChars = React.useMemo(
-    () => ['y', 'Y', 'yy', 'yyyy', 'd', 'dd', 'D', 'm', 'mm', 'M'],
+    () => ['y', 'Y', 'yy', 'yyyy', 'd', 'dd', 'D', 'm', 'mm'],
     [],
   );
 
@@ -72,7 +72,7 @@ export const useDatePickerFormat = (): UseDatePickerFormatPayload => {
       validateTemplate(template);
 
       return template.split('').map(char => {
-        if (['m', 'M', 'd', 'D', 'y', 'Y'].includes(char)) {
+        if (['m', 'd', 'D', 'y', 'Y'].includes(char)) {
           return /\d/;
         }
 
@@ -147,12 +147,12 @@ export const useDatePickerFormat = (): UseDatePickerFormatPayload => {
 
             return day;
           })
-          // mm or M - month with leading zero
+          // mm - month with leading zero
           // m - month without leading zero
-          .replace(/(m{1,2}|M{1,2})/, entries => {
+          .replace(/(m{1,2})/, entries => {
             const month = `${date.getMonth() + 1}`;
 
-            if (['MM', 'M', 'mm'].includes(entries)) {
+            if (['mm'].includes(entries)) {
               const str = `0${month}`;
 
               return str.substring(str.length - entries.length);
@@ -160,6 +160,7 @@ export const useDatePickerFormat = (): UseDatePickerFormatPayload => {
 
             return month;
           })
+
           // yyyy or Y - full year
           // yy or y - last two digits
           .replace(/(y{4}|y{1,2}|Y{1,2})/, entries => {
