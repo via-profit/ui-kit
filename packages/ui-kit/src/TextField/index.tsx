@@ -89,9 +89,7 @@ export interface TextFieldOverrides {
   /**
    * label component
    */
-  readonly Label?: React.ComponentType<
-    TextFieldLabelProps & React.RefAttributes<HTMLLabelElement>
-  >;
+  readonly Label?: React.ComponentType<TextFieldLabelProps & React.RefAttributes<HTMLLabelElement>>;
 
   /**
    * label asterisk component
@@ -135,14 +133,13 @@ const TextField: React.ForwardRefRenderFunction<HTMLDivElement, TextFieldProps> 
     }
 
     const u = Date.now().toString(16) + Math.random().toString(16) + '0'.repeat(16);
-    const guid = [
+
+    return [
       u.substring(0, 8),
       u.substring(8, 12),
       '4000-8' + u.substring(13, 16),
       u.substring(16, 28),
     ].join('-');
-
-    return guid;
   }, [id]);
 
   const inputChange: React.ChangeEventHandler<HTMLInputElement> = React.useCallback(
@@ -196,6 +193,38 @@ const TextField: React.ForwardRefRenderFunction<HTMLDivElement, TextFieldProps> 
     [overrides],
   );
 
+  const renderAsterisk = React.useCallback(() => {
+    if (!requiredAsterisk) {
+      return null;
+    }
+
+    return (
+      <overridesMap.Asterisk>
+        {typeof requiredAsterisk === 'boolean' ? '*' : requiredAsterisk}
+      </overridesMap.Asterisk>
+    );
+  }, [overridesMap, requiredAsterisk]);
+
+  const renderLabel = React.useCallback(() => {
+    if (!label) {
+      return null;
+    }
+
+    return (
+      <overridesMap.Label htmlFor={inputID} error={error}>
+        {label}
+        {renderAsterisk()}
+      </overridesMap.Label>
+    );
+  }, [error, inputID, label, overridesMap, renderAsterisk]);
+
+  const renderIcon = React.useCallback(
+    (position: 'start' | 'end', icon?: React.ReactElement) => (
+      <overridesMap.IconWrapper position={position}>{icon}</overridesMap.IconWrapper>
+    ),
+    [overridesMap],
+  );
+
   return (
     <overridesMap.Container
       ref={ref}
@@ -204,21 +233,10 @@ const TextField: React.ForwardRefRenderFunction<HTMLDivElement, TextFieldProps> 
       style={style}
       focused={focused}
     >
-      {typeof label !== 'undefined' && label !== null && (
-        <overridesMap.Label htmlFor={inputID} error={error}>
-          {label}
-          {typeof requiredAsterisk !== 'undefined' && requiredAsterisk !== null && (
-            <overridesMap.Asterisk>
-              {typeof requiredAsterisk === 'boolean' ? '*' : requiredAsterisk}
-            </overridesMap.Asterisk>
-          )}
-        </overridesMap.Label>
-      )}
+      {renderLabel()}
 
       <overridesMap.InputWrapper error={error} focused={focused} fullWidth={fullWidth}>
-        {hasStartIcon && (
-          <overridesMap.IconWrapper position="start">{startIcon}</overridesMap.IconWrapper>
-        )}
+        {hasStartIcon && renderIcon('start', startIcon)}
 
         <overridesMap.Input
           {...nativeInputProps}
@@ -230,9 +248,7 @@ const TextField: React.ForwardRefRenderFunction<HTMLDivElement, TextFieldProps> 
           onFocus={inputFocus}
           onBlur={inputBlur}
         />
-        {hasEndIcon && (
-          <overridesMap.IconWrapper position="end">{endIcon}</overridesMap.IconWrapper>
-        )}
+        {hasEndIcon && renderIcon('end', endIcon)}
       </overridesMap.InputWrapper>
       <overridesMap.ErrorText error={error}>{errorText}</overridesMap.ErrorText>
     </overridesMap.Container>

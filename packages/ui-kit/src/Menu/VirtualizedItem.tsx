@@ -22,24 +22,16 @@ const VirtualizedItem = React.forwardRef(
     React.useEffect(() => {
       if (containerRef.current) {
         const h = containerRef.current.getBoundingClientRect().height;
-        setItemHeight(index, h);
-        setHeightCache(h);
+        if (h !== heightCache) {
+          setItemHeight(index, h);
+          setHeightCache(h);
+        }
       }
-    }, [setItemHeight, index]);
+    }, [setItemHeight, index, heightCache]);
 
     return (
-      <StyledItem
-        ref={el => {
-          containerRef.current = el;
-          if (typeof ref === 'function') ref(el);
-          else if (ref) ref.current = el;
-        }}
-        style={{
-          ...style,
-          height: heightCache ?? 'auto',
-        }}
-      >
-        {children}
+      <StyledItem ref={ref} style={style}>
+        <div ref={containerRef}>{children}</div>
       </StyledItem>
     );
   },

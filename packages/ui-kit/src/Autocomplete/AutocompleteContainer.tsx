@@ -1,12 +1,13 @@
 import React from 'react';
+import styled from '@emotion/styled';
 
-import Menu, { MenuRef, Value, OnRequestClose, GetOptionSelected } from '../Menu';
+import Menu, { GetOptionSelected, MenuList, MenuRef, OnRequestClose, Value } from '../Menu';
 import TextField, { AutocompleteTextFieldProps } from './AutocompleteTextField';
 import Button from '../Button';
 import Spinner from '../LoadingIndicator/Spinner';
 import useContext, { actionSetPartial } from './context';
 import IconClear from './IconClear';
-import { AnchorPos, PositionStrategy } from '../Popper';
+import Popper, { AnchorPos, PopperProps, PositionStrategy } from '../Popper';
 import type { MenuItemCommonProps } from '../Menu/MenuItem';
 import { mouseEventMap } from '../ClickOutside';
 
@@ -47,15 +48,6 @@ export interface AutocompleteProps<T, Multiple extends boolean | undefined = und
    * ```
    */
   readonly autoFlip?: boolean;
-
-  /**
-   * Additional offset (in pixels) from the anchor element.
-   * Positive values move the popper away from the anchor, negative values move it closer.
-   *
-   * @default `0`
-   * ```
-   */
-  readonly offset?: number;
 
   /**
    * The positioning strategy to use.
@@ -215,6 +207,48 @@ export type FilterItems<T> = (
 export type AutocompleteRef = {
   clear: () => void;
 };
+//
+
+const StyledMenuList = styled(MenuList)`
+  &:focus {
+    outline: none;
+  }
+`;
+
+const StyledPopper = styled(Popper)`
+  --border-color: ${({ theme }) =>
+  theme.isDark
+    ? theme.color.textPrimary.darken(100).toString()
+    : theme.color.textPrimary.lighten(150).toString()};
+
+  &[data-popper-placement='bottom-fill'] {
+    ${StyledMenuList} {
+      border-top-left-radius: 0;
+      border-top-right-radius: 0;
+      border: 1px solid var( --border-color);
+      border-top: 0;
+      box-shadow: 0 1em 1.5em ${({ theme }) => theme.color.surface.darken(50).alpha(0.6).toString()};
+    }
+  }
+
+  &[data-popper-placement='top-fill'] {
+    ${StyledMenuList} {
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
+      border: 1px solid var( --border-color);
+      border-bottom: 0;
+      box-shadow: 0 -1em 1.5em
+        ${({ theme }) => theme.color.surface.darken(50).alpha(0.6).toString()};
+    }
+  }
+`;
+
+const OverridePopper = React.forwardRef(function SStyledPopper(
+  p: PopperProps,
+  r: React.ForwardedRef<HTMLDivElement>,
+) {
+  return <StyledPopper {...p} ref={r} />;
+});
 
 const Autocomplete = React.forwardRef(
   <T, Multiple extends boolean | undefined = undefined>(
@@ -232,7 +266,6 @@ const Autocomplete = React.forwardRef(
       openOnFocus = true,
       autoFlip,
       viewportMargin,
-      offset,
       positionStrategy,
       requiredAsterisk,
       startIcon,
@@ -373,12 +406,9 @@ const Autocomplete = React.forwardRef(
         const query = inputValue.toLowerCase().trim();
 
         // Apply filter
-        const newItems =
-          typeof filterItems !== 'function' || query.length === 0
-            ? itemList
-            : filterItems(itemList, { query, inputValue });
-
-        return newItems;
+        return typeof filterItems !== 'function' || query.length === 0
+          ? itemList
+          : filterItems(itemList, { query, inputValue });
       },
       [filterItems],
     );
@@ -652,13 +682,17 @@ const Autocomplete = React.forwardRef(
               autofocus={false}
               autoFlip={autoFlip}
               viewportMargin={viewportMargin}
-              offset={offset}
+              offset={0}
+              overrides={{
+                Popper: OverridePopper,
+                List: StyledMenuList,
+              }}
               positionStrategy={positionStrategy}
               anchorElement={anchorElement}
               closeOutsideClick={false}
               getOptionSelected={getOptionSelected}
               onRequestClose={onRequestClose}
-              closeOnSelect={multiple ? false : true}
+              closeOnSelect={!multiple}
               onSelectItem={item => {
                 if (!multiple) {
                   dispatch({
@@ -686,7 +720,6 @@ const Autocomplete = React.forwardRef(
             currentOpen,
             autoFlip,
             viewportMargin,
-            offset,
             positionStrategy,
             anchorElement,
             getOptionSelected,

@@ -1,9 +1,14 @@
 import React from 'react';
 import Autocomplete, { AutocompleteItem, FilterItems } from '@via-profit/ui-kit/src/Autocomplete';
 import type { AutocompleteTextFieldProps } from '@via-profit/ui-kit/src/Autocomplete/AutocompleteTextField';
-import PhoneField, { templates, usePhoneUtils } from '@via-profit/ui-kit/src/PhoneField';
+import PhoneField, {
+  PhoneFieldProps,
+  templates,
+  usePhoneUtils,
+} from '@via-profit/ui-kit/src/PhoneField';
 import Highlighted from '@via-profit/ui-kit/src/Highlighted';
 import * as flags from '@via-profit/ui-kit/src/CountryFlags';
+import styled from '@emotion/styled';
 
 const phones = [
   { country: 'RU', number: '9122191984', callingCode: '7', value: '+7 (912) 219-19-84' },
@@ -15,6 +20,29 @@ const phones = [
   { country: 'JP', number: '156878255', callingCode: '81', value: '+81 (15) 687-8255' },
 ];
 
+const StyledPhoneField = styled(PhoneField)<PhoneFieldProps>`
+  &[data-popper-placement='top-fill'] > div {
+    outline: none;
+    border-top: 0;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    border-color: ${({ theme }) =>
+      theme.isDark
+        ? theme.color.textPrimary.darken(100).toString()
+        : theme.color.textPrimary.lighten(150).toString()};
+  }
+
+  &[data-popper-placement='bottom-fill'] > div {
+    outline: none;
+    border-bottom: 0;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    border-color: ${({ theme }) =>
+      theme.isDark
+        ? theme.color.textPrimary.darken(100).toString()
+        : theme.color.textPrimary.lighten(150).toString()};
+  }
+`;
 const StyledTextFieldWithRef: React.ForwardRefRenderFunction<
   HTMLDivElement,
   AutocompleteTextFieldProps
@@ -22,7 +50,7 @@ const StyledTextFieldWithRef: React.ForwardRefRenderFunction<
   const { value, onChange, ...restProps } = p;
 
   return (
-    <PhoneField
+    <StyledPhoneField
       ref={r}
       {...restProps}
       templates={templates}
