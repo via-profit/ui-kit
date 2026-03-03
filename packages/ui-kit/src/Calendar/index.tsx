@@ -14,7 +14,6 @@ import Toolbar, { CalendarToolbarProps } from './CalendarToolbar';
 import YearsSelector, { CalendarYearsSelectorProps } from './CalendarYearsSelector';
 import MonthsSelector, { CalendarMonthsSelectorProps } from './CalendarMonthsSelector';
 import MonthCell, { CalendarMonthCellProps } from './CalendarMonthCell';
-import YearCell, { CalendarYearCellProps } from './CalendarYearCell';
 import DayBadge, { CalendarDayBadgeProps } from './CalendarDayBadge';
 import Footer, { CalendarFooterProps } from './CalendarFooter';
 import ControlButton, { CalendarControlButtonProps } from './CalendarControlButton';
@@ -24,7 +23,7 @@ import IconPrev, { CalendarIconPrevProps } from './CalendarIconPrev';
 import IconNext, { CalendarIconNextProps } from './CalendarIconNext';
 import WeekDaysBar, { CalendarWeekDaysBarProps, WeekNameLabelFormat } from './CalendarWeekDaysBar';
 import { CalendarValue, useCalendar, Week, WeekDayName } from './use-calendar';
-import Swiper, { SwiperRef, SwiperSlide } from '@via-profit/ui-kit/src/Swiper';
+import Swiper, { SwiperRef, SwiperSlide } from '../Swiper';
 
 export * from './use-calendar';
 export * from './CalendarWeekDaysBar';

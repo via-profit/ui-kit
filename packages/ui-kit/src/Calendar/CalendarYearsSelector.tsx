@@ -136,7 +136,7 @@ const CalendarYearsSelector: React.ForwardRefRenderFunction<
   return (
     <SelectorContainer ref={ref}>
       <SelectorContainerInner ref={containerRef}>
-        <VirtualizedList items={items2} isOpen={Boolean(maxHeight)} maxHeight={maxHeight}>
+        <VirtualizedList items={items2} maxHeight={maxHeight}>
           {({ item, style, setItemHeight, index }) => (
             <VirtualizedItem
               key={`${item}${index}`}
