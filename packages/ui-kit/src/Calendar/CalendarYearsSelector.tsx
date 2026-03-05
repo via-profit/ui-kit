@@ -137,33 +137,35 @@ const CalendarYearsSelector: React.ForwardRefRenderFunction<
   return (
     <SelectorContainer ref={ref}>
       <SelectorContainerInner ref={containerRef}>
-        <VirtualizedList items={items2} maxHeight={maxHeight}>
-          {({ item, style, setItemHeight, index }) => (
-            <VirtualizedItem
-              key={`${item}${index}`}
-              index={index}
-              style={style}
-              setItemHeight={setItemHeight}
-            >
-              <Chunk>
-                {item.map(item => {
-                  const isSelected = date.getFullYear() === item.value;
+        {maxHeight && (
+          <VirtualizedList items={items2} maxHeight={maxHeight}>
+            {({ item, style, setItemHeight, index }) => (
+              <VirtualizedItem
+                key={`${item}${index}`}
+                index={index}
+                style={style}
+                setItemHeight={setItemHeight}
+              >
+                <Chunk>
+                  {item.map(item => {
+                    const isSelected = date.getFullYear() === item.value;
 
-                  return (
-                    <overridesMap.YearCell
-                      key={item.value}
-                      accentColor={accentColor}
-                      isSelected={isSelected}
-                      onClick={() => onChange(item.value)}
-                    >
-                      {item.label}
-                    </overridesMap.YearCell>
-                  );
-                })}
-              </Chunk>
-            </VirtualizedItem>
-          )}
-        </VirtualizedList>
+                    return (
+                      <overridesMap.YearCell
+                        key={item.value}
+                        accentColor={accentColor}
+                        isSelected={isSelected}
+                        onClick={() => onChange(item.value)}
+                      >
+                        {item.label}
+                      </overridesMap.YearCell>
+                    );
+                  })}
+                </Chunk>
+              </VirtualizedItem>
+            )}
+          </VirtualizedList>
+        )}
       </SelectorContainerInner>
     </SelectorContainer>
   );

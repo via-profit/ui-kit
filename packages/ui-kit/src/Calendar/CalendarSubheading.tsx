@@ -4,10 +4,11 @@ import styled from '@emotion/styled';
 export type CalendarSubheadingProps = React.HTMLAttributes<HTMLDivElement>;
 
 const StyledCalendarSubheading = styled.div`
-  font-weight: 200;
+  font-weight: 400;
   font-size: 1em;
-  opacity: 0.6;
+  opacity: 0.8;
   margin-bottom: 1em;
+  text-align: center;
 `;
 
 const CalendarSubheading: React.ForwardRefRenderFunction<

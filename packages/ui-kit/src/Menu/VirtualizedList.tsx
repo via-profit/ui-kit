@@ -1,9 +1,10 @@
 import * as React from 'react';
 import styled from '@emotion/styled';
+import { css } from '@emotion/react';
 
 export type VirtualizedListProps<T> = {
   readonly items: readonly T[];
-  readonly maxHeight?: number;
+  readonly maxHeight: number;
   readonly overscan?: number;
   readonly baseItemHeight?: number;
   readonly children: (params: ChildrenProps<T>) => React.ReactNode;
@@ -20,8 +21,11 @@ export type ChildrenProps<T> = {
 };
 
 const Container = styled.div<{ $maxHeight: number }>`
-  width: 100%;
-  max-height: ${({ $maxHeight }) => $maxHeight}px;
+    ${({ $maxHeight }) =>
+            typeof $maxHeight === 'number' &&
+            css`
+                max-height: ${$maxHeight}px;
+            `}
   overflow-y: auto;
   position: relative;
 `;
@@ -60,11 +64,13 @@ const VirtualizedList = React.forwardRef(
     const visibleRangeRef = React.useRef({ start: 0, end: 0 });
 
     /**
-     * Clear heightcache
+     * Clear heights cache
      */
     React.useEffect(() => {
       setHeights(new Map());
-    }, [items]);
+      offsetsRef.current = [];
+      itemRefs.current = [];
+    }, [items, maxHeight]);
 
     /**
      * Items height cache
@@ -120,11 +126,16 @@ const VirtualizedList = React.forwardRef(
     }, [offsets]);
 
     /**
-     * Calculate full list height
+     * Calculate real list height
      */
-    const totalHeight = React.useMemo(
+    const wrapperHeight = React.useMemo(
       () => offsets[items.length - 1] + (heights.get(items.length - 1) ?? baseItemHeight),
       [baseItemHeight, heights, items.length, offsets],
+    );
+
+    const containerHeight = React.useMemo(
+      () => Math.min(maxHeight, wrapperHeight),
+      [wrapperHeight, maxHeight],
     );
 
     const findStartIndex = React.useCallback(
@@ -247,11 +258,11 @@ const VirtualizedList = React.forwardRef(
 
     return (
       <Container
-        $maxHeight={maxHeight}
+        $maxHeight={containerHeight}
         onScroll={e => setScrollTop(e.currentTarget.scrollTop)}
         ref={containerRef}
       >
-        <Wrapper style={{ height: totalHeight }}>
+        <Wrapper style={{ height: wrapperHeight }}>
           <Inner ref={innerRef}>
             {visibleItems.map((item, i) => {
               const index = startIndex + i;

@@ -262,6 +262,8 @@ export type MenuRef = {
    * Returns the list HTML container
    */
   getListElement: () => HTMLDivElement | null;
+
+  setActualPlacement: (placement: AnchorPos) => void;
 };
 
 export type Value<T, Multiple> = Multiple extends undefined ? T | null : readonly T[];
@@ -308,6 +310,7 @@ const MenuContainer = React.forwardRef(
       getOptionSelected,
       onAnchorPosChanged,
     } = props;
+    const popperRef = React.useRef();
     const [actualPlacement, setActualPlacement] = React.useState(anchorPos);
     const overridesMap = React.useMemo(
       () => ({
@@ -480,6 +483,7 @@ const MenuContainer = React.forwardRef(
         selectHighlightedItem: () => selectHightlightedItem(),
         selectItem: (idx: number) => selectItem(idx),
         getListElement: () => menuListRef.current,
+        setActualPlacement: placement => setActualPlacement(placement),
       }),
       [
         scrollToIndex,
@@ -708,6 +712,8 @@ const MenuContainer = React.forwardRef(
       [dispatch],
     );
 
+    const listHeight = 36 * 8;
+
     return (
       <ClickOutside
         onOutsideClick={onRequestClose}
@@ -717,6 +723,9 @@ const MenuContainer = React.forwardRef(
           isOpen={Boolean(isOpen)}
           zIndex={zIndex}
           anchorPos={actualPlacement}
+          ref={api => {
+
+          }}
           onAnchorPosChanged={newPlacement => {
             setActualPlacement(newPlacement);
             if (typeof onAnchorPosChanged === 'function') {
@@ -735,7 +744,12 @@ const MenuContainer = React.forwardRef(
             anchorPos={actualPlacement}
             onKeyDown={listKeydownEvent}
           >
-            <VirtualizedList ref={virtListRef} items={items} initialIndex={firstSelectedIndex}>
+            <VirtualizedList
+              ref={virtListRef}
+              maxHeight={listHeight}
+              items={items}
+              initialIndex={firstSelectedIndex}
+            >
               {({ index, style, item, setItemHeight, itemRef }) => (
                 <VirtualizedItem
                   ref={itemRef}

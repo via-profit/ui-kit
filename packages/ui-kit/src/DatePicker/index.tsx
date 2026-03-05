@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { MouseEventHandler } from 'react';
 import styled from '@emotion/styled';
 import { css } from '@emotion/react';
 
@@ -8,11 +8,12 @@ import Calendar, {
   WeekNameLabelFormat,
   CalendarBadge,
   CalendarView,
+  CalendarProps,
 } from '../Calendar';
 import Button from '../Button';
 import Popper from '../Popper';
 import ClickOutside from '../ClickOutside';
-import MaskedField from '../MaskedField';
+import MaskedField, { MaskedFieldProps } from '../MaskedField';
 import type { TextFieldProps, TextFieldOverrides } from '../TextField';
 import DatePickerIcon from './DatePickerIcon';
 import useDatePickerFormat from './useDatePickerFormat';
@@ -253,65 +254,96 @@ const DatePicker: React.FC<DatePickerProps> = props => {
     [maxDate],
   );
 
+  const handleClick: MouseEventHandler<HTMLInputElement> = React.useCallback(() => {
+    if (readOnly) {
+      setOpenSate(!isOpen);
+    }
+  }, [isOpen, readOnly]);
+
+  const endIcon = React.useMemo(
+    () => (
+      <Button
+        disabled={disabled}
+        iconOnly
+        variant="plain"
+        type="button"
+        onClick={() => setOpenSate(true)}
+        title={calendarButtonTooltip}
+      >
+        <DatePickerIcon />
+      </Button>
+    ),
+    [calendarButtonTooltip, disabled],
+  );
+
+  const handleChange: MaskedFieldProps['onChange'] = React.useCallback(
+    ({ isValid, text }) => {
+      if (isValid) {
+        const parsedDate = parseInputByTemplate(text, template);
+
+        // Trying to parse the input date value
+        if (parsedDate instanceof Date && !isNaN(parsedDate.getTime())) {
+          // if the date satisfies the restrictions
+          if (isGreatherThenMinDate(parsedDate) && isLessThenMaxDate(parsedDate)) {
+            onChange(parsedDate);
+
+            // if the date violates the restrictions
+          } else {
+            // set as minDate if parsed date less then minDate value constraint
+            if (!isGreatherThenMinDate(parsedDate)) {
+              onChange(minDate);
+            }
+
+            // set as maxDate if parsed date greather then maxDate value constraint
+            if (!isLessThenMaxDate(parsedDate)) {
+              onChange(maxDate);
+            }
+          }
+        }
+      }
+    },
+    [
+      isGreatherThenMinDate,
+      isLessThenMaxDate,
+      maxDate,
+      minDate,
+      onChange,
+      parseInputByTemplate,
+      template,
+    ],
+  );
+
+  const calendarValue = React.useMemo(() => currentValue || new Date(), [currentValue]);
+
+  const calendarChange: CalendarProps['onChange'] = React.useCallback(
+    date => {
+      onChange(date);
+      setOpenSate(false);
+    },
+    [onChange],
+  );
+
   return (
     <>
       <StyledMaskedField
-        onClick={() => {
-          if (readOnly) {
-            setOpenSate(!isOpen);
-          }
-        }}
+        onClick={handleClick}
         disabled={disabled}
         mask={getMaskByTemplate(template)}
         ref={setTextFieldRef}
         readOnly={readOnly}
-        endIcon={
-          <Button
-            disabled={disabled}
-            iconOnly
-            type="button"
-            onClick={() => setOpenSate(true)}
-            title={calendarButtonTooltip}
-          >
-            <DatePickerIcon />
-          </Button>
-        }
+        endIcon={endIcon}
         {...restInputProps}
         value={currentValue ? formatInputByTemplate(currentValue, template) : ''}
-        onChange={({ isValid, text }) => {
-          if (isValid) {
-            const parsedDate = parseInputByTemplate(text, template);
-
-            // Trying to parse the input date value
-            if (parsedDate instanceof Date && !isNaN(parsedDate.getTime())) {
-              // if the date satisfies the restrictions
-              if (isGreatherThenMinDate(parsedDate) && isLessThenMaxDate(parsedDate)) {
-                onChange(parsedDate);
-
-                // if the date violates the restrictions
-              } else {
-                // set as minDate if parsed date less then minDate value constraint
-                if (!isGreatherThenMinDate(parsedDate)) {
-                  onChange(minDate);
-                }
-
-                // set as maxDate if parsed date greather then maxDate value constraint
-                if (!isLessThenMaxDate(parsedDate)) {
-                  onChange(maxDate);
-                }
-              }
-            }
-          }
-        }}
-        overrides={{
-          Input,
-          ErrorText,
-          IconWrapper,
-          InputWrapper,
-          Label,
-          Asterisk,
-          Container,
-        }}
+        onChange={handleChange}
+        // overrides={{
+        //   Input,
+        //   ErrorText,
+        //   IconWrapper,
+        //   InputWrapper,
+        //   Label,
+        //   Asterisk,
+        //   Container,
+        // }}
       />
 
       <ClickOutside onOutsideClick={() => setOpenSate(false)} mouseEvent="onMouseDown">
@@ -334,32 +366,29 @@ const DatePicker: React.FC<DatePickerProps> = props => {
             view={view}
             views={views}
             footer={footer}
-            value={currentValue || new Date()}
-            onChange={date => {
-              onChange(date);
-              setOpenSate(false);
-            }}
-            overrides={{
-              Body,
-              Cell,
-              EmptyCell,
-              Paper,
-              Header,
-              WeekRow,
-              DateContainer,
-              Toolbar,
-              YearsSelector,
-              MonthsSelector,
-              MonthCell,
-              DayBadge,
-              Footer,
-              ControlButton,
-              Heading,
-              Subheading,
-              IconPrev,
-              IconNext,
-              WeekDaysBar,
-            }}
+            value={calendarValue}
+            onChange={calendarChange}
+            // overrides={{
+            //   Body,
+            //   Cell,
+            //   EmptyCell,
+            //   Paper,
+            //   Header,
+            //   WeekRow,
+            //   DateContainer,
+            //   Toolbar,
+            //   YearsSelector,
+            //   MonthsSelector,
+            //   MonthCell,
+            //   DayBadge,
+            //   Footer,
+            //   ControlButton,
+            //   Heading,
+            //   Subheading,
+            //   IconPrev,
+            //   IconNext,
+            //   WeekDaysBar,
+            // }}
           />
         </Popper>
       </ClickOutside>

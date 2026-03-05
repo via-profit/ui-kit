@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { useMasked, Mask, FormatParsedPayload, ParseInput } from './useMasked';
+import { FormatParsedPayload, Mask, ParseInput, useMasked } from './useMasked';
 import TextField, { TextFieldProps } from '../TextField';
 
 export type GetMask = (input: string) => Mask;
@@ -57,7 +57,7 @@ const MaskedField: React.ForwardRefRenderFunction<HTMLDivElement, MaskedFieldPro
       ) {
         decoratorsErrorDisplayed.current = true;
         console.warn(
-          `[MaskedField component] You use symbols as decorators, which should be replaced with RegExp or provide the «parseInput» function instead`,
+          '[MaskedField component] You use symbols as decorators, which should be replaced with RegExp or provide the «parseInput» function instead',
         );
       }
 
@@ -113,6 +113,19 @@ const MaskedField: React.ForwardRefRenderFunction<HTMLDivElement, MaskedFieldPro
     [getMask, masked, transform, onChange, parseInputFn],
   );
 
+  const setInputRef = React.useCallback(
+    (elem: HTMLInputElement | null) => {
+      textInputRef.current = elem;
+      if (typeof nativeProps.inputRef === 'function') {
+        nativeProps.inputRef(elem);
+      }
+      if (nativeProps.inputRef !== null && typeof nativeProps.inputRef === 'object') {
+        nativeProps.inputRef.current = elem;
+      }
+    },
+    [nativeProps],
+  );
+
   return (
     <TextField
       ref={ref}
@@ -120,15 +133,7 @@ const MaskedField: React.ForwardRefRenderFunction<HTMLDivElement, MaskedFieldPro
       type="text"
       value={inputValue}
       onChange={handleOnChange}
-      inputRef={elem => {
-        textInputRef.current = elem;
-        if (typeof nativeProps.inputRef === 'function') {
-          nativeProps.inputRef(elem);
-        }
-        if (nativeProps.inputRef !== null && typeof nativeProps.inputRef === 'object') {
-          nativeProps.inputRef.current = elem;
-        }
-      }}
+      inputRef={setInputRef}
     />
   );
 };

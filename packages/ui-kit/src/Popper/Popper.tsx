@@ -162,6 +162,7 @@ export interface PopperOverrides {
 
 export const PORTAL_ID = 'ui-kit-portal';
 
+
 const Popper: React.ForwardRefRenderFunction<HTMLDivElement, PopperProps> = (props, ref) => {
   const {
     isOpen,
