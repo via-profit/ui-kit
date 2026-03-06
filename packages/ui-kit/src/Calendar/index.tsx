@@ -19,4 +19,4 @@ Calendar.displayName = 'Calendar';
 
 export default Calendar as <IsRangeValue extends boolean | undefined = undefined>(
   props: CalendarProps<IsRangeValue> & { ref?: React.Ref<CalendarRef<IsRangeValue>> },
-) => JSX.Element;
+) => React.ReactElement;

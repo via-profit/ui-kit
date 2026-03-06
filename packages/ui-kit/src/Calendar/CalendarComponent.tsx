@@ -136,7 +136,7 @@ export type CalendarProps<IsRangeValue extends boolean | undefined = undefined> 
   /**
    * Custom footer elements
    */
-  readonly footer?: JSX.Element;
+  readonly footer?: React.ReactNode;
 
   /**
    * Overridable components map
@@ -493,6 +493,7 @@ const CalendarComponent = React.forwardRef(
     /**
      * Selected value
      */
+    const inputValueRef = React.useRef(inputValue);
     const [value, setValue] = React.useState<CalendarValue<IsRangeValue> | null>(
       inputValue ?? defaultValue ?? null,
     );
@@ -590,8 +591,9 @@ const CalendarComponent = React.forwardRef(
      * value was changed
      */
     React.useEffect(() => {
-      if (inputValue && JSON.stringify(inputValue) !== JSON.stringify(value)) {
-        setValue(inputValue);
+      if (JSON.stringify(inputValue) !== JSON.stringify(inputValueRef.current)) {
+        inputValueRef.current = inputValue;
+        setValue(inputValue as CalendarValue<IsRangeValue>);
 
         if (isRangeValue(inputValue) && inputValue[0] instanceof Date) {
           setCalendarDate(inputValue[0]);
@@ -599,7 +601,7 @@ const CalendarComponent = React.forwardRef(
           setCalendarDate(inputValue as Date);
         }
       }
-    }, [value, inputValue]);
+    }, [inputValue]);
 
     const handlePrevNextClick = React.useCallback(
       (type: 'next' | 'prev') => () => {
@@ -717,7 +719,6 @@ const CalendarComponent = React.forwardRef(
         newDate.setFullYear(selectedYear, 0, 1);
         newDate.setHours(0, 0, 0);
 
-
         setCalendarDate(newDate);
 
         const nextView = getNextAvailableView();
@@ -732,10 +733,7 @@ const CalendarComponent = React.forwardRef(
           a.setFullYear(newDate.getFullYear(), 11, 31);
           a.setHours(23, 59, 59);
 
-          const selectedValue = range ? [
-            newDate,
-            a,
-          ] : newDate;
+          const selectedValue = range ? [newDate, a] : newDate;
           onChange(selectedValue as NonNullable<CalendarValue<IsRangeValue>>);
 
           if (!inputValue) {
@@ -765,13 +763,10 @@ const CalendarComponent = React.forwardRef(
         // if the next `view` does not exist
         if (!nextView && typeof onChange === 'function') {
           const a = new Date();
-          a.setFullYear(newDate.getFullYear(), newDate.getMonth() + 1, 0)
+          a.setFullYear(newDate.getFullYear(), newDate.getMonth() + 1, 0);
           a.setHours(0, 0, 0);
 
-          const selectedValue = range ?  [
-            newDate,
-            a,
-          ] : newDate;
+          const selectedValue = range ? [newDate, a] : newDate;
           onChange(selectedValue as NonNullable<CalendarValue<IsRangeValue>>);
 
           if (!inputValue) {

@@ -1,6 +1,6 @@
 const light = {
   'code[class*="language-"]': {
-    background: 'hsl(230, 1%, 98%)',
+    background: 'rgb(251 249 244)',
     color: 'hsl(230, 8%, 24%)',
     fontFamily: '"Fira Code", "Fira Mono", Menlo, Consolas, "DejaVu Sans Mono", monospace',
     direction: 'ltr',
@@ -18,7 +18,8 @@ const light = {
     hyphens: 'none',
   },
   'pre[class*="language-"]': {
-    background: 'hsl(230, 1%, 98%)',
+    border: '1px solid #eace84',
+    background: 'rgb(251 249 244)',
     color: 'hsl(230, 8%, 24%)',
     fontFamily: '"Fira Code", "Fira Mono", Menlo, Consolas, "DejaVu Sans Mono", monospace',
     direction: 'ltr',

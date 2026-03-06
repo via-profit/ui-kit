@@ -78,7 +78,7 @@ import MyIcon from './MyIcon';
 const Example: React.FC = () => <TextArea startIcon={<MyIcon />} label="Name" />;
 ```
 
-<ExampleTextAreaIcons />
+
 
 ## Свойства
 

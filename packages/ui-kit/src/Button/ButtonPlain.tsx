@@ -69,7 +69,7 @@ const ButtonPlain: React.ForwardRefRenderFunction<HTMLButtonElement, ButtonPlain
         let $color = theme.color.textPrimary;
         try {
           if (color) {
-            $color = new Color(color);
+            $color = Color.fromString(color);
           }
         } catch (err) {
           console.error(`invalid color value «${color}»`);

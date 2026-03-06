@@ -127,7 +127,7 @@ const SwitchDot: React.ForwardRefRenderFunction<HTMLSpanElement, SwitchDotProps>
         let $color = theme.color.surface;
         try {
           if (color) {
-            $color = new Color(color);
+            $color = Color.fromString(color);
           }
         } catch (err) {
           console.error(`invalid color value «${color}»`);

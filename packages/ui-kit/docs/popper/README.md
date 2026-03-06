@@ -283,7 +283,7 @@ export default Example;
 
 ### Тип AnchorPos
 
-```typescript
+```ts
 type AnchorPos =
   | 'top' | 'top-left' | 'top-right' | 'top-start' | 'top-end'
   | 'bottom' | 'bottom-left' | 'bottom-right' | 'bottom-start' | 'bottom-end'

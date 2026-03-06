@@ -68,7 +68,7 @@ const ButtonOutlined: React.ForwardRefRenderFunction<HTMLButtonElement, ButtonOu
 
         try {
           if (color) {
-            c = new Color(color);
+            c = Color.fromString(color);
           }
         } catch (err) {
           console.error(`invalid color value «${color}»`);

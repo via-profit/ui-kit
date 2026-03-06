@@ -35,7 +35,7 @@ export default ExampleDatePickerOverview;
 
 <ExampleDatePickerOverview />
 <br/>
-<ExampleDatePickerMonths />
+
 
 ## Хуки
 

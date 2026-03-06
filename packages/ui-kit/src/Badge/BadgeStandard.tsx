@@ -74,7 +74,7 @@ const BadgeStandard: React.ForwardRefRenderFunction<HTMLSpanElement, BadgeStanda
         let $background = theme.color.surface;
         try {
           if (color) {
-            $background = new Color(color);
+            $background = Color.fromString(color);
           }
         } catch (err) {
           console.error(`invalid color value «${color}»`);

@@ -1,4 +1,4 @@
-import { ColorParser } from './ColorParser';
+import { ColorParser, ParsedColor } from './ColorParser';
 import { ColorGenerator } from './ColorGenerator';
 
 export type ColorFormat = 'rgb' | 'rgba' | 'hex' | 'hsl' | 'hsla';
@@ -93,6 +93,29 @@ export class Color {
    */
   public darken(units: number): Color {
     return this.lighten(-units);
+  }
+
+  /**
+   * Изменяет яркость цвета путем умножения каждого канала на коэффициент
+   * @param lum - Коэффициент изменения яркости (от -1 до 1, где отрицательные значения затемняют, положительные - осветляют)
+   * @returns Новый объект Color с измененной яркостью
+   *
+   * @example
+   * ```ts
+   * const color = Color.fromString('#ff0000');
+   * const lighter = color.luminance(0.2); // на 20% светлее
+   * const darker = color.luminance(-0.2); // на 20% темнее
+   * ```
+   */
+  public luminance(lum: number): Color {
+    const factor = 1 + lum;
+
+    return new Color(
+      this.clamp(Math.round(this._r * factor), 0, 255),
+      this.clamp(Math.round(this._g * factor), 0, 255),
+      this.clamp(Math.round(this._b * factor), 0, 255),
+      this._a,
+    );
   }
 
   /**
@@ -196,6 +219,7 @@ export class Color {
     }
   }
 
+
   public toRgbString(includeAlpha: boolean = true): string {
     if (includeAlpha) {
       return `rgba(${this._r}, ${this._g}, ${this._b}, ${this._a})`;
@@ -203,6 +227,7 @@ export class Color {
 
     return `rgb(${this._r}, ${this._g}, ${this._b})`;
   }
+
 
   public toHexString(includeAlpha: boolean = false): string {
     const toHex = (n: number) => {
@@ -219,6 +244,7 @@ export class Color {
 
     return hex;
   }
+
 
   public toHslString(includeAlpha: boolean = true): string {
     const [h, s, l] = this.toHsl();
@@ -270,5 +296,130 @@ export class Color {
 
   private clamp(value: number, min: number, max: number): number {
     return Math.max(min, Math.min(max, value));
+  }
+
+
+  // #region Deprecated methods
+
+  /**
+   * @deprecated Use {@link Color.toRgbString} instead
+   */
+  public rgbString(): string {
+    return this.toRgbString();
+  }
+
+  /**
+   * @deprecated Use {@link Color.toHslString} instead
+   */
+  public hslString(): string {
+    return this.toHslString();
+  }
+
+  /**
+   * @deprecated Use {@link Color.toHexString} instead
+   */
+  public hexString(): string {
+    return this.toHexString();
+  }
+
+  /**
+   * @deprecated Use getters `color.r`, `color.g`, `color.b`, `color.a` instead.
+   * This method will be removed in future versions.
+   *
+   * @returns {ParsedColor} Object with r, g, b, a properties
+   */
+  public rgb(): ParsedColor {
+    if (process.env.NODE_ENV !== 'production') {
+      console.warn(
+        '[Color] rgb() is deprecated. Use getters color.r, color.g, color.b, color.a.',
+      );
+    }
+
+    // Возвращаем копию текущих значений для обратной совместимости
+    return {
+      r: this._r,
+      g: this._g,
+      b: this._b,
+      a: this._a,
+    };
+  }
+
+  /**
+   * @deprecated Use {@Link Color.fromString} or {@Link ColorParser.parse} instead.
+   */
+  public static parseColor(value: string): ParsedColor {
+    if (process.env.NODE_ENV !== 'production') {
+      console.warn(
+        '[Color] parseColor() is deprecated. ' +
+        'Use Color.fromString(value) or ' +
+        'ColorParser.parse(value).',
+      );
+    }
+
+    try {
+      return ColorParser.parse(value);
+    } catch (error) {
+      console.error(`Failed to parse color value «${value}»`);
+
+      return { r: 0, g: 0, b: 0, a: 1 };
+    }
+  }
+
+  /**
+   * @deprecated Use {@Link Color.fromHsl} or ColorParser.parse() instead.
+   */
+  public static hslToRgb(value: string): ParsedColor {
+    if (process.env.NODE_ENV !== 'production') {
+      console.warn(
+        '[Color] hslToRgb() is deprecated. ' +
+        'Use Color.fromHsl(value) or ColorParser.parse(value)',
+      );
+    }
+
+    try {
+      return ColorParser.parse(value);
+    } catch (error) {
+      throw new Error(`[@via-profit/ui-kit] «${value}» Is not a valid hsl color`);
+    }
+  }
+
+  /**
+   * @deprecated Use {@Link Color.fromString} with named colors instead.
+   */
+  public static getHextByWebColor(value: string): string | undefined {
+    if (process.env.NODE_ENV !== 'production') {
+      console.warn(
+        '[Color] getHextByWebColor() is deprecated. ' +
+        'Use Color.fromString(value).toHslString() instead',
+      );
+    }
+
+    return Color.fromString(value).toHslString();
+
+  }
+
+  /**
+   * @deprecated Do not use.
+   */
+  public static intToRGB(i: number): string {
+    if (process.env.NODE_ENV !== 'production') {
+      console.warn(
+        '[Color] intToRGB() is deprecated. Do not use',
+      );
+    }
+
+    // Сохраняем функциональность для обратной совместимости
+    const r = (i >> 16) & 0xFF;
+    const g = (i >> 8) & 0xFF;
+    const b = i & 0xFF;
+
+    return `rgb(${r},${g},${b})`;
+  }
+
+  /**
+   * @deprecated Use {@Link Color.fromUuid}
+   */
+  public static uuidToColor(uuid: string) {
+    return Color.fromUuid(uuid);
   }
 }

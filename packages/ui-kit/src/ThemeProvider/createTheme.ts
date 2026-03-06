@@ -49,10 +49,10 @@ export const createTheme: CreateTheme = overrides => {
   };
 
   Object.entries({ ...defaultColors, ...color }).forEach(([colorName, colorValue]) => {
-    theme.color[colorName] = new Color(colorValue);
+    theme.color[colorName] = Color.fromString(colorValue);
   });
 
-  theme.color.test = new Color('red');
+  theme.color.test = Color.fromString('red');
 
   return theme as ReturnType<CreateTheme>;
 };
