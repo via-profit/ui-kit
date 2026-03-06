@@ -21,23 +21,23 @@ const StyledTextFieldContainer = styled.div<StyleProps>`
   vertical-align: top;
 `;
 
-const TextFieldContainer: React.ForwardRefRenderFunction<
-  HTMLDivElement,
-  TextFieldContainerProps
-> = (props, ref) => {
-  const { children, fullWidth, focused, error, ...nativeProps } = props;
+export const TextFieldContainer = React.forwardRef(
+  (props: TextFieldContainerProps, ref: React.ForwardedRef<HTMLDivElement>) => {
+    const { children, fullWidth, focused, error, ...nativeProps } = props;
 
-  return (
-    <StyledTextFieldContainer
-      {...nativeProps}
-      $fullWidth={fullWidth}
-      $focused={focused}
-      $error={error}
-      ref={ref}
-    >
-      {children}
-    </StyledTextFieldContainer>
-  );
-};
+    return (
+      <StyledTextFieldContainer
+        {...nativeProps}
+        $fullWidth={fullWidth}
+        $focused={focused}
+        $error={error}
+        ref={ref}
+      >
+        {children}
+      </StyledTextFieldContainer>
+    );
+  },
+);
 
-export default React.forwardRef(TextFieldContainer);
+TextFieldContainer.displayName = 'TextFieldContainer';
+export default TextFieldContainer;

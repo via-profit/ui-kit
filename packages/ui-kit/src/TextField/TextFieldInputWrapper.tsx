@@ -47,24 +47,25 @@ const Wrapper = styled.div<{
     `}
 `;
 
-const TextFieldInputWrapper: React.ForwardRefRenderFunction<
-  HTMLDivElement,
-  TextFieldInputWrapperProps
-> = (props, ref) => {
-  const { focused, error, readOnly, fullWidth, children, ...nativeProps } = props;
+export const TextFieldInputWrapper = React.forwardRef(
+  (props: TextFieldInputWrapperProps, ref: React.ForwardedRef<HTMLDivElement>) => {
+    const { focused, error, readOnly, fullWidth, children, ...nativeProps } = props;
 
-  return (
-    <Wrapper
-      {...nativeProps}
-      $error={error}
-      $focused={focused}
-      $readOnly={readOnly}
-      $fullWidth={Boolean(fullWidth)}
-      ref={ref}
-    >
-      {children}
-    </Wrapper>
-  );
-};
+    return (
+      <Wrapper
+        {...nativeProps}
+        $error={error}
+        $focused={focused}
+        $readOnly={readOnly}
+        $fullWidth={Boolean(fullWidth)}
+        ref={ref}
+      >
+        {children}
+      </Wrapper>
+    );
+  },
+);
 
-export default React.forwardRef(TextFieldInputWrapper);
+TextFieldInputWrapper.displayName = 'TextFieldInputWrapper';
+
+export default TextFieldInputWrapper;

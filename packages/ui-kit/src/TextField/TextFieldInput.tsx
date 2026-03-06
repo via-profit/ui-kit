@@ -37,13 +37,16 @@ const Input = styled.input<{
   }
 `;
 
-const TextFieldInput: React.ForwardRefRenderFunction<HTMLInputElement, TextFieldInputProps> = (
-  props,
-  ref,
-) => {
-  const { hasEndIcon, hasStartIcon, ...nativeProps } = props;
+export const TextFieldInput = React.forwardRef(
+  (props: TextFieldInputProps, ref: React.ForwardedRef<HTMLInputElement>) => {
+    const { hasEndIcon, hasStartIcon, ...nativeProps } = props;
 
-  return <Input {...nativeProps} $hasEndIcon={hasEndIcon} $hasStartIcon={hasStartIcon} ref={ref} />;
-};
+    return (
+      <Input {...nativeProps} $hasEndIcon={hasEndIcon} $hasStartIcon={hasStartIcon} ref={ref} />
+    );
+  },
+);
 
-export default React.forwardRef(TextFieldInput);
+TextFieldInput.displayName = 'TextFieldInput';
+
+export default TextFieldInput;

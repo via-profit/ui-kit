@@ -11,17 +11,17 @@ const Label = styled.label<{ $error?: boolean; $focused?: boolean }>`
   margin-bottom: 0.2em;
 `;
 
-const TextFieldLabel: React.ForwardRefRenderFunction<HTMLLabelElement, TextFieldLabelProps> = (
-  props,
-  ref,
-) => {
-  const { children, error, focused, ...nativeProps } = props;
+export const TextFieldLabel = React.forwardRef(
+  (props: TextFieldLabelProps, ref: React.ForwardedRef<HTMLLabelElement>) => {
+    const { children, error, focused, ...nativeProps } = props;
 
-  return (
-    <Label {...nativeProps} $error={error} $focused={focused} ref={ref}>
-      {children}
-    </Label>
-  );
-};
+    return (
+      <Label {...nativeProps} $error={error} $focused={focused} ref={ref}>
+        {children}
+      </Label>
+    );
+  },
+);
 
-export default React.forwardRef(TextFieldLabel);
+TextFieldLabel.displayName = 'TextFieldLabel';
+export default TextFieldLabel;

@@ -47,17 +47,23 @@ const IconWrapper = styled.div<StyleProps>`
   }
 `;
 
-const TextFieldIconWrapper: React.ForwardRefRenderFunction<
-  HTMLDivElement,
-  TextFieldIconWrapperProps
-> = (props, ref) => {
-  const { children, position, focused, error, ...nativeProps } = props;
+export const TextFieldIconWrapper = React.forwardRef(
+  (props: TextFieldIconWrapperProps, ref: React.ForwardedRef<HTMLDivElement>) => {
+    const { children, position, focused, error, ...nativeProps } = props;
 
-  return (
-    <IconWrapper {...nativeProps} $position={position} $error={error} $focused={focused} ref={ref}>
-      {children}
-    </IconWrapper>
-  );
-};
+    return (
+      <IconWrapper
+        {...nativeProps}
+        $position={position}
+        $error={error}
+        $focused={focused}
+        ref={ref}
+      >
+        {children}
+      </IconWrapper>
+    );
+  },
+);
 
-export default React.forwardRef(TextFieldIconWrapper);
+TextFieldIconWrapper.displayName = 'TextFieldIconWrapper';
+export default TextFieldIconWrapper;

@@ -6,6 +6,7 @@ import { AnchorPos as PopperAnchorPos } from '../Popper';
 
 export type AnchorPos = PopperAnchorPos;
 export * from './MenuContainer';
+export * from './MenuItem';
 export * from './MenuList';
 
 const Menu = React.forwardRef(

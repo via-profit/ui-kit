@@ -8,6 +8,14 @@ import Input, { TextFieldInputProps } from './TextFieldInput';
 import ErrorText, { TextFieldErrorTextProps } from './TextFieldErrorText';
 import IconWrapper, { TextFieldIconWrapperProps } from './TextFieldIconWrapper';
 
+export * from './TextFieldContainer';
+export * from './TextFieldLabel';
+export * from './TextFieldLabelAsterisk';
+export * from './TextFieldInputWrapper';
+export * from './TextFieldInput';
+export * from './TextFieldErrorText';
+export * from './TextFieldIconWrapper';
+
 export interface TextFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
   /**
    * If true then `errorText` value will be displayed under the TextField element

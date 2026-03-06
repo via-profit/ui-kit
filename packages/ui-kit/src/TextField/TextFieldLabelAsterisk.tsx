@@ -19,17 +19,18 @@ const Asterisk = styled.span<{ $error?: boolean; $focused?: boolean }>`
   color: ${({ theme }) => theme.color.error.toString()};
 `;
 
-const TextFieldLabelAsterisk: React.ForwardRefRenderFunction<
-  HTMLSpanElement,
-  TextFieldLabelAsteriskProps
-> = (props, ref) => {
-  const { children, error, focused, ...nativeProps } = props;
+export const TextFieldLabelAsterisk = React.forwardRef(
+  (props: TextFieldLabelAsteriskProps, ref: React.ForwardedRef<HTMLSpanElement>) => {
+    const { children, error, focused, ...nativeProps } = props;
 
-  return (
-    <Asterisk {...nativeProps} $error={error} $focused={focused} ref={ref}>
-      {children}
-    </Asterisk>
-  );
-};
+    return (
+      <Asterisk {...nativeProps} $error={error} $focused={focused} ref={ref}>
+        {children}
+      </Asterisk>
+    );
+  },
+);
 
-export default React.forwardRef(TextFieldLabelAsterisk);
+TextFieldLabelAsterisk.displayName = 'TextFieldLabelAsterisk';
+
+export default TextFieldLabelAsterisk;

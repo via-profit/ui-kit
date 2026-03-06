@@ -1,5 +1,5 @@
-import Spinner from './Spinner';
+import LoadingIndicator from './Spinner';
 
-export { Spinner };
+export * from './Spinner';
 
-export default Spinner;
+export default LoadingIndicator;

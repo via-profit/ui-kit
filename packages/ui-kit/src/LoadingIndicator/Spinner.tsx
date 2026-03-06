@@ -1,55 +1,61 @@
-import React from 'react';
+import * as React from 'react';
 import styled from '@emotion/styled';
 import { keyframes } from '@emotion/react';
 
-export type SpinnerProps = React.SVGAttributes<SVGSVGElement>;
-
-const animationRotate = keyframes`
-0% {
-  transform: rotate(0deg);
-  }
-100% {
-  transform: rotate(270deg);
-}
+const Container = styled.div`
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
-const animationDash = keyframes`
- 0% {
-    stroke-dashoffset: 187;
-  }
-50% {
-  stroke-dashoffset: 46.75;
-          transform: rotate(135deg);
-}
-100% {
-  stroke-dashoffset: 187;
-          transform: rotate(450deg);
-}
+type Props = React.HTMLAttributes<HTMLDivElement>;
+
+const spin = keyframes`
+    to {
+        transform: rotate(360deg);
+    }
+`;
+const SpinLoader = styled.div`
+  width: 2em;
+  height: 2em;
+  border: 0.187em solid ${({ theme }) => theme.color.surface.darken(30).toString()};
+  border-top-color: ${({ theme }) => theme.color.accentPrimary.toString()};
+  border-radius: 50%;
+  animation: ${spin} 0.8s linear infinite;
 `;
 
-const Svg = styled.svg`
-  animation: ${animationRotate} 1.4s linear infinite;
-`;
-
-const Circle = styled.circle`
-  stroke-dasharray: 187;
-  stroke-dashoffset: 0;
-  transform-origin: center;
-  animation: ${animationDash} 1.4s ease-in-out infinite;
-  stroke: ${({ theme }) => theme.color.accentSecondary.toString()};
-`;
-
-const Spinner: React.ForwardRefRenderFunction<SVGSVGElement, SpinnerProps> = (props, ref) => (
-  <Svg
-    width="1em"
-    height="1em"
-    viewBox="0 0 66 66"
-    xmlns="http://www.w3.org/2000/svg"
-    {...props}
-    ref={ref}
-  >
-    <Circle fill="none" strokeWidth="6" strokeLinecap="round" cx="33" cy="33" r="30" />
-  </Svg>
+export const LoadingIndicator: React.ForwardRefRenderFunction<HTMLDivElement, Props> = (
+  props,
+  ref,
+) => (
+  <Container {...props} ref={ref}>
+    <SpinLoader />
+  </Container>
 );
 
-export default React.forwardRef(Spinner);
+const StaticLoadingIndicatorContainer = styled.span`
+  height: 100%;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+`;
+
+export const StaticLoadingIndicator = React.forwardRef(
+  (props: Props, ref: React.ForwardedRef<HTMLDivElement>) => (
+    <StaticLoadingIndicatorContainer {...props} ref={ref}>
+      <SpinLoader />
+    </StaticLoadingIndicatorContainer>
+  ),
+);
+
+StaticLoadingIndicator.displayName = 'StaticLoadingIndicator';
+
+export default React.forwardRef(LoadingIndicator);

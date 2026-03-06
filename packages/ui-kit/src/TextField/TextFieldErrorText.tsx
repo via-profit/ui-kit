@@ -9,7 +9,6 @@ export interface TextFieldErrorTextProps extends React.HTMLAttributes<HTMLDivEle
 
 const ErrorTextContainer = styled.div<{ $maxHeight: 'initial' | number }>`
   margin-left: 0.5em;
-  max-height: 0;
   max-height: ${({ $maxHeight }) =>
     typeof $maxHeight === 'number' ? `${$maxHeight}px` : $maxHeight};
   transition: max-height 240ms cubic-bezier(0.22, 0.61, 0.36, 1);
@@ -24,37 +23,38 @@ const ErrorTextInner = styled.div<{ $error: boolean }>`
   transition: all 240ms 240ms ease-out;
 `;
 
-const TextFieldErrorText: React.ForwardRefRenderFunction<
-  HTMLDivElement,
-  TextFieldErrorTextProps
-> = (props, ref) => {
-  const { children, error, ...nativeProps } = props;
+export const TextFieldErrorText = React.forwardRef(
+  (props: TextFieldErrorTextProps, ref: React.ForwardedRef<HTMLDivElement>) => {
+    const { children, error, ...nativeProps } = props;
 
-  const innerRef = React.useRef<HTMLDivElement | null>(null);
-  const [maxHeight, setMaxHeight] = React.useState<'initial' | number>('initial');
+    const innerRef = React.useRef<HTMLDivElement | null>(null);
+    const [maxHeight, setMaxHeight] = React.useState<'initial' | number>('initial');
 
-  React.useEffect(() => {
-    const updateMaxHeight = () => {
-      if (innerRef.current && innerRef.current.getBoundingClientRect().height > 0) {
-        setMaxHeight(innerRef.current.getBoundingClientRect().height);
-      }
-    };
+    React.useEffect(() => {
+      const updateMaxHeight = () => {
+        if (innerRef.current && innerRef.current.getBoundingClientRect().height > 0) {
+          setMaxHeight(innerRef.current.getBoundingClientRect().height);
+        }
+      };
 
-    updateMaxHeight();
-    window.addEventListener('resize', updateMaxHeight);
+      updateMaxHeight();
+      window.addEventListener('resize', updateMaxHeight);
 
-    return () => {
-      window.removeEventListener('resize', updateMaxHeight);
-    };
-  }, [children]);
+      return () => {
+        window.removeEventListener('resize', updateMaxHeight);
+      };
+    }, [children]);
 
-  return (
-    <ErrorTextContainer {...nativeProps} $maxHeight={error ? maxHeight : 0} ref={ref}>
-      <ErrorTextInner ref={innerRef} $error={Boolean(error)}>
-        {children ? <NoSSR>{children}</NoSSR> : <>&nbsp;</>}
-      </ErrorTextInner>
-    </ErrorTextContainer>
-  );
-};
+    return (
+      <ErrorTextContainer {...nativeProps} $maxHeight={error ? maxHeight : 0} ref={ref}>
+        <ErrorTextInner ref={innerRef} $error={Boolean(error)}>
+          {children ? <NoSSR>{children}</NoSSR> : <>&nbsp;</>}
+        </ErrorTextInner>
+      </ErrorTextContainer>
+    );
+  },
+);
 
-export default React.memo(React.forwardRef(TextFieldErrorText));
+TextFieldErrorText.displayName = 'TextFieldErrorText';
+
+export default TextFieldErrorText;
