@@ -2,7 +2,7 @@ import React from 'react';
 import styled from '@emotion/styled';
 
 import Surface from '@via-profit/ui-kit/src/Surface';
-import { Spinner } from '@via-profit/ui-kit/src/LoadingIndicator';
+import Spinner from '@via-profit/ui-kit/src/LoadingIndicator';
 
 const Container = styled.div`
   display: flex;
