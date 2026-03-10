@@ -1,38 +1,52 @@
 import styled from '@emotion/styled';
 import * as React from 'react';
 
-export type VirtualizedItemProps = {
+export type VirtualizedItemProps = Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> & {
+  readonly key: string;
   readonly index: number;
   readonly style: React.CSSProperties;
   readonly setItemHeight: (index: number, height: number) => void;
-  readonly children: React.ReactNode;
+  readonly isActiveOnScroll: boolean;
+  readonly children: VirtualizedItemChildren;
 };
 
-const StyledItem = styled.div`
+export type VirtualizedItemChildren = (params: {
+  readonly index: number;
+  readonly isActiveOnScroll: boolean;
+}) => React.ReactNode;
+
+const StyledVirtualizedItem = styled.div`
   position: absolute;
   width: 100%;
 `;
 
-const VirtualizedItem = React.forwardRef(
+export const VirtualizedItem = React.forwardRef(
   (props: VirtualizedItemProps, ref: React.ForwardedRef<HTMLDivElement>) => {
-    const { children, style, index, setItemHeight } = props;
+    const { children, style, index, setItemHeight, isActiveOnScroll, ...restProps } = props;
     const containerRef = React.useRef<HTMLDivElement | null>(null);
-    const [heightCache, setHeightCache] = React.useState<number | null>(null);
 
     React.useEffect(() => {
-      if (containerRef.current) {
-        const h = containerRef.current.getBoundingClientRect().height;
-        if (h !== heightCache) {
-          setItemHeight(index, h);
-          setHeightCache(h);
+      const el = containerRef.current;
+      if (!el) return;
+
+      const observer = new ResizeObserver(entries => {
+        for (const entry of entries) {
+          const { height } = entry.contentRect;
+          if (height) {
+            setItemHeight(index, height);
+          }
         }
-      }
-    }, [setItemHeight, index, heightCache]);
+      });
+
+      observer.observe(el);
+
+      return () => observer.disconnect();
+    }, [index, setItemHeight]);
 
     return (
-      <StyledItem ref={ref} style={style}>
-        <div ref={containerRef}>{children}</div>
-      </StyledItem>
+      <StyledVirtualizedItem style={style} {...restProps} ref={ref}>
+        <div ref={containerRef}>{children({ index, isActiveOnScroll })}</div>
+      </StyledVirtualizedItem>
     );
   },
 );

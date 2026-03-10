@@ -1,289 +1,524 @@
 import * as React from 'react';
 import styled from '@emotion/styled';
-import { css } from '@emotion/react';
+
+import { VirtualizedItemProps } from './VirtualizedItem';
+import VirtualizedListRender from './VirtualizedListRender';
+
+export * from './VirtualizedItem';
+
+export type VirtualizedListRef = {
+  readonly scrollToIndex: (index: number) => void;
+  readonly scrollToNextIndex: () => void;
+  readonly scrollToPreviousIndex: () => void;
+  readonly getActiveScrollIndex: () => number;
+};
 
 export type VirtualizedListProps<T> = {
   readonly items: readonly T[];
-  readonly maxHeight: number;
   readonly overscan?: number;
-  readonly baseItemHeight?: number;
-  readonly children: (params: ChildrenProps<T>) => React.ReactNode;
+  readonly estimatedItemSize?: number;
+  readonly children: VirtualizedListChildren<T>;
   readonly initialIndex?: number;
-  readonly cacheSize?: number;
+  readonly onEndReached?: () => void;
+  readonly onEndReachedIndexThreshold?: number;
+  readonly maxHeight?: number;
+  readonly scrollUpdates?: boolean;
+  readonly itemKey?: (index: number, item: T) => string | number;
 };
 
-export type ChildrenProps<T> = {
+export type VirtualizedListChildren<T> = (
+  data: DataProps<T>,
+  virtualizedItemProps: Omit<VirtualizedItemProps, 'children'>,
+) => React.ReactNode;
+
+export type DataProps<T> = {
   readonly item: T;
   readonly index: number;
-  readonly style: React.CSSProperties;
-  readonly setItemHeight: (index: number, height: number) => void;
-  readonly itemRef: (el: HTMLElement | null) => void;
 };
 
-const Container = styled.div<{ $maxHeight: number }>`
-    ${({ $maxHeight }) =>
-            typeof $maxHeight === 'number' &&
-            css`
-                max-height: ${$maxHeight}px;
-            `}
+const VirtualizedListContainer = styled.div`
+  width: 100%;
+  height: 100%;
   overflow-y: auto;
   position: relative;
 `;
 
-const Wrapper = styled.div`
-  position: relative;
+const VirtualizedListWrapper = styled.div`
+  position: absolute;
 `;
 
-const Inner = styled.div`
+const VirtualizedListItemsList = styled.div`
   position: absolute;
   left: 0;
   right: 0;
 `;
-
-export type VirtualizedListRef = {
-  readonly scrollToIndex: (index: number) => void;
-};
 
 const VirtualizedList = React.forwardRef(
   <T,>(props: VirtualizedListProps<T>, ref: React.ForwardedRef<VirtualizedListRef>) => {
     const {
       items,
       children,
-      baseItemHeight = 34.78,
-      maxHeight = 36 * 8,
+      estimatedItemSize = 0,
       overscan = 5,
-      cacheSize = 60,
       initialIndex,
+      onEndReachedIndexThreshold = Math.min(20, props.items.length),
+      onEndReached,
+      maxHeight = 0,
+      scrollUpdates = true,
     } = props;
+    const [size, setSize] = React.useState({ width: 0, height: 0 });
+    const [activeScrollIndex, setActiveScrollIndex] = React.useState<number>(-1);
+    const activeScrollIndexRef = React.useRef(activeScrollIndex);
+    const [estimatedItemHeight, setEstimatedItemHeight] = React.useState(estimatedItemSize);
     const [scrollTop, setScrollTop] = React.useState(0);
-    const [heights, setHeights] = React.useState<Map<number, number>>(new Map());
+    const [heights, setHeights] = React.useState<number[]>(
+      new Array(items.length).fill(estimatedItemHeight),
+    );
     const offsetsRef = React.useRef<number[]>([]);
     const containerRef = React.useRef<HTMLDivElement | null>(null);
-    const innerRef = React.useRef<HTMLDivElement | null>(null);
     const itemRefs = React.useRef<(HTMLElement | null)[]>([]);
-    const visibleRangeRef = React.useRef({ start: 0, end: 0 });
+    const rafId = React.useRef<number | undefined>(undefined);
 
-    /**
-     * Clear heights cache
-     */
+    // #region Calculations
+
+    // Сбрасываем только при смене items
     React.useEffect(() => {
-      setHeights(new Map());
-      offsetsRef.current = [];
-      itemRefs.current = [];
-    }, [items, maxHeight]);
+      setHeights(new Array(items.length).fill(estimatedItemHeight));
+      offsetsRef.current = new Array(items.length).fill(0);
+      itemRefs.current = new Array(items.length).fill(null);
+    }, [items, estimatedItemHeight]);
 
-    /**
-     * Items height cache
-     */
     const setItemHeight = React.useCallback(
       (index: number, h: number) => {
+        if (!h || h <= 0) {
+          // игнорируем нулевые/отрицательные/NaN высоты
+          return;
+        }
+
+        if (typeof estimatedItemHeight === 'undefined') {
+          setEstimatedItemHeight(h);
+        }
+
         setHeights(prev => {
-          if (prev.get(index) === h) {
+          if (prev[index] === h) {
             return prev;
           }
-
-          const next = new Map(prev);
-          next.set(index, h);
-
-          // over `cacheSize` item heights will be cleared
-          const { start, end } = visibleRangeRef.current;
-
-          for (const key of next.keys()) {
-            if (typeof key === 'number' && (key < start - cacheSize || key > end + cacheSize)) {
-              next.delete(key);
-            }
-          }
+          const next = [...prev];
+          next[index] = h;
 
           return next;
         });
       },
-      [cacheSize],
+      [estimatedItemHeight],
     );
 
-    /**
-     * Calculate offsets
-     */
+    // Вычисляем offsets на основе heights
     const offsets = React.useMemo(() => {
-      const arr: number[] = new Array(items.length);
+      const arr = new Array(items.length);
       let sum = 0;
 
       for (let i = 0; i < items.length; i++) {
         arr[i] = sum;
-        sum += heights.get(i) ?? baseItemHeight;
+        sum += heights[i] ?? estimatedItemHeight;
       }
 
       offsetsRef.current = arr;
-      // offsetsRef.current = arr;
 
       return arr;
-    }, [items.length, heights, baseItemHeight]);
+    }, [items.length, heights, estimatedItemHeight]);
 
-    /**
-     * Offsets cache
-     */
-    React.useEffect(() => {
-      offsetsRef.current = offsets;
-    }, [offsets]);
+    // Общая высота списка
+    const wrapperHeight = React.useMemo(() => {
+      if (items.length === 0) return 0;
 
-    /**
-     * Calculate real list height
-     */
-    const wrapperHeight = React.useMemo(
-      () => offsets[items.length - 1] + (heights.get(items.length - 1) ?? baseItemHeight),
-      [baseItemHeight, heights, items.length, offsets],
-    );
+      const lastOffset = offsets[items.length - 1];
+      const lastHeight = heights[items.length - 1] ?? estimatedItemHeight;
 
-    const containerHeight = React.useMemo(
-      () => Math.min(maxHeight, wrapperHeight),
-      [wrapperHeight, maxHeight],
-    );
+      return lastOffset + lastHeight;
+    }, [items.length, offsets, heights, estimatedItemHeight]);
 
-    const findStartIndex = React.useCallback(
-      (scrollTop: number) => {
-        let low = 0;
-        let high = offsets.length - 1;
+    // Поиск начального индекса бинарным поиском
+    const findStartIndex = React.useCallback((scrollTop: number) => {
+      const offsets = offsetsRef.current;
+      let low = 0;
+      let high = offsets.length - 1;
 
-        while (low <= high) {
-          const mid = (low + high) >> 1;
-          if (offsets[mid] <= scrollTop) low = mid + 1;
-          else high = mid - 1;
+      while (low <= high) {
+        const mid = (low + high) >> 1;
+        const midValue = offsets[mid];
+
+        if (midValue < scrollTop) {
+          low = mid + 1;
+        } else if (midValue > scrollTop) {
+          high = mid - 1;
+        } else {
+          return mid;
         }
-
-        return Math.max(0, low - 1);
-      },
-      [offsets],
-    );
-
-    const startIndex = React.useMemo(() => findStartIndex(scrollTop), [findStartIndex, scrollTop]);
-    const endIndex = React.useMemo(() => {
-      let acc = offsets[startIndex];
-      let end = startIndex;
-
-      while (end < items.length && acc < scrollTop + maxHeight) {
-        acc += heights.get(end) ?? baseItemHeight;
-        end++;
       }
 
-      return Math.min(end + overscan, items.length);
+      return Math.max(0, low - 1);
+    }, []);
+
+    // #region Start index
+    const startIndex = React.useMemo(() => {
+      if (items.length === 0) {
+        return 0;
+      }
+      // const visibleBottom = scrollTop + viewportHeight;
+
+      const rawStart = findStartIndex(scrollTop);
+
+      // overscan не должен быть больше длины списка
+      const safeOverscan = Math.min(overscan, items.length);
+
+      // сдвигаем влево, но не выходим за границы
+      const idx = rawStart - safeOverscan;
+
+      // нормализуем индекс
+      return Math.max(0, Math.min(idx, items.length - 1));
+    }, [items.length, scrollTop, findStartIndex, overscan]);
+
+    // #region End index
+    const endIndex = React.useMemo(() => {
+      if (items.length === 0 || !size.height) {
+        return -1;
+      }
+
+      const visibleBottom = scrollTop + size.height;
+
+      let end = startIndex;
+      let currentBottom = offsets[startIndex] + (heights[startIndex] ?? estimatedItemHeight);
+
+      // идём вправо, пока элемент полностью не вышел за пределы viewport
+      while (end < items.length - 1 && currentBottom < visibleBottom) {
+        end++;
+        currentBottom = offsets[end] + (heights[end] ?? estimatedItemHeight);
+      }
+
+      // overscan вправо, но ограниченный длиной списка
+      const safeOverscan = Math.min(overscan, items.length);
+
+      return Math.min(end + safeOverscan, items.length - 1);
     }, [
       startIndex,
       offsets,
       scrollTop,
-      maxHeight,
+      size.height,
       heights,
-      baseItemHeight,
+      estimatedItemHeight,
       items.length,
       overscan,
     ]);
 
-    const pendingScrollIndex = React.useRef<number | null>(null);
-
     const visibleItems = React.useMemo(() => {
-      itemRefs.current = [];
+      if (items.length === 0) return [];
+      if (endIndex < startIndex) return [];
 
-      return items.slice(startIndex, endIndex);
-    }, [endIndex, items, startIndex]);
+      return items.slice(startIndex, endIndex + 1);
+    }, [items, startIndex, endIndex]);
 
-    React.useEffect(() => {
-      if (pendingScrollIndex.current !== null && containerRef.current) {
-        const index = pendingScrollIndex.current;
-        containerRef.current.scrollTop = offsetsRef.current[index] ?? 0;
-        pendingScrollIndex.current = null;
-      }
-    }, [offsets]);
+    // #region Component API
 
-    React.useEffect(() => {
-      const index = pendingScrollIndex.current;
-      if (index == null) {
-        return;
-      }
+    const scrollToIndex = React.useCallback(
+      (index: number) => {
+        if (index < 0 || index >= items.length) {
+          return;
+        }
 
-      const el = itemRefs.current[index];
-      if (el) {
-        el.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
-        pendingScrollIndex.current = null;
-      }
-    }, [visibleItems]);
+        if (rafId.current) {
+          cancelAnimationFrame(rafId.current);
+        }
 
-    const setItemRef = React.useCallback(
-      (index: number) => (el: HTMLElement | null) => {
-        itemRefs.current[index] = el;
+        rafId.current = requestAnimationFrame(() => {
+          const container = containerRef.current;
+          if (!container) {
+            return;
+          }
+
+          const targetOffset = offsetsRef.current[index];
+          const height = heights[index] ?? estimatedItemHeight;
+
+          const containerHeight = container.clientHeight;
+          const currentScrollTop = container.scrollTop;
+
+          const elementTop = targetOffset;
+          const elementBottom = targetOffset + height;
+
+          const viewportTop = currentScrollTop;
+          const viewportBottom = currentScrollTop + containerHeight;
+
+          // --- 1. Элемент больше viewport ---
+          if (height > containerHeight) {
+            // Показываем начало элемента
+            container.scrollTo({
+              top: elementTop,
+              behavior: 'smooth',
+            });
+            rafId.current = undefined;
+            if (scrollUpdates) {
+              setActiveScrollIndex(index);
+            }
+
+            return;
+          }
+
+          // --- 2. Элемент полностью виден ---
+          const fullyVisible = elementTop >= viewportTop && elementBottom <= viewportBottom;
+
+          if (fullyVisible) {
+            rafId.current = undefined;
+            if (scrollUpdates) {
+              setActiveScrollIndex(index);
+            }
+
+            return;
+          }
+
+          // --- 3. Элемент частично виден сверху ---
+          if (elementTop < viewportTop) {
+            container.scrollTo({
+              top: elementTop,
+              behavior: 'smooth',
+            });
+            rafId.current = undefined;
+            if (scrollUpdates) {
+              setActiveScrollIndex(index);
+            }
+
+            return;
+          }
+
+          // --- 4. Элемент частично виден снизу ---
+          if (elementBottom > viewportBottom) {
+            container.scrollTo({
+              top: elementBottom - containerHeight,
+              behavior: 'smooth',
+            });
+            rafId.current = undefined;
+            if (scrollUpdates) {
+              setActiveScrollIndex(index);
+            }
+
+            return;
+          }
+
+          rafId.current = undefined;
+        });
       },
-      [],
+      [items.length, heights, estimatedItemHeight, scrollUpdates],
     );
 
-    const scrollToIndex = React.useCallback((index: number) => {
-      const el = itemRefs.current[index];
+    const scrollToPreviousIndex = React.useCallback(() => {
+      scrollToIndex(activeScrollIndex === -1 ? items.length : activeScrollIndex - 1);
+    }, [activeScrollIndex, scrollToIndex, items.length]);
 
-      if (el) {
-        requestAnimationFrame(() => {
-          el.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
-        });
+    const scrollToNextIndex = React.useCallback(() => {
+      const index = activeScrollIndex === -1 ? 0 : activeScrollIndex + 1;
+      scrollToIndex(index);
+    }, [activeScrollIndex, scrollToIndex]);
 
-        return;
-      }
-
-      // scroll container by offsets
-      if (containerRef.current) {
-        containerRef.current.scrollTop = offsetsRef.current[index] ?? 0;
-      }
-
-      // Pending while element are shown
-      pendingScrollIndex.current = index;
-    }, []);
-
-    /**
-     * Scroll to initial index
-     */
     React.useEffect(() => {
-      if (typeof initialIndex === 'number' && initialIndex >= 0) {
-        pendingScrollIndex.current = initialIndex;
-      }
-    }, [initialIndex]);
+      if (typeof initialIndex === 'number' && initialIndex >= 0 && initialIndex < items.length) {
+        // Используем setTimeout для гарантии, что DOM уже отрисован
+        const timeoutId = setTimeout(() => {
+          scrollToIndex(initialIndex);
+        }, 0);
 
-    /**
-     * Save visible range
-     */
-    React.useEffect(() => {
-      visibleRangeRef.current = { start: startIndex, end: endIndex };
-    }, [startIndex, endIndex]);
+        return () => clearTimeout(timeoutId);
+      }
+    }, [initialIndex, items.length, scrollToIndex]);
 
     React.useImperativeHandle(
       ref,
       () => ({
         scrollToIndex,
+        scrollToNextIndex,
+        scrollToPreviousIndex,
+        getActiveScrollIndex: () => activeScrollIndex,
       }),
-      [scrollToIndex],
+      [scrollToIndex, scrollToNextIndex, scrollToPreviousIndex, activeScrollIndex],
+    );
+
+    // #region Render items
+    const computeStyle = React.useCallback(
+      (index: number) => {
+        if (typeof offsets[index] === 'undefined') {
+          return {} as React.CSSProperties;
+        }
+
+        const s: React.CSSProperties = {
+          position: 'absolute',
+          top: offsets[index],
+          height: heights[index] ?? estimatedItemHeight,
+          width: '100%',
+          willChange: 'top',
+        };
+
+        return s;
+      },
+      [estimatedItemHeight, heights, offsets],
+    );
+
+    const renderedItems = React.useMemo(() => {
+      return visibleItems.map((item, i) => {
+        const index = startIndex + i;
+
+        return children(
+          { item, index },
+          {
+            key: `${index}`,
+            index,
+            isActiveOnScroll: activeScrollIndex === index,
+            setItemHeight,
+            style: computeStyle(index),
+            // onMouseEnter: () => {
+            //   activeScrollIndexRef.current = activeScrollIndex;
+            //   // setActiveScrollIndex(index);
+            // },
+            // onMouseLeave: () => {
+            //   if (activeScrollIndexRef.current) {
+            //     // setActiveScrollIndex(activeScrollIndexRef.current);
+            //   }
+            // },
+          },
+        );
+      });
+    }, [visibleItems, startIndex, children, activeScrollIndex, setItemHeight, computeStyle]);
+
+    // #region EndReached logic
+
+    const lastTriggeredItemsCountRef = React.useRef<number | null>(null);
+    const prevItemsLengthRef = React.useRef(items.length);
+
+    const checkAndTriggerEndReached = React.useCallback(() => {
+      if (!onEndReached || items.length === 0) {
+        return;
+      }
+
+      // сколько элементов осталось до конца
+      const itemsRemaining = items.length - 1 - endIndex;
+
+      // если уже вызывали для этого количества элементов — выходим
+      if (lastTriggeredItemsCountRef.current === items.length) {
+        return;
+      }
+
+      // если осталось меньше или равно threshold элементов — вызываем
+      if (itemsRemaining <= onEndReachedIndexThreshold) {
+        lastTriggeredItemsCountRef.current = items.length;
+        onEndReached();
+      }
+    }, [onEndReached, onEndReachedIndexThreshold, items.length, endIndex]);
+
+    // Сбрасываем триггер при изменении items (успешной загрузке)
+    React.useEffect(() => {
+      if (prevItemsLengthRef.current !== items.length) {
+        // Данные обновились - сбрасываем триггер для возможности новой загрузки
+        prevItemsLengthRef.current = items.length;
+
+        // Проверяем, не нужно ли вызвать onEndReached сразу после загрузки
+        // (если список все еще не заполнил контейнер)
+        if (containerRef.current) {
+          // Даем время на ререндер и пересчет высот
+          requestAnimationFrame(() => {
+            checkAndTriggerEndReached();
+          });
+        }
+      }
+    }, [items.length, checkAndTriggerEndReached]);
+
+    // Первоначальная проверка для случая, когда список не заполняет контейнер
+    React.useEffect(() => {
+      if (containerRef.current) {
+        // Даем время на отрисовку
+        const timeoutId = setTimeout(() => {
+          checkAndTriggerEndReached();
+        }, 100);
+
+        return () => clearTimeout(timeoutId);
+      }
+    }, [checkAndTriggerEndReached, items.length]);
+
+    // #region Scroll event
+    const handleScroll = React.useCallback(
+      (e: React.UIEvent<HTMLDivElement>) => {
+        const scrollTop = e.currentTarget.scrollTop;
+
+        if (rafId.current) {
+          cancelAnimationFrame(rafId.current);
+        }
+
+        rafId.current = requestAnimationFrame(() => {
+          setScrollTop(scrollTop);
+
+          // Проверяем, достигли ли конца списка
+          checkAndTriggerEndReached();
+          rafId.current = undefined;
+        });
+      },
+      [checkAndTriggerEndReached],
+    );
+
+    // #region ComponentWillUnmount
+    // Очистка при размонтировании
+    React.useEffect(() => {
+      return () => {
+        if (rafId.current) {
+          cancelAnimationFrame(rafId.current);
+        }
+      };
+    }, []);
+
+    // #region Resize
+    React.useEffect(() => {
+      const el = containerRef.current;
+      if (!el) {
+        return;
+      }
+
+      const observer = new ResizeObserver(entries => {
+        for (const entry of entries) {
+          const { width, height } = entry.contentRect;
+
+          if (maxHeight) {
+            setSize({ width, height: height > 0 ? Math.min(maxHeight, height) : maxHeight });
+
+            return;
+          }
+
+          if (width && height) {
+            setSize({ width, height });
+          }
+        }
+      });
+
+      observer.observe(el);
+      return () => observer.disconnect();
+    }, [maxHeight]);
+
+    // #region Component Render
+
+    const wrapperStyle: React.CSSProperties = React.useMemo(
+      () => ({ width: size.width, height: wrapperHeight }),
+      [size.width, wrapperHeight],
     );
 
     return (
-      <Container
-        $maxHeight={containerHeight}
-        onScroll={e => setScrollTop(e.currentTarget.scrollTop)}
+      <VirtualizedListRender
+        handleScroll={handleScroll}
         ref={containerRef}
+        wrapperStyle={wrapperStyle}
       >
-        <Wrapper style={{ height: wrapperHeight }}>
-          <Inner ref={innerRef}>
-            {visibleItems.map((item, i) => {
-              const index = startIndex + i;
-
-              return children({
-                item,
-                index,
-                itemRef: setItemRef(index),
-                setItemHeight,
-                style: {
-                  position: 'absolute',
-                  top: offsets[index],
-                  height: heights.get(index) ?? baseItemHeight,
-                  width: '100%',
-                },
-              });
-            })}
-          </Inner>
-        </Wrapper>
-      </Container>
+        {renderedItems}
+      </VirtualizedListRender>
     );
+    // return (
+    //   <VirtualizedListContainer onScroll={handleScroll} ref={containerRef}>
+    //     <VirtualizedListWrapper style={wrapperStyle}>
+    //       <VirtualizedListItemsList>{renderedItems}</VirtualizedListItemsList>
+    //     </VirtualizedListWrapper>
+    //   </VirtualizedListContainer>
+    // );
   },
 );
 
@@ -291,4 +526,4 @@ VirtualizedList.displayName = 'VirtualizedList';
 
 export default VirtualizedList as <T>(
   props: VirtualizedListProps<T> & { ref?: React.Ref<VirtualizedListRef> },
-) => JSX.Element;
+) => React.ReactElement;
