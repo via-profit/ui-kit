@@ -12,7 +12,7 @@ export type CalendarWeekRowButtonProps = React.HTMLAttributes<HTMLButtonElement>
 };
 
 const StyleButton = styled(Button)`
-  padding: 0.2em 0.5em;
+  padding: 0.2em 0.5em !important;
   font-size: 1em;
   border-radius: ${({ theme }) => theme.shape.radiusFactor * 3}em;
 `;

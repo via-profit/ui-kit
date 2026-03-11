@@ -3,10 +3,8 @@ import React from 'react';
 import useContext, { actionSetmenuState } from './context';
 import List, { MenuListProps } from './MenuList';
 import Popper, { AnchorPos, PopperProps, PositionStrategy } from '../Popper';
-import type { MenuItemCommonProps } from './MenuItem';
+import type { MenuItemProps } from './MenuItem';
 import ClickOutside from '../ClickOutside';
-import VirtualizedList, { VirtualizedListRef } from './VirtualizedList';
-import VirtualizedItem from './VirtualizedItem';
 
 export type AnchorElement<E extends HTMLElement = HTMLElement> = E;
 
@@ -15,7 +13,7 @@ export type Children<T> = (
     item: T;
     index: number;
   },
-  itemProps: MenuItemCommonProps,
+  itemProps: MenuItemProps,
 ) => React.ReactNode;
 
 export interface MenuProps<T, Multiple extends boolean | undefined = undefined> {
@@ -84,7 +82,7 @@ export interface MenuProps<T, Multiple extends boolean | undefined = undefined> 
   // readonly keyExtractor: KeyExtractor<T>;
 
   /**
-   * Close list if click outside of the list and anchor element\
+   * Close list if click outside the list and anchor element\
    * \
    * **Default**: `true`
    */
@@ -266,7 +264,7 @@ export type MenuRef = {
   setActualPlacement: (placement: AnchorPos) => void;
 };
 
-export type Value<T, Multiple> = Multiple extends undefined ? T | null : readonly T[];
+export type Value<T, Multiple> = Multiple extends undefined | undefined ? T | null : readonly T[];
 export type GetOptionSelected<T> = (payload: { readonly item: T; readonly value: T }) => boolean;
 
 export type OnSelectItem<T, Multiple extends boolean | undefined = undefined> = (
@@ -300,17 +298,16 @@ const MenuContainer = React.forwardRef(
       positionStrategy,
       autoFlip,
       viewportMargin,
-      offset = 8,
+      offset,
       multiple = false,
       autofocus = true,
       closeOnSelect = !multiple,
       onRequestClose = onRequestCloseDefault,
+      onAnchorPosChanged,
       zIndex,
       onSelectItem,
       getOptionSelected,
-      onAnchorPosChanged,
     } = props;
-    const popperRef = React.useRef();
     const [actualPlacement, setActualPlacement] = React.useState(anchorPos);
     const overridesMap = React.useMemo(
       () => ({
@@ -349,8 +346,7 @@ const MenuContainer = React.forwardRef(
     const [currentAnchorElement, setAnchorElement] = React.useState(anchorElement);
     const isOpenRef = React.useRef(isOpen);
     const menuListRef = React.useRef<HTMLDivElement | null>(null);
-    // const popperRef = React.useRef<HTMLDivElement | null>(null);
-    const virtListRef = React.useRef<VirtualizedListRef | null>(null);
+    const menuPopperRef = React.useRef<HTMLDivElement | null>(null);
     const {
       dispatch,
       state: { selectedIndexes, markedIndex, hoveredIndex },
@@ -359,17 +355,45 @@ const MenuContainer = React.forwardRef(
     const timeoutRef = React.useRef<NodeJS.Timeout | null>(null);
 
     const scrollToIndex = React.useCallback((index: number) => {
-      if (virtListRef.current) {
-        virtListRef.current?.scrollToIndex(index);
+      const option = menuListRef?.current?.children[index];
+      if (option) {
+        option.scrollIntoView({
+          behavior: 'auto',
+          block: 'nearest',
+        });
       }
     }, []);
+
+    React.useEffect(() => {
+      let timeout: NodeJS.Timeout | null;
+      const recalc = () => {
+        if (timeout) {
+          clearTimeout(timeout);
+        }
+        timeout = setTimeout(() => {
+          if (anchorElement) {
+            // calculateElementPos();
+          }
+        }, 300);
+      };
+
+      window.addEventListener('resize', recalc);
+      window.addEventListener('scroll', recalc);
+
+      recalc();
+
+      return () => {
+        window.removeEventListener('resize', recalc);
+        window.removeEventListener('scroll', recalc);
+      };
+    }, [anchorElement, isOpen]);
+
     /**
      * Scroll to first of selected item
      */
     const scrollToFirstSelected = React.useCallback(() => {
       const indexes = [...selectedIndexes];
-      //
-      // // Sort array of indexes by DESC and get the index
+      // Sort array of indexes by DESC and get the index
       const index = indexes.length ? [...indexes.sort()][0] : -1;
       dispatch({
         type: 'setMenuState',
@@ -377,9 +401,7 @@ const MenuContainer = React.forwardRef(
           markedIndex: index,
         },
       });
-      if (index >= 0) {
-        scrollToIndex(index);
-      }
+      scrollToIndex(index);
     }, [dispatch, selectedIndexes, scrollToIndex]);
 
     /**
@@ -443,22 +465,26 @@ const MenuContainer = React.forwardRef(
     const hightlightPrevItem = React.useCallback(() => {
       const index = Math.max(markedIndex - 1, 0);
       highlightIndex(index);
-    }, [markedIndex, highlightIndex]);
+      scrollToIndex(index);
+    }, [markedIndex, highlightIndex, scrollToIndex]);
 
     const hightlightNextItem = React.useCallback(() => {
       const index = Math.min(markedIndex + 1, items.length);
       highlightIndex(index);
-    }, [markedIndex, items.length, highlightIndex]);
+      scrollToIndex(index);
+    }, [markedIndex, items.length, highlightIndex, scrollToIndex]);
 
     const hightlightFirstItem = React.useCallback(() => {
       const index = 0;
       highlightIndex(index);
-    }, [highlightIndex]);
+      scrollToIndex(index);
+    }, [highlightIndex, scrollToIndex]);
 
     const hightlightLastItem = React.useCallback(() => {
       const index = items.length - 1;
       highlightIndex(index);
-    }, [highlightIndex, items.length]);
+      scrollToIndex(index);
+    }, [highlightIndex, scrollToIndex, items.length]);
 
     const selectHightlightedItem = React.useCallback(() => {
       if (markedIndex > -1) {
@@ -607,51 +633,33 @@ const MenuContainer = React.forwardRef(
       };
     }, [isOpen, onRequestClose, anchorElement, closeOutsideClick]);
 
-    const firstSelectedIndex = React.useMemo(
-      () => getSelectedIndexes()[0] ?? null,
-      [getSelectedIndexes],
-    );
     /**
      * Toggle menu open
      */
     React.useEffect(() => {
       if (isOpenRef.current !== isOpen) {
         isOpenRef.current = Boolean(isOpen);
+        // setMenuOpen(Boolean(isOpen));
         if (!isOpen) {
           onRequestClose();
         }
         if (isOpen) {
-          if (selectedIndexes.length > 0) {
-            dispatch({
-              type: 'setMenuState',
-              payload: {
-                markedIndex: selectedIndexes[0],
-              },
-            });
-          }
+          scrollToFirstSelected();
 
           if (autofocus) {
-            requestAnimationFrame(() => {
+            setTimeout(() => {
               menuListRef.current?.focus();
-            });
+            }, 15);
           }
         }
 
         // Reset indexes
         if (!isOpen) {
+          // listVirtRef.current?.scrollToIndex(0);
           dispatch(actionSetmenuState({ markedIndex: -1, hoveredIndex: -1 }));
         }
       }
-    }, [
-      getSelectedIndexes,
-      scrollToFirstSelected,
-      isOpen,
-      autofocus,
-      dispatch,
-      onRequestClose,
-      firstSelectedIndex,
-      selectedIndexes,
-    ]);
+    }, [getSelectedIndexes, scrollToFirstSelected, isOpen, autofocus, dispatch, onRequestClose]);
 
     /**
      * Mark selected items by values
@@ -712,8 +720,6 @@ const MenuContainer = React.forwardRef(
       [dispatch],
     );
 
-    const listHeight = 36 * 8;
-
     return (
       <ClickOutside
         onOutsideClick={onRequestClose}
@@ -721,54 +727,43 @@ const MenuContainer = React.forwardRef(
       >
         <overridesMap.Popper
           isOpen={Boolean(isOpen)}
+          ref={menuPopperRef}
           zIndex={zIndex}
           anchorPos={actualPlacement}
-          ref={api => {
-
-          }}
+          anchorElement={anchorElement}
           onAnchorPosChanged={newPlacement => {
             setActualPlacement(newPlacement);
             if (typeof onAnchorPosChanged === 'function') {
               onAnchorPosChanged(newPlacement);
             }
           }}
-          anchorElement={anchorElement}
           positionStrategy={positionStrategy}
           autoFlip={autoFlip}
           viewportMargin={viewportMargin}
           offset={offset}
         >
           <overridesMap.List
+            anchorPos={actualPlacement}
             isOpen={Boolean(isOpen)}
             ref={menuListRef}
-            anchorPos={actualPlacement}
             onKeyDown={listKeydownEvent}
           >
-            <VirtualizedList
-              ref={virtListRef}
-              maxHeight={listHeight}
-              items={items}
-              initialIndex={firstSelectedIndex}
-            >
-              {({ index, style, item, setItemHeight, itemRef }) => (
-                <VirtualizedItem
-                  ref={itemRef}
-                  key={index}
-                  style={style}
-                  setItemHeight={setItemHeight}
-                  index={index}
-                >
-                  {children({ index, item } as { index: number; item: T }, {
-                    key: index,
-                    onMouseEnter: itemMouseEnterHandler(index, hoveredIndex),
-                    onMouseLeave: itemMouseLeaveHandler(index, hoveredIndex),
-                    onClick: itemClickHandler(index),
-                    selected: selectedIndexes.includes(index),
-                    hovered: hoveredIndex === index || markedIndex === index,
-                  })}
-                </VirtualizedItem>
-              )}
-            </VirtualizedList>
+            {items.map((item, index) =>
+              children(
+                {
+                  item,
+                  index,
+                },
+                {
+                  key: index,
+                  onMouseEnter: itemMouseEnterHandler(index, hoveredIndex),
+                  onMouseLeave: itemMouseLeaveHandler(index, hoveredIndex),
+                  onClick: itemClickHandler(index),
+                  selected: selectedIndexes.includes(index),
+                  hovered: hoveredIndex === index || markedIndex === index,
+                },
+              ),
+            )}
           </overridesMap.List>
         </overridesMap.Popper>
       </ClickOutside>

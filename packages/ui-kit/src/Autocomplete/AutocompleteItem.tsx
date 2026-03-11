@@ -6,7 +6,7 @@ import MenuItem, { MenuItemProps } from '../Menu/MenuItem';
 
 export interface AutocompleteItemProps extends MenuItemProps {
   readonly variant?: 'standard' | 'virtual';
-  readonly startIcon?: JSX.Element;
+  readonly startIcon?: React.ReactNode;
 }
 
 type StyeldMenuItemProps = {

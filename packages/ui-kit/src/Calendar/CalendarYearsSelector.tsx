@@ -4,7 +4,7 @@ import YearCell, { CalendarYearCellProps } from './CalendarYearCell';
 
 import useCalendar from './use-calendar';
 import VirtualizedList from '../Menu/VirtualizedList';
-import VirtualizedItem from '../Menu/VirtualizedItem';
+// import VirtualizedItem from '../Menu/VirtualizedItem';
 
 export type CalendarYearsSelectorProps = {
   readonly years: readonly number[];
@@ -134,38 +134,32 @@ const CalendarYearsSelector: React.ForwardRefRenderFunction<
     }
   }, []);
 
+  const renderItem = React.useCallback(
+    (item: ItemChunk) => (
+      <Chunk>
+        {item.map(item => {
+          const isSelected = date.getFullYear() === item.value;
+
+          return (
+            <overridesMap.YearCell
+              key={item.value}
+              accentColor={accentColor}
+              isSelected={isSelected}
+              onClick={() => onChange(item.value)}
+            >
+              {item.label}
+            </overridesMap.YearCell>
+          );
+        })}
+      </Chunk>
+    ),
+    [accentColor, date, onChange, overridesMap],
+  );
+
   return (
     <SelectorContainer ref={ref}>
       <SelectorContainerInner ref={containerRef}>
-        {maxHeight && (
-          <VirtualizedList items={items2} maxHeight={maxHeight}>
-            {({ item, style, setItemHeight, index }) => (
-              <VirtualizedItem
-                key={`${item}${index}`}
-                index={index}
-                style={style}
-                setItemHeight={setItemHeight}
-              >
-                <Chunk>
-                  {item.map(item => {
-                    const isSelected = date.getFullYear() === item.value;
-
-                    return (
-                      <overridesMap.YearCell
-                        key={item.value}
-                        accentColor={accentColor}
-                        isSelected={isSelected}
-                        onClick={() => onChange(item.value)}
-                      >
-                        {item.label}
-                      </overridesMap.YearCell>
-                    );
-                  })}
-                </Chunk>
-              </VirtualizedItem>
-            )}
-          </VirtualizedList>
-        )}
+        {maxHeight && <VirtualizedList items={items2} renderItem={renderItem} />}
       </SelectorContainerInner>
     </SelectorContainer>
   );

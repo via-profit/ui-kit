@@ -42,6 +42,7 @@ const ExampleMenuOverview: React.FC = () => {
       </Button>
       <Menu
         anchorElement={anchorElement}
+        anchorPos="bottom-fill"
         isOpen={Boolean(anchorElement)}
         value={value}
         items={countries}

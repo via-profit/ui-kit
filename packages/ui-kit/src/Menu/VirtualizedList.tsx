@@ -1,10 +1,14 @@
 import React from 'react';
 import AutoHeightWrapper from './AutoHeightWrapper';
-import VirtualizedListComponent, { VirtualizedRenderItem } from './VirtualizedListComponent';
+import VirtualizedListComponent, {
+  VirtualizedListRef,
+  VirtualizedRenderItem,
+} from './VirtualizedListComponent';
 
-type ScrollAlign = 'start' | 'center' | 'end' | 'auto';
+export type ScrollAlign = 'start' | 'center' | 'end' | 'auto';
+export * from './VirtualizedListComponent';
 
-type VirtualizedListProps<T> = {
+export type VirtualizedListProps<T> = {
   readonly items: readonly T[];
   readonly renderItem: VirtualizedRenderItem<T>;
 
@@ -16,18 +20,18 @@ type VirtualizedListProps<T> = {
 
   readonly overscan?: number;
 
-  // scrollToIndex API
   readonly scrollToIndex?: number | null;
   readonly scrollToAlign?: ScrollAlign;
   readonly onEndReached?: () => void;
-  // threshold?: number;
 };
 
 const VirtualizedList = React.forwardRef(
-  <T,>(props: VirtualizedListProps<T>, ref: React.ForwardedRef<HTMLDivElement>) => {
+  <T,>(props: VirtualizedListProps<T>, ref: React.ForwardedRef<VirtualizedListRef>) => {
     return (
       <AutoHeightWrapper>
-        {height => height > 0 && <VirtualizedListComponent {...props} height={height} ref={ref} />}
+        {height =>
+          height > 0 && <VirtualizedListComponent {...(props as any)} height={height} ref={ref} />
+        }
       </AutoHeightWrapper>
     );
   },
@@ -36,5 +40,5 @@ const VirtualizedList = React.forwardRef(
 VirtualizedList.displayName = 'VirtualizedList';
 
 export default VirtualizedList as <T>(
-  props: VirtualizedListProps<T> & { ref?: React.Ref<HTMLDivElement> },
+  props: VirtualizedListProps<T> & { ref?: React.Ref<VirtualizedListRef> },
 ) => React.ReactElement;

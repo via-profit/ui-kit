@@ -46,14 +46,6 @@ const ExampleMenuAPI: React.FC = () => {
         >
           Focus
         </Button>
-        <Button
-          variant="standard"
-          onClick={el => {
-            menuRef.current?.setPlacement('right')
-          }}
-        >
-          Random pos
-        </Button>
         <Button variant="standard" iconOnly onClick={() => menuRef.current?.highlightPrevItem()}>
           <IconLeft />
         </Button>

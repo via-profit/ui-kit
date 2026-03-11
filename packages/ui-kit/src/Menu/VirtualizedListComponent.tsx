@@ -1,10 +1,28 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState, useLayoutEffect } from 'react';
-
+import React, { useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import MeasuredItem from './MeasuredItem';
 
-type ScrollAlign = 'start' | 'center' | 'end' | 'auto';
+const BLOCK_SIZE = 50;
 
-const BLOCK_SIZE = 50; // размер блока для двухуровневого индекса
+export type VirtualizedRenderItem<T> = (item: T, index: number) => React.ReactNode;
+
+export type VirtualizedListComponentProp<T> = {
+  readonly items: readonly T[];
+  readonly height: number;
+  readonly renderItem: VirtualizedRenderItem<T>;
+  readonly estimatedItemHeight?: number;
+  readonly itemHeight?: number;
+  readonly overscan?: number;
+  readonly scrollToIndex?: number | null;
+  readonly scrollToAlign?: ScrollAlign;
+  readonly onEndReached?: () => void;
+};
+
+export type ScrollAlign = 'start' | 'center' | 'end' | 'auto';
+
+export type VirtualizedListRef = {
+  scrollToIndex: (index: number, align?: ScrollAlign) => void;
+  getTopVisibleIndex: () => number;
+};
 
 function updateHeightWithBlocks(
   index: number,
@@ -39,30 +57,8 @@ function updateHeightWithBlocks(
   bumpVersion(v => v + 1);
 }
 
-export type VirtualizedRenderItem<T> = (item: T, index: number) => React.ReactNode;
-
-export type VirtualizedListComponentProp<T> = {
-  readonly items: readonly T[];
-  readonly height: number;
-  readonly renderItem: VirtualizedRenderItem<T>;
-
-  // динамическая высота
-  readonly estimatedItemHeight?: number;
-
-  // фиксированная высота (если задана — включаем fast mode)
-  readonly itemHeight?: number;
-
-  readonly overscan?: number;
-
-  // scrollToIndex API
-  readonly scrollToIndex?: number | null;
-  readonly scrollToAlign?: ScrollAlign;
-  readonly onEndReached?: () => void;
-  // threshold?: number;
-};
-
 const VirtualizedListComponent = React.forwardRef(
-  <T,>(props: VirtualizedListComponentProp<T>, ref: React.ForwardedRef<HTMLDivElement>) => {
+  <T,>(props: VirtualizedListComponentProp<T>, ref: React.ForwardedRef<VirtualizedListRef>) => {
     const {
       items,
       height,
@@ -77,138 +73,92 @@ const VirtualizedListComponent = React.forwardRef(
 
     const containerRef = useRef<HTMLDivElement>(null);
 
-    // состояние только для scrollTop и "поколения" рендера
     const [scrollTop, setScrollTop] = useState(0);
     const [renderVersion, setRenderVersion] = useState(0);
-    // const [height, setHeight] = useState(0);
 
-    // кэш высот и offsets — живут в ref и переживают рендеры
     const heightsRef = useRef<number[]>([]);
     const offsetsRef = useRef<number[]>([]);
-    const blockOffsetsRef = useRef<number[]>([]); // двухуровневый индекс
+    const blockOffsetsRef = useRef<number[]>([]);
 
     const isFixed = typeof itemHeight === 'number';
 
-    // инициализация кэша высот/offsets
-    useLayoutEffect(() => {
-      const len = items.length;
+    const onEndReachedRef = React.useRef(false);
+    const threshold = Math.max(300, height * 1.5);
 
-      if (isFixed) {
-        // фиксированная высота — всё просто
-        heightsRef.current = new Array(len).fill(itemHeight!);
-        offsetsRef.current = new Array(len);
-        for (let i = 0; i < len; i++) {
-          offsetsRef.current[i] = i * itemHeight!;
+    const animateScrollTop = useCallback((to: number, duration = 300) => {
+      const container = containerRef.current;
+      if (!container) return;
+
+      const start = container.scrollTop;
+      const change = to - start;
+      const startTime = performance.now();
+
+      const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
+
+      const step = (now: number) => {
+        const elapsed = now - startTime;
+        const progress = Math.min(1, elapsed / duration);
+        const eased = easeOutCubic(progress);
+
+        container.scrollTop = start + change * eased;
+
+        if (progress < 1) {
+          requestAnimationFrame(step);
         }
-        // блоки
-        const blockCount = Math.ceil(len / BLOCK_SIZE);
-        blockOffsetsRef.current = new Array(blockCount);
-        for (let b = 0; b < blockCount; b++) {
-          blockOffsetsRef.current[b] = b * BLOCK_SIZE * itemHeight!;
-        }
-      } else {
-        // динамическая высота — используем кэш, но инициализируем недостающие
-        const heights = heightsRef.current;
-        const offsets = offsetsRef.current;
+      };
 
-        if (heights.length !== len) {
-          const newHeights = new Array(len);
-          const newOffsets = new Array(len);
-
-          for (let i = 0; i < len; i++) {
-            newHeights[i] = heights[i] ?? estimatedItemHeight;
-          }
-
-          let sum = 0;
-          for (let i = 0; i < len; i++) {
-            newOffsets[i] = sum;
-            sum += newHeights[i];
-          }
-
-          heightsRef.current = newHeights;
-          offsetsRef.current = newOffsets;
-
-          // блоки
-          const blockCount = Math.ceil(len / BLOCK_SIZE);
-          const blockOffsets = new Array(blockCount);
-          for (let b = 0; b < blockCount; b++) {
-            const start = b * BLOCK_SIZE;
-            blockOffsets[b] = newOffsets[start] ?? 0;
-          }
-          blockOffsetsRef.current = blockOffsets;
-        }
-      }
-
-      // форсим ререндер, чтобы использовать новые offsets
-      setRenderVersion(v => v + 1);
-    }, [items.length, isFixed, itemHeight, estimatedItemHeight]);
-
-    const onScroll = useCallback(() => {
-      const top = containerRef.current?.scrollTop ?? 0;
-      setScrollTop(top);
+      requestAnimationFrame(step);
     }, []);
 
-    // двухуровневый поиск: сначала по блокам, потом внутри блока
-    const findStartIndex = useCallback(
-      (scrollTopValue: number) => {
+    const scrollTo = useCallback(
+      (index: number, align: ScrollAlign = 'auto') => {
+        const container = containerRef.current;
+        if (!container) return;
+
         const len = items.length;
-        if (len === 0) return 0;
+        if (index < 0 || index >= len) return;
 
         const offsets = offsetsRef.current;
-        const blockOffsets = blockOffsetsRef.current;
+        const heights = heightsRef.current;
 
-        if (isFixed) {
-          // fast path
-          const idx = Math.floor(scrollTopValue / (itemHeight || estimatedItemHeight));
+        const itemTop = offsets[index];
+        const itemHeightValue = heights[index] ?? estimatedItemHeight;
 
-          return Math.max(0, Math.min(len - 1, idx));
+        const viewportHeight = height;
+        const viewportTop = container.scrollTop;
+        const viewportBottom = viewportTop + viewportHeight;
+
+        let target = itemTop;
+
+        switch (align) {
+          case 'start':
+            target = itemTop;
+            break;
+
+          case 'center':
+            target = itemTop - viewportHeight / 2 + itemHeightValue / 2;
+            break;
+
+          case 'end':
+            target = itemTop - viewportHeight + itemHeightValue;
+            break;
+
+          case 'auto':
+          default:
+            if (itemTop < viewportTop) {
+              target = itemTop; // прокрутить вверх
+            } else if (itemTop + itemHeightValue > viewportBottom) {
+              target = itemTop - viewportHeight + itemHeightValue; // прокрутить вниз
+            } else {
+              return; // уже видно
+            }
+            break;
         }
 
-        // 1) бинарный поиск по блокам
-        let lowBlock = 0;
-        let highBlock = blockOffsets.length - 1;
-        while (lowBlock < highBlock) {
-          const mid = (lowBlock + highBlock) >> 1;
-          if (blockOffsets[mid] < scrollTopValue) lowBlock = mid + 1;
-          else highBlock = mid;
-        }
-        const blockIndex = Math.max(0, lowBlock - 1);
-        const start = blockIndex * BLOCK_SIZE;
-        const end = Math.min(len - 1, start + BLOCK_SIZE * 2); // небольшой запас
-
-        // 2) линейный поиск внутри блока
-        let i = start;
-        while (i < end && offsets[i] < scrollTopValue) i++;
-
-        return Math.max(0, Math.min(len - 1, i));
+        animateScrollTop(Math.max(0, target));
       },
-      [items.length, isFixed, itemHeight, estimatedItemHeight],
+      [items.length, estimatedItemHeight, height, animateScrollTop],
     );
-
-    const startIndex = useMemo(() => {
-      const idx = findStartIndex(scrollTop);
-
-      return Math.max(0, idx - overscan);
-    }, [scrollTop, findStartIndex, overscan]);
-
-    const endIndex = useMemo(() => {
-      const len = items.length;
-      if (len === 0) {
-        return -1;
-      }
-
-      const offsets = offsetsRef.current;
-      if (offsets.length !== items.length) {
-        // offsets ещё не инициализированы — пропускаем вычисление
-        return -1; // или 0, или -1 — зависит от твоей логики
-      }
-      const totalVisibleBottom = scrollTop + height;
-
-      let i = startIndex;
-      while (i < len && offsets[i] < totalVisibleBottom) i++;
-
-      return Math.min(len - 1, i + overscan);
-    }, [scrollTop, height, startIndex, items.length, overscan]);
 
     // scrollToIndex без rAF
     useLayoutEffect(() => {
@@ -245,75 +195,7 @@ const VirtualizedListComponent = React.forwardRef(
       containerRef.current.scrollTop = nextScrollTop;
     }, [scrollToIndex, scrollToAlign, items.length, height, itemHeight, estimatedItemHeight]);
 
-    // chunked rendering: рендерим не сразу весь диапазон, а порциями
-    const [chunkEnd, setChunkEnd] = useState(0);
-
-    useLayoutEffect(() => {
-      if (endIndex < 0) {
-        setChunkEnd(-1);
-        return;
-      }
-
-      const targetEnd = endIndex;
-      const CHUNK_SIZE = 20;
-
-      if (chunkEnd >= targetEnd) return;
-
-      let frameId: number;
-
-      const step = () => {
-        setChunkEnd(prev => {
-          const next = Math.min(targetEnd, prev + CHUNK_SIZE);
-          if (next < targetEnd) {
-            frameId = window.requestAnimationFrame(step);
-          }
-          return next;
-        });
-      };
-
-      frameId = window.requestAnimationFrame(step);
-
-      return () => {
-        window.cancelAnimationFrame(frameId);
-      };
-    }, [endIndex, chunkEnd]);
-
-    const visibleStart = startIndex;
-    const visibleEnd = chunkEnd < 0 ? endIndex : Math.min(endIndex, chunkEnd);
-
-    const totalHeightRef = useRef(0);
-
     React.useLayoutEffect(() => {
-      console.log('INIT EFFECT RUN');
-      const len = items.length;
-      if (len === 0) {
-        totalHeightRef.current = 0;
-        return;
-      }
-
-      if (isFixed) {
-        totalHeightRef.current = len * (itemHeight || estimatedItemHeight);
-        return;
-      }
-
-      const offsets = offsetsRef.current;
-      const heights = heightsRef.current;
-
-      const lastOffset = offsets[len - 1];
-      const lastHeight = heights[len - 1];
-
-      if (typeof lastOffset === 'undefined' || typeof lastHeight === 'undefined') {
-        return;
-      }
-
-      totalHeightRef.current = lastOffset + lastHeight;
-    }, [items.length, isFixed, itemHeight, estimatedItemHeight, renderVersion]);
-
-    const totalHeight = totalHeightRef.current;
-    const onEndReachedRef = useRef(false);
-    const threshold = Math.max(300, height * 1.5);
-
-    useLayoutEffect(() => {
       const totalHeight =
         offsetsRef.current[offsetsRef.current.length - 1] +
         heightsRef.current[heightsRef.current.length - 1];
@@ -331,8 +213,148 @@ const VirtualizedListComponent = React.forwardRef(
         onEndReachedRef.current = false;
       }
     }, [scrollTop, height, items.length, threshold, onEndReached]);
+
+    // ⭐ ИДЕАЛЬНАЯ ИНИЦИАЛИЗАЦИЯ offsets/heights
+    // инициализация кэша высот/offsets
+    // инициализация кэша высот/offsets
+    useLayoutEffect(() => {
+      const len = items.length;
+      const oldLen = heightsRef.current.length;
+
+      if (isFixed) {
+        // фиксированная высота — всё просто
+        heightsRef.current = new Array(len).fill(itemHeight!);
+        offsetsRef.current = new Array(len);
+        for (let i = 0; i < len; i++) {
+          offsetsRef.current[i] = i * itemHeight!;
+        }
+
+        const blockCount = Math.ceil(len / BLOCK_SIZE);
+        blockOffsetsRef.current = new Array(blockCount);
+        for (let b = 0; b < blockCount; b++) {
+          blockOffsetsRef.current[b] = b * BLOCK_SIZE * itemHeight!;
+        }
+      } else {
+        // динамическая высота — добавляем только новые элементы
+        const heights = heightsRef.current;
+        const offsets = offsetsRef.current;
+
+        // список вырос
+        if (len > oldLen) {
+          // добавляем новые элементы
+          for (let i = oldLen; i < len; i++) {
+            heights[i] = estimatedItemHeight;
+            offsets[i] = i === 0 ? 0 : offsets[i - 1] + heights[i - 1];
+          }
+
+          // пересчитываем блоки только для новых блоков
+          const blockCount = Math.ceil(len / BLOCK_SIZE);
+          const oldBlockCount = blockOffsetsRef.current.length;
+
+          for (let b = oldBlockCount; b < blockCount; b++) {
+            const start = b * BLOCK_SIZE;
+            blockOffsetsRef.current[b] = offsets[start] ?? 0;
+          }
+        }
+      }
+
+      // форсим ререндер, чтобы использовать новые offsets
+      setRenderVersion(v => v + 1);
+    }, [items.length, isFixed, itemHeight, estimatedItemHeight]);
+
+    const onScroll = useCallback(() => {
+      const top = containerRef.current?.scrollTop ?? 0;
+      setScrollTop(top);
+    }, []);
+
+    // ⭐ Поиск startIndex
+    const findStartIndex = useCallback(
+      (scrollTopValue: number) => {
+        const len = items.length;
+        if (len === 0) return 0;
+
+        const offsets = offsetsRef.current;
+        const blocks = blockOffsetsRef.current;
+
+        if (isFixed) {
+          const idx = Math.floor(scrollTopValue / (itemHeight || estimatedItemHeight));
+          return Math.max(0, Math.min(len - 1, idx));
+        }
+
+        // бинарный поиск по блокам
+        let low = 0;
+        let high = blocks.length - 1;
+        while (low < high) {
+          const mid = (low + high) >> 1;
+          if (blocks[mid] < scrollTopValue) low = mid + 1;
+          else high = mid;
+        }
+        const blockIndex = Math.max(0, low - 1);
+        const start = blockIndex * BLOCK_SIZE;
+        const end = Math.min(len - 1, start + BLOCK_SIZE * 2);
+
+        let i = start;
+        while (i < end && offsets[i] < scrollTopValue) i++;
+
+        return Math.max(0, Math.min(len - 1, i));
+      },
+      [items.length, isFixed, itemHeight, estimatedItemHeight, renderVersion],
+    );
+
+    const startIndex = useMemo(() => {
+      const idx = findStartIndex(scrollTop);
+      const _ = renderVersion;
+
+      return Math.max(0, idx - overscan);
+    }, [scrollTop, findStartIndex, overscan, renderVersion]);
+
+    // ⭐ Поиск endIndex
+    const endIndex = useMemo(() => {
+      const len = items.length;
+      if (len === 0) return -1;
+
+      const offsets = offsetsRef.current;
+      if (offsets.length !== len) return -1;
+
+      const totalVisibleBottom = scrollTop + height;
+
+      let i = startIndex;
+      while (i < len && offsets[i] < totalVisibleBottom) i++;
+
+      const _ = renderVersion;
+
+      // renderVersion;
+      return Math.min(len - 1, i + overscan);
+    }, [scrollTop, height, startIndex, items.length, overscan, renderVersion]);
+
+    const getTopVisibleIndex = useCallback(() => startIndex, [startIndex]);
+
+    React.useImperativeHandle(ref, () => ({
+      scrollToIndex: (index: number, align: ScrollAlign = 'auto') => {
+        scrollTo(index, align);
+      },
+      getTopVisibleIndex: () => getTopVisibleIndex(),
+    }));
+
     if (renderVersion === 0) {
-      return null;
+      return (
+        <div
+          ref={containerRef}
+          style={{
+            overflowY: 'auto',
+            position: 'relative',
+            height,
+          }}
+        />
+      );
+    }
+
+    const visibleStart = startIndex;
+    const visibleEnd = endIndex;
+
+    let totalHeight = offsetsRef.current[items.length - 1] + heightsRef.current[items.length - 1];
+    if (isNaN(totalHeight)) {
+      totalHeight = 0;
     }
 
     return (
@@ -341,38 +363,37 @@ const VirtualizedListComponent = React.forwardRef(
         onScroll={onScroll}
         style={{
           overflowY: 'auto',
-          height,
           position: 'relative',
+          height,
         }}
       >
-        <div style={{ height: totalHeight, position: 'relative' }} ref={ref}>
-          {visibleEnd >= visibleStart &&
-            Array.from({ length: visibleEnd - visibleStart + 1 }).map((_, i) => {
-              const index = visibleStart + i;
-              const item = items[index];
-              const top = offsetsRef.current[index];
+        <div style={{ height: totalHeight, position: 'relative' }}>
+          {Array.from({ length: visibleEnd - visibleStart + 1 }, (_, i) => {
+            const index = visibleStart + i;
+            const item = items[index];
+            const top = offsetsRef.current[index];
 
-              return (
-                <MeasuredItem
-                  key={index}
-                  index={index}
-                  top={top}
-                  isFixed={isFixed}
-                  updateHeight={(idx, h) =>
-                    updateHeightWithBlocks(
-                      idx,
-                      h,
-                      heightsRef,
-                      offsetsRef,
-                      blockOffsetsRef,
-                      setRenderVersion,
-                    )
-                  }
-                >
-                  {renderItem(item, index)}
-                </MeasuredItem>
-              );
-            })}
+            return (
+              <MeasuredItem
+                key={index}
+                index={index}
+                isFixed={isFixed}
+                top={top}
+                updateHeight={(idx, h) =>
+                  updateHeightWithBlocks(
+                    idx,
+                    h,
+                    heightsRef,
+                    offsetsRef,
+                    blockOffsetsRef,
+                    setRenderVersion,
+                  )
+                }
+              >
+                {renderItem(item, index)}
+              </MeasuredItem>
+            );
+          })}
         </div>
       </div>
     );
@@ -380,6 +401,4 @@ const VirtualizedListComponent = React.forwardRef(
 );
 
 VirtualizedListComponent.displayName = 'VirtualizedListComponent';
-export default VirtualizedListComponent as <T>(
-  props: VirtualizedListComponentProp<T> & { ref?: React.Ref<HTMLDivElement> },
-) => React.ReactElement;
+export default VirtualizedListComponent;

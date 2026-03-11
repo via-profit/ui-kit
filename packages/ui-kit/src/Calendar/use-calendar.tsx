@@ -2,7 +2,7 @@ import React from 'react';
 
 export type CalendarValue<Range> = Range extends undefined
   ? Date | null
-  : [Date | null, Date | null];
+  : [Date, Date] | [Date | null] | null;
 
 export type WeekDayName =
   | 'sunday'

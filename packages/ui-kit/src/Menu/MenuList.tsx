@@ -21,11 +21,13 @@ const StyledMenuList = styled.div<{
   background-color: ${({ theme }) => theme.color.surface.toString()};
   border-radius: ${({ theme }) => theme.shape.radiusFactor * 2}em;
   box-shadow: 0 0.5em 1.5em ${({ theme }) => theme.color.surface.darken(50).alpha(0.6).toString()};
+
   &:focus {
     outline-style: solid;
     outline-width: 0.14em;
     outline-color: ${({ theme }) => theme.color.accentPrimary.toString()};
   }
+
   & ::-webkit-scrollbar {
     width: 0.6rem;
     height: 0.6rem;
@@ -54,14 +56,20 @@ const StyledMenuList = styled.div<{
   & ::-webkit-scrollbar-thumb:vertical:hover {
     background: ${({ theme }) => theme.color.accentPrimary.toString()};
   }
+
   box-sizing: border-box;
   overflow-y: auto;
   padding: 0.4em;
   max-height: 18em;
+  min-width: 10em;
+
+  max-width: 100%;
+
   ${({ $fixedWidth }) =>
     $fixedWidth &&
     css`
-      min-width: 16em;
+      min-width: 10em;
+      max-width: 16em;
     `}
 
   ${({ $anchorPos, theme }) =>

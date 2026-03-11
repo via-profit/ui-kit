@@ -63,7 +63,7 @@ const CalendarDayBadge: React.ForwardRefRenderFunction<HTMLButtonElement, Calend
       };
     }
 
-    const clr = new Color(accentColor);
+    const clr = Color.fromString(accentColor);
 
     return {
       $backgroundColor: accentColor,

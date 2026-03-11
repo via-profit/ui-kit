@@ -18,13 +18,7 @@ const Container = styled.div`
   gap: 1em;
 `;
 
-const items = [...countries, ...countries, ...countries, ...countries, ...countries,...countries, ...countries, ...countries, ...countries, ...countries,...countries, ...countries, ...countries, ...countries, ...countries,...countries, ...countries, ...countries, ...countries, ...countries, 
-  ...countries, ...countries, ...countries, ...countries, ...countries,...countries, ...countries, ...countries, ...countries, ...countries,...countries, ...countries, ...countries, ...countries, ...countries,...countries, ...countries, ...countries, ...countries, ...countries,
-  ...countries, ...countries, ...countries, ...countries, ...countries,...countries, ...countries, ...countries, ...countries, ...countries,...countries, ...countries, ...countries, ...countries, ...countries,...countries, ...countries, ...countries, ...countries, ...countries,
-  ...countries, ...countries, ...countries, ...countries, ...countries,...countries, ...countries, ...countries, ...countries, ...countries,...countries, ...countries, ...countries, ...countries, ...countries,...countries, ...countries, ...countries, ...countries, ...countries,
-  ...countries, ...countries, ...countries, ...countries, ...countries,...countries, ...countries, ...countries, ...countries, ...countries,...countries, ...countries, ...countries, ...countries, ...countries,...countries, ...countries, ...countries, ...countries, ...countries,
-]
-
+const items = [...countries];
 const ExampleSelectboxOverview: React.FC = () => {
   const [value, setValue] = React.useState<Item | null>(null);
   const [isOpen, setIsOpen] = React.useState(false);

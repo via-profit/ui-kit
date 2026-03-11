@@ -3,6 +3,8 @@ import Autocomplete, { AutocompleteItem } from '@via-profit/ui-kit/src/Autocompl
 import Highlighted from '@via-profit/ui-kit/src/Highlighted';
 
 import countries from './countries.json';
+import IconBell from '~/components/Icons/IconBell';
+import IconChevronDown from '@via-profit/ui-kit/dist/Calendar/IconChevronDown';
 
 type Item = (typeof countries)[0];
 
@@ -15,6 +17,7 @@ const ExampleAutocompleteOverview: React.FC = () => {
       <Autocomplete
         value={value}
         items={countries}
+        openOnFocus={false}
         isOpen={isOpen}
         onRequestClose={() => setIsOpen(false)}
         onRequestOpen={() => setIsOpen(true)}

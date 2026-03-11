@@ -28,23 +28,28 @@ import styled from '@emotion/styled';
 
 export * from './use-calendar';
 export * from './CalendarWeekDaysBar';
+
 export type CalendarView = 'days' | 'months' | 'years' | 'weeks';
+export type CalendarOnChange<IsRangeValue extends boolean | undefined = undefined> = (
+  dates: CalendarValue<IsRangeValue>,
+) => void;
+
 export type CalendarProps<IsRangeValue extends boolean | undefined = undefined> = {
   readonly range?: IsRangeValue;
   /**
    * Selected date
    */
-  readonly value?: CalendarValue<IsRangeValue> | null;
+  readonly value?: CalendarValue<IsRangeValue>;
 
   /**
    * selected value if your component should not be controlled
    */
-  readonly defaultValue?: CalendarValue<IsRangeValue> | null;
+  readonly defaultValue?: CalendarValue<IsRangeValue>;
 
   /**
    * It will be called at the moment of selecting the given
    */
-  readonly onChange: (dates: NonNullable<CalendarValue<IsRangeValue>>) => void;
+  readonly onChange: CalendarOnChange<IsRangeValue>;
 
   /**
    * calendar locale\
@@ -297,7 +302,8 @@ const StyledSwiper = styled(Swiper)`
 
 export type CalendarRef<IsRangeValue extends boolean | undefined = undefined> = {
   readonly setView: (view: CalendarView) => void;
-  readonly setValue: (value: CalendarValue<IsRangeValue> | null) => void;
+  readonly getActiveView: () => CalendarView;
+  readonly setValue: (value: CalendarValue<IsRangeValue>) => void;
   readonly setCalendarDate: (date: Date) => void;
   readonly reset: () => void;
 };
@@ -310,7 +316,7 @@ const isRangeValue = (value: unknown): value is CalendarValue<true> => {
   return false;
 };
 
-const isNotRangeValue = (value: unknown): value is Date => !isRangeValue(value);
+const isNotRangeValue = (value: unknown): value is CalendarValue<undefined> => !isRangeValue(value);
 
 const computeViews = (
   inputViews?: readonly CalendarView[],
@@ -355,8 +361,8 @@ const computeView = (inputParams: {
 };
 
 const computeCalendarDate = (params: {
-  readonly inputValue?: Date | CalendarValue<true> | null;
-  readonly defaultValue?: Date | CalendarValue<true> | null;
+  readonly inputValue?: Date | CalendarValue<true>;
+  readonly defaultValue?: Date | CalendarValue<true>;
 }): Date => {
   const { inputValue, defaultValue } = params;
   const today = new Date();
@@ -369,11 +375,11 @@ const computeCalendarDate = (params: {
     }
   }
 
-  if (isRangeValue(defaultValue) && defaultValue[1]) {
+  if (isRangeValue(defaultValue) && defaultValue && defaultValue[1]) {
     return defaultValue[1];
   }
 
-  if (isRangeValue(defaultValue) && defaultValue[0]) {
+  if (isRangeValue(defaultValue) && defaultValue && defaultValue[0]) {
     return defaultValue[0];
   }
 
@@ -494,7 +500,7 @@ const CalendarComponent = React.forwardRef(
      * Selected value
      */
     const inputValueRef = React.useRef(inputValue);
-    const [value, setValue] = React.useState<CalendarValue<IsRangeValue> | null>(
+    const [value, setValue] = React.useState<CalendarValue<IsRangeValue>>(
       inputValue ?? defaultValue ?? null,
     );
 
@@ -508,12 +514,6 @@ const CalendarComponent = React.forwardRef(
         inputView,
       }),
     );
-
-    // const getViewIndex = React.useCallback((selectedView: CalendarView) => {
-    //
-    //
-    //
-    // }, [views, view])
 
     /**
      * List of possibility views
@@ -595,7 +595,7 @@ const CalendarComponent = React.forwardRef(
         inputValueRef.current = inputValue;
         setValue(inputValue as CalendarValue<IsRangeValue>);
 
-        if (isRangeValue(inputValue) && inputValue[0] instanceof Date) {
+        if (isRangeValue(inputValue) && inputValue && inputValue[0] instanceof Date) {
           setCalendarDate(inputValue[0]);
         } else {
           setCalendarDate(inputValue as Date);
@@ -644,70 +644,53 @@ const CalendarComponent = React.forwardRef(
       [calendarDate, view],
     );
 
-    /**
-     * Handles click on a day cell.
-     * Range selection follows a simple two‑click model:
-     * 1) First click sets the start date.
-     * 2) Second click sets the end date.
-     * If a full range is already selected, a new click starts a new range.
-     */
     const handleCellDateClick = React.useCallback(
       (selectedDate: Date) => () => {
-        if (!onChange) {
-          return;
-        }
-
         const nextView = getNextAvailableView();
+
         if (nextView) {
           setView(nextView);
         }
 
         // Single-date mode
         if (!range) {
-          onChange(selectedDate as any);
-          if (!inputValue) {
-            setValue(selectedDate as CalendarValue<IsRangeValue>);
-          }
+          onChange(selectedDate as CalendarValue<IsRangeValue>);
+          setValue(selectedDate as CalendarValue<IsRangeValue>);
 
           return;
         }
 
         // Range-date mode
-        const [from, to] = (value as CalendarValue<true> | null) ?? [];
+        const [from, to] = (value as CalendarValue<true>) ?? [];
 
-        // No range selected yet → first click
-        if (!from && !to) {
-          setValue([selectedDate, null] as CalendarValue<IsRangeValue>);
+        // начало нового периода
+        if (from && to) {
+          setValue([selectedDate, null] as unknown as CalendarValue<IsRangeValue>);
+          onChange([selectedDate, null] as unknown as CalendarValue<IsRangeValue>);
 
           return;
         }
 
-        // Only start date selected → second click
-        if (from && (!to || from.getTime() === to.getTime())) {
-          if (selectedDate < from) {
-            // User clicked before the start → swap
-            onChange([selectedDate, from] as NonNullable<CalendarValue<IsRangeValue>>);
-            if (!inputValue) {
-              setValue([selectedDate, from] as CalendarValue<IsRangeValue>);
-            }
+        // если выбрана только первая дата или обе даты равны - завершение периода
+        if ((from && to === null) || (from && to && from.getTime() === to.getTime())) {
+          /// check to swap
+          if (selectedDate.getTime() < from.getTime()) {
+            onChange([selectedDate, from] as unknown as CalendarValue<IsRangeValue>);
+            setValue([selectedDate, from] as unknown as CalendarValue<IsRangeValue>);
           } else {
-            // Normal forward range
-            onChange([from, selectedDate] as NonNullable<CalendarValue<IsRangeValue>>);
-            if (!inputValue) {
-              setValue([from, selectedDate] as CalendarValue<IsRangeValue>);
-            }
+            onChange([from, selectedDate] as unknown as CalendarValue<IsRangeValue>);
+            setValue([from, selectedDate] as unknown as CalendarValue<IsRangeValue>);
           }
+        } else {
+          // обе даты выбраны или ничего не выбрано ([Date, Date] | [null, null] | null) - начало нового периода
+          if ((from && to) || (from === null && to === null) || value === null) {
+            setValue([selectedDate, null] as unknown as CalendarValue<IsRangeValue>);
 
-          return;
-        }
-
-        // Full range already selected → start a new range
-        onChange([selectedDate, selectedDate] as NonNullable<CalendarValue<IsRangeValue>>);
-        if (!inputValue) {
-          setValue([selectedDate, selectedDate] as CalendarValue<IsRangeValue>);
+            return;
+          }
         }
       },
-      [onChange, getNextAvailableView, range, value, inputValue],
+      [onChange, getNextAvailableView, range, value],
     );
 
     /**
@@ -860,7 +843,7 @@ const CalendarComponent = React.forwardRef(
                   let isSelected: boolean = false;
 
                   if (isRangeValue(value)) {
-                    const [from, to] = value;
+                    const [from, to] = value || [];
 
                     if (from && to) {
                       fill =
@@ -972,7 +955,7 @@ const CalendarComponent = React.forwardRef(
           {getWeeks(calendarDate).map(week => {
             let isSelected = false;
             if (isRangeValue(value)) {
-              const [from, to] = value;
+              const [from, to] = value || [];
 
               if (from && to) {
                 if (
@@ -1038,6 +1021,7 @@ const CalendarComponent = React.forwardRef(
 
     const initialIndex = React.useMemo(() => views.findIndex(v => v === view), [views, view]);
 
+    const getActiveView = React.useCallback(() => view, [view]);
     /**
      * API
      */
@@ -1048,8 +1032,9 @@ const CalendarComponent = React.forwardRef(
         reset: handleReset,
         setValue,
         setCalendarDate,
+        getActiveView,
       }),
-      [selectView, handleReset],
+      [selectView, handleReset, getActiveView],
     );
 
     return (

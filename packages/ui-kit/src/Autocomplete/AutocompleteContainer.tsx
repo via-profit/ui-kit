@@ -1,15 +1,21 @@
 import React from 'react';
 
-import Menu, { GetOptionSelected, MenuRef, OnRequestClose, Value, AnchorPos } from '../Menu';
 import TextField, { AutocompleteTextFieldProps } from './AutocompleteTextField';
 import Button from '../Button';
 import Spinner from '../LoadingIndicator/Spinner';
 import useContext, { actionSetPartial } from './context';
 import IconClear from './IconClear';
 import { PositionStrategy } from '../Popper';
-import type { MenuItemCommonProps } from '../Menu/MenuItem';
 import { mouseEventMap } from '../ClickOutside';
 import OverrideMenuList from './OverrideMenuList';
+import Menu, {
+  AnchorPos,
+  GetOptionSelected,
+  MenuItemProps,
+  MenuRef,
+  OnRequestClose,
+  Value,
+} from '../Menu';
 
 export interface AutocompleteProps<T, Multiple extends boolean | undefined = undefined>
   extends Omit<AutocompleteTextFieldProps, 'value' | 'onChange' | 'children' | 'overrides'> {
@@ -185,7 +191,7 @@ export type Children<T> = (
     index: number;
     inputValue: string;
   },
-  itemProps: MenuItemCommonProps,
+  itemProps: MenuItemProps,
 ) => React.ReactNode;
 
 export type ItemToString<T, Multiple extends boolean | undefined = undefined> = (
@@ -608,8 +614,9 @@ const Autocomplete = React.forwardRef(
           [
             overridesMap,
             placeholder,
+            actualPlacement,
+            currentOpen,
             label,
-            onRequestClose,
             error,
             requiredAsterisk,
             errorText,
@@ -625,12 +632,12 @@ const Autocomplete = React.forwardRef(
             dispatch,
             inputRef,
             openOnFocus,
-            currentOpen,
             filteredItems.length,
             onRequestOpen,
             onInputChange,
-            items,
             applyFilterForItems,
+            items,
+            onRequestClose,
           ],
         )}
         {React.useMemo(

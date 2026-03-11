@@ -24,4 +24,4 @@ Menu.displayName = 'Menu';
 
 export default Menu as <T, Multiple extends boolean | undefined = undefined>(
   props: MenuProps<T, Multiple> & { ref?: React.Ref<MenuRef> },
-) => JSX.Element;
+) => React.ReactElement;

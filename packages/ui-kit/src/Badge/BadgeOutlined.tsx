@@ -56,7 +56,7 @@ const BadgeOutlined: React.ForwardRefRenderFunction<HTMLSpanElement, BadgeOutlin
       case typeof color === 'undefined':
       case color === 'default':
         return {
-          $color: Color.fromString(theme.color.textPrimary),
+          $color: Color.fromString(theme.color.textPrimary.toString()),
           $background: theme.color.textPrimary.lighten(100),
         };
       case typeof color === 'string': {

@@ -86,26 +86,6 @@ export type DatePickerProps = Omit<TextFieldProps, 'value' | 'onChange' | 'overr
   readonly badges?: readonly CalendarBadge[];
 
   /**
-   * Tooltip for the Prev month button
-   */
-  readonly prevMonthButtonTooltip?: string;
-
-  /**
-   * Tooltip for the Next month button
-   */
-  readonly nextMonthButtonTooltip?: string;
-
-  /**
-   * Tooltip for tne month selector button
-   */
-  readonly changeMonthButtonTooltip?: string;
-
-  /**
-   * Tooltip for the year selector button
-   */
-  readonly changeYearButtonTooltip?: string;
-
-  /**
    * Label for the Reset button. If label passed, then button will be rendered
    */
   readonly resetButtonLabel?: string;
@@ -168,10 +148,6 @@ const DatePicker: React.FC<DatePickerProps> = props => {
     locale = 'ru-RU',
     badges = [],
     displayLeadingZero = false,
-    prevMonthButtonTooltip,
-    nextMonthButtonTooltip,
-    changeMonthButtonTooltip,
-    changeYearButtonTooltip,
     resetButtonLabel,
     toodayButtonLabel,
     heading,
@@ -317,7 +293,9 @@ const DatePicker: React.FC<DatePickerProps> = props => {
 
   const calendarChange: CalendarProps['onChange'] = React.useCallback(
     date => {
-      onChange(date);
+      if (date) {
+        onChange(date);
+      }
       setOpenSate(false);
     },
     [onChange],
@@ -355,10 +333,6 @@ const DatePicker: React.FC<DatePickerProps> = props => {
             locale={locale}
             badges={badges}
             displayLeadingZero={displayLeadingZero}
-            prevMonthButtonTooltip={prevMonthButtonTooltip}
-            nextMonthButtonTooltip={nextMonthButtonTooltip}
-            changeMonthButtonTooltip={changeMonthButtonTooltip}
-            changeYearButtonTooltip={changeYearButtonTooltip}
             resetButtonLabel={resetButtonLabel}
             todayButtonLabel={toodayButtonLabel}
             heading={heading}

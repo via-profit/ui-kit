@@ -2,9 +2,7 @@ import React from 'react';
 import styled from '@emotion/styled';
 import { css } from '@emotion/react';
 
-export type MenuItemProps = React.HTMLAttributes<HTMLDivElement> & MenuItemCommonProps;
-
-export type MenuItemCommonProps = {
+export type MenuItemProps = React.HTMLAttributes<HTMLDivElement> & {
   /**
    * Selected flag
    */
@@ -19,17 +17,20 @@ export type MenuItemCommonProps = {
    * React key
    */
   readonly key: React.Key;
-  readonly onMouseEnter: React.MouseEventHandler<HTMLDivElement>;
-  readonly onMouseLeave: React.MouseEventHandler<HTMLDivElement>;
-  readonly onClick: React.MouseEventHandler<HTMLDivElement>;
 
   /**
    * Icon or another JSX element placed before button label
    */
-  readonly startIcon?: JSX.Element;
+  readonly startIcon?: React.ReactNode;
 };
 
-const InnerContainer = styled.div<{ selected?: boolean; hovered?: boolean }>`
+/**
+ * @deprecated Use `MenuItemProps` instead
+ */
+export type MenuItemCommonProps = MenuItemProps;
+
+
+const StyledMenuItem = styled.div<{ selected?: boolean; hovered?: boolean }>`
   cursor: pointer;
   user-select: none;
   display: flex;
@@ -70,7 +71,7 @@ const ItemIconWrapper = styled.span`
   margin-right: 0.5em;
 `;
 
-const MenuItem = React.forwardRef((props: MenuItemProps, ref: React.Ref<HTMLDivElement>) => {
+export const MenuItem = React.forwardRef((props: MenuItemProps, ref: React.Ref<HTMLDivElement>) => {
   const {
     children,
     selected,
@@ -82,8 +83,16 @@ const MenuItem = React.forwardRef((props: MenuItemProps, ref: React.Ref<HTMLDivE
     ...nativeProps
   } = props;
 
+  const renderStartIcon = React.useCallback(() => {
+    if (!startIcon) {
+      return null;
+    }
+
+    return <ItemIconWrapper>{startIcon}</ItemIconWrapper>;
+  }, [startIcon]);
+
   return (
-    <InnerContainer
+    <StyledMenuItem
       {...nativeProps}
       ref={ref}
       onMouseLeave={onMouseLeave}
@@ -92,11 +101,9 @@ const MenuItem = React.forwardRef((props: MenuItemProps, ref: React.Ref<HTMLDivE
       selected={selected}
       hovered={hovered}
     >
-      {typeof startIcon !== 'undefined' && startIcon !== null && (
-        <ItemIconWrapper>{startIcon}</ItemIconWrapper>
-      )}
+      {renderStartIcon()}
       {children}
-    </InnerContainer>
+    </StyledMenuItem>
   );
 });
 
