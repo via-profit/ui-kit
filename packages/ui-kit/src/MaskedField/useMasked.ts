@@ -24,14 +24,13 @@ export const useMasked = () => {
     };
 
     value
-      .replace(/\s/, '')
+      .replace(/\s+/g, '')
       .split('')
       .forEach((character, charIndex) => {
         const isMatch = mask.some(pattern => {
           if (typeof pattern === 'string') {
-            return false;
 
-            // return character === pattern && character;
+            return character === pattern && character;
           }
 
           if (pattern instanceof RegExp) {
@@ -69,7 +68,9 @@ export const useMasked = () => {
       return data;
     }
 
-    for (let patternIndex = 0; patternIndex < mask.length; patternIndex++) {
+    let patternIndex = 0;
+    for (patternIndex = 0; patternIndex < mask.length; patternIndex++) {
+      data.isValid = false;
       if (data.charIndex >= parsedValue.length) {
         break;
       }
@@ -83,6 +84,7 @@ export const useMasked = () => {
       if (pattern instanceof RegExp && new RegExp(pattern).test(char)) {
         data.text = `${data.text}${char}`;
         data.charIndex += 1;
+        data.isValid = true;
       }
 
       // If char is correct (equal with pattern string)
@@ -90,7 +92,6 @@ export const useMasked = () => {
       // and increment the charIndex and caret
       if (typeof pattern === 'string' && pattern === char) {
         data.text = `${data.text}${char}`;
-
         data.caret += 1;
         data.charIndex += 1;
       }
@@ -109,7 +110,7 @@ export const useMasked = () => {
     const result: FormatParsedPayload = {
       text: data.text,
       caret: data.caret,
-      isValid: data.text.length >= mask.length,
+      isValid: data.isValid,
     };
 
     return result;

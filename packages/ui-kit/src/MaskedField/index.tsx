@@ -3,6 +3,7 @@ import React from 'react';
 import { FormatParsedPayload, Mask, ParseInput, useMasked } from './useMasked';
 import TextField, { TextFieldProps } from '../TextField';
 
+export * from './useMasked';
 export type GetMask = (input: string) => Mask;
 
 export interface MaskedFieldProps extends Omit<TextFieldProps, 'value' | 'onChange'> {
@@ -37,89 +38,72 @@ const MaskedField: React.ForwardRefRenderFunction<HTMLDivElement, MaskedFieldPro
   ref,
 ) => {
   const { value: propValue, mask, parseInput, onChange, transform, ...nativeProps } = props;
-  const propValueRef = React.useRef(propValue);
-  const textInputRef = React.useRef<HTMLInputElement | null>(null);
-  const decoratorsErrorDisplayed = React.useRef(false);
+
   const masked = useMasked();
   const parseInputFn = parseInput || masked.parseInput;
 
-  const getMask = React.useCallback(
-    (input: string) => {
-      const currentMask = typeof mask === 'function' ? mask(input) : mask;
-      if (
-        !decoratorsErrorDisplayed.current &&
-        currentMask.find(
-          elem =>
-            typeof elem === 'string' &&
-            typeof parseInput === 'undefined' &&
-            elem.match(/[0-9a-zа-яё]/i),
-        )
-      ) {
-        decoratorsErrorDisplayed.current = true;
-        console.warn(
-          '[MaskedField component] You use symbols as decorators, which should be replaced with RegExp or provide the «parseInput» function instead',
-        );
-      }
+  const inputRef = React.useRef<HTMLInputElement | null>(null);
+  const lastPropValue = React.useRef(propValue);
 
-      return currentMask;
-    },
-    [mask, parseInput],
+  const getMask = React.useCallback(
+    (input: string) => (typeof mask === 'function' ? mask(input) : mask),
+    [mask],
   );
 
   const getInputValue = React.useCallback(
     (v: string) => {
-      const mask = getMask(v || '');
-      const parsed = parseInputFn(v || '', mask, textInputRef.current?.selectionStart || 0);
-      const { text } = masked.formatParsedInput(parsed.text, mask, parsed.caret);
+      const m = getMask(v);
+      const parsed = parseInputFn(v, m, inputRef.current?.selectionStart || 0);
+      const formatted = masked.formatParsedInput(parsed.text, m, parsed.caret);
 
-      return text;
+      return formatted.text;
     },
-    [getMask, masked, parseInputFn],
+    [getMask, parseInputFn, masked],
   );
 
   const [inputValue, setInputValue] = React.useState(getInputValue(propValue || ''));
 
+  // Обновление при изменении внешнего значения
   React.useEffect(() => {
-    if (propValueRef.current !== propValue) {
-      propValueRef.current = propValue;
-
+    if (lastPropValue.current !== propValue) {
+      lastPropValue.current = propValue;
       setInputValue(getInputValue(propValue || ''));
     }
-  }, [getInputValue, getMask, parseInputFn, masked, propValue]);
+  }, [propValue, getInputValue]);
 
   const handleOnChange: React.ChangeEventHandler<HTMLInputElement> = React.useCallback(
     event => {
-      const mask = getMask(event.currentTarget.value);
-      const parsed = parseInputFn(
-        event.currentTarget.value,
-        mask,
-        textInputRef.current?.selectionStart || 0,
-      );
+      const raw = event.currentTarget.value;
+      const caret = inputRef.current?.selectionStart || 0;
 
-      const { caret, isValid, text } = masked.formatParsedInput(parsed.text, mask, parsed.caret);
-      const transformedText = transform ? transform(text) : text;
+      const m = getMask(raw);
+      const parsed = parseInputFn(raw, m, caret);
+      const formatted = masked.formatParsedInput(parsed.text, m, parsed.caret);
 
-      setInputValue(transformedText);
+      const finalText = transform ? transform(formatted.text) : formatted.text;
+
+      setInputValue(finalText);
       onChange({
-        caret,
-        isValid,
-        text: transformedText,
+        caret: formatted.caret,
+        isValid: formatted.isValid,
+        text: finalText,
       });
 
-      setTimeout(() => {
-        textInputRef.current?.setSelectionRange(caret, caret);
-      }, 15);
+      // Устанавливаем caret после рендера
+      requestAnimationFrame(() => {
+        inputRef.current?.setSelectionRange(formatted.caret, formatted.caret);
+      });
     },
-    [getMask, masked, transform, onChange, parseInputFn],
+    [getMask, parseInputFn, masked, transform, onChange],
   );
 
   const setInputRef = React.useCallback(
     (elem: HTMLInputElement | null) => {
-      textInputRef.current = elem;
+      inputRef.current = elem;
+
       if (typeof nativeProps.inputRef === 'function') {
         nativeProps.inputRef(elem);
-      }
-      if (nativeProps.inputRef !== null && typeof nativeProps.inputRef === 'object') {
+      } else if (nativeProps.inputRef && typeof nativeProps.inputRef === 'object') {
         nativeProps.inputRef.current = elem;
       }
     },

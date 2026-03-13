@@ -1,8 +1,9 @@
 import React from 'react';
 import MaskedField from '@via-profit/ui-kit/src/MaskedField';
 
-const letter = /[abekmhopctyXABEKMHOPCTYXАВЕКМНОРСТУХавекмнорстух]/;
+const letter = /[abekmhopctyXABEKMHOPCTYАВЕКМНОРСТУХавекмнорстух]/;
 const digit = /\d/;
+const mask = [letter, ' ', digit, digit, digit, ' ', letter, letter, ' ', digit, digit, digit];
 
 const ExampleMaskedFieldBasic: React.FC = () => {
   const [value, setValue] = React.useState('');
@@ -10,11 +11,11 @@ const ExampleMaskedFieldBasic: React.FC = () => {
 
   return (
     <MaskedField
-      mask={[letter, ' ', digit, digit, digit, ' ', letter, letter, ' ', digit, digit, digit]}
+      mask={mask}
       value={value}
       placeholder="в 215 вн 196"
       transform={v => v.toUpperCase()}
-      error={validState !== true}
+      error={!validState}
       errorText="Invalid"
       onChange={({ isValid, text }) => {
         if (isValid) {

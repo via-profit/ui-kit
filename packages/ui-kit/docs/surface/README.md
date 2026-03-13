@@ -115,17 +115,71 @@ export default Example;
 
 ## Свойства
 
-Помимо перечисленных свойств, компонент принимает [стандартные аттрибуты](https://developer.mozilla.org/ru/docs/Web/HTML/Element/div#атрибуты) HTML элемента `<div>`
+Помимо перечисленных ниже свойств, компонент принимает  
+стандартные атрибуты [(developer.mozilla.org in Bing)](https://www.bing.com/search?q="https%3A%2F%2Fdeveloper.mozilla.org%2Fru%2Fdocs%2FWeb%2FHTML%2FElement%2Fdiv%23%25D0%25B0%25D1%2582%25D1%2580%25D0%25B8%25D0%25B1%25D1%2583%25D1%2582%25D1%258B") HTML‑элемента `<div>`.
 
-| Свойство                 | Тип                        | По умолчанию         | Описание                                                                                 |
-| ------------------------ | :------------------------- | :------------------- | ---------------------------------------------------------------------------------------- |
-| **inline**               | `boolean`                  | `false`              | Если `true`, то элемент примет вид `inline-flex` контейнера и `flex` в противном случае. |
-| **header**               | `<JSX.Element>` `<String>` | `undefined`          | Элемент заголовка                                                                        |
-| **subheader**            | `<JSX.Element>` `<String>` | `undefined`          | Элемент подзаголовка                                                                     |
-| **children**             | `<JSX.Element>` `<String>` |                      | Содержимое                                                                               |
-| **overrides**            | `Object`                   | `undefined`          | Объект элементов для переопределения составных компонентов поверхности                   |
-| **overrides .Container** | `<React.Component>`        | `<SurfaceContainer>` | Компонент обёртка                                                                        |
-| **overrides .Header**    | `<React.Component>`        | `<SurfaceHeader>`    | Компонент обёртка заголовка в случае её отображения                                      |
-| **overrides .Subheader** | `<React.Component>`        | `<SurfaceSubheader>` | Компонент обёртка подзаголовка в случае её отображения                                   |
-| **overrides .Content**   | `<React.Component>`        | `<SurfaceContent>`   | Компонент обёртка контентной части                                                       |
-| **overrides .Footer**    | `<React.Component>`        | `<SurfaceFooter>`    | Компонент футер                                                                          |
+### `inline: boolean`
+Определяет способ отображения поверхности.
+
+Если `true`, компонент рендерится как `inline-flex`.  
+Если `false` — как блочный `flex`‑контейнер.
+
+По умолчанию: `false`.
+
+
+
+### `header: JSX.Element | string`
+Содержимое заголовка карточки.
+
+Если свойство не передано, заголовок не отображается.
+
+
+
+### `subheader: JSX.Element | string`
+Содержимое подзаголовка карточки.
+
+Если свойство не передано, подзаголовок не отображается.
+
+
+
+### `footer: JSX.Element | string`
+Содержимое футера карточки.
+
+Если свойство не передано, футер не отображается.
+
+
+### `children: JSX.Element | string`
+Основное содержимое поверхности.
+
+Это единственное обязательное свойство.
+
+
+### `overrides: object`
+Объект, позволяющий переопределить составные части компонента `<Surface>`.
+
+Используется для кастомизации структуры и внешнего вида.
+
+### `overrides.Container: React.Component`
+Компонент‑обёртка поверхности.  
+По умолчанию используется `<SurfaceContainer>`.
+
+
+### `overrides.Header: React.Component`
+Компонент‑обёртка заголовка.  
+По умолчанию используется `<SurfaceHeader>`.
+
+
+### `overrides.Subheader: React.Component`
+Компонент‑обёртка подзаголовка.  
+По умолчанию используется `<SurfaceSubheader>`.
+
+
+### `overrides.Content: React.Component`
+Компонент‑обёртка основной контентной части.  
+По умолчанию используется `<SurfaceContent>`.
+
+
+### `overrides.Footer: React.Component`
+Компонент‑обёртка футера.  
+По умолчанию используется `<SurfaceFooter>`.
+

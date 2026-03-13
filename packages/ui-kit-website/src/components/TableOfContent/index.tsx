@@ -24,6 +24,8 @@ const Inner = styled(Surface)`
   bottom: 1rem;
   z-index: ${({ theme }) => theme.zIndex.header};
   width: 20em;
+  max-height: calc(100vh - 7rem);
+  overflow-y: auto;
   @media all and (max-width: 1280px) {
     width: 16em;
   }
@@ -69,8 +71,9 @@ type Elem = {
 const TableOfContent: React.FC<TableOfContentProps> = props => {
   const { content } = props;
   const { pathname } = useLocation();
-  const navRef = React.useRef<HTMLElement | null>(null);
   const [activeAnchor, setActiveAnchor] = React.useState<string | null>(null);
+  const observersRef = React.useRef<IntersectionObserver[]>([]);
+  const headingsRef = React.useRef<Map<string, HTMLElement>>(new Map());
 
   const listItems: readonly Elem[] = React.useMemo(() => {
     const rawContent = content
@@ -100,68 +103,107 @@ const TableOfContent: React.FC<TableOfContentProps> = props => {
       .filter((el): el is Elem => el !== null);
   }, [content]);
 
-  const lastScrollTopRef = React.useRef(window.scrollY || document.documentElement.scrollTop);
-  const scrollDirectionRef = React.useRef<'up' | 'down'>('down');
-
+  // Очистка наблюдателей при размонтировании
   React.useEffect(() => {
-    const scrollEvent = () => {
-      const scrollTopPosition = window.scrollY || document.documentElement.scrollTop;
-
-      scrollDirectionRef.current = scrollTopPosition > lastScrollTopRef.current ? 'down' : 'up';
-      lastScrollTopRef.current = scrollTopPosition <= 0 ? 0 : scrollTopPosition;
-
-      const headings = document.querySelectorAll('h1, h2, h3, h4, h5, h6');
-      headings.forEach(heading => {
-        if (heading instanceof HTMLElement) {
-          const anchor = heading.querySelector('a[id]');
-          const section =
-            heading.parentNode &&
-            heading.parentNode instanceof HTMLElement &&
-            heading.parentNode.tagName === 'SECTION'
-              ? heading.parentNode
-              : null;
-          const anchorID = anchor instanceof HTMLElement ? anchor.getAttribute('id') : '';
-          const target = section ?? anchor;
-
-          if (target instanceof HTMLElement) {
-            const observer = new window.IntersectionObserver(
-              ([entry]) => {
-                if (entry.isIntersecting) {
-                  if (
-                    scrollDirectionRef.current === 'down' &&
-                    entry.boundingClientRect.top > 0 &&
-                    entry.boundingClientRect.top < window.innerHeight - window.innerHeight / 4
-                  ) {
-                    setActiveAnchor(anchorID);
-                  }
-
-                  if (
-                    scrollDirectionRef.current === 'up' &&
-                    entry.boundingClientRect.top > 100 &&
-                    entry.boundingClientRect.top < window.innerHeight / 4
-                  ) {
-                    setActiveAnchor(anchorID);
-                  }
-                }
-              },
-              {
-                root: null,
-                threshold: 0.1,
-              },
-            );
-
-            observer.observe(target);
-          }
-        }
-      });
-    };
-
-    window.addEventListener('scroll', scrollEvent);
+    const observers = observersRef.current;
 
     return () => {
-      window.removeEventListener('scroll', scrollEvent);
+      observers.forEach(observer => observer.disconnect());
+      observersRef.current = [];
     };
   }, []);
+
+  // Настройка наблюдателей
+  React.useEffect(() => {
+    // Очищаем предыдущие наблюдатели
+    observersRef.current.forEach(observer => observer.disconnect());
+    observersRef.current = [];
+    headingsRef.current.clear();
+
+    if (listItems.length === 0) return;
+
+    // Находим все целевые элементы
+    listItems.forEach(({ link }) => {
+      const anchor = document.querySelector(`a[id="${link}"]`);
+      if (anchor instanceof HTMLElement) {
+        headingsRef.current.set(link, anchor);
+      }
+    });
+
+    // Создаем наблюдатель
+    const observer = new IntersectionObserver(
+      entries => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            // Находим соответствующий link по элементу
+            const activeLink = Array.from(headingsRef.current.entries()).find(
+              ([, element]) => element === entry.target,
+            )?.[0];
+
+            if (activeLink) {
+              setActiveAnchor(activeLink);
+            }
+          }
+        });
+      },
+      {
+        root: null,
+        threshold: 0.3, // Увеличил threshold для более стабильного определения
+        rootMargin: '-80px 0px -50% 0px', // Учитываем высоту header
+      },
+    );
+
+    // Наблюдаем за всеми элементами
+    headingsRef.current.forEach(element => {
+      observer.observe(element);
+    });
+
+    observersRef.current = [observer];
+
+    // Устанавливаем начальный активный элемент
+    const findInitialActive = () => {
+      const scrollPosition = window.scrollY;
+      let currentActive: string | null = null;
+      let minDistance = Infinity;
+
+      headingsRef.current.forEach((element, link) => {
+        const rect = element.getBoundingClientRect();
+        const distance = Math.abs(rect.top + window.scrollY - scrollPosition);
+
+        if (distance < minDistance) {
+          minDistance = distance;
+          currentActive = link;
+        }
+      });
+
+      if (currentActive) {
+        setActiveAnchor(currentActive);
+      }
+    };
+
+    // Небольшая задержка для корректного определения после монтирования
+    setTimeout(findInitialActive, 100);
+  }, [listItems]);
+
+  const scrollToAnchor = React.useCallback(
+    (link: string, event: React.MouseEvent) => {
+      event.preventDefault();
+      const element = document.querySelector(`a[id="${link}"]`);
+
+      if (element) {
+        const yOffset = -80; // app header height
+        const y = element.getBoundingClientRect().top + window.scrollY + yOffset;
+
+        window.scrollTo({ top: y, behavior: 'smooth' });
+        window.history.pushState(true, '', `${pathname}#${link}`);
+      }
+    },
+    [pathname],
+  );
+
+  if (listItems.length === 0) {
+    return null;
+  }
 
   return (
     <StyledContainer>
@@ -169,21 +211,10 @@ const TableOfContent: React.FC<TableOfContentProps> = props => {
         <Heading>
           <FormattedMessage defaultMessage="Содержание" />
         </Heading>
-        <nav ref={navRef}>
+        <nav>
           {listItems.map(({ label, link }) => (
             <StyledLink
-              onClick={event => {
-                event.preventDefault();
-                const element = document.querySelector(`a[id="${link}"]`);
-
-                if (element) {
-                  const yOffset = -80; // app header height
-                  const y = element.getBoundingClientRect().top + window.scrollY + yOffset;
-
-                  window.scrollTo({ top: y, behavior: 'smooth' });
-                  window.history.pushState(true, '', `${pathname}#${link}`);
-                }
-              }}
+              onClick={event => scrollToAnchor(link, event)}
               to={`#${link}`}
               key={link}
               $isActive={activeAnchor === link}

@@ -723,7 +723,7 @@ const MenuContainer = React.forwardRef(
     return (
       <ClickOutside
         onOutsideClick={onRequestClose}
-        mouseEvent={closeOutsideClick ? 'onMouseDown' : false}
+        mouseEvent={isOpen && closeOutsideClick ? 'onMouseDown' : false}
       >
         <overridesMap.Popper
           isOpen={Boolean(isOpen)}
