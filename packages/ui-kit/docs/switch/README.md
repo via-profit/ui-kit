@@ -245,27 +245,110 @@ export default ExampleButtonOverrides;
 
 <ExampleSwitchOverrides />
 
+---
+
 ## Свойства
 
-Помимо перечисленных свойств, компонент принимает [стандартные аттрибуты](https://developer.mozilla.org/ru/docs/Web/HTML/Element/label) HTML элемента `<label>`
+### `checked`
+Управляющее состояние переключателя (вкл/выкл).
+- Тип: `boolean`
+- По умолчанию: `undefined`
+- Обязательное: нет
 
-| Свойство                     | Обязателен | Тип                                      | По умолчанию          | Описание                                                                                                    |
-| ---------------------------- | :--------: | :--------------------------------------- | :-------------------- | ----------------------------------------------------------------------------------------------------------- |
-| **checked**                  |            | `Boolean`                                | `undefined`           | состояние переключателя вкл/выкл                                                                            |
-| **onChange**                 |            | `Function`                               | `undefined`           | Функция, которая выполнится при изменении состояния переключателя                                           |
-| **color**                    |            | `default` `secondary` `primary` `String` | `default`             | Цвет переключателя. В качестве пользовательского цвета принимается строка в формате **hex** или **rgb(a)**. |
-| **disabled**                 |            | `Boolean`                                | `undefined`           | Если `true`, то переключатель станет не активным                                                            |
-| **defaultChecked**           |            | `Boolean`                                | `false`               | Если `true`, то переключатель будет включен по умолчанию                                                    |
-| **labelPosition**            |            | `start` `end` `top` `bottom`             | `end`                 | Позиция текста, относительно переключателя                                                                  |
-| **error**                    |            | `Boolean`                                | `false`               | Если `true`, то переключатель под переключателем будет показано содержимое свойства `errorText`             |
-| **errorText**                |            | `String` `<React.Component>`             | `undefined`           | Текст ошибки, будет показан под компонентом переключателя, если `error` в значении `true`                   |
-| **requiredAsterisk**         |            | `Boolean` `<React.Component>`            | `undefined`           | Если передан, то поле будет помечено как обязательное                                                       |
-| **overrides**                |            | `Object`                                 | `undefined`           | Объект элементов для переопределения составных компонентов переключателя                                    |
-| **overrides .Wrapper**       |            | `<React.Component>`                      | `<ButtonIconWrapper>` | Компонент основная обертка для всего переключателя                                                          |
-| **overrides .Container**     |            | `<React.Component>`                      | `<ButtonContainer>`   | Обёртка переключателя и текста, нативный элемент `label`                                                    |
-| **overrides .TextWrapper**   |            | `<React.Component>`                      | `<ButtonTextWrapper>` | Обёртка для текста переключателя                                                                            |
-| **overrides .ToggleWrapper** |            | `<React.Component>`                      | `<ButtonTextWrapper>` | Обёртка переключателя                                                                                       |
-| **overrides .Asterisk**      |            | `<React.Component>`                      | `<ButtonTextWrapper>` | Компонент, показывающий что поле обязательно                                                                |
-| **overrides .Dot**           |            | `<React.Component>`                      | `<ButtonTextWrapper>` | Элемент переключателя: сдвигающаяся точка                                                                   |
-| **overrides .Track**         |            | `<React.Component>`                      | `<ButtonTextWrapper>` | Элемент переключателя: путь по которой сдвигается переключатель                                             |
-| **overrides .ErrorText**     |            | `<React.Component>`                      | `<ButtonTextWrapper>` | Обёртка для текста ошибки                                                                                   |
+### `onChange`
+Функция обратного вызова, вызываемая при изменении состояния переключателя.
+- Тип: `function`
+- По умолчанию: `undefined`
+- Обязательное: нет
+
+### `color`
+Цвет переключателя. Может быть предопределенным значением или пользовательским цветом в формате **hex** или **rgb(a)**.
+- Тип: `'default' | 'secondary' | 'primary' | string`
+- По умолчанию: `'default'`
+- Обязательное: нет
+
+### `disabled`
+Если `true`, переключатель становится неактивным.
+- Тип: `boolean`
+- По умолчанию: `undefined`
+- Обязательное: нет
+
+### `defaultChecked`
+Если `true`, переключатель будет включен по умолчанию (неконтролируемый режим).
+- Тип: `boolean`
+- По умолчанию: `false`
+- Обязательное: нет
+
+### `labelPosition`
+Позиция текста относительно переключателя.
+- Тип: `'start' | 'end' | 'top' | 'bottom'`
+- По умолчанию: `'end'`
+- Обязательное: нет
+
+### `error`
+Если `true`, под переключателем будет показано содержимое свойства `errorText`.
+- Тип: `boolean`
+- По умолчанию: `false`
+- Обязательное: нет
+
+### `errorText`
+Текст ошибки, отображаемый под компонентом переключателя при значении `error={true}`.
+- Тип: `string | React.Component`
+- По умолчанию: `undefined`
+- Обязательное: нет
+
+### `requiredAsterisk`
+Если передан, поле помечается как обязательное (отображается звездочка).
+- Тип: `boolean | React.Component`
+- По умолчанию: `undefined`
+- Обязательное: нет
+
+### `overrides`
+Объект для переопределения составных компонентов переключателя.
+- Тип: `Object`
+- По умолчанию: `undefined`
+- Обязательное: нет
+
+#### `overrides.Wrapper`
+Основная обертка для всего переключателя.
+- Тип: `React.Component`
+- По умолчанию: `<ButtonIconWrapper>`
+
+#### `overrides.Container`
+Обертка переключателя и текста, нативный элемент `label`.
+- Тип: `React.Component`
+- По умолчанию: `<ButtonContainer>`
+
+#### `overrides.TextWrapper`
+Обертка для текста переключателя.
+- Тип: `React.Component`
+- По умолчанию: `<ButtonTextWrapper>`
+
+#### `overrides.ToggleWrapper`
+Обертка для самого переключателя.
+- Тип: `React.Component`
+- По умолчанию: `<ButtonTextWrapper>`
+
+#### `overrides.Asterisk`
+Компонент, отображающий обязательность поля (звездочка).
+- Тип: `React.Component`
+- По умолчанию: `<ButtonTextWrapper>`
+
+#### `overrides.Dot`
+Элемент переключателя: сдвигающаяся точка.
+- Тип: `React.Component`
+- По умолчанию: `<ButtonTextWrapper>`
+
+#### `overrides.Track`
+Элемент переключателя: путь (трек), по которому движется точка.
+- Тип: `React.Component`
+- По умолчанию: `<ButtonTextWrapper>`
+
+#### `overrides.ErrorText`
+Обертка для текста ошибки.
+- Тип: `React.Component`
+- По умолчанию: `<ButtonTextWrapper>`
+
+---
+
+Помимо перечисленных свойств, компонент принимает [стандартные атрибуты](https://developer.mozilla.org/ru/docs/Web/HTML/Element/label) HTML элемента `<label>`

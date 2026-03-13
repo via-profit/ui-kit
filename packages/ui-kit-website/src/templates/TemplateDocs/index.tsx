@@ -42,6 +42,10 @@ const Content = styled.div`
   flex: 1;
   margin: 1em;
   display: flex;
+
+  & > div:first-of-type {
+    flex: 1;
+  }
 `;
 
 const TemplateDocs: React.FC = () => (

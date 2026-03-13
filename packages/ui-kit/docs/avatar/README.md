@@ -205,19 +205,66 @@ export default Example;
 
 <ExampleAvatarOverrides />
 
+---
+
 ## Свойства
 
-Помимо перечисленных свойств, компонент принимает [стандартные аттрибуты](https://developer.mozilla.org/ru/docs/Web/HTML/Element/span#атрибуты) HTML элемента `<span>`
+### `variant`
+Вариант отображения формы аватара.
+- Тип: `'circular' | 'rounded' | 'square'`
+- По умолчанию: `'circular'`
+- Обязательное: **да**
 
-| Свойство                    | Обязателен | Тип                                      | По умолчанию           | Описание                                                                                                                               |
-| --------------------------- | :--------: | :--------------------------------------- | :--------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
-| **variant**                 |     \*     | `circular` `rounded` `square`            | `circular`             | Вариант отображения                                                                                                                   |
-| **color**                   |            | `default` `secondary` `primary` `String` | `default`              | Цвет аватара. В качестве пользовательского цвета принимается строка в формате **hex** или **rgb(a)**                                   |
-| **src**                     |            | `{srcSet: string; type: MimeType; isDefault?: boolean;}[]` | `undefined`            | Массив объектов ссылок на изображение                                                                                   |
-| **onClick**                |            | `Function`                               | `undefined`            | Функция, которая будет вызвана при нажатии на аватар |
-| **isOnline**                |            | `Boolean`                               | `undefined`            | Если передан **true** будет отображен индикатор онлайн |
-| **overrides**               |            | `Object`                                 | `undefined`            | Объект элементов для переопределения составных компонентов аватара                                                                      |
-| **overrides .Container**    |            | `<React.Component>`                      | `<AvatarContainer>`    | Компонент обертка аватара                                                                                                           |
-| **overrides .IconWrapper**  |            | `<React.Component>`                      | `<AvatarIconWrapper>`  | Компонент обёртка для изображения аватара                                                                       |
-| **overrides .TextWrapper**  |            | `<React.Component>`                      | `<AvatarTextWrapper>`  | Компонент обёртка текста аватара                                                                                                        |
-| **overrides .Picture** |            | `<React.Component>`                      | `<AvatarDeleteButton>` | Компонент изображения                                                                                                              |
+### `color`
+Цвет аватара. Может быть предопределенным значением или пользовательским цветом в формате **hex** или **rgb(a)**.
+- Тип: `'default' | 'secondary' | 'primary' | string`
+- По умолчанию: `'default'`
+- Обязательное: нет
+
+### `src`
+Массив объектов ссылок на изображения с поддержкой различных форматов и srcSet.
+- Тип: `Array<{ srcSet: string; type: MimeType; isDefault?: boolean; }>`
+- По умолчанию: `undefined`
+- Обязательное: нет
+
+### `onClick`
+Функция, вызываемая при нажатии на аватар.
+- Тип: `function`
+- По умолчанию: `undefined`
+- Обязательное: нет
+
+### `isOnline`
+Если передан `true`, отображается индикатор онлайн-статуса.
+- Тип: `boolean`
+- По умолчанию: `undefined`
+- Обязательное: нет
+
+### `overrides`
+Объект для переопределения составных компонентов аватара.
+- Тип: `Object`
+- По умолчанию: `undefined`
+- Обязательное: нет
+
+#### `overrides.Container`
+Компонент-обертка для всего аватара.
+- Тип: `React.Component`
+- По умолчанию: `<AvatarContainer>`
+
+#### `overrides.IconWrapper`
+Компонент-обертка для изображения аватара.
+- Тип: `React.Component`
+- По умолчанию: `<AvatarIconWrapper>`
+
+#### `overrides.TextWrapper`
+Компонент-обертка для текста аватара (инициалы или текстовая метка).
+- Тип: `React.Component`
+- По умолчанию: `<AvatarTextWrapper>`
+
+#### `overrides.Picture`
+Компонент самого изображения аватара.
+- Тип: `React.Component`
+- По умолчанию: `<AvatarDeleteButton>`
+
+---
+
+Помимо перечисленных свойств, компонент принимает [стандартные атрибуты](https://developer.mozilla.org/ru/docs/Web/HTML/Element/span#атрибуты) HTML элемента `<span>`

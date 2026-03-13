@@ -1,6 +1,6 @@
 const defaultState: Readonly<ReduxStore> = {
   ui: {
-    theme: 'light',
+    theme: 'dark',
     fontSize: 'normal',
     locale: 'ru-RU',
     device: 'desktop',

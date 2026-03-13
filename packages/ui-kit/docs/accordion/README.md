@@ -262,21 +262,71 @@ export default ExampleAccordionOverrides;
 
 <ExampleAccordionOverrides />
 
+
+---
+
 ## Свойства
 
-Помимо перечисленных свойств, компонент принимает [стандартные аттрибуты](https://developer.mozilla.org/ru/docs/Web/HTML/Element/div#атрибуты) HTML элемента `<div>`
+### `header`
+Элемент заголовка аккордеона. Может быть строкой или JSX-элементом.
+- Тип: `JSX.Element | string`
+- По умолчанию: `undefined`
 
-| Свойство                 | Тип                        | По умолчанию           | Описание                                                               |
-| ------------------------ | :------------------------- | :--------------------- | ---------------------------------------------------------------------- |
-| **header**               | `<JSX.Element>` `<String>` | `undefined`            | Элемент заголовка                                                      |
-| **actions**              | `<JSX.Element>` `<String>` | `undefined`            | Элемент кнпок действия                                                 |
-| **noPadding**       | `boolean`                  | `undefined`            | Отключение отсутпов контента от краев блока по умочланию               |
-| **defaultOpened**        | `boolean`                  | `undefined`            | Состояние аккордеона по умолчанию                                      |
-| **isOpen**               | `boolean`                  | `undefined`            | Состояние аккордеона. открыт или нет                                   |
-| **onOpen**               | `function`                 | `undefined`            | Функция контроля состояния аккордеона                                  |
-| **children**             | `<JSX.Element>` `<String>` |                        | Содержимое                                                             |
-| **overrides**            | `Object`                   | `undefined`            | Объект элементов для переопределения составных компонентов поверхности |
-| **overrides .Container** | `<React.Component>`        | `<AccordionContainer>` | Компонент обёртка                                                      |
-| **overrides .Header**    | `<React.Component>`        | `<AccordionHeader>`    | Компонент обёртка заголовка в случае её отображения                    |
-| **overrides .Content**   | `<React.Component>`        | `<AccordionContent>`   | Компонент обёртка контентной части                                     |
-| **overrides .Actions**   | `<React.Component>`        | `<AccordionFooter>`    | Компонент обертка кнопок действия                                      |
+### `actions`
+Элемент с кнопками действий в заголовке аккордеона.
+- Тип: `JSX.Element | string`
+- По умолчанию: `undefined`
+
+### `noPadding`
+Отключает внутренние отступы контентной части аккордеона.
+- Тип: `boolean`
+- По умолчанию: `undefined`
+
+### `defaultOpened`
+Начальное состояние аккордеона (открыт/закрыт) для неконтролируемого режима.
+- Тип: `boolean`
+- По умолчанию: `undefined`
+
+### `isOpen`
+Управляющее состояние аккордеона (открыт/закрыт) для контролируемого режима.
+- Тип: `boolean`
+- По умолчанию: `undefined`
+
+### `onOpen`
+Функция обратного вызова, вызываемая при изменении состояния аккордеона.
+- Тип: `function`
+- По умолчанию: `undefined`
+
+### `children`
+Содержимое аккордеона, отображаемое в развернутом состоянии.
+- Тип: `JSX.Element | string`
+- По умолчанию: (обязательный параметр)
+
+### `overrides`
+Объект для переопределения составных компонентов аккордеона.
+- Тип: `Object`
+- По умолчанию: `undefined`
+
+#### `overrides.Container`
+Компонент-обертка для всего аккордеона.
+- Тип: `React.Component`
+- По умолчанию: `<AccordionContainer>`
+
+#### `overrides.Header`
+Компонент-обертка для заголовка аккордеона.
+- Тип: `React.Component`
+- По умолчанию: `<AccordionHeader>`
+
+#### `overrides.Content`
+Компонент-обертка для контентной части аккордеона.
+- Тип: `React.Component`
+- По умолчанию: `<AccordionContent>`
+
+#### `overrides.Actions`
+Компонент-обертка для блока с кнопками действий.
+- Тип: `React.Component`
+- По умолчанию: `<AccordionFooter>`
+
+---
+
+Помимо перечисленных свойств, компонент принимает [стандартные атрибуты](https://developer.mozilla.org/ru/docs/Web/HTML/Element/div#атрибуты) HTML элемента `<div>`
