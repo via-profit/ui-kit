@@ -59,7 +59,7 @@ const lint = async files => {
 const bootstrap = async () => {
   const svgPath = path.resolve('./assets/country-flags-3x2');
   const outPath = path.resolve('./src/CountryFlags');
-  const indexFile = path.resolve('./src/CountryFlags/index.tsx');
+  const indexFile = path.resolve('./src/CountryFlags/SwiperOverview.tsx');
   const files = fs.readdirSync(svgPath);
   const indexList = [];
 
@@ -80,7 +80,7 @@ const bootstrap = async () => {
 
   const indexExportContent = `export {\n${indexList.join(',\n')}\n}`;
 
-  // write index file (index.tsx)
+  // write index file (SwiperOverview.tsx)
 
   fs.writeFileSync(
     indexFile,

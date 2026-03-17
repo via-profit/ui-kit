@@ -42,7 +42,7 @@ export type SwiperProps = React.HTMLAttributes<HTMLDivElement> & {
 export const Swiper = React.forwardRef((props: SwiperProps, ref: React.ForwardedRef<SwiperRef>) => {
   const {
     children,
-    dragThreshold = 120,
+    dragThreshold = 240,
     snap = true,
     draggable = true,
     overrides,
