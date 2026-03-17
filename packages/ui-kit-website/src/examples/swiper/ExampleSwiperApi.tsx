@@ -1,10 +1,11 @@
 import * as React from 'react';
+import styled from '@emotion/styled';
+
 import Swiper, { SwiperRef, SwiperSlide } from '@via-profit/ui-kit/src/Swiper';
 import { ColorGenerator } from '@via-profit/ui-kit/src/Color';
-import styled from '@emotion/styled';
 import Button from '@via-profit/ui-kit/src/Button';
 
-const colors = ColorGenerator.generatePalette('swiper-api', 4);
+const colors = ColorGenerator.generatePalette('swiper-api', 3);
 
 const Slide = styled(SwiperSlide)`
   font-size: 3em;
@@ -18,23 +19,24 @@ const ExampleSwiperApi: React.FC = () => {
 
   return (
     <div>
-      <Swiper ref={swiperRef}  onSlideChange={setCurrentIndex} infinite>
+      <Swiper ref={swiperRef} onSlideChange={setCurrentIndex} draggable={false}>
         {colors.map((color, index) => (
           <Slide key={color.toString()} style={{ backgroundColor: color.darken(60).toString() }}>
-            {index + 1}
+            Слайд {index + 1}
           </Slide>
         ))}
       </Swiper>
+
       <Button
-        // disabled={currentIndex === 0}
+        disabled={currentIndex === 0}
         onClick={() => swiperRef.current?.prev()}>
-        Go to previous slide
+        Предыдущий слайд
       </Button>
       <Button
-        // disabled={currentIndex === colors.length - 1}
+        disabled={currentIndex === colors.length - 1}
         onClick={() => swiperRef.current?.next()}
       >
-        Go to next slide
+        Следующий слайд
       </Button>
     </div>
   );

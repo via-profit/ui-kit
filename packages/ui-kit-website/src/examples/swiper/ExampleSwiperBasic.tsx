@@ -1,9 +1,7 @@
 import * as React from 'react';
-import Swiper, { SwiperSlide } from '@via-profit/ui-kit/src/Swiper';
-import { ColorGenerator } from '@via-profit/ui-kit/src/Color';
 import styled from '@emotion/styled';
-
-const colors = ColorGenerator.generatePalette('swiper', 8);
+import { ColorGenerator } from '@via-profit/ui-kit/src/Color';
+import Swiper, { SwiperSlide } from '@via-profit/ui-kit/src/Swiper';
 
 const Slide = styled(SwiperSlide)`
   font-size: 3em;
@@ -11,11 +9,13 @@ const Slide = styled(SwiperSlide)`
   font-weight: bold;
 `;
 
+const colors = ColorGenerator.generatePalette('swiper', 3);
+
 const ExampleSwiperBasic: React.FC = () => (
-  <Swiper>
+  <Swiper infinite autoplay>
     {colors.map((color, index) => (
       <Slide key={color.toString()} style={{ backgroundColor: color.toString() }}>
-        {index + 1}
+        Слайд {index + 1}
       </Slide>
     ))}
   </Swiper>
