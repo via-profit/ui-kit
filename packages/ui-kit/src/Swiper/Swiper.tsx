@@ -33,6 +33,8 @@ export type SwiperProps = React.HTMLAttributes<HTMLDivElement> & {
   readonly snap?: boolean;
   readonly draggable?: boolean;
   readonly initialIndex?: number;
+  readonly infinite?: boolean;
+  readonly onSlideChange?: (realIndex: number) => void;
   /**
    * Overridable components map
    */
@@ -47,24 +49,65 @@ export const Swiper = React.forwardRef((props: SwiperProps, ref: React.Forwarded
     draggable = true,
     overrides,
     initialIndex = 0,
+    infinite = false,
+    onSlideChange,
     ...restProps
   } = props;
 
-  const slides = React.Children.toArray(children);
+  const slides = React.useMemo(() => {
+    const childrenSlides = React.Children.toArray(children);
+    if (infinite) {
+      if (childrenSlides.length < 2) {
+        throw new Error('To infinite loop counts of the slides must be greater than 2');
+      }
+
+      const firstSlide = childrenSlides[0];
+      const lastSlide = childrenSlides[childrenSlides.length - 1];
+
+      return [
+        lastSlide, // ← clone last
+        ...childrenSlides,
+        firstSlide, // ← clone first
+      ];
+    }
+
+    return childrenSlides;
+  }, [children, infinite]);
   const total = slides.length;
 
-  const [index, setIndex] = React.useState(initialIndex);
+  const [index, setIndex] = React.useState(infinite ? initialIndex + 1 : initialIndex);
   const [offset, setOffset] = React.useState(0);
   const [isDragging, setIsDragging] = React.useState(false);
-
   const dragging = React.useRef(false);
   const startX = React.useRef(0);
   const lastX = React.useRef(0);
   const lastTime = React.useRef(0);
   const velocity = React.useRef(0);
   const width = React.useRef(0);
-
   const wrapperRef = React.useRef<HTMLDivElement | null>(null);
+  const [disableAnimation, setDisableAnimation] = React.useState(false);
+  const trackRef = React.useRef<HTMLDivElement | null>(null);
+  const realIndex = React.useMemo(() => {
+    if (!infinite) return index;
+
+    if (index === 0) {
+      return total - 3; // clone last → last real
+    }
+    if (index === total - 1) {
+      return 0; // clone first → first real
+    }
+
+    return index - 1; // shift by 1
+  }, [index, total, infinite]);
+
+  const prevRealIndex = React.useRef(realIndex);
+
+  React.useEffect(() => {
+    if (realIndex !== prevRealIndex.current) {
+      onSlideChange?.(realIndex);
+      prevRealIndex.current = realIndex;
+    }
+  }, [realIndex, onSlideChange]);
 
   const onPointerDown = React.useCallback(
     (e: React.PointerEvent) => {
@@ -169,6 +212,51 @@ export const Swiper = React.forwardRef((props: SwiperProps, ref: React.Forwarded
 
   React.useImperativeHandle(ref, () => ({ next, prev, goToIndex }), [next, prev, goToIndex]);
 
+  // #region Teleport: infinite loop supports
+  React.useEffect(() => {
+    if (!infinite) {
+      return;
+    }
+
+    const track = trackRef.current;
+    if (!track) {
+      return;
+    }
+
+    const handleTransitionEnd = () => {
+      // total = children.length + 2
+      const lastReal = total - 2;
+
+      if (index === 0) {
+        // clone of last → teleport to last real
+        setDisableAnimation(true);
+        setIndex(lastReal);
+      } else if (index === total - 1) {
+        // clone of first → teleport to first real
+        setDisableAnimation(true);
+        setIndex(1);
+      }
+    };
+
+    track.addEventListener('transitionend', handleTransitionEnd);
+
+    // eslint-disable-next-line consistent-return
+    return () => track.removeEventListener('transitionend', handleTransitionEnd);
+  }, [index, total, infinite]);
+
+  React.useEffect(() => {
+    if (!disableAnimation) {
+      return;
+    }
+
+    const id = requestAnimationFrame(() => {
+      setDisableAnimation(false);
+    });
+
+    // eslint-disable-next-line consistent-return
+    return () => cancelAnimationFrame(id);
+  }, [disableAnimation]);
+
   const overridesMap = React.useMemo(
     () => ({
       Container: overrides?.Container || Container,
@@ -187,7 +275,13 @@ export const Swiper = React.forwardRef((props: SwiperProps, ref: React.Forwarded
         onPointerMove={onPointerMove}
         onPointerUp={onPointerUp}
       >
-        <overridesMap.Track dragging={isDragging} index={index} offset={offset}>
+        <overridesMap.Track
+          ref={trackRef}
+          dragging={isDragging}
+          index={index}
+          offset={offset}
+          disableAnimation={disableAnimation}
+        >
           {slides.map((slide, i) => (
             // eslint-disable-next-line react/no-array-index-key
             <React.Fragment key={i}>{slide}</React.Fragment>

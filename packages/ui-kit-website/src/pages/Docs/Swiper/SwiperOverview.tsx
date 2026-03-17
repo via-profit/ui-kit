@@ -5,12 +5,13 @@ import Surface from '@via-profit/ui-kit/src/Surface';
 import RenderMarkdown from '~/components/RenderMarkdown';
 import content from '@via-profit/ui-kit/docs/swiper/README.md';
 import ExampleSwiperBasic from '~/examples/swiper/ExampleSwiperBasic';
+import ExampleSwiperInfinite from '~/examples/swiper/ExampleSwiperInfinite';
 
 const SwiperOverview: React.FC = () => (
   <>
     <Surface>
       <RenderMarkdown
-        overrides={{ ExampleSwiperBasic }}
+        overrides={{ ExampleSwiperBasic, ExampleSwiperInfinite }}
       >
         {content}
       </RenderMarkdown>
