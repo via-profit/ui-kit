@@ -11,19 +11,22 @@ const StyledSlide = styled.div`
 `;
 
 export type SwiperSlideProps = React.HTMLAttributes<HTMLDivElement> & {
-  readonly children: React.ReactNode | readonly React.ReactNode[];
+  readonly children: React.ReactNode;
+  readonly isVisible?: boolean;
 };
 
 export const SwiperSlide = React.forwardRef(
   (props: SwiperSlideProps, ref: React.ForwardedRef<HTMLDivElement>) => {
-    const { children, ...restProps } = props;
+    const { children, isVisible, ...restProps } = props;
 
     return (
       <StyledSlide {...restProps} ref={ref}>
-        {children}
+        {isVisible ? children : null}
       </StyledSlide>
     );
   },
 );
 
 SwiperSlide.displayName = 'SwiperSlide';
+
+export default SwiperSlide;

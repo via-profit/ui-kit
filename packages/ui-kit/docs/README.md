@@ -29,6 +29,7 @@
 - [Селектбокс](./selectbox/README.md)
 - [Модальные окна](./modal/README.md)
 - [Бейдж](./badge/README.md)
+- [Свайпер 🤏🏼](./swiper/README.md)
 - [Индикатор загрузки 🤏🏼](./loading-indicator/README.md)
 - [Таблица 🤏🏼](./table/README.md)
 

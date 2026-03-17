@@ -3,7 +3,7 @@ import Swiper, { SwiperSlide } from '@via-profit/ui-kit/src/Swiper';
 import { ColorGenerator } from '@via-profit/ui-kit/src/Color';
 import styled from '@emotion/styled';
 
-const colors = ColorGenerator.generatePalette('swiper-infinite', 4);
+const colors = ColorGenerator.generatePalette('swiper-infinite', 16);
 
 const Slide = styled(SwiperSlide)`
   font-size: 3em;
@@ -12,9 +12,9 @@ const Slide = styled(SwiperSlide)`
 `;
 
 const ExampleSwiperInfinite: React.FC = () => (
-  <Swiper infinite onSlideChange={realIndex => console.debug(`Slide changed to ${realIndex}`)}>
+  <Swiper infinite>
     {colors.map((color, index) => (
-      <Slide key={color.toString()} style={{ backgroundColor: color.darken(60).toString() }}>
+      <Slide key={index} style={{ backgroundColor: color.darken(60).toString() }}>
         {index + 1}
       </Slide>
     ))}
