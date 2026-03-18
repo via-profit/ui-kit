@@ -8,6 +8,7 @@ import ExampleSwiperBasic from '~/examples/swiper/ExampleSwiperBasic';
 import ExampleSwiperInfinite from '~/examples/swiper/ExampleSwiperInfinite';
 import ExampleSwiperChangeSlides from '~/examples/swiper/ExampleSwiperChangeSlides';
 import ExampleSwiperApi from '~/examples/swiper/ExampleSwiperApi';
+import ExampleSwiperSlidesPerView from '~/examples/swiper/ExampleSwiperSlidesPerView';
 
 const SwiperOverview: React.FC = () => (
   <>
@@ -18,6 +19,7 @@ const SwiperOverview: React.FC = () => (
           ExampleSwiperInfinite,
           ExampleSwiperChangeSlides,
           ExampleSwiperApi,
+          ExampleSwiperSlidesPerView,
         }}
       >
         {content}

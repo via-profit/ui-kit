@@ -12,7 +12,7 @@ const Slide = styled(SwiperSlide)`
 const colors = ColorGenerator.generatePalette('swiper', 3);
 
 const ExampleSwiperBasic: React.FC = () => (
-  <Swiper infinite autoplay>
+  <Swiper infinite>
     {colors.map((color, index) => (
       <Slide key={color.toString()} style={{ backgroundColor: color.toString() }}>
         Слайд {index + 1}

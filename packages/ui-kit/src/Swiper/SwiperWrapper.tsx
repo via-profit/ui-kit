@@ -4,6 +4,7 @@ import { css } from '@emotion/react';
 
 export type SwiperWrapperProps = React.HTMLAttributes<HTMLDivElement> & {
   readonly draggable: boolean;
+  readonly slidesPerView: number;
 };
 
 export const StyledWrapper = styled.div<{ $draggable: boolean }>`

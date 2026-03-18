@@ -49,6 +49,11 @@ export default ExampleSwiperBasic;
 
 <ExampleSwiperBasic>
 
+
+## slidesPerView
+
+<ExampleSwiperSlidesPerView>
+
 ### Работа с ref
 
 Компонент предоставляет ref с методами для программного управления:

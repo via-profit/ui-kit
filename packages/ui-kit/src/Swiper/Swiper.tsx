@@ -2,7 +2,12 @@ import * as React from 'react';
 import Container, { SwiperContainerProps } from './SwiperContainer';
 import Wrapper, { SwiperWrapperProps } from './SwiperWrapper';
 import Track, { SwiperTrackProps } from './SwiperTrack';
-import SwiperSlide from './SwiperSlide';
+import SwiperSlide, { SwiperSlideBaseProps, SwiperSlideProps } from './SwiperSlide';
+
+export * from './SwiperSlide';
+
+export type SwiperSlideBaseElement = React.ReactElement<SwiperSlideBaseProps, typeof SwiperSlide>;
+export type SwiperSlideElement = React.ReactElement<SwiperSlideProps, typeof SwiperSlide>;
 
 export type SwiperRef = {
   next: () => void;
@@ -15,25 +20,14 @@ export type SwiperRef = {
 };
 
 export interface SwiperOverrides {
-  /**
-   * Swiper main container
-   */
   readonly Container?: React.ComponentType<
     SwiperContainerProps & React.RefAttributes<HTMLDivElement>
   >;
-
-  /**
-   * Swiper wrapper
-   */
   readonly Wrapper?: React.ComponentType<SwiperWrapperProps & React.RefAttributes<HTMLDivElement>>;
-
-  /**
-   * Swiper slides track
-   */
   readonly Track?: React.ComponentType<SwiperTrackProps & React.RefAttributes<HTMLDivElement>>;
 }
 
-export type SwiperProps = React.HTMLAttributes<HTMLDivElement> & {
+export type SwiperProps = Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> & {
   readonly dragThreshold?: number;
   readonly snap?: boolean;
   readonly draggable?: boolean;
@@ -44,13 +38,11 @@ export type SwiperProps = React.HTMLAttributes<HTMLDivElement> & {
   readonly autoplayInterval?: number;
   readonly pauseOnHover?: boolean;
   readonly keyboardControl?: boolean;
-  readonly threshold?: number; // минимальное расстояние для свайпа
-  readonly resistance?: boolean; // сопротивление на границах
-  /**
-   * Overridable components map
-   */
+  readonly threshold?: number;
+  readonly resistance?: boolean;
+  readonly slidesPerView?: number;
+  readonly children?: readonly SwiperSlideBaseElement[];
   readonly overrides?: SwiperOverrides;
-
 };
 
 export const Swiper = React.forwardRef((props: SwiperProps, ref: React.ForwardedRef<SwiperRef>) => {
@@ -69,15 +61,15 @@ export const Swiper = React.forwardRef((props: SwiperProps, ref: React.Forwarded
     keyboardControl = true,
     threshold = 20,
     resistance = true,
+    slidesPerView = 1,
     ...restProps
   } = props;
 
-  // Проверка на минимальное количество слайдов для infinite режима
-  const childrenCount = React.Children.count(children);
-
   // #region Slides
   const slides = React.useMemo(() => {
-    const childrenSlides = Array.isArray(children) ? children : [children];
+    const childrenSlides: readonly SwiperSlideElement[] = Array.isArray(children)
+      ? children
+      : [children];
 
     if (infinite) {
       if (childrenSlides.length < 2) {
@@ -86,44 +78,55 @@ export const Swiper = React.forwardRef((props: SwiperProps, ref: React.Forwarded
         return childrenSlides;
       }
 
-      const firstSlide = childrenSlides[0];
-      const lastSlide = childrenSlides[childrenSlides.length - 1];
+      if (childrenSlides.length < slidesPerView + 1) {
+        console.error(
+          `For infinite loop with slidesPerView=${slidesPerView}, need at least ${slidesPerView + 1} slides`,
+        );
 
-      return [
-        React.cloneElement(lastSlide as any, { key: `clone-last-${Date.now()}` }),
-        ...childrenSlides.map((slide, idx) =>
-          // eslint-disable-next-line react/no-array-index-key
-          React.cloneElement(slide as any, { key: `slide-${idx}-${Date.now()}` }),
-        ),
-        React.cloneElement(firstSlide as any, { key: `clone-first-${Date.now()}` }),
-      ];
+        return childrenSlides;
+      }
+
+      const headClones = childrenSlides.slice(-slidesPerView).map((slide, i) =>
+        React.cloneElement(slide as any, {
+          key: `clone-head-${i}-${Date.now()}`,
+        }),
+      );
+
+      const tailClones = childrenSlides.slice(0, slidesPerView).map((slide, i) =>
+        React.cloneElement(slide as any, {
+          key: `clone-tail-${i}-${Date.now()}`,
+        }),
+      );
+
+      const mainSlides = childrenSlides.map((slide, idx) =>
+        React.cloneElement(slide as any, {
+          key: `slide-${idx}-${Date.now()}`,
+        }),
+      );
+
+      return [...headClones, ...mainSlides, ...tailClones];
     }
 
     return childrenSlides.map((slide, idx) =>
-      // eslint-disable-next-line react/no-array-index-key
-      React.cloneElement(slide as any, { key: `slide-${idx}-${Date.now()}` }),
+      React.cloneElement(slide as any, {
+        key: `slide-${idx}-${Date.now()}`,
+      }),
     );
-  }, [children, infinite]);
+  }, [children, infinite, slidesPerView]);
 
   const total = slides.length;
-  const realSlidesCount = infinite ? total - 2 : total;
-
-  /**
-   * Return the initial index
-   */
-  const getInitialIndex = React.useCallback(() => {
-    if (!infinite) {
-      return Math.max(0, Math.min(initialIndex, total - 1));
-    }
-    if (realSlidesCount < 2) {
-      return 0;
-    }
-
-    return Math.min(initialIndex + 1, total - 2);
-  }, [infinite, initialIndex, total, realSlidesCount]);
+  const realSlidesCount = infinite ? total - 2 * slidesPerView : total;
+  const maxIndex = Math.max(0, total - slidesPerView);
 
   // #region States
-  const [index, setIndex] = React.useState(getInitialIndex);
+  const [index, setIndex] = React.useState(() => {
+    if (!infinite) {
+      return Math.max(0, Math.min(initialIndex, maxIndex));
+    }
+
+    return initialIndex + slidesPerView;
+  });
+
   const [offset, setOffset] = React.useState(0);
   const [isDragging, setIsDragging] = React.useState(false);
   const [disableAnimation, setDisableAnimation] = React.useState(false);
@@ -135,31 +138,34 @@ export const Swiper = React.forwardRef((props: SwiperProps, ref: React.Forwarded
   const lastX = React.useRef(0);
   const lastTime = React.useRef(0);
   const velocity = React.useRef(0);
-  const width = React.useRef(0);
   const wrapperRef = React.useRef<HTMLDivElement | null>(null);
   const trackRef = React.useRef<HTMLDivElement | null>(null);
   const isAnimating = React.useRef(false);
-  const commandQueue = React.useRef<(() => void)[]>([]);
   const autoplayTimer = React.useRef<NodeJS.Timeout>();
   const mounted = React.useRef(true);
+  const normalizeTimeout = React.useRef<NodeJS.Timeout>();
 
-  /**
-   * Calculating the real index (excluding clones)
-   */
+  // #region Real Index
   const realIndex = React.useMemo(() => {
-    if (!infinite) return index;
+    if (!infinite) {
+      return index;
+    }
 
-    if (index === 0) return total - 3;
-    if (index === total - 1) return 0;
+    const realIndex = index - slidesPerView;
 
-    return index - 1;
-  }, [index, total, infinite]);
+    if (realIndex < 0) {
+      return realSlidesCount + realIndex;
+    }
+    if (realIndex >= realSlidesCount) {
+      return realIndex - realSlidesCount;
+    }
+
+    return Math.min(realIndex, realSlidesCount - slidesPerView);
+  }, [index, infinite, slidesPerView, realSlidesCount]);
 
   const prevRealIndex = React.useRef(realIndex);
 
-  /**
-   * On slide change callback
-   */
+  // #region Effects
   React.useEffect(() => {
     if (realIndex !== prevRealIndex.current && mounted.current) {
       onSlideChange?.(realIndex);
@@ -167,9 +173,6 @@ export const Swiper = React.forwardRef((props: SwiperProps, ref: React.Forwarded
     }
   }, [realIndex, onSlideChange]);
 
-  /**
-   * Adjusting the index when changing the number of slides
-   */
   React.useEffect(() => {
     if (!mounted.current) return;
 
@@ -179,12 +182,115 @@ export const Swiper = React.forwardRef((props: SwiperProps, ref: React.Forwarded
     }
   }, [slides.length, index]);
 
-  // #region pointer events
+  // #region Normalization
+  const normalizeIndex = React.useCallback(() => {
+    if (!infinite || !mounted.current) return;
+
+    const firstRealIndex = slidesPerView;
+    const lastRealIndex = total - slidesPerView - 1;
+
+    if (index < firstRealIndex || index > lastRealIndex) {
+      const target = index < firstRealIndex ? lastRealIndex : firstRealIndex;
+
+      setDisableAnimation(true);
+
+      requestAnimationFrame(() => {
+        if (!mounted.current) return;
+
+        trackRef.current?.getBoundingClientRect();
+        setIndex(target);
+        setOffset(0);
+
+        requestAnimationFrame(() => {
+          if (mounted.current) {
+            setDisableAnimation(false);
+          }
+        });
+      });
+    }
+  }, [index, infinite, slidesPerView, total]);
+
+  // #region Navigation API
+
+  const indexRef = React.useRef(index);
+  React.useEffect(() => {
+    indexRef.current = index;
+  }, [index]);
+
+  const goToIndex = React.useCallback(
+    (i: number) => {
+      if (isAnimating.current) return;
+
+      let targetIndex = i;
+
+      if (infinite) {
+        targetIndex = i + slidesPerView;
+        const minIndex = slidesPerView;
+        const maxIndex = slidesPerView + realSlidesCount - 1;
+        targetIndex = Math.max(minIndex, Math.min(maxIndex, targetIndex));
+      } else {
+        targetIndex = Math.max(0, Math.min(maxIndex, i));
+      }
+
+      if (targetIndex === indexRef.current) {
+        return; // никуда не едем — флаг не трогаем
+      }
+
+      setDisableAnimation(false);
+      setIndex(targetIndex);
+      isAnimating.current = true;
+    },
+    [infinite, slidesPerView, realSlidesCount, maxIndex],
+  );
+
+  const next = React.useCallback(() => {
+    // if (isAnimating.current) return;
+
+    setDisableAnimation(false);
+
+    setIndex(prev => {
+      let nextIndex: number;
+
+      if (infinite) {
+        nextIndex = Math.min(prev + 1, total - 1);
+      } else {
+        nextIndex = Math.min(prev + 1, maxIndex);
+      }
+
+      // если индекс не меняется — не ставим флаг анимации
+      if (nextIndex === prev) {
+        return prev;
+      }
+
+      isAnimating.current = true;
+
+      return nextIndex;
+    });
+  }, [infinite, maxIndex, total]);
+
+  const prev = React.useCallback(() => {
+    // if (isAnimating.current) return;
+
+    setDisableAnimation(false);
+
+    setIndex(prev => {
+      const nextIndex = Math.max(prev - 1, 0);
+
+      if (nextIndex === prev) {
+        return prev;
+      }
+
+      isAnimating.current = true;
+
+      return nextIndex;
+    });
+  }, []);
+
+  // #region Pointer Events
   const onPointerDown = React.useCallback(
     (e: React.PointerEvent) => {
       if (!wrapperRef.current || !draggable) return;
 
-      width.current = wrapperRef.current.offsetWidth;
       dragging.current = true;
       isAnimating.current = false;
       setDisableAnimation(true);
@@ -217,19 +323,18 @@ export const Swiper = React.forwardRef((props: SwiperProps, ref: React.Forwarded
 
       let delta = lastX.current - startX.current;
 
-      // resistances
       if (resistance && !infinite) {
         if (index === 0 && delta > 0) {
           delta *= 0.3;
         }
-        if (index === total - 1 && delta < 0) {
+        if (index === maxIndex && delta < 0) {
           delta *= 0.3;
         }
       }
 
       setOffset(delta);
     },
-    [index, total, infinite, resistance],
+    [resistance, infinite, index, maxIndex],
   );
 
   const onPointerUp = React.useCallback(
@@ -251,8 +356,11 @@ export const Swiper = React.forwardRef((props: SwiperProps, ref: React.Forwarded
         nextIndex = delta < 0 ? index + 1 : index - 1;
       }
 
-      // check out of bounds
-      nextIndex = Math.max(0, Math.min(total - 1, nextIndex));
+      if (!infinite) {
+        nextIndex = Math.max(0, Math.min(maxIndex, nextIndex));
+      } else {
+        nextIndex = Math.max(0, Math.min(total - 1, nextIndex));
+      }
 
       setDisableAnimation(false);
 
@@ -269,7 +377,7 @@ export const Swiper = React.forwardRef((props: SwiperProps, ref: React.Forwarded
 
       (e.target as HTMLElement).releasePointerCapture(e.pointerId);
     },
-    [dragThreshold, index, snap, total, threshold],
+    [threshold, dragThreshold, index, maxIndex, snap, infinite, total],
   );
 
   const onLostPointerCapture = React.useCallback(
@@ -279,85 +387,6 @@ export const Swiper = React.forwardRef((props: SwiperProps, ref: React.Forwarded
       }
     },
     [onPointerUp],
-  );
-
-  /**
-   * Index normalization for infinite mode
-   */
-  const normalizeIndex = React.useCallback(
-    (after?: () => void) => {
-      if (!infinite || !mounted.current) {
-        after?.();
-
-        return;
-      }
-
-      const lastReal = total - 2;
-
-      if (index === 0 || index === total - 1) {
-        const target = index === 0 ? lastReal : 1;
-
-        setDisableAnimation(true);
-
-        requestAnimationFrame(() => {
-          if (!mounted.current) return;
-
-          trackRef.current?.getBoundingClientRect(); // force reflow
-          setIndex(target);
-          setOffset(0);
-
-          requestAnimationFrame(() => {
-            if (!mounted.current) return;
-            setDisableAnimation(false);
-            after?.();
-          });
-        });
-      } else {
-        after?.();
-      }
-    },
-    [index, infinite, total],
-  );
-
-  /**
-   * Exec commands with animation
-   */
-  const runCommand = React.useCallback(
-    (fn: () => void) => {
-      normalizeIndex(() => {
-        if (isAnimating.current) {
-          commandQueue.current.push(fn);
-        } else {
-          fn();
-        }
-      });
-    },
-    [normalizeIndex],
-  );
-
-  // #region Navigation API
-  const next = React.useCallback(() => {
-    runCommand(() => {
-      setDisableAnimation(false);
-      setIndex(i => Math.min(i + 1, total - 1));
-      isAnimating.current = true;
-    });
-  }, [runCommand, total]);
-
-  const prev = React.useCallback(() => {
-    runCommand(() => {
-      setDisableAnimation(false);
-      setIndex(i => Math.max(i - 1, 0));
-      isAnimating.current = true;
-    });
-  }, [runCommand]);
-
-  const goToIndex = React.useCallback(
-    (i: number) => {
-      const targetIndex = infinite ? i + 1 : i;
-      setIndex(Math.max(0, Math.min(total - 1, targetIndex)));
-    },
-    [total, infinite],
   );
 
   // #region Autoplay
@@ -383,6 +412,7 @@ export const Swiper = React.forwardRef((props: SwiperProps, ref: React.Forwarded
     setIsPaused(false);
   }, []);
 
+  // #region Keyboard
   React.useEffect(() => {
     if (!keyboardControl) return;
 
@@ -401,6 +431,7 @@ export const Swiper = React.forwardRef((props: SwiperProps, ref: React.Forwarded
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [keyboardControl, prev, next]);
 
+  // #region Hover
   React.useEffect(() => {
     if (!autoplay || !pauseOnHover) return;
 
@@ -419,6 +450,7 @@ export const Swiper = React.forwardRef((props: SwiperProps, ref: React.Forwarded
     };
   }, [autoplay, pauseOnHover, pause, resume]);
 
+  // #region Autoplay Effect
   React.useEffect(() => {
     if (autoplay) {
       startAutoplay();
@@ -432,21 +464,15 @@ export const Swiper = React.forwardRef((props: SwiperProps, ref: React.Forwarded
     };
   }, [autoplay, startAutoplay, isPaused]);
 
-  // #region transition end
+  // #region Transition End
   React.useEffect(() => {
     const track = trackRef.current;
     if (!track) return;
 
     const handleTransitionEnd = (e: TransitionEvent) => {
       if (e.propertyName !== 'transform') return;
-
-      normalizeIndex();
       isAnimating.current = false;
-
-      const nextCmd = commandQueue.current.shift();
-      if (nextCmd) {
-        nextCmd();
-      }
+      normalizeIndex(); // <-- вот здесь
     };
 
     track.addEventListener('transitionend', handleTransitionEnd);
@@ -454,20 +480,7 @@ export const Swiper = React.forwardRef((props: SwiperProps, ref: React.Forwarded
     return () => track.removeEventListener('transitionend', handleTransitionEnd);
   }, [normalizeIndex]);
 
-  // disableAnimation clean
-  React.useEffect(() => {
-    if (!disableAnimation) return;
-
-    const id = requestAnimationFrame(() => {
-      if (mounted.current) {
-        setDisableAnimation(false);
-      }
-    });
-
-    return () => cancelAnimationFrame(id);
-  }, [disableAnimation]);
-
-  // mount / unmount
+  // #region Mount
   React.useEffect(() => {
     mounted.current = true;
 
@@ -476,7 +489,7 @@ export const Swiper = React.forwardRef((props: SwiperProps, ref: React.Forwarded
     };
   }, []);
 
-  // Imperative handle
+  // #region Imperative Handle
   React.useImperativeHandle(
     ref,
     () => ({
@@ -491,7 +504,7 @@ export const Swiper = React.forwardRef((props: SwiperProps, ref: React.Forwarded
     [next, prev, goToIndex, realIndex, realSlidesCount, pause, resume],
   );
 
-  // Overrides
+  // #region Overrides
   const overridesMap = React.useMemo(
     () => ({
       Container: overrides?.Container || Container,
@@ -501,11 +514,41 @@ export const Swiper = React.forwardRef((props: SwiperProps, ref: React.Forwarded
     [overrides],
   );
 
+  const getSlideRealIndex = React.useCallback((domIndex: number): number => {
+    if (!infinite) {
+      return domIndex;
+    }
+
+    const totalSlides = realSlidesCount; // 8 реальных слайдов
+
+    if (domIndex < slidesPerView) {
+      // Левые клоны (индексы 0, 1, 2) - соответствуют последним слайдам
+      // domIndex: 0 -> последний слайд (7)
+      // domIndex: 1 -> предпоследний (6)
+      // domIndex: 2 -> пред-предпоследний (5)
+      return totalSlides - slidesPerView + domIndex;
+    }
+
+    if (domIndex >= total - slidesPerView) {
+      // Правые клоны (индексы 11, 12, 13) - соответствуют первым слайдам
+      // domIndex: 11 -> первый слайд (0)
+      // domIndex: 12 -> второй слайд (1)
+      // domIndex: 13 -> третий слайд (2)
+      return domIndex - (total - slidesPerView);
+    }
+
+    // Основные слайды (индексы 3-10) - вычитаем количество левых клонов
+    return domIndex - slidesPerView;
+    },
+    [infinite, slidesPerView, realSlidesCount, total],
+  );
+
   return (
     <overridesMap.Container {...restProps}>
       <overridesMap.Wrapper
         ref={wrapperRef}
         draggable={draggable}
+        slidesPerView={slidesPerView}
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
         onPointerUp={onPointerUp}
@@ -517,24 +560,55 @@ export const Swiper = React.forwardRef((props: SwiperProps, ref: React.Forwarded
           index={index}
           offset={offset}
           disableAnimation={disableAnimation}
+          slidesPerView={slidesPerView}
         >
           {slides.map((slide, i) => {
-            const distance = Math.abs(i - index);
-            const isVisible = distance <= 1;
-            // const isNearby = distance <= 2;
-            const isNearby = true;
+            const slideRealIndex = getSlideRealIndex(i);
 
-            if (!isVisible && !isNearby) {
-              return React.cloneElement(slide as any, {
-                key: (slide as any).key,
-              });
+            // Текущий реальный индекс первого видимого слайда
+            const currentRealIndex = realIndex; // 5
+
+            // Вычисляем какие реальные индексы должны быть видны (только 3 слайда!)
+            // При realIndex = 5 должны быть видны реальные индексы: 5, 6, 7
+            // При realIndex = 7 должны быть видны: 7, 0, 1
+            // При realIndex = 0 должны быть видны: 0, 1, 2
+
+            let isVisible = false;
+            let isNearby = false;
+
+            if (realSlidesCount <= slidesPerView) {
+              // Если слайдов меньше или равно slidesPerView, все видны
+              isVisible = true;
+            } else {
+              // Вычисляем индексы видимых слайдов с учетом цикличности
+              const visibleIndices = [];
+              for (let j = 0; j < slidesPerView; j++) {
+                visibleIndices.push((currentRealIndex + j) % realSlidesCount);
+              }
+              // visibleIndices = [5, 6, 7] при currentRealIndex = 5
+
+              // Проверяем, входит ли текущий слайд в видимые
+              isVisible = visibleIndices.includes(slideRealIndex);
+
+              // Вычисляем соседние слайды (перед первым видимым и после последнего видимого)
+              if (!isVisible) {
+                const prevIndex = (currentRealIndex - 1 + realSlidesCount) % realSlidesCount; // 4
+                const nextIndex = (currentRealIndex + slidesPerView) % realSlidesCount; // (5 + 3) % 8 = 0
+
+                isNearby = slideRealIndex === prevIndex || slideRealIndex === nextIndex;
+              }
             }
 
-            return React.cloneElement(slide as any, {
-              key: (slide as any).key,
+            console.log(`DOM[${i}] -> Real[${slideRealIndex}], visible: ${isVisible}, nearby: ${isNearby}`);
+
+
+            return React.cloneElement<SwiperSlideProps>(slide as SwiperSlideElement, {
+              slidesPerView,
               isVisible,
-              isActive: i === index,
-              distance,
+              isNearby,
+              key: slide.key || i.toString(),
+              'data-index': i,
+              'data-real-index': slideRealIndex,
             });
           })}
         </overridesMap.Track>

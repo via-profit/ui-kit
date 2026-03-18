@@ -1,8 +1,14 @@
 import styled from '@emotion/styled';
 import * as React from 'react';
 
-const StyledSlide = styled.div`
-  flex: 0 0 100%;
+type StyleProps = {
+  $slidesPerView: number;
+};
+
+const StyledSlide = styled.div<StyleProps>`
+  flex-grow: 0;
+  flex-shrink: 0;
+  flex-basis: calc(100% / ${({ $slidesPerView }) => $slidesPerView});
   height: 100%;
   display: flex;
   align-items: center;
@@ -10,18 +16,30 @@ const StyledSlide = styled.div`
   box-sizing: border-box;
 `;
 
-export type SwiperSlideProps = React.HTMLAttributes<HTMLDivElement> & {
+export type SwiperSlideBaseProps = React.HTMLAttributes<HTMLDivElement> & {
   readonly children: React.ReactNode;
-  readonly isVisible?: boolean;
+};
+
+export type SwiperSlideProps = SwiperSlideBaseProps & {
+  readonly isVisible: boolean;
+  readonly isNearby: boolean;
+  readonly slidesPerView: number;
+  readonly key: string;
 };
 
 export const SwiperSlide = React.forwardRef(
-  (props: SwiperSlideProps, ref: React.ForwardedRef<HTMLDivElement>) => {
-    const { children, isVisible, ...restProps } = props;
+  (props: SwiperSlideBaseProps | SwiperSlideProps, ref: React.ForwardedRef<HTMLDivElement>) => {
+    const {
+      children,
+      isVisible = true,
+      slidesPerView = 1,
+      isNearby = true,
+      ...restProps
+    } = props as SwiperSlideProps;
 
     return (
-      <StyledSlide {...restProps} ref={ref}>
-        {isVisible ? children : null}
+      <StyledSlide data-is-visible={isVisible} data-is-nearby={isNearby} {...restProps} $slidesPerView={slidesPerView} ref={ref}>
+        {isVisible || isNearby ? children : null}
       </StyledSlide>
     );
   },
