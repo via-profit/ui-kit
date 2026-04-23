@@ -12,6 +12,7 @@ import Menu, {
   AnchorPos,
   GetOptionSelected,
   MenuItemProps,
+  MenuProps,
   MenuRef,
   OnRequestClose,
   Value,
@@ -379,6 +380,11 @@ const Autocomplete = React.forwardRef(
       [filterItems],
     );
 
+    const renderChildren: MenuProps<T>['children'] = React.useCallback(
+      ({ index, item }, itemProps) => children({ index, item: item as T, inputValue }, itemProps),
+      [children, inputValue],
+    );
+
     /**
      * Only affected value change action
      */
@@ -411,22 +417,31 @@ const Autocomplete = React.forwardRef(
     }, [filteredItems]);
 
     React.useEffect(() => {
-      if (currentOpen !== isOpen || currentLoading !== isLoading) {
-        dispatch(actionSetPartial({ currentOpen: isOpen, currentLoading: isLoading }));
+      if (currentOpen !== isOpen) {
+        dispatch(actionSetPartial({ currentOpen: isOpen }));
       }
-    }, [isOpen, isLoading, dispatch, currentOpen, currentLoading]);
+    }, [isOpen, currentOpen, dispatch]);
 
     React.useEffect(() => {
-      if (JSON.stringify(items) !== JSON.stringify(itemsRef.current)) {
-        itemsRef.current = items;
-        const newFilteredItems = applyFilterForItems(inputValue, items);
-
-        dispatch(actionSetPartial({ filteredItems: newFilteredItems }));
-        if (!newFilteredItems.length) {
-          onRequestClose();
-        }
+      if (currentLoading !== isLoading) {
+        dispatch(actionSetPartial({ currentLoading: isLoading }));
       }
-    }, [items, inputValue, applyFilterForItems, dispatch, onRequestClose]);
+    }, [isLoading, currentLoading, dispatch]);
+
+    React.useEffect(() => {
+      // Сравниваем items более эффективно
+      if (itemsRef.current === items) {
+        return;
+      }
+
+      itemsRef.current = items;
+      const newFilteredItems = applyFilterForItems(inputValue, items);
+
+      dispatch(actionSetPartial({ filteredItems: newFilteredItems }));
+      if (!newFilteredItems.length && currentOpen) {
+        onRequestClose();
+      }
+    }, [items, inputValue, applyFilterForItems, dispatch, onRequestClose, currentOpen]);
 
     React.useEffect(() => {
       const mouseDownEvent = (event: MouseEvent) => {
@@ -677,9 +692,7 @@ const Autocomplete = React.forwardRef(
                 }
               }}
             >
-              {({ index, item }, itemProps) =>
-                children({ index, item: item as T, inputValue }, itemProps)
-              }
+              {renderChildren}
             </Menu>
           ),
           [

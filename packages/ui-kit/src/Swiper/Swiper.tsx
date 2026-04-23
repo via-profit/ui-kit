@@ -3,6 +3,7 @@ import Container, { SwiperContainerProps } from './SwiperContainer';
 import Wrapper, { SwiperWrapperProps } from './SwiperWrapper';
 import Track, { SwiperTrackProps } from './SwiperTrack';
 import SwiperSlide, { SwiperSlideBaseProps, SwiperSlideProps } from './SwiperSlide';
+import SwiperSlidesRenderer from './SwiperSlidesRenderer';
 
 export * from './SwiperSlide';
 
@@ -86,21 +87,24 @@ export const Swiper = React.forwardRef((props: SwiperProps, ref: React.Forwarded
         return childrenSlides;
       }
 
+      // Используем стабильные ключи без Date.now()
       const headClones = childrenSlides.slice(-slidesPerView).map((slide, i) =>
         React.cloneElement(slide as any, {
-          key: `clone-head-${i}-${Date.now()}`,
+          key: `clone-head-${i}`,
+          'data-clone': 'head',
         }),
       );
 
       const tailClones = childrenSlides.slice(0, slidesPerView).map((slide, i) =>
         React.cloneElement(slide as any, {
-          key: `clone-tail-${i}-${Date.now()}`,
+          key: `clone-tail-${i}`,
+          'data-clone': 'tail',
         }),
       );
 
       const mainSlides = childrenSlides.map((slide, idx) =>
         React.cloneElement(slide as any, {
-          key: `slide-${idx}-${Date.now()}`,
+          key: `slide-${idx}`,
         }),
       );
 
@@ -109,7 +113,7 @@ export const Swiper = React.forwardRef((props: SwiperProps, ref: React.Forwarded
 
     return childrenSlides.map((slide, idx) =>
       React.cloneElement(slide as any, {
-        key: `slide-${idx}-${Date.now()}`,
+        key: `slide-${idx}`,
       }),
     );
   }, [children, infinite, slidesPerView]);
@@ -514,33 +518,25 @@ export const Swiper = React.forwardRef((props: SwiperProps, ref: React.Forwarded
     [overrides],
   );
 
-  const getSlideRealIndex = React.useCallback((domIndex: number): number => {
-    if (!infinite) {
-      return domIndex;
-    }
+  const getSlideRealIndex = React.useCallback(
+    (domIndex: number): number => {
+      if (!infinite) {
+        return domIndex;
+      }
 
-    const totalSlides = realSlidesCount; // 8 реальных слайдов
+      const totalSlides = realSlidesCount;
 
-    if (domIndex < slidesPerView) {
-      // Левые клоны (индексы 0, 1, 2) - соответствуют последним слайдам
-      // domIndex: 0 -> последний слайд (7)
-      // domIndex: 1 -> предпоследний (6)
-      // domIndex: 2 -> пред-предпоследний (5)
-      return totalSlides - slidesPerView + domIndex;
-    }
+      if (domIndex < slidesPerView) {
+        return totalSlides - slidesPerView + domIndex;
+      }
 
-    if (domIndex >= total - slidesPerView) {
-      // Правые клоны (индексы 11, 12, 13) - соответствуют первым слайдам
-      // domIndex: 11 -> первый слайд (0)
-      // domIndex: 12 -> второй слайд (1)
-      // domIndex: 13 -> третий слайд (2)
-      return domIndex - (total - slidesPerView);
-    }
+      if (domIndex >= total - slidesPerView) {
+        return domIndex - (total - slidesPerView);
+      }
 
-    // Основные слайды (индексы 3-10) - вычитаем количество левых клонов
-    return domIndex - slidesPerView;
+      return domIndex - slidesPerView;
     },
-    [infinite, slidesPerView, realSlidesCount, total],
+    [infinite, realSlidesCount, slidesPerView, total],
   );
 
   return (
@@ -562,55 +558,13 @@ export const Swiper = React.forwardRef((props: SwiperProps, ref: React.Forwarded
           disableAnimation={disableAnimation}
           slidesPerView={slidesPerView}
         >
-          {slides.map((slide, i) => {
-            const slideRealIndex = getSlideRealIndex(i);
-
-            // Текущий реальный индекс первого видимого слайда
-            const currentRealIndex = realIndex; // 5
-
-            // Вычисляем какие реальные индексы должны быть видны (только 3 слайда!)
-            // При realIndex = 5 должны быть видны реальные индексы: 5, 6, 7
-            // При realIndex = 7 должны быть видны: 7, 0, 1
-            // При realIndex = 0 должны быть видны: 0, 1, 2
-
-            let isVisible = false;
-            let isNearby = false;
-
-            if (realSlidesCount <= slidesPerView) {
-              // Если слайдов меньше или равно slidesPerView, все видны
-              isVisible = true;
-            } else {
-              // Вычисляем индексы видимых слайдов с учетом цикличности
-              const visibleIndices = [];
-              for (let j = 0; j < slidesPerView; j++) {
-                visibleIndices.push((currentRealIndex + j) % realSlidesCount);
-              }
-              // visibleIndices = [5, 6, 7] при currentRealIndex = 5
-
-              // Проверяем, входит ли текущий слайд в видимые
-              isVisible = visibleIndices.includes(slideRealIndex);
-
-              // Вычисляем соседние слайды (перед первым видимым и после последнего видимого)
-              if (!isVisible) {
-                const prevIndex = (currentRealIndex - 1 + realSlidesCount) % realSlidesCount; // 4
-                const nextIndex = (currentRealIndex + slidesPerView) % realSlidesCount; // (5 + 3) % 8 = 0
-
-                isNearby = slideRealIndex === prevIndex || slideRealIndex === nextIndex;
-              }
-            }
-
-            console.log(`DOM[${i}] -> Real[${slideRealIndex}], visible: ${isVisible}, nearby: ${isNearby}`);
-
-
-            return React.cloneElement<SwiperSlideProps>(slide as SwiperSlideElement, {
-              slidesPerView,
-              isVisible,
-              isNearby,
-              key: slide.key || i.toString(),
-              'data-index': i,
-              'data-real-index': slideRealIndex,
-            });
-          })}
+          <SwiperSlidesRenderer
+            slides={slides as readonly SwiperSlideElement[]}
+            slidesPerView={slidesPerView}
+            realIndex={realIndex}
+            realSlidesCount={realSlidesCount}
+            getSlideRealIndex={getSlideRealIndex}
+          />
         </overridesMap.Track>
       </overridesMap.Wrapper>
     </overridesMap.Container>
