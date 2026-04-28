@@ -16,7 +16,6 @@ export type SelectboxButtonProps = Omit<ButtonProps, 'type'> & {
 type StyleProps = {
   readonly $fullWidth?: boolean;
   readonly $error?: boolean;
-  readonly $anchorPos?: AnchorPos;
   readonly $isOpen?: boolean;
 };
 
@@ -46,35 +45,7 @@ const StyledSelectboxButton = styled(Button)<StyleProps>`
       }
     `}
   transition: none;
-  ${({ theme, $isOpen, $anchorPos }) =>
-    $isOpen &&
-    $anchorPos &&
-    ['bottom-fill', 'top-fill'].includes($anchorPos) &&
-    css`
-      border-width: 1px;
-      border-style: solid;
-      border-color: ${theme.isDark
-        ? theme.color.textPrimary.darken(100).toString()
-        : theme.color.textPrimary.lighten(150).toString()};
-    `};
-
-  ${({ $anchorPos, $isOpen }) =>
-    $isOpen &&
-    $anchorPos === 'bottom-fill' &&
-    css`
-      border-bottom-left-radius: 0;
-      border-bottom-right-radius: 0;
-      border-bottom: 0;
-    `};
-
-  ${({ $anchorPos, $isOpen }) =>
-    $isOpen &&
-    $anchorPos === 'top-fill' &&
-    css`
-      border-top-left-radius: 0;
-      border-top-right-radius: 0;
-      border-top: 0;
-    `};
+  
 `;
 
 const StyledButtonTextWrapper = styled(ButtonTextWrapper)`
@@ -93,7 +64,6 @@ const SelectboxButton: React.ForwardRefRenderFunction<HTMLButtonElement, Selectb
       $error={error}
       {...nativeProps}
       $isOpen={isOpen}
-      $anchorPos={anchorPos}
       overrides={{
         TextWrapper: StyledButtonTextWrapper,
       }}

@@ -1,9 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Container, { PopperContainerProps, PositionStrategy } from './PopperContainer';
-import { AnchorPos, usePopper } from './usePopprer';
+import { AnchorPos, usePopper } from './usePopper';
 
-export * from './usePopprer';
+export * from './usePopper';
 // export type AnchorPos = Di | `${Di}-${Mod}` | Au | `${Au}-${Di}`;
 
 export interface PopperProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -44,6 +44,8 @@ export interface PopperProps extends React.HTMLAttributes<HTMLDivElement> {
    * ```
    */
   readonly anchorPos?: AnchorPos;
+
+  readonly alternativePlacements?: readonly AnchorPos[];
 
   readonly onAnchorPosChanged?: (anchorPos: AnchorPos) => void;
 
@@ -162,7 +164,6 @@ export interface PopperOverrides {
 
 export const PORTAL_ID = 'ui-kit-portal';
 
-
 const Popper: React.ForwardRefRenderFunction<HTMLDivElement, PopperProps> = (props, ref) => {
   const {
     isOpen,
@@ -173,7 +174,8 @@ const Popper: React.ForwardRefRenderFunction<HTMLDivElement, PopperProps> = (pro
     anchorPos = 'auto',
     positionStrategy = 'fixed',
     viewportMargin = 30,
-    autoFlip = true,
+    autoFlip = false,
+    alternativePlacements,
     offset = 0,
     onAnchorPosChanged,
     ...nativeProps
@@ -188,6 +190,7 @@ const Popper: React.ForwardRefRenderFunction<HTMLDivElement, PopperProps> = (pro
     autoFlip,
     offset,
     viewportMargin,
+    alternativePlacements,
     isOpen,
   });
 
@@ -232,6 +235,7 @@ const Popper: React.ForwardRefRenderFunction<HTMLDivElement, PopperProps> = (pro
       onAnchorPosChanged(actualPlacement);
     }
   }, [anchorPos, actualPlacement, onAnchorPosChanged]);
+  const childrenMemo = React.useMemo(() => children, [children]);
 
   const renderNode = React.useCallback(
     () => (
@@ -242,9 +246,9 @@ const Popper: React.ForwardRefRenderFunction<HTMLDivElement, PopperProps> = (pro
           ...nativeProps.style,
           opacity: isVisible ? 1 : 0,
           pointerEvents: isVisible ? 'auto' : 'none',
-          // transformOrigin: getTransformOrigin(actualPlacement),
+          // zIndex: zIndex,
           ...(positionStrategy === 'fixed' && {
-            zIndex: zIndex,
+            position: 'fixed',
           }),
         }}
         zIndex={zIndex}
@@ -264,7 +268,7 @@ const Popper: React.ForwardRefRenderFunction<HTMLDivElement, PopperProps> = (pro
           }
         }}
       >
-        {children}
+        {childrenMemo}
       </overridesMap.Container>
     ),
     [
@@ -276,7 +280,7 @@ const Popper: React.ForwardRefRenderFunction<HTMLDivElement, PopperProps> = (pro
       actualPlacement,
       positionStrategy,
       zIndex,
-      children,
+      childrenMemo,
       popperRef,
       ref,
     ],

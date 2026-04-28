@@ -1,12 +1,12 @@
 import * as React from 'react';
 
 import { GetOptionSelected, MenuRef, OnRequestClose, Value } from '../Menu';
-import type { MenuItemCommonProps } from '../Menu/MenuItem';
+import type { MenuItemProps } from '../Menu/MenuItem';
 import SelectboxItem from '../Menu/MenuItem';
 import Button, { SelectboxButtonProps } from './SelectboxButton';
 import Spinner from '../LoadingIndicator/Spinner';
 import Icon, { SelectboxChevronIconProps } from './SelectboxChevronIcon';
-import { AnchorPos } from '../Popper';
+import { AnchorPos, PositionStrategy } from '../Popper';
 import { mouseEventMap } from '../ClickOutside';
 import Label, { TextFieldLabelProps } from '../TextField/TextFieldLabel';
 import Asterisk, { TextFieldLabelAsteriskProps } from '../TextField/TextFieldLabelAsterisk';
@@ -46,6 +46,11 @@ export interface SelectboxProps<T, Multiple extends boolean | undefined = undefi
    * Default: `bottom`
    */
   readonly anchorPos?: AnchorPos;
+  readonly positionStrategy?: PositionStrategy;
+
+  readonly autoFlip?: boolean;
+
+
 
   /**
    * Text field loading state\
@@ -204,7 +209,7 @@ export type Children<T> = (
     item: T;
     index: number;
   },
-  itemProps: MenuItemCommonProps,
+  itemProps: MenuItemProps,
 ) => React.ReactNode;
 
 export type ItemToString<T, Multiple extends boolean | undefined = undefined> = (
@@ -263,11 +268,12 @@ const Selectbox = React.forwardRef(
       error,
       errorText,
       notSetLabel = 'Not set',
+      autoFlip = true,
+      positionStrategy,
       ...nativeButtonProps
     } = props;
 
     const menuRef = React.useRef<MenuRef | null>(null);
-    const [actualPlacement, setActualPlacement] = React.useState(anchorPos);
     const [anchorElement, setAnchorElement] = React.useState<HTMLElement | null>(null);
 
     const overridesMap = React.useMemo(
@@ -359,11 +365,11 @@ const Selectbox = React.forwardRef(
         fullWidth,
         error,
         isOpen,
-        anchorPos: actualPlacement,
+        anchorPos,
         endIcon: isLoading ? <Spinner /> : <overridesMap.Icon isOpen={isOpen} />,
         ...nativeButtonProps,
       }),
-      [fullWidth, error, isOpen, actualPlacement, isLoading, overridesMap, nativeButtonProps],
+      [fullWidth, error, isOpen, anchorPos, isLoading, overridesMap, nativeButtonProps],
     );
 
     const labelProps = React.useMemo(
@@ -398,16 +404,18 @@ const Selectbox = React.forwardRef(
         <overridesMap.ErrorText error={error}>{errorText}</overridesMap.ErrorText>
 
         <SelectboxMenu
-          actualPlacement={actualPlacement}
           multiple={multiple}
           items={items}
           value={value}
           isOpen={isOpen}
+          anchorPos={anchorPos}
+          positionStrategy={positionStrategy}
+          autoFlip={autoFlip}
+          alternativePlacements={['bottom-fill', 'top-fill']}
           anchorElement={anchorElement}
           getOptionSelected={getOptionSelected}
           onChange={onChange}
           onRequestClose={onRequestClose}
-          onAnchorPosChanged={setActualPlacement}
           ref={menuRef}
         >
           {children}

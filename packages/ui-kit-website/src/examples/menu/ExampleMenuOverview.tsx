@@ -45,6 +45,7 @@ const ExampleMenuOverview: React.FC = () => {
         anchorPos="bottom-fill"
         isOpen={Boolean(anchorElement)}
         value={value}
+        autoFlip
         items={countries}
         getOptionSelected={({ item, value }) => item.code === value.code}
         onRequestClose={() => setAnchorElement(null)}

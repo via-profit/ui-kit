@@ -72,6 +72,8 @@ const ExampleMenuAPI: React.FC = () => {
           anchorPos="bottom"
           autofocus={false}
           value={value}
+          maxWidth={180}
+
           items={items}
           getOptionSelected={({ item, value }) => item.id === value.id}
           onSelectItem={item => setValue(item)}

@@ -13,7 +13,7 @@ type StyeldMenuItemProps = {
   readonly $variant: NonNullable<AutocompleteItemProps['variant']>;
 };
 const StyeldMenuItem = styled(MenuItem, {
-  shouldForwardProp: p => !['$vatiant'].includes(p),
+  shouldForwardProp: p => !['variant'].includes(p),
 })<StyeldMenuItemProps>`
   ${({ $variant, theme }) =>
     $variant === 'virtual' &&

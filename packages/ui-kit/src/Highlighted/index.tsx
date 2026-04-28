@@ -57,16 +57,12 @@ export interface HighlightedOverrides {
   /**
    * Mark element (HTML <mark>)
    */
-  readonly Mark?: React.ComponentType<
-    HighlightedMarkProps & React.RefAttributes<HTMLElement>
-  >;
+  readonly Mark?: React.ComponentType<HighlightedMarkProps & React.RefAttributes<HTMLElement>>;
 
   /**
    * Text element (HTML <span>)regex
    */
-  readonly Text?: React.ComponentType<
-    HighlightedTextProps & React.RefAttributes<HTMLSpanElement>
-  >;
+  readonly Text?: React.ComponentType<HighlightedTextProps & React.RefAttributes<HTMLSpanElement>>;
 }
 
 export const escapeRegex = (pattern: string) => pattern.replace(/[/\-\\^$*+?.()|[\]{}]/g, '\\$&');
@@ -109,23 +105,29 @@ const Highlighted: React.ForwardRefRenderFunction<HTMLSpanElement, HighlightedPr
     [overrides],
   );
 
+  const renderParts = React.useCallback(() => {
+    if (disabledHighlighting || patterns.length === 0) {
+      return null;
+    }
+
+    return text.split(regex).map((part, i) => {
+      const isMatch = part.match(regex) !== null;
+
+      return isMatch ? (
+        <overridesMap.Mark key={i}>{part}</overridesMap.Mark>
+      ) : (
+        <overridesMap.Text key={i}>{part}</overridesMap.Text>
+      );
+    });
+  }, [disabledHighlighting, patterns.length, regex, text, overridesMap]);
+
   return (
     <overridesMap.Container {...nativeProps} ref={ref}>
       {disabledHighlighting && <overridesMap.Text>{text}</overridesMap.Text>}
       {!disabledHighlighting && patterns.length === 0 && (
         <overridesMap.Text>{text}</overridesMap.Text>
       )}
-      {!disabledHighlighting &&
-        patterns.length > 0 &&
-        text
-          .split(regex)
-          .map((part, i) =>
-            regex.test(part) ? (
-              <overridesMap.Mark key={i}>{part}</overridesMap.Mark>
-            ) : (
-              <overridesMap.Text key={i}>{part}</overridesMap.Text>
-            ),
-          )}
+      {renderParts()}
     </overridesMap.Container>
   );
 };

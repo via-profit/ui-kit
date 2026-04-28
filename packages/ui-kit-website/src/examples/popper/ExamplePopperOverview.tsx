@@ -13,6 +13,7 @@ const StyledAnchorContainer = styled.div`
   background-color: ${({ theme }) => theme.color.backgroundPrimary.toString()};
   border-radius: ${({ theme }) => theme.shape.radiusFactor}em;
   overflow: auto;
+    position: relative;
 `;
 
 const Inner = styled.div`
@@ -43,9 +44,11 @@ const ExampleMenuAnchorPos: React.FC = () => {
           </StyledButton>
           <Popper
             anchorElement={anchorElement}
-            anchorPos="bottom"
+            anchorPos="auto-bottom"
+            autoFlip
+            positionStrategy="absolute"
             isOpen={Boolean(anchorElement)}
-            zIndex={zIndex.header - 1}
+            onAnchorPosChanged={(newAnchorPos) => console.debug(newAnchorPos)}
           >
             <Surface>
               <FormattedMessage defaultMessage="Какой-либо контент" />

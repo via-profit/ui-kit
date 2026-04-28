@@ -99,6 +99,7 @@ export type AnchorPos = Direction | Modifier | AutoModifier;
 export interface UsePopperProps {
   readonly anchorElement: HTMLElement | null;
   readonly anchorPos?: AnchorPos;
+  readonly alternativePlacements?: readonly AnchorPos[];
   readonly positionStrategy?: PositionStrategy;
   readonly autoFlip?: boolean;
   readonly offset?: number;
@@ -168,15 +169,23 @@ export const findScrollableAncestor = (
   return window;
 };
 
-export const usePopper = ({
-  anchorElement,
-  anchorPos = 'auto',
-  positionStrategy = 'fixed',
-  autoFlip = true,
-  offset = 0,
-  viewportMargin = 10,
-  isOpen = false,
-}: UsePopperProps): UsePopperResult => {
+
+
+
+
+export const usePopper = (props: UsePopperProps): UsePopperResult => {
+  const {
+    anchorElement,
+    anchorPos = 'auto',
+    positionStrategy = 'fixed',
+    autoFlip = false,
+    offset = 0,
+    viewportMargin = 10,
+    isOpen = false,
+    alternativePlacements,
+  } = props;
+  const isMountedRef = React.useRef(false);
+  const isPositioningRef = React.useRef(false);
   const [actualPlacement, setActualPlacement] = React.useState<AnchorPos>(anchorPos);
   const [style, setStyle] = React.useState<React.CSSProperties | null>(null);
   const [isVisible, setIsVisible] = React.useState(false);
@@ -279,9 +288,38 @@ export const usePopper = ({
 
       // For the final positioning, we take into account the strategy
       if (positionStrategy === 'absolute') {
+        // Для absolute позиционирования нужно учитывать:
+        // 1. Прокрутку страницы (scrollX/scrollY)
+        // 2. Позицию относительно ближайшего positioned ancestor
+
+        // Получаем offset родителя с позиционированием
+        let offsetParent: Element | null = popperRef.current?.offsetParent || null;
+
+        // Если нет offsetParent или это body, используем document.documentElement
+        if (!offsetParent || offsetParent === document.body) {
+          offsetParent = document.documentElement;
+        }
+
+        const offsetParentRect = offsetParent.getBoundingClientRect();
+
+        // Вычисляем позицию относительно offsetParent
+        // left/top уже относительно viewport, вычитаем позицию offsetParent
+        let relativeLeft = left - offsetParentRect.left;
+        let relativeTop = top - offsetParentRect.top;
+
+        // Добавляем прокрутку offsetParent (если он скроллится)
+        if (offsetParent !== document.documentElement && offsetParent !== document.body) {
+          relativeLeft += (offsetParent as HTMLElement).scrollLeft || 0;
+          relativeTop += (offsetParent as HTMLElement).scrollTop || 0;
+        } else {
+          // Для document.documentElement используем window.scroll
+          relativeLeft += window.scrollX;
+          relativeTop += window.scrollY;
+        }
+
         return {
-          left: left + window.scrollX,
-          top: top + window.scrollY,
+          left: relativeLeft,
+          top: relativeTop,
           width,
         };
       }
@@ -291,12 +329,10 @@ export const usePopper = ({
     [offset, positionStrategy],
   );
 
-  // const clampPopperToContainer = React.useCallback(
-  //   (style: { left: number; top: number; width?: number }, _popperRect: DOMRect) => style,
-  //   [],
-  // );
   const clampPopperToContainer = React.useCallback(
     (style: { left: number; top: number; width?: number }, popperRect: DOMRect) => {
+
+
       // Если нет scrollableAncestor, используем document.documentElement как fallback
       const container =
         scrollableAncestor instanceof HTMLElement ? scrollableAncestor : document.documentElement;
@@ -423,71 +459,38 @@ export const usePopper = ({
     return order;
   }, []);
 
+  // #region Get Preferred Placements
   const getPreferredPlacements = React.useCallback(
     (preferredPlacement: AnchorPos, anchorRect: DOMRect, popperRect: DOMRect) => {
-      // Check the auto placements
-      if (preferredPlacement.startsWith('auto')) {
-        const [, preferredDirection = 'bottom'] = preferredPlacement.split('-');
-
-        const allPlacements: AnchorPos[] = [
-          'bottom',
-          'bottom-start',
-          'bottom-end',
-          'bottom-left',
-          'bottom-right',
-          'top',
-          'top-left',
-          'top-right',
-          'top-start',
-          'top-end',
-          'left',
-          'left-top',
-          'left-bottom',
-          'right',
-          'right-top',
-          'right-bottom',
-        ];
-
-        // Sorting placements
-        const sortedPlacements = [...allPlacements].sort((a, b) => {
-          const aDir = a.split('-')[0];
-          const bDir = b.split('-')[0];
-
-          if (aDir === preferredDirection && bDir !== preferredDirection) return -1;
-          if (aDir !== preferredDirection && bDir === preferredDirection) return 1;
-
-          return 0;
+      const tryPlacement = (placement: AnchorPos) => {
+        const viewportStyle = getPositionStyle({
+          place: placement,
+          anchorRect,
+          popperRect,
+          forViewportCheck: true,
         });
 
-        for (const place of sortedPlacements) {
-          const viewportStyle = getPositionStyle({
-            place,
-            anchorRect,
-            popperRect,
-            forViewportCheck: true,
-          });
-          const fits = checkIfViewportFits(viewportStyle, popperRect);
-
-          if (fits) {
-            const finalStyle = getPositionStyle({
-              place,
-              anchorRect,
-              popperRect,
-              forViewportCheck: false,
-            });
-
-            return {
-              found: true,
-              placement: place,
-              style: clampPopperToContainer(finalStyle, popperRect),
-            };
-          }
+        if (!checkIfViewportFits(viewportStyle, popperRect)) {
+          return null;
         }
-      }
 
-      if (!autoFlip) {
         const finalStyle = getPositionStyle({
-          place: preferredPlacement,
+          place: placement,
+          anchorRect,
+          popperRect,
+          forViewportCheck: false,
+        });
+
+        return {
+          found: true,
+          placement,
+          style: clampPopperToContainer(finalStyle, popperRect),
+        };
+      };
+
+      const fallback = (placement: AnchorPos) => {
+        const finalStyle = getPositionStyle({
+          place: placement,
           anchorRect,
           popperRect,
           forViewportCheck: false,
@@ -495,99 +498,134 @@ export const usePopper = ({
 
         return {
           found: false,
-          placement: preferredPlacement,
+          placement,
           style: clampPopperToContainer(finalStyle, popperRect),
         };
+      };
+
+      const isAuto = preferredPlacement.startsWith('auto');
+      const isFill = preferredPlacement.endsWith('fill');
+
+      // -------------------------------------------------------
+      // 1. EXPLICIT (top, bottom, left, right, top-left, ...)
+      // -------------------------------------------------------
+      if (!isAuto && !isFill) {
+        if (!autoFlip) {
+          return tryPlacement(preferredPlacement) ?? fallback(preferredPlacement);
+        }
+
+        // Формируем порядок без дубликатов
+        const order = Array.from(new Set([
+          preferredPlacement,
+          ...(alternativePlacements?.filter(p => !p.startsWith('auto') && !p.endsWith('fill')) ?? []),
+          ...(placementsOrder[preferredPlacement] ?? []),
+        ]));
+
+        for (const p of order) {
+          const r = tryPlacement(p);
+          if (r) return r;
+        }
+
+        return fallback(preferredPlacement);
       }
 
-      /**
-       * bottom-fill, top-fill
-       */
-      if (preferredPlacement.endsWith('fill')) {
-        const [preferredDirection = 'bottom'] = preferredPlacement.split('-');
-        const allPlacements: AnchorPos[] = ['top-fill', 'bottom-fill'];
-        const sortedPlacements = [...allPlacements].sort((a, b) => {
-          const aDir = a.split('-')[0];
-          const bDir = b.split('-')[0];
+      // -------------------------------------------------------
+      // 2. FILL (bottom-fill, top-fill)
+      // -------------------------------------------------------
+      if (isFill) {
+        const [dir] = preferredPlacement.split('-');
 
-          if (aDir === preferredDirection && bDir !== preferredDirection) return -1;
-          if (aDir !== preferredDirection && bDir === preferredDirection) return 1;
+        if (!autoFlip) {
+          return tryPlacement(preferredPlacement) ?? fallback(preferredPlacement);
+        }
 
+        const opposite = dir === 'bottom' ? 'top-fill' : 'bottom-fill';
+
+        // Формируем порядок: fill сначала, потом обычные позиции из альтернатив, потом дефолтные
+        const order = Array.from(new Set([
+          preferredPlacement,
+          opposite,
+          // Обычные позиции из alternativePlacements (не auto и не fill)
+          ...(alternativePlacements?.filter(p => !p.startsWith('auto') && !p.endsWith('fill')) ?? []),
+          // Обычные позиции из дефолтного порядка (не fill)
+          ...(placementsOrder[preferredPlacement]?.filter(p => !p.endsWith('fill')) ?? []),
+        ]));
+
+        for (const p of order) {
+          const r = tryPlacement(p as AnchorPos);
+          if (r) return r;
+        }
+
+        return fallback(preferredPlacement);
+      }
+
+      // -------------------------------------------------------
+      // 3. AUTO
+      // -------------------------------------------------------
+      if (isAuto) {
+        // Если autoFlip выключен - просто используем дефолтное направление
+        if (!autoFlip) {
+          const [, dir = 'bottom'] = preferredPlacement.split('-');
+          const defaultPlacement = dir as AnchorPos;
+          return tryPlacement(defaultPlacement) ?? fallback(defaultPlacement);
+        }
+
+        const [, dir = 'bottom'] = preferredPlacement.split('-');
+
+        const base = alternativePlacements?.length
+          ? alternativePlacements
+          : [
+            'bottom',
+            'bottom-start',
+            'bottom-end',
+            'bottom-left',
+            'bottom-right',
+            'top',
+            'top-left',
+            'top-right',
+            'top-start',
+            'top-end',
+            'left',
+            'left-top',
+            'left-bottom',
+            'right',
+            'right-top',
+            'right-bottom',
+          ];
+
+        const sorted = [...base].sort((a, b) => {
+          const ad = a.split('-')[0];
+          const bd = b.split('-')[0];
+
+          if (ad === dir && bd !== dir) return -1;
+          if (ad !== dir && bd === dir) return 1;
           return 0;
         });
 
-        for (const place of sortedPlacements) {
-          const viewportStyle = getPositionStyle({
-            place,
-            anchorRect,
-            popperRect,
-            forViewportCheck: true,
-          });
-          const fits = checkIfViewportFits(viewportStyle, popperRect);
-
-          if (fits) {
-            const finalStyle = getPositionStyle({
-              place,
-              anchorRect,
-              popperRect,
-              forViewportCheck: false,
-            });
-
-            return {
-              found: true,
-              placement: place,
-              style: clampPopperToContainer(finalStyle, popperRect),
-            };
-          }
+        for (const p of sorted) {
+          const r = tryPlacement(p as AnchorPos);
+          if (r) return r;
         }
+
+        return fallback(dir as AnchorPos);
       }
 
-      /**
-       * Other
-       */
-      const order = placementsOrder[preferredPlacement] || placementsOrder.bottom;
-
-      for (const place of order) {
-        const viewportStyle = getPositionStyle({
-          place,
-          anchorRect,
-          popperRect,
-          forViewportCheck: true,
-        });
-        const fits = checkIfViewportFits(viewportStyle, popperRect);
-
-        if (fits) {
-          const finalStyle = getPositionStyle({
-            place,
-            anchorRect,
-            popperRect,
-            forViewportCheck: false,
-          });
-
-          return {
-            found: true,
-            placement: place,
-            style: clampPopperToContainer(finalStyle, popperRect),
-          };
-        }
-      }
-
-      const finalStyle = getPositionStyle({
-        place: preferredPlacement,
-        anchorRect,
-        popperRect,
-        forViewportCheck: false,
-      });
-
-      return {
-        found: false,
-        placement: preferredPlacement,
-        style: clampPopperToContainer(finalStyle, popperRect),
-      };
+      // -------------------------------------------------------
+      // 4. SUPER FALLBACK
+      // -------------------------------------------------------
+      return fallback('bottom' as AnchorPos);
     },
-    [autoFlip, getPositionStyle, checkIfViewportFits, clampPopperToContainer, placementsOrder],
+    [
+      autoFlip,
+      getPositionStyle,
+      checkIfViewportFits,
+      clampPopperToContainer,
+      placementsOrder,
+      alternativePlacements,
+    ],
   );
 
+  // #region Calculate Position
   const calculatePosition = React.useCallback(() => {
     if (!anchorElement || !popperRef.current) {
       return;
@@ -603,15 +641,6 @@ export const usePopper = ({
     setStyle(style);
   }, [anchorElement, anchorPos, getPreferredPlacements]);
 
-  // const getTransformOrigin = React.useCallback((placement: AnchorPos): string => {
-  //   if (placement.startsWith('top')) return 'bottom center';
-  //   if (placement.startsWith('bottom')) return 'top center';
-  //   if (placement.startsWith('left')) return 'right center';
-  //   if (placement.startsWith('right')) return 'left center';
-  //
-  //   return 'top center';
-  // }, []);
-
   /**
    * Open / Close popper logic
    */
@@ -623,7 +652,7 @@ export const usePopper = ({
       calculatePosition();
       setIsVisible(true);
     }
-  }, [actualPlacement, anchorElement, getPreferredPlacements, isOpen, calculatePosition]);
+  }, [anchorElement, getPreferredPlacements, isOpen, calculatePosition]);
 
   /**
    * The anchor element changes

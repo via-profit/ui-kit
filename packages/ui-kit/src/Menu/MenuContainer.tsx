@@ -110,6 +110,8 @@ export interface MenuProps<T, Multiple extends boolean | undefined = undefined> 
    */
   readonly anchorPos?: AnchorPos;
 
+  readonly alternativePlacements?: readonly AnchorPos[];
+
   readonly onAnchorPosChanged?: (anchorPos: AnchorPos) => void;
 
   /**
@@ -193,6 +195,29 @@ export interface MenuProps<T, Multiple extends boolean | undefined = undefined> 
    * The function that will be called at the moment when you want to close the menu
    */
   readonly onRequestClose?: OnRequestClose;
+
+  /**
+   * List menu maximum width (px, em, etc.)\
+   * Using pixels:
+   * ```tsx
+   * <Menu
+   *  maxWidth={250}
+   * >
+   * ```
+   * Using em:
+   * ```tsx
+   * <Menu
+   *  maxWidth="16em"
+   * >
+   * ```
+   * Using pixels:
+   * ```tsx
+   * <Menu
+   *  maxWidth="16px"
+   * >
+   * ```
+   */
+  readonly maxWidth?: number | string;
 }
 
 export interface MenuOverrides {
@@ -261,10 +286,10 @@ export type MenuRef = {
    */
   getListElement: () => HTMLDivElement | null;
 
-  setActualPlacement: (placement: AnchorPos) => void;
+  // setActualPlacement: (placement: AnchorPos) => void;
 };
 
-export type Value<T, Multiple> = Multiple extends undefined | undefined ? T | null : readonly T[];
+export type Value<T, Multiple> = Multiple extends undefined ? T | null : readonly T[];
 export type GetOptionSelected<T> = (payload: { readonly item: T; readonly value: T }) => boolean;
 
 export type OnSelectItem<T, Multiple extends boolean | undefined = undefined> = (
@@ -281,6 +306,24 @@ export type OnRequestClose = (
 
 const onRequestCloseDefault = () => undefined;
 
+const isEqual = <T,>(a: T, b: T): boolean => {
+  if (a === b) {
+    return true;
+  }
+  if (typeof a !== 'object' || typeof b !== 'object' || a === null || b === null) {
+    return false;
+  }
+
+  const keysA = Object.keys(a);
+  const keysB = Object.keys(b);
+
+  if (keysA.length !== keysB.length) return false;
+
+  return keysA.every(
+    key => Object.prototype.hasOwnProperty.call(b, key) && (a as any)[key] === (b as any)[key],
+  );
+};
+
 const MenuContainer = React.forwardRef(
   <T, Multiple extends boolean | undefined = undefined>(
     props: MenuProps<T, Multiple>,
@@ -295,6 +338,7 @@ const MenuContainer = React.forwardRef(
       closeOutsideClick = true,
       isOpen = false,
       anchorPos = 'bottom',
+      alternativePlacements = ['bottom', 'top'],
       positionStrategy,
       autoFlip,
       viewportMargin,
@@ -307,139 +351,114 @@ const MenuContainer = React.forwardRef(
       zIndex,
       onSelectItem,
       getOptionSelected,
+      maxWidth,
     } = props;
-    const [actualPlacement, setActualPlacement] = React.useState(anchorPos);
+
+    // const [actualPlacement, setActualPlacement] = React.useState(anchorPos);
+    const [currentAnchorElement, setAnchorElement] = React.useState(anchorElement);
+
     const overridesMap = React.useMemo(
       () => ({
         List: overrides?.List || List,
         Popper: overrides?.Popper || Popper,
       }),
-      [overrides],
+      [overrides?.List, overrides?.Popper],
     );
 
-    const getSelectedIndexes = React.useCallback(() => {
-      const idx = new Set<number>();
-
-      if (value !== null) {
-        if (typeof getOptionSelected === 'function') {
-          if (multiple) {
-            (value as T[]).forEach(v => {
-              idx.add(items.findIndex(item => getOptionSelected({ item, value: v })));
-            });
-          } else {
-            idx.add(items.findIndex(item => getOptionSelected({ item, value: value as T })));
-          }
-        } else {
-          if (multiple) {
-            (value as T[]).forEach(v => {
-              idx.add(items.findIndex(item => JSON.stringify(item) === JSON.stringify(v)));
-            });
-          } else {
-            idx.add(items.findIndex(item => JSON.stringify(item) === JSON.stringify(value)));
-          }
-        }
-      }
-
-      return [...idx];
-    }, [getOptionSelected, items, multiple, value]);
-
-    const [currentAnchorElement, setAnchorElement] = React.useState(anchorElement);
-    const isOpenRef = React.useRef(isOpen);
     const menuListRef = React.useRef<HTMLDivElement | null>(null);
     const menuPopperRef = React.useRef<HTMLDivElement | null>(null);
+    const isOpenRef = React.useRef(isOpen);
+    const focusTimeoutRef = React.useRef<NodeJS.Timeout>();
+
     const {
       dispatch,
       state: { selectedIndexes, markedIndex, hoveredIndex },
     } = useContext();
+
     const selectedIndexesRef = React.useRef(selectedIndexes);
-    const timeoutRef = React.useRef<NodeJS.Timeout | null>(null);
+
+    // Оптимизированная функция получения выбранных индексов
+    const getSelectedIndexes = React.useCallback((): number[] => {
+      if (value === null || (multiple && (value as T[]).length === 0)) {
+        return [];
+      }
+
+      const indexes: number[] = [];
+      const compareFunc = getOptionSelected
+        ? (item: T, val: T) => getOptionSelected({ item, value: val })
+        : (item: T, val: T) => isEqual(item, val);
+
+      if (multiple) {
+        const valueArray = value as T[];
+        items.forEach((item, index) => {
+          if (valueArray.some(val => compareFunc(item, val))) {
+            indexes.push(index);
+          }
+        });
+      } else {
+        const singleValue = value as T;
+        const index = items.findIndex(item => compareFunc(item, singleValue));
+        if (index !== -1) {
+          indexes.push(index);
+        }
+      }
+
+      return indexes;
+    }, [items, value, multiple, getOptionSelected]);
 
     const scrollToIndex = React.useCallback((index: number) => {
-      const option = menuListRef?.current?.children[index];
-      if (option) {
-        option.scrollIntoView({
-          behavior: 'auto',
-          block: 'nearest',
+      if (index === -1) {
+        return;
+      }
+
+      const container = menuListRef.current;
+      const option = container?.children[index] as HTMLElement;
+
+      if (container && option) {
+        const containerRect = container.getBoundingClientRect();
+        const optionRect = option.getBoundingClientRect();
+
+        const scrollOffset = optionRect.top - containerRect.top + container.scrollTop;
+
+        container.scrollTo({
+          top: scrollOffset,
+          behavior: 'instant'
         });
       }
     }, []);
 
-    React.useEffect(() => {
-      let timeout: NodeJS.Timeout | null;
-      const recalc = () => {
-        if (timeout) {
-          clearTimeout(timeout);
-        }
-        timeout = setTimeout(() => {
-          if (anchorElement) {
-            // calculateElementPos();
-          }
-        }, 300);
-      };
-
-      window.addEventListener('resize', recalc);
-      window.addEventListener('scroll', recalc);
-
-      recalc();
-
-      return () => {
-        window.removeEventListener('resize', recalc);
-        window.removeEventListener('scroll', recalc);
-      };
-    }, [anchorElement, isOpen]);
-
-    /**
-     * Scroll to first of selected item
-     */
     const scrollToFirstSelected = React.useCallback(() => {
-      const indexes = [...selectedIndexes];
-      // Sort array of indexes by DESC and get the index
-      const index = indexes.length ? [...indexes.sort()][0] : -1;
-      dispatch({
-        type: 'setMenuState',
-        payload: {
-          markedIndex: index,
-        },
-      });
-      scrollToIndex(index);
+      if (selectedIndexes.length === 0) return;
+
+      const firstSelectedIndex = Math.min(...selectedIndexes);
+      dispatch(actionSetmenuState({ markedIndex: firstSelectedIndex }));
+      scrollToIndex(firstSelectedIndex);
     }, [dispatch, selectedIndexes, scrollToIndex]);
 
-    /**
-     * Select specified item by index
-     */
     const selectItem = React.useCallback(
       (index: number) => {
-        const item = items[index];
+        if (index < 0 || index >= items.length) return;
 
-        if (!item) {
-          return;
-        }
+        const item = items[index];
+        if (!item) return;
 
         if (typeof onSelectItem === 'function') {
-          // For multiple
           if (multiple) {
-            const selectedMap = new Map<string, T>();
+            // Для multiple режима
+            const selectedSet = new Set<T>();
             if (value !== null) {
-              (value as Value<T, Multiple>[]).forEach(v =>
-                selectedMap.set(JSON.stringify(v), v as T),
-              );
+              (value as T[]).forEach(v => selectedSet.add(v));
             }
 
             if (selectedIndexes.includes(index)) {
-              selectedMap.delete(JSON.stringify(item));
-            }
-            if (!selectedIndexes.includes(index)) {
-              selectedMap.set(JSON.stringify(item), item as T);
+              selectedSet.delete(item);
+            } else {
+              selectedSet.add(item);
             }
 
-            onSelectItem(
-              Array.from(selectedMap, ([_key, v]) => v) as Multiple extends undefined
-                ? T
-                : readonly T[],
-            );
+            onSelectItem(Array.from(selectedSet) as Multiple extends undefined ? T : readonly T[]);
           } else {
-            // For single
-
+            // Для single режима
             onSelectItem(item as Multiple extends undefined ? T : readonly T[]);
           }
 
@@ -451,263 +470,183 @@ const MenuContainer = React.forwardRef(
       [onSelectItem, onRequestClose, selectedIndexes, closeOnSelect, items, value, multiple],
     );
 
-    /**
-     * Highlight specified item by index
-     */
     const highlightIndex = React.useCallback(
       (index: number) => {
-        dispatch(actionSetmenuState({ markedIndex: items[index] ? index : -1 }));
-        scrollToIndex(index);
+        const validIndex = Math.max(-1, Math.min(index, items.length - 1));
+        if (validIndex !== markedIndex) {
+          dispatch(actionSetmenuState({ markedIndex: validIndex }));
+          scrollToIndex(validIndex);
+        }
       },
-      [dispatch, items, scrollToIndex],
+      [dispatch, items.length, markedIndex, scrollToIndex],
     );
 
-    const hightlightPrevItem = React.useCallback(() => {
-      const index = Math.max(markedIndex - 1, 0);
-      highlightIndex(index);
-      scrollToIndex(index);
-    }, [markedIndex, highlightIndex, scrollToIndex]);
+    const highlightPrevItem = React.useCallback(() => {
+      const newIndex = markedIndex - 1;
+      highlightIndex(newIndex >= 0 ? newIndex : 0);
+    }, [markedIndex, highlightIndex]);
 
-    const hightlightNextItem = React.useCallback(() => {
-      const index = Math.min(markedIndex + 1, items.length);
-      highlightIndex(index);
-      scrollToIndex(index);
-    }, [markedIndex, items.length, highlightIndex, scrollToIndex]);
+    const highlightNextItem = React.useCallback(() => {
+      const newIndex = markedIndex + 1;
+      highlightIndex(newIndex < items.length ? newIndex : items.length - 1);
+    }, [markedIndex, items.length, highlightIndex]);
 
-    const hightlightFirstItem = React.useCallback(() => {
-      const index = 0;
-      highlightIndex(index);
-      scrollToIndex(index);
-    }, [highlightIndex, scrollToIndex]);
+    const highlightFirstItem = React.useCallback(() => {
+      highlightIndex(0);
+    }, [highlightIndex]);
 
-    const hightlightLastItem = React.useCallback(() => {
-      const index = items.length - 1;
-      highlightIndex(index);
-      scrollToIndex(index);
-    }, [highlightIndex, scrollToIndex, items.length]);
+    const highlightLastItem = React.useCallback(() => {
+      highlightIndex(items.length - 1);
+    }, [highlightIndex, items.length]);
 
-    const selectHightlightedItem = React.useCallback(() => {
-      if (markedIndex > -1) {
+    const selectHighlightedItem = React.useCallback(() => {
+      if (markedIndex > -1 && markedIndex < items.length) {
         selectItem(markedIndex);
       }
-    }, [markedIndex, selectItem]);
+    }, [markedIndex, selectItem, items.length]);
 
-    /**
-     * API
-     */
+    // API ref
     React.useImperativeHandle(
       ref,
       () => ({
         focus: () => menuListRef.current?.focus(),
         scrollToIndex: (idx: number) => scrollToIndex(idx),
         highlightIndex: (idx: number) => highlightIndex(idx),
-        highlightPrevItem: () => hightlightPrevItem(),
-        highlightNextItem: () => hightlightNextItem(),
-        highlightFirstItem: () => hightlightFirstItem(),
-        highlightLastItem: () => hightlightLastItem(),
+        highlightPrevItem: () => highlightPrevItem(),
+        highlightNextItem: () => highlightNextItem(),
+        highlightFirstItem: () => highlightFirstItem(),
+        highlightLastItem: () => highlightLastItem(),
         scrollToFirstSelected: () => scrollToFirstSelected(),
-        selectHighlightedItem: () => selectHightlightedItem(),
+        selectHighlightedItem: () => selectHighlightedItem(),
         selectItem: (idx: number) => selectItem(idx),
         getListElement: () => menuListRef.current,
-        setActualPlacement: placement => setActualPlacement(placement),
+        // setActualPlacement: placement => setActualPlacement(placement),
       }),
       [
         scrollToIndex,
         highlightIndex,
-        hightlightPrevItem,
-        hightlightNextItem,
-        hightlightFirstItem,
-        hightlightLastItem,
-        selectHightlightedItem,
+        highlightPrevItem,
+        highlightNextItem,
+        highlightFirstItem,
+        highlightLastItem,
+        selectHighlightedItem,
         scrollToFirstSelected,
         selectItem,
       ],
     );
 
-    /**
-     * Update achnor
-     */
+    // Обновление anchor элемента
     React.useEffect(() => {
       if (anchorElement !== currentAnchorElement) {
         setAnchorElement(anchorElement);
       }
     }, [anchorElement, currentAnchorElement]);
 
-    /**
-     * Keyboard events of menu list container.
-     * Note: Moved selection up and down while keys pressed
-     */
+    // Обработчик клавиатуры
     const listKeydownEvent = React.useCallback(
       (event: React.KeyboardEvent<HTMLElement>) => {
         switch (event.code) {
           case 'Enter':
           case 'NumpadEnter':
-          case 'Tab':
             event.preventDefault();
-            if (markedIndex > -1) {
+            if (markedIndex > -1 && markedIndex < items.length) {
               selectItem(markedIndex);
             }
             break;
 
           case 'ArrowUp':
-            {
-              event.preventDefault();
-              hightlightPrevItem();
-            }
+            event.preventDefault();
+            highlightPrevItem();
             break;
 
           case 'ArrowDown':
-            {
-              event.preventDefault();
-              hightlightNextItem();
-            }
-
+            event.preventDefault();
+            highlightNextItem();
             break;
 
           case 'Home':
-            {
-              event.preventDefault();
-              hightlightFirstItem();
-            }
-
+            event.preventDefault();
+            highlightFirstItem();
             break;
 
           case 'End':
-            {
-              event.preventDefault();
-              hightlightLastItem();
-            }
-
-            break;
-
-          case 'PageUp':
-          case 'PageDown':
-          case 'Space':
             event.preventDefault();
-
+            highlightLastItem();
             break;
 
           case 'Escape':
             event.preventDefault();
             onRequestClose(event);
-
             break;
 
           default:
-            // do nothing
             break;
         }
       },
       [
         markedIndex,
-        onRequestClose,
+        items.length,
         selectItem,
-        hightlightPrevItem,
-        hightlightNextItem,
-        hightlightFirstItem,
-        hightlightLastItem,
+        highlightPrevItem,
+        highlightNextItem,
+        highlightFirstItem,
+        highlightLastItem,
+        onRequestClose,
       ],
     );
 
+    // Управление открытием/закрытием меню
     React.useEffect(() => {
-      const timeoutID = timeoutRef.current;
+      if (isOpenRef.current === isOpen) return;
 
-      return () => {
-        if (timeoutID) {
-          clearTimeout(timeoutID);
-        }
-      };
-    }, []);
+      isOpenRef.current = isOpen;
 
-    React.useEffect(() => {
-      const windowResizeEvent = (_event: UIEvent) => {
-        if (timeoutRef.current) {
-          clearTimeout(timeoutRef.current);
-        }
-      };
+      if (!isOpen) {
+        onRequestClose();
+        dispatch(actionSetmenuState({ markedIndex: -1, hoveredIndex: -1 }));
 
-      window.document.addEventListener('resize', windowResizeEvent);
-
-      return () => {
-        window.document.removeEventListener('resize', windowResizeEvent);
-      };
-    }, [isOpen, onRequestClose, anchorElement, closeOutsideClick]);
-
-    /**
-     * Toggle menu open
-     */
-    React.useEffect(() => {
-      if (isOpenRef.current !== isOpen) {
-        isOpenRef.current = Boolean(isOpen);
-        // setMenuOpen(Boolean(isOpen));
-        if (!isOpen) {
-          onRequestClose();
-        }
-        if (isOpen) {
-          scrollToFirstSelected();
-
-          if (autofocus) {
-            setTimeout(() => {
-              menuListRef.current?.focus();
-            }, 15);
-          }
-        }
-
-        // Reset indexes
-        if (!isOpen) {
-          // listVirtRef.current?.scrollToIndex(0);
-          dispatch(actionSetmenuState({ markedIndex: -1, hoveredIndex: -1 }));
-        }
+        return;
       }
-    }, [getSelectedIndexes, scrollToFirstSelected, isOpen, autofocus, dispatch, onRequestClose]);
 
-    /**
-     * Mark selected items by values
-     */
+      // При открытии
+      scrollToFirstSelected();
+
+      if (autofocus) {
+        // Очищаем предыдущий таймаут
+        if (focusTimeoutRef.current) {
+          clearTimeout(focusTimeoutRef.current);
+        }
+        focusTimeoutRef.current = setTimeout(() => {
+          menuListRef.current?.focus();
+        }, 15);
+      }
+    }, [isOpen, autofocus, dispatch, onRequestClose, scrollToFirstSelected]);
+
+    // Обновление выбранных индексов
     React.useEffect(() => {
       const indexes = getSelectedIndexes();
 
-      // If elements in selectedIndexesRef and indexes are not equal
-      if (
-        !(
-          selectedIndexesRef.current.length === indexes.length &&
-          selectedIndexesRef.current.every(value => indexes.includes(value))
-        )
-      ) {
+      // Сравниваем массивы эффективно
+      const hasChanged =
+        selectedIndexesRef.current.length !== indexes.length ||
+        selectedIndexesRef.current.some((value, idx) => value !== indexes[idx]);
+
+      if (hasChanged) {
         selectedIndexesRef.current = indexes;
         dispatch({
           type: 'setMenuState',
-          payload: {
-            selectedIndexes: indexes,
-          },
+          payload: { selectedIndexes: indexes },
         });
       }
-    }, [value, getSelectedIndexes, dispatch]);
+    }, [getSelectedIndexes, dispatch]);
 
     const itemClickHandler = React.useCallback(
-      (index: number): React.MouseEventHandler<HTMLDivElement> =>
-        () => {
-          selectItem(index);
-        },
+      (index: number) => () => selectItem(index),
       [selectItem],
     );
 
-    const itemMouseLeaveHandler = React.useCallback(
-      (index: number, hoveredIndex: number) => () => {
-        if (index === hoveredIndex) {
-          dispatch(
-            actionSetmenuState({
-              hoveredIndex: -1,
-              markedIndex: -1,
-            }),
-          );
-        }
-      },
-      [dispatch],
-    );
-
     const itemMouseEnterHandler = React.useCallback(
-      (index: number, hoveredIndex: number) => () => {
+      (index: number) => () => {
         if (index !== hoveredIndex) {
           dispatch(
             actionSetmenuState({
@@ -717,55 +656,101 @@ const MenuContainer = React.forwardRef(
           );
         }
       },
-      [dispatch],
+      [dispatch, hoveredIndex],
     );
+
+    const itemMouseLeaveHandler = React.useCallback(
+      (index: number) => () => {
+        if (index === hoveredIndex) {
+          dispatch(
+            actionSetmenuState({
+              hoveredIndex: -1,
+              markedIndex: -1,
+            }),
+          );
+        }
+      },
+      [dispatch, hoveredIndex],
+    );
+
+    const onAnchorPosChangedMemo = React.useCallback(
+      (newPlacement: AnchorPos) => {
+        if (typeof onAnchorPosChanged === 'function') {
+          onAnchorPosChanged(newPlacement);
+        }
+      },
+      [onAnchorPosChanged],
+    );
+
+    const renderedChildren = React.useMemo(
+      () =>
+        items.map((item, index) =>
+          children(
+            { item, index },
+            {
+              key: index,
+              onMouseEnter: itemMouseEnterHandler(index),
+              onMouseLeave: itemMouseLeaveHandler(index),
+              onClick: itemClickHandler(index),
+              selected: selectedIndexes.includes(index),
+              hovered: hoveredIndex === index || markedIndex === index,
+            },
+          ),
+        ),
+      [
+        items,
+        children,
+        selectedIndexes,
+        hoveredIndex,
+        markedIndex,
+        itemMouseEnterHandler,
+        itemMouseLeaveHandler,
+        itemClickHandler,
+      ],
+    );
+
+    // Cleanup on unmount
+    React.useEffect(
+      () => () => {
+        if (focusTimeoutRef.current) {
+          clearTimeout(focusTimeoutRef.current);
+        }
+      },
+      [],
+    );
+
+    // Мемоизация компонентов
+    const PopperComponent = overridesMap.Popper;
+    const ListComponent = overridesMap.List;
 
     return (
       <ClickOutside
         onOutsideClick={onRequestClose}
         mouseEvent={isOpen && closeOutsideClick ? 'onMouseDown' : false}
       >
-        <overridesMap.Popper
+        <PopperComponent
           isOpen={Boolean(isOpen)}
           ref={menuPopperRef}
           zIndex={zIndex}
-          anchorPos={actualPlacement}
+          anchorPos={anchorPos}
+          alternativePlacements={alternativePlacements}
           anchorElement={anchorElement}
-          onAnchorPosChanged={newPlacement => {
-            setActualPlacement(newPlacement);
-            if (typeof onAnchorPosChanged === 'function') {
-              onAnchorPosChanged(newPlacement);
-            }
-          }}
+          onAnchorPosChanged={onAnchorPosChangedMemo}
           positionStrategy={positionStrategy}
           autoFlip={autoFlip}
           viewportMargin={viewportMargin}
           offset={offset}
         >
-          <overridesMap.List
-            anchorPos={actualPlacement}
+          <ListComponent
+            anchorPos={anchorPos}
             isOpen={Boolean(isOpen)}
             ref={menuListRef}
+            maxWidth={maxWidth}
             onKeyDown={listKeydownEvent}
           >
-            {items.map((item, index) =>
-              children(
-                {
-                  item,
-                  index,
-                },
-                {
-                  key: index,
-                  onMouseEnter: itemMouseEnterHandler(index, hoveredIndex),
-                  onMouseLeave: itemMouseLeaveHandler(index, hoveredIndex),
-                  onClick: itemClickHandler(index),
-                  selected: selectedIndexes.includes(index),
-                  hovered: hoveredIndex === index || markedIndex === index,
-                },
-              ),
-            )}
-          </overridesMap.List>
-        </overridesMap.Popper>
+            {renderedChildren}
+          </ListComponent>
+        </PopperComponent>
       </ClickOutside>
     );
   },

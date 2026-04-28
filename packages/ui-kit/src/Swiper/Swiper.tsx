@@ -38,7 +38,6 @@ export type SwiperProps = Omit<React.HTMLAttributes<HTMLDivElement>, 'children'>
   readonly autoplay?: boolean;
   readonly autoplayInterval?: number;
   readonly pauseOnHover?: boolean;
-  readonly keyboardControl?: boolean;
   readonly threshold?: number;
   readonly resistance?: boolean;
   readonly slidesPerView?: number;
@@ -59,7 +58,6 @@ export const Swiper = React.forwardRef((props: SwiperProps, ref: React.Forwarded
     autoplay = false,
     autoplayInterval = 3000,
     pauseOnHover = true,
-    keyboardControl = true,
     threshold = 20,
     resistance = true,
     slidesPerView = 1,
@@ -416,24 +414,6 @@ export const Swiper = React.forwardRef((props: SwiperProps, ref: React.Forwarded
     setIsPaused(false);
   }, []);
 
-  // #region Keyboard
-  React.useEffect(() => {
-    if (!keyboardControl) return;
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'ArrowLeft') {
-        e.preventDefault();
-        prev();
-      } else if (e.key === 'ArrowRight') {
-        e.preventDefault();
-        next();
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [keyboardControl, prev, next]);
 
   // #region Hover
   React.useEffect(() => {

@@ -14,6 +14,7 @@ const StyledAnchorContainer = styled.div`
   align-items: center;
   background-color: ${({ theme }) => theme.color.backgroundPrimary.toString()};
   border-radius: ${({ theme }) => theme.shape.radiusFactor}em;
+  position: relative;
 `;
 
 const ExamplePopperOutsideClick: React.FC = () => {
@@ -39,9 +40,10 @@ const ExamplePopperOutsideClick: React.FC = () => {
       >
         <Popper
           anchorPos="top"
-          autoFlip={false}
+          autoFlip
           anchorElement={anchorElement}
           isOpen={Boolean(anchorElement)}
+          positionStrategy="absolute"
         >
           <Surface>
             <FormattedMessage defaultMessage="Какой-то контент" />

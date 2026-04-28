@@ -14,11 +14,6 @@ type State = {
 
 type Action = ActionSetPartial;
 
-type Context = {
-  readonly state: State;
-  readonly dispatch: React.Dispatch<Action>;
-};
-
 type ActionSetPartial = {
   readonly type: 'setPartial';
   readonly payload: Partial<State>;
@@ -78,10 +73,8 @@ export const createInitialState = <T, Multiple extends boolean | undefined = und
   };
 };
 
-const context = React.createContext<Context>({
-  state: defaultState,
-  dispatch: () => undefined,
-});
+const StateContext = React.createContext(defaultState);
+const DispatchContext = React.createContext<React.Dispatch<Action>>(() => undefined);
 
 interface ContextProviderProps {
   readonly children: React.ReactNode | readonly React.ReactNode[];
@@ -95,16 +88,32 @@ export const ContextProvider: React.FC<ContextProviderProps> = props => {
     ...initialState,
   });
 
-  return <context.Provider value={{ state, dispatch }}>{children}</context.Provider>;
+  const stateValue = React.useMemo(() => state, [state]);
+  const dispatchValue = React.useMemo(() => dispatch, []);
+
+  return (
+    <DispatchContext.Provider value={dispatchValue}>
+      <StateContext.Provider value={stateValue}>{children}</StateContext.Provider>
+    </DispatchContext.Provider>
+  );
 };
 
-export const useContext = () => {
-  const { state, dispatch } = React.useContext(context);
+export const useContextState = (): State => {
+  const context = React.useContext(StateContext);
 
-  return {
-    state,
-    dispatch,
-  };
+  if (context === undefined) {
+    throw new Error('useContextState must be used within a ContextProvider');
+  }
+
+  return context;
 };
 
-export default useContext;
+export const useContextDispatch = (): React.Dispatch<Action> => {
+  const context = React.useContext(DispatchContext);
+
+  if (context === undefined) {
+    throw new Error('useContextDispatch must be used within a ContextProvider');
+  }
+
+  return context;
+};

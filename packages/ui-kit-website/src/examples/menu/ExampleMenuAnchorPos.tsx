@@ -70,6 +70,11 @@ const ExampleMenuAnchorPos: React.FC = () => {
         />
       </div>
       <AnchorButton
+        value="top-fill"
+        isActive={anchorPos === 'top-fill'}
+        onChange={() => setAnchorPos('top-fill')}
+      />
+      <AnchorButton
         value="top-start"
         isActive={anchorPos === 'top-start'}
         onChange={() => setAnchorPos('top-start')}
@@ -88,9 +93,12 @@ const ExampleMenuAnchorPos: React.FC = () => {
       <StyledAnchorContainer>
         <StyledAnchorElement ref={setAnchorElement}></StyledAnchorElement>
         <Menu
-          isOpen
+          isOpen={Boolean(anchorElement)}
           anchorElement={anchorElement}
           anchorPos={anchorPos}
+          autoFlip
+          positionStrategy="absolute"
+          // alternativePlacements={['bottom-start', 'top-start']}
           zIndex={theme.zIndex.header - 1}
           value={value}
           items={items}
@@ -120,6 +128,14 @@ const ExampleMenuAnchorPos: React.FC = () => {
         isActive={anchorPos === 'bottom-end'}
         onChange={() => setAnchorPos('bottom-end')}
       />
+
+      <AnchorButton
+        value="bottom-fill"
+        isActive={anchorPos === 'bottom-fill'}
+        onChange={() => setAnchorPos('bottom-fill')}
+      />
+
+
     </>
   );
 };

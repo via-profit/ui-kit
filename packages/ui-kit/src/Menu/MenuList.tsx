@@ -1,18 +1,19 @@
 import React from 'react';
 import styled from '@emotion/styled';
-import { css } from '@emotion/react';
 
 import { AnchorPos } from '../Popper';
+import { css } from '@emotion/react';
 
 export interface MenuListProps extends React.HTMLAttributes<HTMLDivElement> {
   readonly isOpen: boolean;
   readonly anchorPos: AnchorPos;
+  readonly maxWidth?: number | string;
 }
 
 const StyledMenuList = styled.div<{
   $isOpen: boolean;
-  $fixedWidth?: boolean;
   $anchorPos?: AnchorPos;
+  $maxWidth?: number | string;
 }>`
   display: flex;
   flex-direction: column;
@@ -22,6 +23,21 @@ const StyledMenuList = styled.div<{
   border-radius: ${({ theme }) => theme.shape.radiusFactor * 2}em;
   box-shadow: 0 0.5em 1.5em ${({ theme }) => theme.color.surface.darken(50).alpha(0.6).toString()};
 
+  ${({ $maxWidth }) => {
+    if (typeof $maxWidth === 'number') {
+      return css`
+        max-width: ${$maxWidth}px;
+      `;
+    }
+
+    if (typeof $maxWidth === 'string') {
+      return css`
+        max-width: ${$maxWidth};
+      `;
+    }
+
+    return undefined;
+  }};
   &:focus {
     outline-style: solid;
     outline-width: 0.14em;
@@ -61,34 +77,18 @@ const StyledMenuList = styled.div<{
   overflow-y: auto;
   padding: 0.4em;
   max-height: 18em;
-  min-width: 10em;
-
-  max-width: 100%;
-
-  ${({ $fixedWidth }) =>
-    $fixedWidth &&
-    css`
-      min-width: 10em;
-      max-width: 16em;
-    `}
-
-  ${({ $anchorPos, theme }) =>
-    $anchorPos === 'top-fill' &&
-    css`
-      box-shadow: 0 -0.5em 1.5em ${theme.color.surface.darken(50).alpha(0.6).toString()};
-    `};
 `;
 
 export const MenuList = React.forwardRef(
   (props: MenuListProps, ref: React.ForwardedRef<HTMLDivElement>) => {
-    const { isOpen, anchorPos, children, ...nativeProps } = props;
+    const { isOpen, anchorPos, maxWidth, children, ...nativeProps } = props;
 
     return (
       <StyledMenuList
         tabIndex={-1}
         $isOpen={isOpen}
+        $maxWidth={maxWidth}
         $anchorPos={anchorPos}
-        $fixedWidth={!['bottom-fill', 'top-fill'].includes(anchorPos)}
         {...nativeProps}
         ref={ref}
       >

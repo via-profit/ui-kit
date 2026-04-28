@@ -50,9 +50,19 @@ const ExampleAutocompleteMultiple: React.FC = () => {
         value={value}
         items={countries}
         isOpen={isOpen}
-        filterItems={(items, { query }) =>
-          items.filter(item => item.name.toLocaleLowerCase().indexOf(query) !== -1)
-        }
+        filterItems={(items, { query }) => {
+          const queries = query
+            .split(',')
+            .map(q => q.trim().toLowerCase())
+            .filter(Boolean);
+
+          return items.filter(item => {
+            const name = item.name.toLowerCase();
+
+            return queries.some(q => name.includes(q));
+          });
+
+        }}
         onRequestClose={() => setIsOpen(false)}
         onRequestOpen={() => setIsOpen(true)}
         onChange={items => setValue(items)}

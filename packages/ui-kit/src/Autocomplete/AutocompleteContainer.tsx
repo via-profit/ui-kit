@@ -1,13 +1,12 @@
 import React from 'react';
 
-import TextField, { AutocompleteTextFieldProps } from './AutocompleteTextField';
+import TextField, { TextFieldProps } from '../TextField';
 import Button from '../Button';
-import Spinner from '../LoadingIndicator/Spinner';
-import useContext, { actionSetPartial } from './context';
+import { StaticLoadingIndicator } from '../LoadingIndicator';
+import { actionSetPartial, useContextDispatch, useContextState } from './context';
 import IconClear from './IconClear';
 import { PositionStrategy } from '../Popper';
 import { mouseEventMap } from '../ClickOutside';
-import OverrideMenuList from './OverrideMenuList';
 import Menu, {
   AnchorPos,
   GetOptionSelected,
@@ -19,7 +18,7 @@ import Menu, {
 } from '../Menu';
 
 export interface AutocompleteProps<T, Multiple extends boolean | undefined = undefined>
-  extends Omit<AutocompleteTextFieldProps, 'value' | 'onChange' | 'children' | 'overrides'> {
+  extends Omit<TextFieldProps, 'value' | 'onChange' | 'children' | 'overrides'> {
   readonly items: readonly T[];
 
   readonly value: Value<T, Multiple>;
@@ -42,7 +41,7 @@ export interface AutocompleteProps<T, Multiple extends boolean | undefined = und
   /**
    * Anchor position\
    * \
-   * Default: `bottom-fill`
+   * Default: `bottom`
    */
   readonly anchorPos?: AnchorPos;
 
@@ -67,6 +66,7 @@ export interface AutocompleteProps<T, Multiple extends boolean | undefined = und
    */
   readonly positionStrategy?: PositionStrategy;
 
+  readonly alternativePlacements?: readonly AnchorPos[];
   /**
    * Minimum distance (in pixels) that the popper must maintain from the viewport edges.
    * Used to prevent the popper from being positioned too close to the screen boundaries.
@@ -181,9 +181,7 @@ export interface AutocompleteOverrides {
   /**
    * Element wrapper
    */
-  readonly TextField?: React.ComponentType<
-    AutocompleteTextFieldProps & React.RefAttributes<HTMLDivElement>
-  >;
+  readonly TextField?: React.ComponentType<TextFieldProps & React.RefAttributes<HTMLDivElement>>;
 }
 
 export type Children<T> = (
@@ -214,7 +212,6 @@ export type FilterItems<T> = (
 export type AutocompleteRef = {
   clear: () => void;
 };
-//
 
 const Autocomplete = React.forwardRef(
   <T, Multiple extends boolean | undefined = undefined>(
@@ -229,8 +226,9 @@ const Autocomplete = React.forwardRef(
       isLoading = false,
       clearOnBlur = true,
       anchorPos = 'bottom-fill',
+      alternativePlacements = ['bottom-fill', 'top-fill'],
       openOnFocus = true,
-      autoFlip,
+      autoFlip = true,
       viewportMargin,
       positionStrategy,
       requiredAsterisk,
@@ -253,14 +251,13 @@ const Autocomplete = React.forwardRef(
       overrides,
       ...nativeInputProps
     } = props;
-    const [actualPlacement, setActualPlacement] = React.useState(anchorPos);
     const menuRef = React.useRef<MenuRef | null>(null);
     const fieldInputRef = React.useRef<HTMLInputElement | null>(null);
     const isFocusedRef = React.useRef(false);
     const itemsRef = React.useRef(items);
-    const { state, dispatch } = useContext();
     const { currentOpen, filteredItems, inputValue, currentValue, anchorElement, currentLoading } =
-      state;
+      useContextState();
+    const dispatch = useContextDispatch();
     const overridesMap = React.useMemo(
       () => ({
         TextField: overrides?.TextField || TextField,
@@ -384,7 +381,6 @@ const Autocomplete = React.forwardRef(
       ({ index, item }, itemProps) => children({ index, item: item as T, inputValue }, itemProps),
       [children, inputValue],
     );
-
     /**
      * Only affected value change action
      */
@@ -429,7 +425,6 @@ const Autocomplete = React.forwardRef(
     }, [isLoading, currentLoading, dispatch]);
 
     React.useEffect(() => {
-      // Сравниваем items более эффективно
       if (itemsRef.current === items) {
         return;
       }
@@ -438,6 +433,7 @@ const Autocomplete = React.forwardRef(
       const newFilteredItems = applyFilterForItems(inputValue, items);
 
       dispatch(actionSetPartial({ filteredItems: newFilteredItems }));
+
       if (!newFilteredItems.length && currentOpen) {
         onRequestClose();
       }
@@ -506,161 +502,213 @@ const Autocomplete = React.forwardRef(
       multiple,
     ]);
 
+    const onSelectMenuItem: NonNullable<MenuProps<T, Multiple>['onSelectItem']> = React.useCallback(
+      item => {
+        if (!multiple) {
+          dispatch({
+            type: 'setPartial',
+            payload: {
+              filteredItems: applyFilterForItems(selectedItemToString(item), items),
+            },
+          });
+        }
+        if (typeof onChange === 'function') {
+          onChange(item);
+        }
+      },
+      [applyFilterForItems, dispatch, items, multiple, onChange, selectedItemToString],
+    );
+
+    const endIconMemo = React.useMemo(() => {
+      if (currentLoading) {
+        return (
+          <Button iconOnly type="button" variant="plain" disabled>
+            <StaticLoadingIndicator />
+          </Button>
+        );
+      }
+
+      if (!clearable) {
+        return undefined;
+      }
+
+      return (
+        <Button iconOnly type="button" variant="plain" onClick={clear} aria-label="Clear">
+          <IconClear />
+        </Button>
+      );
+    }, [clear, clearable, currentLoading]);
+
+    const textFieldOnKeyDown: React.KeyboardEventHandler<HTMLInputElement> = React.useCallback(
+      event => {
+        inputKeydownEvent(event);
+        if (typeof nativeInputProps.onKeyDown === 'function') {
+          nativeInputProps.onKeyDown(event);
+        }
+      },
+      [inputKeydownEvent, nativeInputProps],
+    );
+
+    const textFieldOnChange: React.ChangeEventHandler<HTMLInputElement> = React.useCallback(
+      event => {
+        if (typeof onInputChange === 'function') {
+          onInputChange(event);
+        }
+
+        // If openOnFocus is false, but value is not empty
+        // we should open menu list if is not opened
+        if (!openOnFocus && isFocusedRef.current && !currentOpen && filteredItems.length > 0) {
+          onRequestOpen(event);
+        }
+
+        const newFilteredItems = applyFilterForItems(event.currentTarget.value, items);
+
+        if (newFilteredItems.length === 0 && currentOpen) {
+          onRequestClose();
+        }
+
+        if (newFilteredItems.length > 0 && !currentOpen) {
+          onRequestOpen(event);
+        }
+        dispatch(
+          actionSetPartial({
+            filteredItems: newFilteredItems,
+            inputValue: event.currentTarget.value,
+          }),
+        );
+      },
+      [
+        applyFilterForItems,
+        currentOpen,
+        dispatch,
+        filteredItems.length,
+        items,
+        onInputChange,
+        onRequestClose,
+        onRequestOpen,
+        openOnFocus,
+      ],
+    );
+
+    const textFieldClick: React.MouseEventHandler<HTMLInputElement> = React.useCallback(
+      event => {
+        if (typeof nativeInputProps.onClick === 'function') {
+          nativeInputProps.onClick(event);
+        }
+
+        if (
+          isFocusedRef.current &&
+          !currentOpen &&
+          filteredItems.length > 0
+          // && inputValue.trim() !== ''
+        ) {
+          onRequestOpen(event);
+        }
+      },
+      [currentOpen, filteredItems.length, nativeInputProps, onRequestOpen],
+    );
+
+    const textFieldFocus: React.FocusEventHandler<HTMLInputElement> = React.useCallback(
+      event => {
+        isFocusedRef.current = true;
+
+        if (openOnFocus && !currentOpen && filteredItems.length > 0) {
+          onRequestOpen(event);
+        }
+
+        if (typeof nativeInputProps.onFocus === 'function') {
+          nativeInputProps.onFocus(event);
+        }
+      },
+      [currentOpen, filteredItems.length, nativeInputProps, onRequestOpen, openOnFocus],
+    );
+
+    const textFieldBlur: React.FocusEventHandler<HTMLInputElement> = React.useCallback(
+      event => {
+        isFocusedRef.current = false;
+
+        if (typeof nativeInputProps.onBlur === 'function') {
+          nativeInputProps.onBlur(event);
+        }
+      },
+      [nativeInputProps],
+    );
+
+    const setAnchorElementRef = React.useCallback(
+      (el: HTMLDivElement | null) => {
+        if (anchorElement !== el) {
+          dispatch(actionSetPartial({ anchorElement: el }));
+        }
+      },
+      [anchorElement, dispatch],
+    );
+
+    const inputRefRef = React.useRef(inputRef);
+    React.useEffect(() => {
+      inputRefRef.current = inputRef;
+    }, [inputRef]);
+
+    const setInputElementRef = React.useCallback((el: HTMLInputElement | null) => {
+      fieldInputRef.current = el;
+      const currentInputRef = inputRefRef.current;
+      if (typeof currentInputRef === 'function') {
+        currentInputRef(el);
+      } else if (currentInputRef && typeof currentInputRef === 'object') {
+        currentInputRef.current = el;
+      }
+    }, []);
+
     return (
       <>
         {React.useMemo(
           () => (
             <overridesMap.TextField
               placeholder={placeholder}
-              anchorPos={actualPlacement}
-              isOpen={currentOpen}
               label={label}
               error={error}
               requiredAsterisk={requiredAsterisk}
               errorText={errorText}
               fullWidth={fullWidth}
               startIcon={startIcon}
-              isLoading={currentLoading}
-              endIcon={
-                clearable ? (
-                  <Button
-                    iconOnly
-                    type="button"
-                    variant="plain"
-                    onClick={() => (currentLoading ? 'undefined' : clear())}
-                  >
-                    {currentLoading ? <Spinner /> : <IconClear />}
-                  </Button>
-                ) : undefined
-              }
+              endIcon={endIconMemo}
               {...nativeInputProps}
-              onKeyDown={event => {
-                inputKeydownEvent(event);
-                if (typeof nativeInputProps.onKeyDown === 'function') {
-                  nativeInputProps.onKeyDown(event);
-                }
-              }}
-              ref={el => {
-                if (anchorElement !== el) {
-                  dispatch(actionSetPartial({ anchorElement: el }));
-                }
-              }}
-              inputRef={el => {
-                fieldInputRef.current = el;
-                if (typeof inputRef === 'function') {
-                  inputRef(el);
-                }
-                if (inputRef && typeof inputRef === 'object') {
-                  inputRef.current = el;
-                }
-              }}
+              onKeyDown={textFieldOnKeyDown}
+              ref={setAnchorElementRef}
+              inputRef={setInputElementRef}
               value={inputValue}
-              onBlur={event => {
-                isFocusedRef.current = false;
-
-                if (typeof nativeInputProps.onBlur === 'function') {
-                  nativeInputProps.onBlur(event);
-                }
-              }}
-              onFocus={event => {
-                isFocusedRef.current = true;
-
-                if (openOnFocus && !currentOpen && filteredItems.length > 0) {
-                  onRequestOpen(event);
-                }
-
-                // if (!openOnFocus && !currentOpen && inputValue !== '' && filteredItems.length > 0) {
-                //   onRequestOpen(event);
-                // }
-
-                if (typeof nativeInputProps.onFocus === 'function') {
-                  nativeInputProps.onFocus(event);
-                }
-              }}
-              onClick={event => {
-                if (typeof nativeInputProps.onClick === 'function') {
-                  nativeInputProps.onClick(event);
-                }
-
-                if (
-                  isFocusedRef.current &&
-                  !currentOpen &&
-                  filteredItems.length > 0
-                  // && inputValue.trim() !== ''
-                ) {
-                  onRequestOpen(event);
-                }
-              }}
-              onChange={event => {
-                if (typeof onInputChange === 'function') {
-                  onInputChange(event);
-                }
-
-                // If openOnFocus is false, but value is not empty
-                // we should open menu list if is not opened
-                if (
-                  !openOnFocus &&
-                  isFocusedRef.current &&
-                  !currentOpen &&
-                  filteredItems.length > 0
-                ) {
-                  onRequestOpen(event);
-                }
-
-                // console.debug('set filteredItems');
-                const newFilteredItems = applyFilterForItems(event.currentTarget.value, items);
-
-                if (newFilteredItems.length === 0 && currentOpen) {
-                  onRequestClose();
-                }
-
-                if (newFilteredItems.length > 0 && !currentOpen) {
-                  onRequestOpen(event);
-                }
-                dispatch(
-                  actionSetPartial({
-                    filteredItems: newFilteredItems,
-                    inputValue: event.currentTarget.value,
-                  }),
-                );
-              }}
+              onBlur={textFieldBlur}
+              onFocus={textFieldFocus}
+              onClick={textFieldClick}
+              onChange={textFieldOnChange}
             />
           ),
           [
+            setAnchorElementRef,
+            setInputElementRef,
             overridesMap,
             placeholder,
-            actualPlacement,
-            currentOpen,
             label,
             error,
             requiredAsterisk,
             errorText,
             fullWidth,
             startIcon,
-            currentLoading,
-            clearable,
+            endIconMemo,
             nativeInputProps,
+            textFieldOnKeyDown,
             inputValue,
-            clear,
-            inputKeydownEvent,
-            anchorElement,
-            dispatch,
-            inputRef,
-            openOnFocus,
-            filteredItems.length,
-            onRequestOpen,
-            onInputChange,
-            applyFilterForItems,
-            items,
-            onRequestClose,
+            textFieldBlur,
+            textFieldFocus,
+            textFieldClick,
+            textFieldOnChange,
           ],
         )}
         {React.useMemo(
           () => (
             <Menu
               ref={menuRef}
-              onAnchorPosChanged={setActualPlacement}
-              anchorPos={actualPlacement}
+              anchorPos={anchorPos}
+              alternativePlacements={alternativePlacements}
               multiple={multiple}
               items={filteredItems as T[]}
               value={currentValue as Value<T, Multiple>}
@@ -669,34 +717,20 @@ const Autocomplete = React.forwardRef(
               autoFlip={autoFlip}
               viewportMargin={viewportMargin}
               offset={0}
-              overrides={{
-                List: OverrideMenuList,
-              }}
               positionStrategy={positionStrategy}
               anchorElement={anchorElement}
               closeOutsideClick={false}
               getOptionSelected={getOptionSelected}
               onRequestClose={onRequestClose}
               closeOnSelect={!multiple}
-              onSelectItem={item => {
-                if (!multiple) {
-                  dispatch({
-                    type: 'setPartial',
-                    payload: {
-                      filteredItems: applyFilterForItems(selectedItemToString(item), items),
-                    },
-                  });
-                }
-                if (typeof onChange === 'function') {
-                  onChange(item);
-                }
-              }}
+              onSelectItem={onSelectMenuItem}
             >
               {renderChildren}
             </Menu>
           ),
           [
-            actualPlacement,
+            anchorPos,
+            alternativePlacements,
             multiple,
             filteredItems,
             currentValue,
@@ -707,13 +741,8 @@ const Autocomplete = React.forwardRef(
             anchorElement,
             getOptionSelected,
             onRequestClose,
-            onChange,
-            dispatch,
-            applyFilterForItems,
-            selectedItemToString,
-            items,
-            children,
-            inputValue,
+            onSelectMenuItem,
+            renderChildren,
           ],
         )}
       </>

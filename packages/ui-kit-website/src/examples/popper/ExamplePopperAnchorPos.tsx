@@ -1,7 +1,7 @@
 import React from 'react';
 import Button from '@via-profit/ui-kit/src/Button';
 import Surface from '@via-profit/ui-kit/src/Surface';
-import Popper, { AnchorPos } from '@via-profit/ui-kit/src/Popper';
+import Popper, { AnchorPos, PositionStrategy } from '@via-profit/ui-kit/src/Popper';
 import styled from '@emotion/styled';
 import { useTheme } from '@emotion/react';
 
@@ -13,6 +13,7 @@ const StyledAnchorContainer = styled.div`
   align-items: center;
   background-color: ${({ theme }) => theme.color.backgroundPrimary.toString()};
   border-radius: ${({ theme }) => theme.shape.radiusFactor}em;
+    overflow: hidden;
 `;
 
 const StyledAnchorElement = styled.div`
@@ -47,9 +48,26 @@ const ExamplePopperAnchorPos: React.FC = () => {
   const theme = useTheme();
   const [anchorPos, setAnchorPos] = React.useState<AnchorPos>('bottom');
   const [anchorElement, setAnchorElement] = React.useState<HTMLDivElement | null>(null);
+  const [autoFlip, setAutoFlip] = React.useState(true);
+  const [positionStrategy, setPositionStrategy] = React.useState<PositionStrategy>('absolute');
 
   return (
     <>
+      <div>
+        <Button
+          color={autoFlip ? 'primary' : 'default'}
+          onClick={() => setAutoFlip(f => !f)}
+        >
+          AutoFlip: {autoFlip ? 'is enabled' : 'is disabled'}
+        </Button>
+
+        <Button
+          color="primary"
+          onClick={() => setPositionStrategy(p =>p === 'absolute' ? 'fixed' : 'absolute')}
+        >
+          PositionStrategy: {positionStrategy}
+        </Button>
+      </div>
       <div>
         <AnchorButton
           value="auto"
@@ -115,9 +133,10 @@ const ExamplePopperAnchorPos: React.FC = () => {
         <StyledAnchorElement ref={setAnchorElement} />
         <Popper
           anchorPos={anchorPos}
-          positionStrategy="absolute"
+          positionStrategy={positionStrategy}
           anchorElement={anchorElement}
           isOpen
+          autoFlip={autoFlip}
           zIndex={theme.zIndex.header - 1}
         >
           <Surface>Popper content</Surface>

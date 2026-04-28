@@ -25,7 +25,6 @@ const ExampleSelectboxOverview: React.FC = () => {
 
   return (
     <Container>
-      <TextField error label="Field label" errorText="Some error" requiredAsterisk fullWidth />
       <Selectbox
         value={value}
         fullWidth
