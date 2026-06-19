@@ -332,51 +332,22 @@ export const usePopper = (props: UsePopperProps): UsePopperResult => {
   const clampPopperToContainer = React.useCallback(
     (style: { left: number; top: number; width?: number }, popperRect: DOMRect) => {
 
-
-      // Если нет scrollableAncestor, используем document.documentElement как fallback
-      const container =
-        scrollableAncestor instanceof HTMLElement ? scrollableAncestor : document.documentElement;
-
-      const containerRect = container.getBoundingClientRect();
-
-      // Базовые границы контейнера с учетом отступа
-      let minLeft = containerRect.left + viewportMargin;
-      let maxLeft = containerRect.right - popperRect.width - viewportMargin;
-      let minTop = containerRect.top + viewportMargin;
-      let maxTop = containerRect.bottom - popperRect.height - viewportMargin;
-
-      // Для fixed позиционирования добавляем ограничения viewport
-      if (positionStrategy === 'fixed') {
-        // Границы viewport с учетом отступа
-        const viewportMinLeft = viewportMargin;
-        const viewportMaxLeft = window.innerWidth - popperRect.width - viewportMargin;
-        const viewportMinTop = viewportMargin;
-        const viewportMaxTop = window.innerHeight - popperRect.height - viewportMargin;
-
-        // Берем пересечение границ контейнера и viewport
-        minLeft = Math.max(minLeft, viewportMinLeft);
-        maxLeft = Math.min(maxLeft, viewportMaxLeft);
-        minTop = Math.max(minTop, viewportMinTop);
-        maxTop = Math.min(maxTop, viewportMaxTop);
+      if (positionStrategy === 'absolute') {
+        return style;
       }
 
-      // Убеждаемся, что границы валидны (min не больше max)
-      const validMinLeft = Math.min(minLeft, maxLeft);
-      const validMaxLeft = Math.max(minLeft, maxLeft);
-      const validMinTop = Math.min(minTop, maxTop);
-      const validMaxTop = Math.max(minTop, maxTop);
-
-      // Ограничиваем позицию
-      const clampedLeft = Math.max(validMinLeft, Math.min(style.left, validMaxLeft));
-      const clampedTop = Math.max(validMinTop, Math.min(style.top, validMaxTop));
+      const viewportMinLeft = viewportMargin;
+      const viewportMaxLeft = window.innerWidth - popperRect.width - viewportMargin;
+      const viewportMinTop = viewportMargin;
+      const viewportMaxTop = window.innerHeight - popperRect.height - viewportMargin;
 
       return {
-        left: clampedLeft,
-        top: clampedTop,
+        left: Math.max(viewportMinLeft, Math.min(style.left, viewportMaxLeft)),
+        top: Math.max(viewportMinTop, Math.min(style.top, viewportMaxTop)),
         width: style.width,
       };
     },
-    [positionStrategy, scrollableAncestor, viewportMargin],
+    [positionStrategy, viewportMargin],
   );
 
   const checkIfViewportFits = React.useCallback(
@@ -386,34 +357,18 @@ export const usePopper = (props: UsePopperProps): UsePopperResult => {
       const right = left + popperRect.width;
       const bottom = top + popperRect.height;
 
-      if (positionStrategy === 'absolute' && scrollableAncestor instanceof HTMLElement) {
-        const containerRect = scrollableAncestor.getBoundingClientRect();
-
-        const relativeLeft = left - containerRect.left;
-        const relativeTop = top - containerRect.top;
-
-        const relativeRight = relativeLeft + popperRect.width;
-        const relativeBottom = relativeTop + popperRect.height;
-
-        const isWithinHorizontal =
-          relativeLeft >= viewportMargin && relativeRight <= containerRect.width - viewportMargin;
-
-        const isWithinVertical =
-          relativeTop >= viewportMargin && relativeBottom <= containerRect.height - viewportMargin;
-
-        return isWithinHorizontal && isWithinVertical;
-      }
-
       const viewportWidth = window.innerWidth;
       const viewportHeight = window.innerHeight;
 
-      const isWithinHorizontal = left >= viewportMargin && right <= viewportWidth - viewportMargin;
-      const isWithinVertical = top >= viewportMargin && bottom <= viewportHeight - viewportMargin;
-      const hasValidPosition = left >= 0 && top >= 0;
+      const isWithinHorizontal =
+        left >= viewportMargin && right <= viewportWidth - viewportMargin;
 
-      return hasValidPosition && isWithinHorizontal && isWithinVertical;
+      const isWithinVertical =
+        top >= viewportMargin && bottom <= viewportHeight - viewportMargin;
+
+      return isWithinHorizontal && isWithinVertical;
     },
-    [viewportMargin, scrollableAncestor, positionStrategy],
+    [viewportMargin],
   );
 
   const placementsOrder = React.useMemo(() => {
