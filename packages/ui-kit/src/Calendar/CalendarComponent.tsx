@@ -302,9 +302,11 @@ const StyledSwiper = styled(Swiper)`
 
 export type CalendarRef<IsRangeValue extends boolean | undefined = undefined> = {
   readonly setView: (view: CalendarView) => void;
+  readonly setViews: (views: readonly CalendarView[]) => void;
   readonly getActiveView: () => CalendarView;
   readonly setValue: (value: CalendarValue<IsRangeValue>) => void;
   readonly setCalendarDate: (date: Date) => void;
+  readonly getCalendarDate: () => Date;
   readonly reset: () => void;
 };
 
@@ -515,13 +517,23 @@ const CalendarComponent = React.forwardRef(
       }),
     );
 
+
+
     /**
      * List of possibility views
      */
-    const [views] = React.useState<readonly CalendarView[]>(() => computeViews(inputViews, range));
+    const [views, setComputedViews] = React.useState<readonly CalendarView[]>(() => computeViews(inputViews, range));
 
+    const setViews = React.useCallback(
+      (variants: readonly CalendarView[]) => setComputedViews(variants),
+      [],
+    );
     const selectView = React.useCallback(
       (view: CalendarView) => {
+
+        if (!views.includes(view)) {
+          setViews([...views, view]);
+        }
         setView(view);
 
         const index = views.findIndex(v => v === view);
@@ -530,7 +542,7 @@ const CalendarComponent = React.forwardRef(
           swiperRef.current?.goToIndex(index);
         }
       },
-      [views],
+      [setViews, views],
     );
 
     const resetVariablesRef = React.useRef({
@@ -1022,6 +1034,9 @@ const CalendarComponent = React.forwardRef(
     const initialIndex = React.useMemo(() => views.findIndex(v => v === view), [views, view]);
 
     const getActiveView = React.useCallback(() => view, [view]);
+
+    const getCalendarDate = React.useCallback(() => calendarDate, [calendarDate]);
+
     /**
      * API
      */
@@ -1031,10 +1046,12 @@ const CalendarComponent = React.forwardRef(
         setView: selectView,
         reset: handleReset,
         setValue,
+        getCalendarDate,
         setCalendarDate,
         getActiveView,
+        setViews,
       }),
-      [selectView, handleReset, getActiveView],
+      [selectView, handleReset, getActiveView, setViews, getCalendarDate],
     );
 
     return (

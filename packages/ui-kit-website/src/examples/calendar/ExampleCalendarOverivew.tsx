@@ -1,7 +1,7 @@
 import React from 'react';
-import { FormattedDate } from 'react-intl';
-import Calendar, { CalendarValue } from '@via-profit/ui-kit/src/Calendar';
+import Calendar, { CalendarOnChange, CalendarRef, CalendarValue } from '@via-profit/ui-kit/src/Calendar';
 import styled from '@emotion/styled';
+import Button from '@via-profit/ui-kit/src/Button';
 
 const Grid = styled.div`
     display: grid;
@@ -11,10 +11,74 @@ const Grid = styled.div`
 
 const ExampleCalendarOverivew: React.FC = () => {
   const [value, onChange] = React.useState<CalendarValue<undefined>>(new Date());
-  const [values, onChangeDates] = React.useState<CalendarValue<true>>([new Date(), null]);
+  const [values, onChangeDates] = React.useState<CalendarValue<true>>([new Date(), new Date()]);
+  const calendarRef = React.useRef<CalendarRef<true>>(null);
+
+  const renderTitle = React.useMemo(() => {
+    const dates = [...values || []];
+
+    return dates.map(v => {
+      if (!v) {
+        return '-';
+      }
+
+      return [v.getDate(), v.getMonth() + 1, v.getFullYear()].join('.');
+    }).join(' - ');
+
+  }, [values]);
+
+
+
+
 
   return (
     <Grid>
+      <Calendar
+        range
+        value={values}
+        ref={calendarRef}
+        onChange={onChangeDates}
+        views={['days', 'months', 'years', 'weeks']}
+        heading={renderTitle}
+        footer={<>
+          <Button onClick={() => {
+            if (calendarRef.current) {
+              const activeView = calendarRef.current.getActiveView();
+              if(activeView !== 'days') {
+
+                // calendarRef.current.setView('days');
+
+              }
+
+              const d1 = calendarRef.current.getCalendarDate();
+              onChangeDates([d1, d1]);
+              calendarRef.current.setValue([d1, d1]);
+              // if (activeView === 'months') {
+              //   calendarRef.current.setViews(['days', 'months', 'years', 'weeks']);
+              //   setTimeout(() => {
+              //     calendarRef.current?.setView('days');
+              //   }, 300)
+              // } else {
+              //   calendarRef.current.setViews(['years', 'months']);
+              //   setTimeout(() => {
+              //     calendarRef.current.setView('months');
+              //   }, 300)
+              // }
+
+            }
+          }}>Month</Button>
+          <Button onClick={() => {
+            if (calendarRef.current) {
+              const activeView = calendarRef.current.getActiveView();
+              if (activeView === 'months') {
+                calendarRef.current.setViews(['days', 'months', 'years', 'weeks']);
+              }
+
+              calendarRef.current.setView(activeView === 'weeks' ? 'days' : 'weeks');
+            }
+          }}>Weeks</Button>
+        </>}
+      />
       <Calendar
         value={value}
         onChange={onChange}

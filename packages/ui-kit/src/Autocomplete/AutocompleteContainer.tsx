@@ -7,18 +7,12 @@ import { actionSetPartial, useContextDispatch, useContextState } from './context
 import IconClear from './IconClear';
 import { PositionStrategy } from '../Popper';
 import { mouseEventMap } from '../ClickOutside';
-import Menu, {
-  AnchorPos,
-  GetOptionSelected,
-  MenuItemProps,
-  MenuProps,
-  MenuRef,
-  OnRequestClose,
-  Value,
-} from '../Menu';
+import Menu, { AnchorPos, GetOptionSelected, MenuItemProps, MenuProps, MenuRef, OnRequestClose, Value } from '../Menu';
+
+export type AutocompleteTextFieldProps = Omit<TextFieldProps, 'value' | 'onChange' | 'children' | 'overrides'>;
 
 export interface AutocompleteProps<T, Multiple extends boolean | undefined = undefined>
-  extends Omit<TextFieldProps, 'value' | 'onChange' | 'children' | 'overrides'> {
+  extends AutocompleteTextFieldProps {
   readonly items: readonly T[];
 
   readonly value: Value<T, Multiple>;
