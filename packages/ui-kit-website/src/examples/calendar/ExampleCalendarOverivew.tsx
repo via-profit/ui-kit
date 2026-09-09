@@ -77,6 +77,9 @@ const ExampleCalendarOverivew: React.FC = () => {
               calendarRef.current.setView(activeView === 'weeks' ? 'days' : 'weeks');
             }
           }}>Weeks</Button>
+          <Button onClick={() => {
+            calendarRef.current?.reset();
+          }}>Reset</Button>
         </>}
       />
       <Calendar
@@ -147,7 +150,56 @@ const ExampleCalendarOverivew: React.FC = () => {
       heading={'Days only'}
       views={['days']}
     />
+      <Calendar
+        range
+        value={values}
+        ref={calendarRef}
+        onChange={onChangeDates}
+        views={['days', 'months', 'years', 'weeks']}
+        heading={renderTitle}
+        footer={<>
+          <Button onClick={() => {
+            if (calendarRef.current) {
+              const activeView = calendarRef.current.getActiveView();
+              if(activeView !== 'days') {
 
+                // calendarRef.current.setView('days');
+
+              }
+
+              const d1 = calendarRef.current.getCalendarDate();
+              onChangeDates([d1, d1]);
+              calendarRef.current.setValue([d1, d1]);
+              // if (activeView === 'months') {
+              //   calendarRef.current.setViews(['days', 'months', 'years', 'weeks']);
+              //   setTimeout(() => {
+              //     calendarRef.current?.setView('days');
+              //   }, 300)
+              // } else {
+              //   calendarRef.current.setViews(['years', 'months']);
+              //   setTimeout(() => {
+              //     calendarRef.current.setView('months');
+              //   }, 300)
+              // }
+
+            }
+          }}>Month</Button>
+          <Button onClick={() => {
+            if (calendarRef.current) {
+              const activeView = calendarRef.current.getActiveView();
+              if (activeView === 'months') {
+                calendarRef.current.setViews(['days', 'months', 'years', 'weeks']);
+              }
+
+              calendarRef.current.setView(activeView === 'weeks' ? 'days' : 'weeks');
+            }
+          }}>Weeks</Button>
+          <Button onClick={() => {
+            // calendarRef.current?.reset();
+            onChangeDates(null);
+          }}>Reset</Button>
+        </>}
+      />
     </Grid>
   );
 };

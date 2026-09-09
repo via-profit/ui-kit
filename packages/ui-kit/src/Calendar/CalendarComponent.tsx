@@ -363,28 +363,44 @@ const computeView = (inputParams: {
 };
 
 const computeCalendarDate = (params: {
-  readonly inputValue?: Date | CalendarValue<true>;
-  readonly defaultValue?: Date | CalendarValue<true>;
+  readonly inputValue?: Date | CalendarValue<true> | null;
+  readonly defaultValue?: Date | CalendarValue<true> | null;
 }): Date => {
   const { inputValue, defaultValue } = params;
   const today = new Date();
-  if (inputValue) {
-    if (isRangeValue(inputValue) && inputValue[1]) {
-      return inputValue[1];
+
+  // Проверяем inputValue
+  if (inputValue !== null && inputValue !== undefined) {
+    if (Array.isArray(inputValue) && inputValue.length > 0) {
+      // Для range режима - берем первый элемент, если он есть
+      if (inputValue[0] instanceof Date) {
+        return inputValue[0];
+      }
+      // Если первый элемент null, пробуем второй
+      if (inputValue[1] instanceof Date) {
+        return inputValue[1];
+      }
+    } else if (inputValue instanceof Date) {
+      // Для non-range режима
+      return inputValue;
     }
-    if (isRangeValue(inputValue) && inputValue[0]) {
-      return inputValue[0];
+  }
+
+  // Проверяем defaultValue
+  if (defaultValue !== null && defaultValue !== undefined) {
+    if (Array.isArray(defaultValue) && defaultValue.length > 0) {
+      if (defaultValue[0] instanceof Date) {
+        return defaultValue[0];
+      }
+      if (defaultValue[1] instanceof Date) {
+        return defaultValue[1];
+      }
+    } else if (defaultValue instanceof Date) {
+      return defaultValue;
     }
   }
 
-  if (isRangeValue(defaultValue) && defaultValue && defaultValue[1]) {
-    return defaultValue[1];
-  }
-
-  if (isRangeValue(defaultValue) && defaultValue && defaultValue[0]) {
-    return defaultValue[0];
-  }
-
+  // Возвращаем сегодняшнюю дату, если ничего не подошло
   return today;
 };
 
@@ -607,10 +623,12 @@ const CalendarComponent = React.forwardRef(
         inputValueRef.current = inputValue;
         setValue(inputValue as CalendarValue<IsRangeValue>);
 
-        if (isRangeValue(inputValue) && inputValue && inputValue[0] instanceof Date) {
-          setCalendarDate(inputValue[0]);
-        } else {
-          setCalendarDate(inputValue as Date);
+        if (inputValue !== null && inputValue !== undefined) {
+          if (Array.isArray(inputValue) && inputValue[0] instanceof Date) {
+            setCalendarDate(inputValue[0]);
+          } else if (inputValue instanceof Date) {
+            setCalendarDate(inputValue);
+          }
         }
       }
     }, [inputValue]);
