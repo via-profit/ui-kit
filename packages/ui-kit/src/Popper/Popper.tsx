@@ -66,7 +66,7 @@ export interface PopperProps extends React.HTMLAttributes<HTMLDivElement> {
    * if the preferred placement doesn't fit in the viewport.
    * The component will iterate through possible placements until it finds one that fits.
    *
-   * @default true
+   * @default false
    * @example
    * ```tsx
    * <Popper autoFlip={true}>...</Popper> // Will flip if needed
@@ -108,7 +108,7 @@ export interface PopperProps extends React.HTMLAttributes<HTMLDivElement> {
    * Used to prevent the popper from being positioned too close to the screen boundaries.
    * The popper will try to flip to another placement if it cannot maintain this margin.
    *
-   * @default 8
+   * @default 30
    * @example
    * ```tsx
    * // Larger margin for better visibility
@@ -220,21 +220,21 @@ const Popper: React.ForwardRefRenderFunction<HTMLDivElement, PopperProps> = (pro
 
     const newNode = window.document.createElement('div');
     newNode.setAttribute('id', PORTAL_ID);
-
-    if (positionStrategy === 'absolute') {
-      newNode.style.position = 'relative';
-    }
-
     window.document.body.appendChild(newNode);
 
     return newNode;
-  }, [positionStrategy]);
+  }, []);
+
+  const onAnchorPosChangedRef = React.useRef(onAnchorPosChanged);
+  onAnchorPosChangedRef.current = onAnchorPosChanged;
+  const prevPlacementRef = React.useRef(actualPlacement);
 
   React.useEffect(() => {
-    if (anchorPos !== actualPlacement && typeof onAnchorPosChanged === 'function') {
-      onAnchorPosChanged(actualPlacement);
+    if (prevPlacementRef.current !== actualPlacement) {
+      prevPlacementRef.current = actualPlacement;
+      onAnchorPosChangedRef.current?.(actualPlacement);
     }
-  }, [anchorPos, actualPlacement, onAnchorPosChanged]);
+  }, [actualPlacement]);
   const childrenMemo = React.useMemo(() => children, [children]);
 
   const renderNode = React.useCallback(

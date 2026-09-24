@@ -169,9 +169,8 @@ export const findScrollableAncestor = (
   return window;
 };
 
-
-
-
+const useIsomorphicLayoutEffect =
+  typeof window !== 'undefined' ? React.useLayoutEffect : React.useEffect;
 
 export const usePopper = (props: UsePopperProps): UsePopperResult => {
   const {
@@ -184,8 +183,6 @@ export const usePopper = (props: UsePopperProps): UsePopperResult => {
     isOpen = false,
     alternativePlacements,
   } = props;
-  const isMountedRef = React.useRef(false);
-  const isPositioningRef = React.useRef(false);
   const [actualPlacement, setActualPlacement] = React.useState<AnchorPos>(anchorPos);
   const [style, setStyle] = React.useState<React.CSSProperties | null>(null);
   const [isVisible, setIsVisible] = React.useState(false);
@@ -200,12 +197,15 @@ export const usePopper = (props: UsePopperProps): UsePopperResult => {
     return findScrollableAncestor(anchorElement);
   }, [anchorElement]);
 
-  // Synchronizing actualPlacement with anchorPos
+  // Reset actualPlacement only when the preferred placement itself changes.
+  // Comparing with actualPlacement here would immediately revert every flip.
+  const prevAnchorPosRef = React.useRef(anchorPos);
   React.useEffect(() => {
-    if (actualPlacement !== anchorPos) {
+    if (prevAnchorPosRef.current !== anchorPos) {
+      prevAnchorPosRef.current = anchorPos;
       setActualPlacement(anchorPos);
     }
-  }, [actualPlacement, anchorPos]);
+  }, [anchorPos]);
 
   const getPositionStyle = React.useCallback(
     (props: {
@@ -588,26 +588,67 @@ export const usePopper = (props: UsePopperProps): UsePopperResult => {
     const anchorRect = anchorElement.getBoundingClientRect();
     const popperRect = popperRef.current.getBoundingClientRect();
 
-    const { style, placement, found } = getPreferredPlacements(anchorPos, anchorRect, popperRect);
+    const { style, placement } = getPreferredPlacements(anchorPos, anchorRect, popperRect);
 
-    if (found) {
-      setActualPlacement(placement);
-    }
+    setActualPlacement(placement);
     setStyle(style);
   }, [anchorElement, anchorPos, getPreferredPlacements]);
 
+  const frameRef = React.useRef<number | null>(null);
+
+  const scheduleUpdate = React.useCallback(() => {
+    if (frameRef.current !== null) {
+      return;
+    }
+
+    frameRef.current = window.requestAnimationFrame(() => {
+      frameRef.current = null;
+      calculatePosition();
+    });
+  }, [calculatePosition]);
+
+  // Cancel the pending frame on unmount
+  React.useEffect(
+    () => () => {
+      if (frameRef.current !== null) {
+        window.cancelAnimationFrame(frameRef.current);
+        frameRef.current = null;
+      }
+    },
+    [],
+  );
+
   /**
-   * Open / Close popper logic
+   * Close popper logic
    */
   React.useEffect(() => {
     if (!isOpen) {
       setIsVisible(false);
       setStyle(null);
-    } else if (anchorElement && isOpen && popperRef.current) {
+    }
+  }, [isOpen]);
+
+  /**
+   * Open popper logic.
+   * Runs after every render because the popper node can appear later than `isOpen`
+   * becomes true (e.g. the portal is rendered only after the client mount)
+   */
+  useIsomorphicLayoutEffect(() => {
+    if (isOpen && !isVisible && anchorElement && popperRef.current) {
       calculatePosition();
       setIsVisible(true);
     }
-  }, [anchorElement, getPreferredPlacements, isOpen, calculatePosition]);
+  });
+
+  /**
+   * Recalculate position when the positioning params are changed
+   */
+  React.useEffect(() => {
+    if (isOpen && isVisible) {
+      calculatePosition();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [calculatePosition]);
 
   /**
    * The anchor element changes
@@ -617,12 +658,7 @@ export const usePopper = (props: UsePopperProps): UsePopperResult => {
       return;
     }
 
-    const observer = new MutationObserver(() => {
-      window.requestAnimationFrame(() => {
-        // console.log('The anchor element was change');
-        calculatePosition();
-      });
-    });
+    const observer = new MutationObserver(scheduleUpdate);
 
     observer.observe(anchorElement, {
       attributes: true,
@@ -634,38 +670,56 @@ export const usePopper = (props: UsePopperProps): UsePopperResult => {
     return () => {
       observer.disconnect();
     };
-  }, [isOpen, anchorElement, calculatePosition]);
+  }, [isOpen, anchorElement, scheduleUpdate]);
 
   /**
-   * On scroll - recalculate position
+   * The size of the anchor or popper changes
    */
   React.useEffect(() => {
-    if (!isOpen || !scrollableAncestor) {
+    if (!isOpen || !isVisible || typeof ResizeObserver === 'undefined') {
       return;
     }
 
-    const handleScroll = () => {
-      window.requestAnimationFrame(() => {
-        calculatePosition();
-      });
-    };
+    const observer = new ResizeObserver(scheduleUpdate);
 
-    // parent scroll listener
-    if (scrollableAncestor instanceof HTMLElement) {
-      scrollableAncestor.addEventListener('scroll', handleScroll, { passive: true });
-    } else if (scrollableAncestor === window) {
-      window.addEventListener('scroll', handleScroll, { passive: true });
+    if (anchorElement) {
+      observer.observe(anchorElement);
+    }
+
+    if (popperRef.current) {
+      observer.observe(popperRef.current);
     }
 
     // eslint-disable-next-line consistent-return
     return () => {
-      if (scrollableAncestor instanceof HTMLElement) {
-        scrollableAncestor.removeEventListener('scroll', handleScroll);
-      } else if (scrollableAncestor === window) {
-        window.removeEventListener('scroll', handleScroll);
-      }
+      observer.disconnect();
     };
-  }, [isOpen, scrollableAncestor, calculatePosition]);
+  }, [isOpen, isVisible, anchorElement, scheduleUpdate]);
+
+  /**
+   * On scroll of any ancestor (captured on window) - recalculate position
+   */
+  React.useEffect(() => {
+    if (!isOpen) {
+      return;
+    }
+
+    const handleScroll = (event: Event) => {
+      // Scrolling inside the popper does not move it
+      if (event.target instanceof Node && popperRef.current?.contains(event.target)) {
+        return;
+      }
+
+      scheduleUpdate();
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true, capture: true });
+
+    // eslint-disable-next-line consistent-return
+    return () => {
+      window.removeEventListener('scroll', handleScroll, { capture: true });
+    };
+  }, [isOpen, scheduleUpdate]);
 
   /**
    * On window resize - recalculate position
@@ -675,20 +729,13 @@ export const usePopper = (props: UsePopperProps): UsePopperResult => {
       return;
     }
 
-    const handleResize = () => {
-      window.requestAnimationFrame(() => {
-        calculatePosition();
-      });
-    };
-
-    // parent scroll listener
-    window.addEventListener('resize', handleResize);
+    window.addEventListener('resize', scheduleUpdate);
 
     // eslint-disable-next-line consistent-return
     return () => {
-      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('resize', scheduleUpdate);
     };
-  }, [calculatePosition, isOpen]);
+  }, [scheduleUpdate, isOpen]);
 
   return {
     actualPlacement,
