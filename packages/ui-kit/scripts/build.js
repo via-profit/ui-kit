@@ -13,9 +13,9 @@ const buildCountryFlags = async () => new Promise((resolve, reject) => {
     console.log(Buffer.from(data).toString());
   });
 
+  // The result is decided by the exit code, stderr may contain just warnings
   process.stderr.on('data', data => {
-    console.error(`stdout ${data}`);
-    reject(data);
+    console.error(`stderr ${data}`);
   });
 
   process.on('close', code => {
@@ -39,9 +39,9 @@ const buildPackage = () =>
       console.log(Buffer.from(data).toString());
     });
 
+    // The result is decided by the exit code, stderr may contain just warnings
     process.stderr.on('data', data => {
-      console.error(`stdout ${data}`);
-      reject(data);
+      console.error(`stderr ${data}`);
     });
 
     process.on('close', code => {
@@ -62,12 +62,12 @@ const build = async () => {
   // const typesPath = path.resolve(packagePath, './@types');
 
   process.stdout.write('\nBuild country flags...');
-  await buildCountryFlags().catch(err => console.error(err));
+  await buildCountryFlags();
   process.stdout.write("\r\x1b[K");
   process.stdout.write('Build country flags...Done');
 
   process.stdout.write('\nBuild package...');
-  await buildPackage().catch(err => console.error(err));
+  await buildPackage();
   process.stdout.write("\r\x1b[K");
   process.stdout.write('Build package...Done');
 
@@ -90,4 +90,8 @@ const build = async () => {
   // });
 };
 
-build();
+// Fail the process, otherwise a broken build could be published
+build().catch(err => {
+  console.error('\nBuild failed:', err);
+  process.exit(1);
+});
