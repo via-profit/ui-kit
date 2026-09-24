@@ -410,14 +410,14 @@ const CalendarComponent = React.forwardRef(
     ref: React.Ref<CalendarRef<IsRangeValue>>,
   ): React.ReactNode => {
     const {
-      minDate = new Date(new Date().getFullYear() - 100, 0, 1, 0, 0, 0),
-      maxDate = new Date(new Date().getFullYear() + 100, 0, 1, 0, 0, 0),
+      minDate: inputMinDate,
+      maxDate: inputMaxDate,
       weekStartDay = 'monday',
       locale = 'ru-RU',
       displayLeadingZero = false,
       onChange,
       badges = [],
-      markToday,
+      markToday = true,
       weekDayLabelFormat = 'short',
       accentColor = 'primary',
       defaultValue,
@@ -461,7 +461,7 @@ const CalendarComponent = React.forwardRef(
       }
     }
 
-    if (!inputValue && typeof onChange === 'undefined') {
+    if (typeof inputValue !== 'undefined' && typeof onChange !== 'function') {
       throw new Error(
         'You provided a `value` prop to a form field without an `onChange` handler. This will render a read-only field. If the field should be mutable use `defaultValue`. Otherwise, set either `onChange`.',
       );
@@ -470,6 +470,26 @@ const CalendarComponent = React.forwardRef(
     if (inputView && inputInitialView) {
       throw new Error('You can not use view and initialView at the same time.');
     }
+
+    // Default limits are created once, otherwise every render gets new Date instances
+    // and invalidates all memoized values depending on them
+    const minDate = React.useMemo(
+      () => inputMinDate ?? new Date(new Date().getFullYear() - 100, 0, 1, 0, 0, 0),
+      [inputMinDate],
+    );
+    const maxDate = React.useMemo(
+      () => inputMaxDate ?? new Date(new Date().getFullYear() + 100, 0, 1, 0, 0, 0),
+      [inputMaxDate],
+    );
+
+    const emitChange = React.useCallback(
+      (newValue: CalendarValue<IsRangeValue>) => {
+        if (typeof onChange === 'function') {
+          onChange(newValue);
+        }
+      },
+      [onChange],
+    );
 
     /**
      * Overrides
@@ -533,12 +553,12 @@ const CalendarComponent = React.forwardRef(
       }),
     );
 
-
-
     /**
      * List of possibility views
      */
-    const [views, setComputedViews] = React.useState<readonly CalendarView[]>(() => computeViews(inputViews, range));
+    const [views, setComputedViews] = React.useState<readonly CalendarView[]>(() =>
+      computeViews(inputViews, range),
+    );
 
     const setViews = React.useCallback(
       (variants: readonly CalendarView[]) => setComputedViews(variants),
@@ -546,13 +566,14 @@ const CalendarComponent = React.forwardRef(
     );
     const selectView = React.useCallback(
       (view: CalendarView) => {
+        const nextViews = views.includes(view) ? views : [...views, view];
 
-        if (!views.includes(view)) {
-          setViews([...views, view]);
+        if (nextViews !== views) {
+          setViews(nextViews);
         }
         setView(view);
 
-        const index = views.findIndex(v => v === view);
+        const index = nextViews.findIndex(v => v === view);
 
         if (index > -1) {
           swiperRef.current?.goToIndex(index);
@@ -560,6 +581,17 @@ const CalendarComponent = React.forwardRef(
       },
       [setViews, views],
     );
+
+    /**
+     * Controlled `view` property was changed
+     */
+    const inputViewRef = React.useRef(inputView);
+    React.useEffect(() => {
+      if (inputView && inputView !== inputViewRef.current) {
+        inputViewRef.current = inputView;
+        selectView(inputView);
+      }
+    }, [inputView, selectView]);
 
     const resetVariablesRef = React.useRef({
       calendarDate,
@@ -647,9 +679,9 @@ const CalendarComponent = React.forwardRef(
 
         if (view === 'months') {
           if (type === 'prev') {
-            newCalendarDate.setFullYear(newCalendarDate.getFullYear() + 1);
-          } else {
             newCalendarDate.setFullYear(newCalendarDate.getFullYear() - 1);
+          } else {
+            newCalendarDate.setFullYear(newCalendarDate.getFullYear() + 1);
           }
         }
 
@@ -684,7 +716,7 @@ const CalendarComponent = React.forwardRef(
 
         // Single-date mode
         if (!range) {
-          onChange(selectedDate as CalendarValue<IsRangeValue>);
+          emitChange(selectedDate as CalendarValue<IsRangeValue>);
           setValue(selectedDate as CalendarValue<IsRangeValue>);
 
           return;
@@ -693,34 +725,23 @@ const CalendarComponent = React.forwardRef(
         // Range-date mode
         const [from, to] = (value as CalendarValue<true>) ?? [];
 
-        // начало нового периода
-        if (from && to) {
-          setValue([selectedDate, null] as unknown as CalendarValue<IsRangeValue>);
-          onChange([selectedDate, null] as unknown as CalendarValue<IsRangeValue>);
+        // выбрана только первая дата - завершение периода
+        if (from && !to) {
+          /// check to swap
+          const newValue =
+            selectedDate.getTime() < from.getTime() ? [selectedDate, from] : [from, selectedDate];
+
+          emitChange(newValue as unknown as CalendarValue<IsRangeValue>);
+          setValue(newValue as unknown as CalendarValue<IsRangeValue>);
 
           return;
         }
 
-        // если выбрана только первая дата или обе даты равны - завершение периода
-        if ((from && to === null) || (from && to && from.getTime() === to.getTime())) {
-          /// check to swap
-          if (selectedDate.getTime() < from.getTime()) {
-            onChange([selectedDate, from] as unknown as CalendarValue<IsRangeValue>);
-            setValue([selectedDate, from] as unknown as CalendarValue<IsRangeValue>);
-          } else {
-            onChange([from, selectedDate] as unknown as CalendarValue<IsRangeValue>);
-            setValue([from, selectedDate] as unknown as CalendarValue<IsRangeValue>);
-          }
-        } else {
-          // обе даты выбраны или ничего не выбрано ([Date, Date] | [null, null] | null) - начало нового периода
-          if ((from && to) || (from === null && to === null) || value === null) {
-            setValue([selectedDate, null] as unknown as CalendarValue<IsRangeValue>);
-
-            return;
-          }
-        }
+        // обе даты выбраны или ничего не выбрано ([Date, Date] | [null, null] | null) - начало нового периода
+        setValue([selectedDate, null] as unknown as CalendarValue<IsRangeValue>);
+        emitChange([selectedDate, null] as unknown as CalendarValue<IsRangeValue>);
       },
-      [onChange, getNextAvailableView, range, value],
+      [emitChange, getNextAvailableView, range, value],
     );
 
     /**
@@ -728,9 +749,7 @@ const CalendarComponent = React.forwardRef(
      */
     const handleYearSelected = React.useCallback(
       (selectedYear: number) => () => {
-        const newDate = new Date(calendarDate);
-        newDate.setFullYear(selectedYear, 0, 1);
-        newDate.setHours(0, 0, 0);
+        const newDate = new Date(selectedYear, 0, 1, 0, 0, 0, 0);
 
         setCalendarDate(newDate);
 
@@ -742,9 +761,7 @@ const CalendarComponent = React.forwardRef(
 
         // if the next `view` does not exist
         if (!nextView && typeof onChange === 'function') {
-          const a = new Date();
-          a.setFullYear(newDate.getFullYear(), 11, 31);
-          a.setHours(23, 59, 59);
+          const a = new Date(newDate.getFullYear(), 11, 31, 23, 59, 59, 999);
 
           const selectedValue = range ? [newDate, a] : newDate;
           onChange(selectedValue as NonNullable<CalendarValue<IsRangeValue>>);
@@ -762,9 +779,7 @@ const CalendarComponent = React.forwardRef(
      */
     const handleMonthSelected = React.useCallback(
       (monthIndex: number) => () => {
-        const newDate = new Date();
-        newDate.setFullYear(calendarDate.getFullYear(), monthIndex, 1);
-        newDate.setHours(0, 0, 0);
+        const newDate = new Date(calendarDate.getFullYear(), monthIndex, 1, 0, 0, 0, 0);
 
         setCalendarDate(newDate);
         const nextView = getNextAvailableView();
@@ -775,9 +790,8 @@ const CalendarComponent = React.forwardRef(
 
         // if the next `view` does not exist
         if (!nextView && typeof onChange === 'function') {
-          const a = new Date();
-          a.setFullYear(newDate.getFullYear(), newDate.getMonth() + 1, 0);
-          a.setHours(0, 0, 0);
+          // The end of the last day of the month, the same way as for the year range
+          const a = new Date(newDate.getFullYear(), newDate.getMonth() + 1, 0, 23, 59, 59, 999);
 
           const selectedValue = range ? [newDate, a] : newDate;
           onChange(selectedValue as NonNullable<CalendarValue<IsRangeValue>>);
@@ -807,14 +821,18 @@ const CalendarComponent = React.forwardRef(
      * Handle click on «Today» button
      */
     const handleToday = React.useCallback(() => {
-      const today = new Date();
-      today.setHours(0, 0, 0);
+      const now = new Date();
+      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0);
+      const newValue = (range ? [today, today] : today) as CalendarValue<IsRangeValue>;
+
       setCalendarDate(today);
+      setValue(newValue);
+      emitChange(newValue);
 
-      setValue((range ? [today, today] : today) as CalendarValue<IsRangeValue>);
-
-      handleCellDateClick(today)();
-    }, [handleCellDateClick, range]);
+      if (view !== 'days' && views.includes('days')) {
+        selectView('days');
+      }
+    }, [emitChange, range, selectView, view, views]);
 
     const handleClickWeek = React.useCallback(
       (week: Week) => () => {
@@ -857,8 +875,8 @@ const CalendarComponent = React.forwardRef(
     );
 
     const monthsRange = React.useMemo(
-      () => getMonthsRange(minDate, maxDate),
-      [minDate, maxDate, getMonthsRange],
+      () => getMonthsRange(minDate, maxDate, calendarDate.getFullYear()),
+      [minDate, maxDate, getMonthsRange, calendarDate],
     );
 
     const renderViewDays = React.useCallback(
@@ -941,7 +959,7 @@ const CalendarComponent = React.forwardRef(
 
             return (
               <overridesMap.MonthCell
-                key={monthIndex + monthsRange[monthIndex]}
+                key={monthIndex}
                 accentColor={accentColor}
                 isSelected={isSelected}
                 onClick={handleMonthSelected(monthIndex)}

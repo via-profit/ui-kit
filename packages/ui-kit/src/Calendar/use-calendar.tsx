@@ -88,13 +88,14 @@ export type UseCalendarPayload = {
   getYearsRange: (minDate: Date, maxDate: Date) => number[];
 
   /**
-   * Returns range of monthes (array of month indexes) between passed dates
+   * Returns range of monthes (array of month indexes) of the passed year (current year by default)
+   * which are intersected with the range between passed dates
    */
-  getMonthsRange: (minDate: Date, maxDate: Date) => number[];
+  getMonthsRange: (minDate: Date, maxDate: Date, year?: number) => number[];
 };
 
 const WHITESPACE = '\u{0020}';
-const WEEK_IN_MS = 604800000; // 7 * 24 * 60 * 60 * 1000
+const DAY_IN_MS = 86400000; // 24 * 60 * 60 * 1000
 
 // Константа для маппинга дней недели
 const WEEK_DAYS_MAP: Record<WeekDayName, number> = {
@@ -110,9 +111,25 @@ const WEEK_DAYS_MAP: Record<WeekDayName, number> = {
 export const useCalendar = (props: UseCalendarProps): UseCalendarPayload => {
   const { minDate, maxDate, weekStartDay, displayLeadingZero, locale } = props;
 
-  // Мемоизируем timestamp граничных дат для оптимизации проверок isDisabled
-  const minTime = React.useMemo(() => minDate.getTime(), [minDate]);
-  const maxTime = React.useMemo(() => maxDate.getTime(), [maxDate]);
+  // Мемоизируем timestamp граничных дат для оптимизации проверок isDisabled.
+  // Границы расширяются до целых дней, иначе при minDate={new Date()} сегодняшний день недоступен
+  const minTime = React.useMemo(
+    () => new Date(minDate.getFullYear(), minDate.getMonth(), minDate.getDate()).getTime(),
+    [minDate],
+  );
+  const maxTime = React.useMemo(
+    () =>
+      new Date(
+        maxDate.getFullYear(),
+        maxDate.getMonth(),
+        maxDate.getDate(),
+        23,
+        59,
+        59,
+        999,
+      ).getTime(),
+    [maxDate],
+  );
 
   // Мемоизируем номер дня начала недели
   const weekStartDayNumber = React.useMemo(() => WEEK_DAYS_MAP[weekStartDay], [weekStartDay]);
@@ -149,28 +166,33 @@ export const useCalendar = (props: UseCalendarProps): UseCalendarPayload => {
 
   const calculateWeekNumber = React.useCallback(
     (date: Date): number => {
-      // Используем UTC методы для избежания проблем с часовыми поясами
-      const year = date.getFullYear();
-      const month = date.getMonth();
-      const day = date.getDate();
+      // Используем UTC методы для избежания проблем с часовыми поясами (DST)
+      const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
 
-      // Создаем дату без времени
-      const d = new Date(Date.UTC(year, month, day));
+      // Неделя с понедельника - ISO 8601: первая неделя года содержит первый четверг
+      if (weekStartDayNumber === WEEK_DAYS_MAP.monday) {
+        const isoDay = d.getUTCDay() || 7;
+        const thursday = new Date(d.getTime() + (4 - isoDay) * DAY_IN_MS);
+        const yearStart = Date.UTC(thursday.getUTCFullYear(), 0, 1);
 
-      // День недели (0-6)
-      const dayOfWeek = d.getUTCDay();
+        return Math.ceil(((thursday.getTime() - yearStart) / DAY_IN_MS + 1) / 7);
+      }
 
-      // Смещение от начала недели
-      const diff = (dayOfWeek - weekStartDayNumber + 7) % 7;
+      // Остальные системы: первая неделя года содержит 1 января
+      const diff = (d.getUTCDay() - weekStartDayNumber + 7) % 7;
+      const weekStart = d.getTime() - diff * DAY_IN_MS;
+      const weekEnd = new Date(weekStart + 6 * DAY_IN_MS);
 
-      // Первый день недели
-      const weekStart = new Date(Date.UTC(year, month, day - diff));
+      // Неделя содержит 1 января следующего года
+      if (weekEnd.getUTCFullYear() !== new Date(weekStart).getUTCFullYear()) {
+        return 1;
+      }
 
-      // Первый день года
-      const yearStart = new Date(Date.UTC(year, 0, 1));
+      const yearStart = new Date(Date.UTC(new Date(weekStart).getUTCFullYear(), 0, 1));
+      const firstWeekStart =
+        yearStart.getTime() - ((yearStart.getUTCDay() - weekStartDayNumber + 7) % 7) * DAY_IN_MS;
 
-      // Вычисляем номер недели
-      return Math.floor((weekStart.getTime() - yearStart.getTime()) / WEEK_IN_MS) + 1;
+      return Math.round((weekStart - firstWeekStart) / (7 * DAY_IN_MS)) + 1;
     },
     [weekStartDayNumber],
   );
@@ -224,12 +246,15 @@ export const useCalendar = (props: UseCalendarProps): UseCalendarPayload => {
     return years;
   }, []);
 
-  const getMonthsRange = React.useCallback((minDate: Date, maxDate: Date) => {
+  const getMonthsRange = React.useCallback((minDate: Date, maxDate: Date, year?: number) => {
     const m: number[] = [];
-    const y = new Date().getFullYear();
+    const y = typeof year === 'number' ? year : new Date().getFullYear();
     for (let index = 0; index < 12; index++) {
-      const d = new Date(y, index, 1, 0, 0, 0);
-      if (d.getTime() > minDate.getTime() && d.getTime() < maxDate.getTime()) {
+      const monthStart = new Date(y, index, 1, 0, 0, 0, 0);
+      const monthEnd = new Date(y, index + 1, 0, 23, 59, 59, 999);
+
+      // Месяц подходит, если хотя бы частично попадает в диапазон
+      if (monthStart.getTime() <= maxDate.getTime() && monthEnd.getTime() >= minDate.getTime()) {
         m.push(index);
       }
     }
