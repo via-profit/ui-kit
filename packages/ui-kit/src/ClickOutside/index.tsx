@@ -63,7 +63,22 @@ const ClickOutside: React.FC<ClickOutsideProps> = props => {
     };
   }, [onOutsideClick, mouseEvent]);
 
-  return <>{React.cloneElement(children, { ref })}</>;
+  // Keep the child's own ref working alongside ours
+  const childRef = (children as React.ReactElement & { ref?: React.Ref<HTMLElement> }).ref;
+  const setRef = React.useCallback(
+    (el: HTMLElement | null) => {
+      ref.current = el;
+
+      if (typeof childRef === 'function') {
+        childRef(el);
+      } else if (childRef && typeof childRef === 'object') {
+        (childRef as React.MutableRefObject<HTMLElement | null>).current = el;
+      }
+    },
+    [childRef],
+  );
+
+  return <>{React.cloneElement(children, { ref: setRef })}</>;
 };
 
 export default ClickOutside;
