@@ -119,7 +119,7 @@ export interface MenuProps<T, Multiple extends boolean | undefined = undefined> 
    * if the preferred placement doesn't fit in the viewport.
    * The component will iterate through possible placements until it finds one that fits.
    *
-   * **Default**: `true`
+   * **Default**: `false`
    * ```
    */
   readonly autoFlip?: boolean;
@@ -139,7 +139,7 @@ export interface MenuProps<T, Multiple extends boolean | undefined = undefined> 
    * - `'absolute'`: Positions relative to the nearest positioned ancestor.
    *                 When using 'absolute', make sure a parent element has `position: relative`.
    *
-   * **Default**: `'`absolute`'`
+   * **Default**: `fixed`
    * ```
    */
   readonly positionStrategy?: PositionStrategy;
@@ -149,7 +149,7 @@ export interface MenuProps<T, Multiple extends boolean | undefined = undefined> 
    * Used to prevent the popper from being positioned too close to the screen boundaries.
    * The popper will try to flip to another placement if it cannot maintain this margin.
    *
-   * **Default**: `8`
+   * **Default**: `30`
    * ```
    */
   readonly viewportMargin?: number;
@@ -354,9 +354,6 @@ const MenuContainer = React.forwardRef(
       maxWidth,
     } = props;
 
-    // const [actualPlacement, setActualPlacement] = React.useState(anchorPos);
-    const [currentAnchorElement, setAnchorElement] = React.useState(anchorElement);
-
     const overridesMap = React.useMemo(
       () => ({
         List: overrides?.List || List,
@@ -367,7 +364,8 @@ const MenuContainer = React.forwardRef(
 
     const menuListRef = React.useRef<HTMLDivElement | null>(null);
     const menuPopperRef = React.useRef<HTMLDivElement | null>(null);
-    const isOpenRef = React.useRef(isOpen);
+    // Starts as `false` so that a menu mounted in the open state is focused and scrolled too
+    const isOpenRef = React.useRef(false);
     const focusTimeoutRef = React.useRef<NodeJS.Timeout>();
 
     const {
@@ -377,6 +375,12 @@ const MenuContainer = React.forwardRef(
 
     const selectedIndexesRef = React.useRef(selectedIndexes);
 
+    const compareFunc = React.useCallback(
+      (item: T, val: T) =>
+        getOptionSelected ? getOptionSelected({ item, value: val }) : isEqual(item, val),
+      [getOptionSelected],
+    );
+
     // Оптимизированная функция получения выбранных индексов
     const getSelectedIndexes = React.useCallback((): number[] => {
       if (value === null || (multiple && (value as T[]).length === 0)) {
@@ -384,9 +388,6 @@ const MenuContainer = React.forwardRef(
       }
 
       const indexes: number[] = [];
-      const compareFunc = getOptionSelected
-        ? (item: T, val: T) => getOptionSelected({ item, value: val })
-        : (item: T, val: T) => isEqual(item, val);
 
       if (multiple) {
         const valueArray = value as T[];
@@ -404,7 +405,7 @@ const MenuContainer = React.forwardRef(
       }
 
       return indexes;
-    }, [items, value, multiple, getOptionSelected]);
+    }, [items, value, multiple, compareFunc]);
 
     const scrollToIndex = React.useCallback((index: number) => {
       if (index === -1) {
@@ -418,22 +419,24 @@ const MenuContainer = React.forwardRef(
         const containerRect = container.getBoundingClientRect();
         const optionRect = option.getBoundingClientRect();
 
-        const scrollOffset = optionRect.top - containerRect.top + container.scrollTop;
-
-        container.scrollTo({
-          top: scrollOffset,
-          behavior: 'instant'
-        });
+        // Scroll only when the option is out of the visible area
+        if (optionRect.top < containerRect.top) {
+          container.scrollTop -= containerRect.top - optionRect.top;
+        } else if (optionRect.bottom > containerRect.bottom) {
+          container.scrollTop += optionRect.bottom - containerRect.bottom;
+        }
       }
     }, []);
 
     const scrollToFirstSelected = React.useCallback(() => {
-      if (selectedIndexes.length === 0) return;
+      // Computed from the props, the context state may not be updated yet
+      const indexes = getSelectedIndexes();
+      if (indexes.length === 0) return;
 
-      const firstSelectedIndex = Math.min(...selectedIndexes);
+      const firstSelectedIndex = Math.min(...indexes);
       dispatch(actionSetmenuState({ markedIndex: firstSelectedIndex }));
       scrollToIndex(firstSelectedIndex);
-    }, [dispatch, selectedIndexes, scrollToIndex]);
+    }, [dispatch, getSelectedIndexes, scrollToIndex]);
 
     const selectItem = React.useCallback(
       (index: number) => {
@@ -445,18 +448,14 @@ const MenuContainer = React.forwardRef(
         if (typeof onSelectItem === 'function') {
           if (multiple) {
             // Для multiple режима
-            const selectedSet = new Set<T>();
-            if (value !== null) {
-              (value as T[]).forEach(v => selectedSet.add(v));
-            }
+            // Value entries may be other instances than items, so compare them by compareFunc
+            const currentValue = (value as readonly T[] | null) || [];
+            const isSelected = currentValue.some(v => compareFunc(item, v));
+            const newValue = isSelected
+              ? currentValue.filter(v => !compareFunc(item, v))
+              : [...currentValue, item];
 
-            if (selectedIndexes.includes(index)) {
-              selectedSet.delete(item);
-            } else {
-              selectedSet.add(item);
-            }
-
-            onSelectItem(Array.from(selectedSet) as Multiple extends undefined ? T : readonly T[]);
+            onSelectItem(newValue as Multiple extends undefined ? T : readonly T[]);
           } else {
             // Для single режима
             onSelectItem(item as Multiple extends undefined ? T : readonly T[]);
@@ -467,7 +466,7 @@ const MenuContainer = React.forwardRef(
           }
         }
       },
-      [onSelectItem, onRequestClose, selectedIndexes, closeOnSelect, items, value, multiple],
+      [onSelectItem, onRequestClose, compareFunc, closeOnSelect, items, value, multiple],
     );
 
     const highlightIndex = React.useCallback(
@@ -535,13 +534,6 @@ const MenuContainer = React.forwardRef(
       ],
     );
 
-    // Обновление anchor элемента
-    React.useEffect(() => {
-      if (anchorElement !== currentAnchorElement) {
-        setAnchorElement(anchorElement);
-      }
-    }, [anchorElement, currentAnchorElement]);
-
     // Обработчик клавиатуры
     const listKeydownEvent = React.useCallback(
       (event: React.KeyboardEvent<HTMLElement>) => {
@@ -602,7 +594,7 @@ const MenuContainer = React.forwardRef(
       isOpenRef.current = isOpen;
 
       if (!isOpen) {
-        onRequestClose();
+        // The menu is already closed by the parent, so onRequestClose must not be called again
         dispatch(actionSetmenuState({ markedIndex: -1, hoveredIndex: -1 }));
 
         return;
@@ -620,7 +612,7 @@ const MenuContainer = React.forwardRef(
           menuListRef.current?.focus();
         }, 15);
       }
-    }, [isOpen, autofocus, dispatch, onRequestClose, scrollToFirstSelected]);
+    }, [isOpen, autofocus, dispatch, scrollToFirstSelected]);
 
     // Обновление выбранных индексов
     React.useEffect(() => {
