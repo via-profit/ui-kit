@@ -68,9 +68,11 @@ export const useMasked = () => {
       return data;
     }
 
+    const requiredCount = mask.filter(pattern => pattern instanceof RegExp).length;
+    let filledCount = 0;
+
     let patternIndex = 0;
     for (patternIndex = 0; patternIndex < mask.length; patternIndex++) {
-      data.isValid = false;
       if (data.charIndex >= parsedValue.length) {
         break;
       }
@@ -78,21 +80,31 @@ export const useMasked = () => {
       const char = parsedValue[data.charIndex];
       const pattern = mask[patternIndex];
 
+      // A mask literal (e.g. a shifted separator) got into a RegExp position:
+      // drop the char and try the same pattern with the next one, otherwise the rest of input is lost
+      if (pattern instanceof RegExp && !new RegExp(pattern).test(char) && mask.includes(char)) {
+        if (data.charIndex < (caret || 0)) {
+          data.caret -= 1;
+        }
+        data.charIndex += 1;
+        patternIndex -= 1;
+        continue;
+      }
+
       // If char is correct (matched with Regexp pattern)
       // then accept char into text
       // and increment the charIndex and caret
       if (pattern instanceof RegExp && new RegExp(pattern).test(char)) {
         data.text = `${data.text}${char}`;
         data.charIndex += 1;
-        data.isValid = true;
+        filledCount += 1;
       }
 
       // If char is correct (equal with pattern string)
-      // then accept char into text
-      // and increment the charIndex and caret
+      // then accept char into text and increment the charIndex.
+      // The caret is not changed: this char is already counted by parseInput
       if (typeof pattern === 'string' && pattern === char) {
         data.text = `${data.text}${char}`;
-        data.caret += 1;
         data.charIndex += 1;
       }
 
@@ -110,7 +122,8 @@ export const useMasked = () => {
     const result: FormatParsedPayload = {
       text: data.text,
       caret: data.caret,
-      isValid: data.isValid,
+      // Valid when every RegExp position of the mask is filled
+      isValid: requiredCount > 0 && filledCount === requiredCount,
     };
 
     return result;
