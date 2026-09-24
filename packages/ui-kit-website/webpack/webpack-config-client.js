@@ -14,6 +14,14 @@ const { parsed } = dotenv.config({
 });
 const isDev = process.env.NODE_ENV === 'development';
 
+/**
+ * Version of the documented ui-kit. Only the version is injected,
+ * importing the whole package.json would put the dependencies list into the bundle
+ */
+const { version: uiKitVersion } = JSON.parse(
+  fs.readFileSync(path.resolve(__dirname, '../../ui-kit/package.json'), { encoding: 'utf8' }),
+);
+
 const webpackProdConfig = {
   target: 'web',
   mode: isDev ? 'development' : 'production',
@@ -66,6 +74,9 @@ const webpackProdConfig = {
     },
   },
   plugins: [
+    new webpack.DefinePlugin({
+      'process.env.UI_KIT_VERSION': JSON.stringify(uiKitVersion),
+    }),
     ...(isDev
       ? [
           /**

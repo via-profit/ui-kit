@@ -37,7 +37,12 @@ const Breadcrumbs: React.FC = () => {
   const { pathname } = useLocation();
   const intl = useIntl();
   const docsLabel = intl.formatMessage({ defaultMessage: 'Документация' });
-  const current = findDocsNavItem(pathname);
+  const staticPages: Record<string, string> = {
+    '/docs/changelog': intl.formatMessage({ defaultMessage: 'Список изменений' }),
+  };
+  const current = staticPages[pathname]
+    ? { label: staticPages[pathname] }
+    : findDocsNavItem(pathname);
 
   if (!current) {
     return (

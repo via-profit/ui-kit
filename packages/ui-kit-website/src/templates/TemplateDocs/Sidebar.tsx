@@ -179,6 +179,13 @@ const Sidebar: React.ForwardRefRenderFunction<HTMLElement, React.HTMLAttributes<
         >
           {intl.formatMessage({ defaultMessage: 'Введение' })}
         </Item>
+        <Item
+          to="/docs/changelog"
+          $isActive={isActive('/docs/changelog')}
+          aria-current={isActive('/docs/changelog') ? 'page' : undefined}
+        >
+          {intl.formatMessage({ defaultMessage: 'Список изменений' })}
+        </Item>
       </Group>
 
       <Group ref={listRef}>

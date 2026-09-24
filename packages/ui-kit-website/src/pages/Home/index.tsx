@@ -8,6 +8,7 @@ import docsNavigation from '~/utils/docsNavigation';
 import { GITHUB_URL } from '~/components/Header';
 import GithubIcon from '~/components/Icons/GithubIcon';
 import Logo from '~/components/Logo';
+import { UI_KIT_VERSION } from '~/utils/version';
 
 const gradient = (theme: Theme) =>
   `linear-gradient(90deg, ${theme.color.accentSecondary.toString()}, ${theme.color.accentPrimary.toString()})`;
@@ -194,7 +195,7 @@ const Home: React.FC = () => {
   return (
     <>
       <Hero>
-        <Pill>React · TypeScript · Emotion</Pill>
+        <Pill>{UI_KIT_VERSION && `v${UI_KIT_VERSION} · `}React · TypeScript · Emotion</Pill>
         <Title>
           {intl.formatMessage({ defaultMessage: 'Набор компонентов для' })}{' '}
           <TitleAccent>{intl.formatMessage({ defaultMessage: 'ваших интерфейсов' })}</TitleAccent>

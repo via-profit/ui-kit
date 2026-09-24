@@ -5,6 +5,7 @@ import { Link, NavLink } from 'react-router-dom';
 import { useIntl } from 'react-intl';
 
 import ViaProfitLogo from '~/components/ViaProfitLogo';
+import { UI_KIT_VERSION } from '~/utils/version';
 import GithubIcon from '~/components/Icons/GithubIcon';
 import MenuIcon from '~/components/Icons/MenuOutline';
 import ThemeSwitcher from './ThemeSwitcher';
@@ -30,6 +31,25 @@ const LogoLink = styled(Link)`
   display: inline-flex;
   font-size: 1.9rem;
   text-decoration: none;
+`;
+
+const VersionBadge = styled(Link)`
+  margin-left: -0.75rem;
+  padding: 0.1rem 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  line-height: 1.4;
+  text-decoration: none;
+  white-space: nowrap;
+  color: ${({ theme }) => theme.color.accentPrimary.toString()};
+  background-color: ${({ theme }) => theme.color.accentPrimary.alpha(0.08).toString()};
+  border: 1px solid ${({ theme }) => theme.color.accentPrimary.alpha(0.3).toString()};
+  border-radius: 999px;
+  transition: border-color 120ms ease-out;
+
+  &:hover {
+    border-color: ${({ theme }) => theme.color.accentPrimary.toString()};
+  }
 `;
 
 const Nav = styled.nav`
@@ -117,6 +137,14 @@ const Header: React.FC<HeaderProps> = props => {
       <LogoLink to="/" aria-label="Via Profit UI Kit">
         <ViaProfitLogo />
       </LogoLink>
+      {UI_KIT_VERSION && (
+        <VersionBadge
+          to="/docs/changelog"
+          title={intl.formatMessage({ defaultMessage: 'Список изменений' })}
+        >
+          v{UI_KIT_VERSION}
+        </VersionBadge>
+      )}
       <Nav>
         <NavItem to="/" end>
           {intl.formatMessage({ defaultMessage: 'Главная' })}
