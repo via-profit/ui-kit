@@ -203,18 +203,11 @@ Color.fromHex('#ff000080'); // с альфа-каналом
 
 #### Утилитарные методы (вспомогательные)
 
-- **parseColor(value: string): ParsedColor** - ❌ **Deprecated**. Используйте `ColorParser.parse()` или
-  `Color.fromString()`
-
+- **parseColor(value: string): ParsedColor** - ❌ **Deprecated**. Используйте `ColorParser.parse()` или `Color.fromString()`
 - **hslToRgb(value: string): ParsedColor** - ❌ **Deprecated**. Используйте `ColorParser.parse()` для парсинга HSL
-
-- **getHextByWebColor(value: string): string** - ❌ **Deprecated**. Именованные цвета теперь поддерживаются в
-  `Color.fromString()`
-
+- **getHextByWebColor(value: string): string** - ❌ **Deprecated**. Именованные цвета теперь поддерживаются в `Color.fromString()`
 - **stringToHashCode(str: string): number** - ⚠️ **Deprecated** в `ColorGenerator` (приватный метод)
-
 - **intToRGB(i: number): string** - ❌ **Deprecated**. Не используйте
-
 - **uuidToColor(uuid: string): string** - ❌ **Deprecated**. Используйте `Color.fromUuid(uuid)`
 
 ### Вспомогательные классы
