@@ -2,7 +2,7 @@ import React from 'react';
 import RenderMarkdown from '~/components/RenderMarkdown';
 
 import TableOfContent from '~/components/TableOfContent';
-import Surface from '@via-profit/ui-kit/src/Surface';
+import DocsArticle from '~/components/DocsArticle';
 import content from '@via-profit/ui-kit/docs/popper/README.md';
 import ExamplePopperOverview from '~/examples/popper/ExamplePopperOverview';
 import ExamplePopperAnchorPos from '~/examples/popper/ExamplePopperAnchorPos';
@@ -11,7 +11,7 @@ import ExamplePopperModal from '~/examples/popper/ExamplePopperModal';
 
 const PopperOverview: React.FC = () => (
   <>
-    <Surface>
+    <DocsArticle>
       <RenderMarkdown
         overrides={{
           ExamplePopperOverview,
@@ -22,7 +22,7 @@ const PopperOverview: React.FC = () => (
       >
         {content}
       </RenderMarkdown>
-    </Surface>
+    </DocsArticle>
     <TableOfContent content={content} />
   </>
 );

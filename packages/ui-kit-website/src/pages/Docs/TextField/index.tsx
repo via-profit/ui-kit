@@ -1,7 +1,7 @@
 import React from 'react';
 
 import TableOfContent from '~/components/TableOfContent';
-import Surface from '@via-profit/ui-kit/src/Surface';
+import DocsArticle from '~/components/DocsArticle';
 import RenderMarkdown from '~/components/RenderMarkdown';
 import ExampleTextFieldOverview from '~/examples/text-field/ExampleTextFieldOverview';
 import ExampleTextFieldOverrides from '~/examples/text-field/ExampleTextFieldOverrides';
@@ -10,7 +10,7 @@ import content from '@via-profit/ui-kit/docs/text-field/README.md';
 
 const TextFields: React.FC = () => (
   <>
-    <Surface>
+    <DocsArticle>
       <RenderMarkdown
         overrides={{
           ExampleTextFieldOverview,
@@ -20,7 +20,7 @@ const TextFields: React.FC = () => (
       >
         {content}
       </RenderMarkdown>
-    </Surface>
+    </DocsArticle>
     <TableOfContent content={content} />
   </>
 );

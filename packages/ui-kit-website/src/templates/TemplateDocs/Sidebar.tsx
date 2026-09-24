@@ -1,25 +1,59 @@
 import React from 'react';
 import styled from '@emotion/styled';
 import { css } from '@emotion/react';
-import { Link, matchPath, useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
+import { useIntl } from 'react-intl';
 
-import content from '@via-profit/ui-kit/docs/README.md';
-import Logo from '~/components/Logo';
+import docsNavigation from '~/utils/docsNavigation';
 
-const Container = styled.div`
-  background-color: ${({ theme }) => theme.color.mainSidebar.toString()};
-  color: ${({ theme }) => theme.color.mainSidebarContrast.toString()};
-  z-index: ${({ theme }) => theme.zIndex.header};
-  position: fixed;
-`;
-
-const ItemsList = styled.nav`
+const Container = styled.aside`
   display: flex;
   flex-direction: column;
+  gap: 1rem;
+  padding: 1.25rem 0.75rem 2rem;
+  color: ${({ theme }) => theme.color.mainSidebarContrast.toString()};
+  background-color: ${({ theme }) => theme.color.mainSidebar.toString()};
   overflow-y: auto;
-  position: sticky;
-  top: 0;
-  max-height: 100vh;
+`;
+
+const Filter = styled.input`
+  flex: 0 0 auto;
+  appearance: none;
+  width: 100%;
+  height: 2.25rem;
+  padding: 0 0.75rem;
+  font: inherit;
+  font-size: 0.85rem;
+  color: ${({ theme }) => theme.color.textPrimary.toString()};
+  background-color: ${({ theme }) => theme.color.surface.toString()};
+  border: 1px solid ${({ theme }) => theme.color.border.toString()};
+  border-radius: 0.5rem;
+  outline: none;
+  transition: border-color 120ms ease-out;
+
+  &::placeholder {
+    color: ${({ theme }) => theme.color.textSecondary.toString()};
+  }
+
+  &:focus {
+    border-color: ${({ theme }) => theme.color.accentPrimary.toString()};
+    box-shadow: 0 0 0 3px ${({ theme }) => theme.color.accentPrimary.alpha(0.15).toString()};
+  }
+`;
+
+const Group = styled.div`
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+`;
+
+const GroupTitle = styled.div`
+  padding: 0 0.75rem 0.5rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: ${({ theme }) => theme.color.textSecondary.toString()};
 `;
 
 type ItemStyle = {
@@ -27,124 +61,143 @@ type ItemStyle = {
 };
 
 const Item = styled(Link, { shouldForwardProp: p => p.match(/^\$/) === null })<ItemStyle>`
-  color: currentColor;
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.75rem;
+  font-size: 0.875rem;
+  color: inherit;
   text-decoration: none;
-  padding: 1em 1.2em;
-  background-color: ${({ theme }) => theme.color.mainSidebar.toString()};
+  border-radius: 0.375rem;
+  transition:
+    color 120ms ease-out,
+    background-color 120ms ease-out;
+
   &:hover {
-    background-color: ${({ theme }) => theme.color.mainSidebar.lighten(15).toString()};
+    color: ${({ theme }) => theme.color.textPrimary.toString()};
+    background-color: ${({ theme }) => theme.color.backgroundSecondary.alpha(0.6).toString()};
   }
+
   ${({ $isActive, theme }) =>
     $isActive &&
     css`
       color: ${theme.color.accentPrimary.toString()};
       background-color: ${theme.color.accentPrimary.alpha(0.1).toString()};
+
+      &:hover {
+        color: ${theme.color.accentPrimary.toString()};
+        background-color: ${theme.color.accentPrimary.alpha(0.14).toString()};
+      }
+
+      &::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0.35rem;
+        bottom: 0.35rem;
+        width: 2px;
+        border-radius: 2px;
+        background: ${theme.color.accentPrimary.toString()};
+        box-shadow: 0 0 8px ${theme.color.accentPrimary.alpha(0.7).toString()};
+      }
     `};
-
-  @media all and (max-width: 1200px) {
-    font-size: 0.8em;
-  }
 `;
 
-const LogoBlock = styled(Link)`
-  height: 5rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: ${({ theme }) => theme.color.mainSidebarContrast.toString()};
+const Draft = styled.span`
+  margin-left: auto;
+  padding: 0 0.35rem;
+  font-size: 0.65rem;
+  line-height: 1.1rem;
+  color: ${({ theme }) => theme.color.warning.toString()};
+  border: 1px solid ${({ theme }) => theme.color.warning.alpha(0.4).toString()};
+  border-radius: 0.25rem;
 `;
 
-const StyledLogo = styled(Logo)`
-  font-size: 1.8em;
+const Empty = styled.div`
+  padding: 0 0.75rem;
+  font-size: 0.85rem;
+  color: ${({ theme }) => theme.color.textSecondary.toString()};
 `;
 
-const StyledDraft = styled.span`
-  background-color: ${({ theme }) => theme.color.accentPrimary.toString()};
-  color: ${({ theme }) => theme.color.accentPrimaryContrast.toString()};
-  padding: 0.2em 0.24em;
-  font-size: 0.7em;
-  border-radius: ${({ theme }) => theme.shape.radiusFactor}em;
-  margin-left: 0.4em;
-`;
-
-const Draft: React.FC = () => <StyledDraft>Draft</StyledDraft>;
-
-type Elem = {
-  readonly label: string;
-  readonly link: string;
-  readonly isDraft: boolean;
-  readonly isActive: boolean;
-};
-
-const Sidebar: React.ForwardRefRenderFunction<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
-> = (props, ref) => {
+const Sidebar: React.ForwardRefRenderFunction<HTMLElement, React.HTMLAttributes<HTMLElement>> = (
+  props,
+  ref,
+) => {
   const { pathname } = useLocation();
-  const listRef = React.useRef<HTMLElement | null>(null);
+  const intl = useIntl();
+  const [filter, setFilter] = React.useState('');
+  const listRef = React.useRef<HTMLDivElement | null>(null);
   const scrollAlreadyAffectedRef = React.useRef(false);
 
-  const listItems: readonly Elem[] = React.useMemo(() => {
-    const rawContent = content.split('## ').find(str => str.match(/^компоненты/i));
-    if (!rawContent) {
-      return [];
-    }
+  const isActive = React.useCallback(
+    (link: string) => pathname === link || pathname.startsWith(`${link}/`),
+    [pathname],
+  );
 
-    const list = rawContent.match(/-\s\[.*\]\(.*\)/gi);
-    if (!list) {
-      return [];
-    }
+  const items = React.useMemo(() => {
+    const query = filter.trim().toLowerCase();
 
-    return list
-      .map(str => {
-        const matches = str.match(/^-\s\[(.*)\]\((.*)\)/i);
-        if (matches && matches.length > 2) {
-          const link = `/docs${matches[2].replace(/\/README\.md$/, '').replace(/^\./, '')}`;
-          const label = matches[1].replace('🤏🏼', '').trim();
-          const isDraft = matches[1].match('🤏🏼') !== null;
-          const isActive = matchPath(`${link}/*`, pathname) !== null;
+    return query === ''
+      ? docsNavigation
+      : docsNavigation.filter(item => item.label.toLowerCase().includes(query));
+  }, [filter]);
 
-          return {
-            label,
-            link,
-            isDraft,
-            isActive,
-          };
-        }
-
-        return null;
-      })
-      .filter((el): el is Elem => el !== null);
-  }, [pathname]);
-
+  // Scroll the active item into view once (e.g. after opening a page by the direct link)
   React.useEffect(() => {
     if (scrollAlreadyAffectedRef.current) {
-      return;
+      return undefined;
     }
-    const activeItem = listItems.find(item => item.isActive);
-    if (activeItem) {
-      setTimeout(() => {
-        const elem = listRef.current?.querySelector(`[href="${activeItem.link}"]`);
-        if (elem) {
-          scrollAlreadyAffectedRef.current = true;
-          elem.scrollIntoView({ behavior: 'smooth' });
-        }
-      }, 100);
-    }
-  }, [listItems]);
+
+    const timeout = setTimeout(() => {
+      const elem = listRef.current?.querySelector('[aria-current="page"]');
+      if (elem) {
+        scrollAlreadyAffectedRef.current = true;
+        elem.scrollIntoView({ block: 'nearest' });
+      }
+    }, 100);
+
+    return () => clearTimeout(timeout);
+  }, [pathname]);
 
   return (
     <Container {...props} ref={ref}>
-      <LogoBlock to="/docs">
-        <StyledLogo />
-      </LogoBlock>
-      <ItemsList ref={listRef}>
-        {listItems.map(({ link, label, isDraft, isActive }) => (
-          <Item key={link} $isActive={isActive} to={link}>
-            {label} {isDraft && <Draft />}
+      <Filter
+        type="search"
+        value={filter}
+        onChange={event => setFilter(event.currentTarget.value)}
+        placeholder={intl.formatMessage({ defaultMessage: 'Найти компонент…' })}
+        aria-label={intl.formatMessage({ defaultMessage: 'Найти компонент' })}
+      />
+
+      <Group>
+        <GroupTitle>{intl.formatMessage({ defaultMessage: 'Начало' })}</GroupTitle>
+        <Item
+          to="/docs"
+          $isActive={pathname === '/docs'}
+          aria-current={pathname === '/docs' ? 'page' : undefined}
+        >
+          {intl.formatMessage({ defaultMessage: 'Введение' })}
+        </Item>
+      </Group>
+
+      <Group ref={listRef}>
+        <GroupTitle>{intl.formatMessage({ defaultMessage: 'Компоненты' })}</GroupTitle>
+        {items.map(({ link, label, isDraft }) => (
+          <Item
+            key={link}
+            to={link}
+            $isActive={isActive(link)}
+            aria-current={isActive(link) ? 'page' : undefined}
+          >
+            {label}
+            {isDraft && <Draft>draft</Draft>}
           </Item>
         ))}
-      </ItemsList>
+        {items.length === 0 && (
+          <Empty>{intl.formatMessage({ defaultMessage: 'Ничего не найдено' })}</Empty>
+        )}
+      </Group>
     </Container>
   );
 };

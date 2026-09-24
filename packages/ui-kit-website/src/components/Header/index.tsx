@@ -1,41 +1,139 @@
 import React from 'react';
 import styled from '@emotion/styled';
-import Paragraph from '@via-profit/ui-kit/src/Typography/Paragraph';
+import { css } from '@emotion/react';
+import { Link, NavLink } from 'react-router-dom';
+import { useIntl } from 'react-intl';
 
+import Logo from '~/components/Logo';
+import GithubIcon from '~/components/Icons/GithubIcon';
+import MenuIcon from '~/components/Icons/MenuOutline';
 import ThemeSwitcher from './ThemeSwitcher';
+import IconButton, { IconLink } from './IconButton';
+
+export const GITHUB_URL = 'https://github.com/via-profit/ui-kit';
 
 const Container = styled.header`
   position: sticky;
   top: 0;
   z-index: ${({ theme }) => theme.zIndex.header};
-  color: ${({ theme }) => theme.color.textPrimary.toString()};
-  background-color: ${({ theme }) => theme.color.surface.toString()};
-  padding: 1em 2em;
+  height: var(--header-height);
   display: flex;
-  box-shadow: ${({ theme }) => theme.color.surface.darken(100).alpha(0.2).toString()} 0 0.3em 0.6em;
-  padding: 0 2em;
-  height: 4.8rem;
   align-items: center;
-  justify-content: space-between;
+  gap: 1.5rem;
+  padding: 0 1.5rem;
+  background-color: ${({ theme }) => theme.color.backgroundPrimary.alpha(0.85).toString()};
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid ${({ theme }) => theme.color.border.toString()};
 `;
 
-const Title = styled(Paragraph)`
-  font-weight: 800;
-  font-size: 1.4em;
-  margin: 0;
+const LogoLink = styled(Link)`
+  display: inline-flex;
+  text-decoration: none;
+`;
+
+const Nav = styled.nav`
+  display: flex;
+  align-items: stretch;
+  align-self: stretch;
+  gap: 1.5rem;
+  margin-left: 1rem;
+
+  @media all and (max-width: 640px) {
+    display: none;
+  }
+`;
+
+const NavItem = styled(NavLink)`
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-decoration: none;
+  color: ${({ theme }) => theme.color.textSecondary.toString()};
+  transition: color 120ms ease-out;
+
+  &:hover {
+    color: ${({ theme }) => theme.color.textPrimary.toString()};
+  }
+
+  &.active {
+    color: ${({ theme }) => theme.color.textPrimary.toString()};
+  }
+
+  &.active::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -1px;
+    height: 2px;
+    border-radius: 2px;
+    ${({ theme }) => css`
+      background: ${theme.color.accentPrimary.toString()};
+      box-shadow: 0 0 8px ${theme.color.accentPrimary.alpha(0.6).toString()};
+    `}
+  }
+`;
+
+const Actions = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-left: auto;
+`;
+
+const MenuButton = styled(IconButton)`
+  display: none;
+
+  @media all and (max-width: 900px) {
+    display: inline-flex;
+  }
 `;
 
 interface HeaderProps {
-  readonly title?: string;
+  /**
+   * If passed, the menu button is shown on narrow screens
+   */
+  readonly onMenuClick?: () => void;
 }
 
 const Header: React.FC<HeaderProps> = props => {
-  const { title } = props;
+  const { onMenuClick } = props;
+  const intl = useIntl();
 
   return (
     <Container>
-      <Title>{title}</Title>
-      <ThemeSwitcher />
+      {onMenuClick && (
+        <MenuButton
+          type="button"
+          onClick={onMenuClick}
+          aria-label={intl.formatMessage({ defaultMessage: 'Открыть меню' })}
+        >
+          <MenuIcon />
+        </MenuButton>
+      )}
+      <LogoLink to="/" aria-label="UI Kit">
+        <Logo />
+      </LogoLink>
+      <Nav>
+        <NavItem to="/" end>
+          {intl.formatMessage({ defaultMessage: 'Главная' })}
+        </NavItem>
+        <NavItem to="/docs">{intl.formatMessage({ defaultMessage: 'Документация' })}</NavItem>
+      </Nav>
+      <Actions>
+        <IconLink
+          href={GITHUB_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          title="GitHub"
+          aria-label="GitHub"
+        >
+          <GithubIcon />
+        </IconLink>
+        <ThemeSwitcher />
+      </Actions>
     </Container>
   );
 };

@@ -1,14 +1,14 @@
 import React from 'react';
 
 import TableOfContent from '~/components/TableOfContent';
-import Surface from '@via-profit/ui-kit/src/Surface';
+import DocsArticle from '~/components/DocsArticle';
 import RenderMarkdown from '~/components/RenderMarkdown';
 import content from '@via-profit/ui-kit/docs/table/README.md';
 import ExampleTableBasic from '~/examples/table/ExampleTableBasic';
 
 const Tables: React.FC = () => (
   <>
-    <Surface>
+    <DocsArticle>
       <RenderMarkdown
         overrides={{
           ExampleTableBasic,
@@ -16,7 +16,7 @@ const Tables: React.FC = () => (
       >
         {content}
       </RenderMarkdown>
-    </Surface>
+    </DocsArticle>
     <TableOfContent content={content} />
   </>
 );

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import styled from '@emotion/styled';
+import { css, Theme } from '@emotion/react';
 import Markdown, { MarkdownToJSX } from 'markdown-to-jsx';
 import H1 from '@via-profit/ui-kit/src/Typography/H1';
 import H2 from '@via-profit/ui-kit/src/Typography/H2';
@@ -33,57 +34,221 @@ interface Props {
 
 const Img = styled.img`
   max-width: 100%;
+  border-radius: 0.5rem;
 `;
 
 const Anchor = styled.a`
-  font-weight: 400;
-  color: ${({ theme }) => theme.color.accentPrimary.darken(30).toString()};
+  position: relative;
+  top: calc(-1 * var(--header-height));
+`;
+
+const linkStyles = (theme: Theme) => css`
+  font-weight: 500;
+  color: ${theme.color.accentPrimary.toString()};
+  text-decoration: none;
+  border-bottom: 1px solid ${theme.color.accentPrimary.alpha(0.3).toString()};
+  transition: border-color 120ms ease-out;
+
+  &:hover {
+    border-bottom-color: ${theme.color.accentPrimary.toString()};
+  }
 `;
 
 const AnchorLink = styled(Link)`
-  font-weight: 400;
-  color: ${({ theme }) => theme.color.accentPrimary.darken(30).toString()};
+  ${({ theme }) => linkStyles(theme)};
 `;
 
 const ExternalLink = styled.a`
-  font-weight: 400;
-  color: ${({ theme }) => theme.color.accentPrimary.darken(30).toString()};
+  ${({ theme }) => linkStyles(theme)};
 `;
 
 const ExternalLinkIcon = styled(OpenInNewIcon)`
   color: currentColor;
-  font-size: 1em;
-  margin-left: 0.1em;
+  font-size: 0.85em;
+  margin-left: 0.15em;
   margin-top: -0.11em;
   vertical-align: middle;
 `;
 
 const MarkdownStrong = styled(Strong)`
   font-weight: 600;
+  color: ${({ theme }) => theme.color.textPrimary.toString()};
 `;
 
 const MarkdownEm = styled(Em)`
   color: ${({ theme }) => theme.color.textSecondary.toString()};
 `;
 
+const MarkdownParagraph = styled(Paragraph)`
+  margin: 0 0 1em;
+  font-weight: 400;
+  line-height: 1.75;
+  color: ${({ theme }) => theme.color.textPrimary.alpha(0.88).toString()};
+`;
+
+const listStyles = (theme: Theme) => css`
+  margin: 0 0 1em;
+  padding-left: 1.4em;
+  font-weight: 400;
+  line-height: 1.75;
+  color: ${theme.color.textPrimary.alpha(0.88).toString()};
+
+  & li::marker {
+    color: ${theme.color.accentPrimary.toString()};
+  }
+`;
+
+const MarkdownUl = styled(Ul)`
+  ${({ theme }) => listStyles(theme)};
+`;
+
+const MarkdownOl = styled(Ol)`
+  ${({ theme }) => listStyles(theme)};
+`;
+
 const CodeInline = styled.code`
-  color: ${({ theme }) =>
-    theme.isDark
-      ? theme.color.accentPrimary.toString()
-      : theme.color.accentPrimary.darken(60).toString()};
-  background-color: ${({ theme }) =>
-    theme.isDark
-      ? theme.color.accentPrimary.alpha(0.04).toString()
-      : theme.color.accentPrimary.alpha(0.04).darken(60).toString()};
-  padding: 0em 0.4em;
-  border-radius: 4px;
-  font-size: 1em;
-  font-weight: 500;
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  color: ${({ theme }) => theme.color.accentPrimary.toString()};
+  background-color: ${({ theme }) => theme.color.accentPrimary.alpha(0.08).toString()};
+  border: 1px solid ${({ theme }) => theme.color.accentPrimary.alpha(0.15).toString()};
+  padding: 0.1em 0.4em;
+  border-radius: 0.3rem;
 `;
 
 const Heading = styled(H1)`
-  margin-top: 0;
+  margin: 0 0 0.75em;
+  font-size: 2.1rem;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
 `;
+
+const MarkdownH2 = styled(H2)`
+  margin: 2.2em 0 0.8em;
+  padding-top: 1.2em;
+  font-size: 1.45rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  border-top: 1px solid ${({ theme }) => theme.color.border.toString()};
+`;
+
+const MarkdownH3 = styled(H3)`
+  margin: 1.8em 0 0.6em;
+  font-size: 1.15rem;
+  font-weight: 600;
+`;
+
+const MarkdownH4 = styled(H4)`
+  margin: 1.5em 0 0.5em;
+  font-size: 1rem;
+  font-weight: 600;
+`;
+
+const MarkdownH5 = styled(H5)`
+  margin: 1.2em 0 0.5em;
+  font-size: 0.95rem;
+  font-weight: 600;
+`;
+
+const MarkdownBlockquote = styled(Blockquote)`
+  margin: 1.25em 0;
+  padding: 0.75em 1em;
+  color: ${({ theme }) => theme.color.textPrimary.alpha(0.88).toString()};
+  background-color: ${({ theme }) => theme.color.accentPrimary.alpha(0.06).toString()};
+  border-left: 3px solid ${({ theme }) => theme.color.accentPrimary.toString()};
+  border-radius: 0 0.5rem 0.5rem 0;
+
+  & p:last-of-type {
+    margin-bottom: 0;
+  }
+`;
+
+const TableWrapper = styled.div`
+  margin: 1.25em 0 1.5em;
+  overflow-x: auto;
+  border: 1px solid ${({ theme }) => theme.color.border.toString()};
+  border-radius: 0.6rem;
+`;
+
+const MarkdownTable = styled(Table)`
+  width: 100%;
+  font-size: 0.875rem;
+  background: transparent;
+  box-shadow: none;
+  border-radius: 0;
+`;
+
+const MarkdownTableHeader = styled(TableHeader)`
+  & th {
+    background-color: ${({ theme }) => theme.color.backgroundSecondary.alpha(0.6).toString()};
+  }
+`;
+
+const MarkdownTableHeaderCell = styled(TableHeaderCell)`
+  padding: 0.6em 1em;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-align: left;
+  color: ${({ theme }) => theme.color.textSecondary.toString()};
+  background-color: ${({ theme }) => theme.color.backgroundSecondary.alpha(0.6).toString()};
+  border-bottom: 1px solid ${({ theme }) => theme.color.border.toString()};
+`;
+
+const MarkdownTableRow = styled(TableRow)`
+  &:not(:last-of-type) td {
+    border-bottom: 1px solid ${({ theme }) => theme.color.border.toString()};
+  }
+
+  &:hover td {
+    background-color: ${({ theme }) => theme.color.backgroundSecondary.alpha(0.35).toString()};
+  }
+`;
+
+const MarkdownTableCell = styled(TableCell)`
+  padding: 0.6em 1em;
+  vertical-align: top;
+  border: none;
+`;
+
+const ExamplePreview = styled.div`
+  margin: 1.25em 0 1.5em;
+  padding: 1.5rem;
+  overflow-x: auto;
+  border: 1px solid ${({ theme }) => theme.color.border.toString()};
+  border-radius: 0.75rem;
+  background-color: ${({ theme }) => theme.color.backgroundPrimary.toString()};
+  background-image: radial-gradient(
+    ${({ theme }) => theme.color.border.alpha(0.6).toString()} 1px,
+    transparent 1px
+  );
+  background-size: 16px 16px;
+`;
+
+type AnyComponent = React.ComponentType<Record<string, unknown>>;
+
+/**
+ * Stable wrappers of the examples: the same component must be returned for the same example,
+ * otherwise the example is remounted (and loses its state) on every render
+ */
+const examplesCache = new WeakMap<AnyComponent, AnyComponent>();
+
+const wrapExample = (Example: AnyComponent): AnyComponent => {
+  const cached = examplesCache.get(Example);
+  if (cached) {
+    return cached;
+  }
+
+  const Wrapped: React.FC<Record<string, unknown>> = exampleProps => (
+    <ExamplePreview>
+      <Example {...exampleProps} />
+    </ExamplePreview>
+  );
+  Wrapped.displayName = `ExamplePreview(${Example.displayName || Example.name || 'Example'})`;
+  examplesCache.set(Example, Wrapped);
+
+  return Wrapped;
+};
 
 /**
  * Resolves the markdown link relative to the current page.
@@ -123,6 +288,20 @@ const MarkdownRender: React.FC<Props> = props => {
   const { children, overrides } = props;
   const { pathname, hash } = useLocation();
 
+  // Examples (<ExampleXxx> tags) are rendered inside the preview frame
+  const examplesOverrides = React.useMemo(
+    () =>
+      Object.fromEntries(
+        Object.entries(overrides || {}).map(([name, value]) => [
+          name,
+          name.startsWith('Example') && typeof value === 'function'
+            ? wrapExample(value as AnyComponent)
+            : value,
+        ]),
+      ) as MarkdownToJSX.Overrides,
+    [overrides],
+  );
+
   // Pages are loaded asynchronously, so ScrollRestoration can not find the anchor
   // from the URL and scrolls to top. Scroll to it when the markdown is rendered
   React.useEffect(() => {
@@ -143,47 +322,51 @@ const MarkdownRender: React.FC<Props> = props => {
             </Heading>
           ),
           h2: p => (
-            <H2>
+            <MarkdownH2>
               <Anchor aria-hidden="true" tabIndex={-1} id={titleToAnchor(p.children)} />
               {p.children}
-            </H2>
+            </MarkdownH2>
           ),
           h3: p => (
-            <H3>
+            <MarkdownH3>
               <Anchor aria-hidden="true" tabIndex={-1} id={titleToAnchor(p.children)} />
               {p.children}
-            </H3>
+            </MarkdownH3>
           ),
           h4: p => (
-            <H4>
+            <MarkdownH4>
               <Anchor aria-hidden="true" tabIndex={-1} id={titleToAnchor(p.children)} />
               {p.children}
-            </H4>
+            </MarkdownH4>
           ),
           h5: p => (
-            <H5>
+            <MarkdownH5>
               <Anchor aria-hidden="true" tabIndex={-1} id={titleToAnchor(p.children)} />
               {p.children}
-            </H5>
+            </MarkdownH5>
           ),
           img: Img,
-          blockquote: Blockquote,
+          blockquote: MarkdownBlockquote,
           b: MarkdownStrong,
           strong: MarkdownStrong,
           em: MarkdownEm,
-          p: Paragraph,
-          ul: Ul,
-          ol: Ol,
-          table: Table,
-          thead: TableHeader,
-          tbody: TableBody,
-          tr: TableRow,
-          td: ({ children, ...restProps }) => (
-            <TableCell {...restProps}>
-              {Array.isArray(children) && children.length === 0 ? `\u00A0` : children}
-            </TableCell>
+          p: MarkdownParagraph,
+          ul: MarkdownUl,
+          ol: MarkdownOl,
+          table: ({ children, ...restProps }) => (
+            <TableWrapper>
+              <MarkdownTable {...restProps}>{children}</MarkdownTable>
+            </TableWrapper>
           ),
-          th: TableHeaderCell,
+          thead: MarkdownTableHeader,
+          tbody: TableBody,
+          tr: MarkdownTableRow,
+          td: ({ children, ...restProps }) => (
+            <MarkdownTableCell {...restProps}>
+              {Array.isArray(children) && children.length === 0 ? `\u00A0` : children}
+            </MarkdownTableCell>
+          ),
+          th: MarkdownTableHeaderCell,
           caption: TableCaption,
           pre: ({ children }) => <>{children}</>,
           a: ({ href, title, children }) => {
@@ -260,7 +443,7 @@ const MarkdownRender: React.FC<Props> = props => {
               <SyntaxHighlighter wrapLongLines language={language as any} code={String(children)} />
             );
           },
-          ...overrides,
+          ...examplesOverrides,
         },
       }}
     >

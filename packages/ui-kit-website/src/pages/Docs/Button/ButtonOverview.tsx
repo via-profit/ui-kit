@@ -1,7 +1,7 @@
 import React from 'react';
 
 import TableOfContent from '~/components/TableOfContent';
-import Surface from '@via-profit/ui-kit/src/Surface';
+import DocsArticle from '~/components/DocsArticle';
 import RenderMarkdown from '~/components/RenderMarkdown';
 import ExampleButtonBasic from '~/examples/button/ExampleButtonBasic';
 import ExampleButtonVariants from '~/examples/button/ExampleButtonVariants';
@@ -12,7 +12,7 @@ import content from '@via-profit/ui-kit/docs/button/README.md';
 
 const ButtonOverview: React.FC = () => (
   <>
-    <Surface>
+    <DocsArticle>
       <RenderMarkdown
         overrides={{
           ExampleButtonBasic,
@@ -24,7 +24,7 @@ const ButtonOverview: React.FC = () => (
       >
         {content}
       </RenderMarkdown>
-    </Surface>
+    </DocsArticle>
     <TableOfContent content={content} />
   </>
 );

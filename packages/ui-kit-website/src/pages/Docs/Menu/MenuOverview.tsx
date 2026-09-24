@@ -1,5 +1,5 @@
 import React from 'react';
-import Surface from '@via-profit/ui-kit/src/Surface';
+import DocsArticle from '~/components/DocsArticle';
 
 import TableOfContent from '~/components/TableOfContent';
 import RenderMarkdown from '~/components/RenderMarkdown';
@@ -11,7 +11,7 @@ import ExampleMenuAnchorPos from '~/examples/menu/ExampleMenuAnchorPos';
 
 const MenuOverview: React.FC = () => (
   <>
-    <Surface>
+    <DocsArticle>
       <RenderMarkdown
         overrides={{
           ExampleMenuOverview,
@@ -22,7 +22,7 @@ const MenuOverview: React.FC = () => (
       >
         {content}
       </RenderMarkdown>
-    </Surface>
+    </DocsArticle>
     <TableOfContent content={content} />
   </>
 );

@@ -1,21 +1,12 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import styled from '@emotion/styled';
 import { useIntl } from 'react-intl';
 import { createStructuredSelector } from 'reselect';
 
-import Icon from '~/components/Icons/PaletteOutline';
-import Button from '@via-profit/ui-kit/src/Button';
+import SunIcon from '~/components/Icons/SunOutline';
+import MoonIcon from '~/components/Icons/MoonOutline';
 import { uiActions } from '~/redux/ui';
-
-const Container = styled.div`
-  & > button {
-    margin-right: 0.2em;
-  }
-  & > button:last-of-type {
-    margin-right: 0;
-  }
-`;
+import IconButton from './IconButton';
 
 const selector = createStructuredSelector({
   currentThemeName: (store: ReduxStore) => store.ui.theme,
@@ -25,22 +16,20 @@ const ThemeSwitcher: React.FC = () => {
   const dispatch = useDispatch();
   const intl = useIntl();
   const { currentThemeName } = useSelector(selector);
+  const isDark = currentThemeName === 'dark';
 
   const switchTheme = React.useCallback(() => {
-    dispatch(uiActions.theme(currentThemeName === 'dark' ? 'light' : 'dark'));
-  }, [currentThemeName, dispatch]);
+    dispatch(uiActions.theme(isDark ? 'light' : 'dark'));
+  }, [isDark, dispatch]);
+
+  const title = isDark
+    ? intl.formatMessage({ defaultMessage: 'Включить светлую тему' })
+    : intl.formatMessage({ defaultMessage: 'Включить тёмную тему' });
 
   return (
-    <Container>
-      <Button
-        iconOnly
-        title={intl.formatMessage({ defaultMessage: 'Сменить тему' })}
-        type="button"
-        onClick={() => switchTheme()}
-      >
-        <Icon />
-      </Button>
-    </Container>
+    <IconButton type="button" title={title} aria-label={title} onClick={switchTheme}>
+      {isDark ? <SunIcon /> : <MoonIcon />}
+    </IconButton>
   );
 };
 

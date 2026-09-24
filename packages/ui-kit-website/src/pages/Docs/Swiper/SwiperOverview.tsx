@@ -1,7 +1,7 @@
 import React from 'react';
 
 import TableOfContent from '~/components/TableOfContent';
-import Surface from '@via-profit/ui-kit/src/Surface';
+import DocsArticle from '~/components/DocsArticle';
 import RenderMarkdown from '~/components/RenderMarkdown';
 import content from '@via-profit/ui-kit/docs/swiper/README.md';
 import ExampleSwiperBasic from '~/examples/swiper/ExampleSwiperBasic';
@@ -12,7 +12,7 @@ import ExampleSwiperSlidesPerView from '~/examples/swiper/ExampleSwiperSlidesPer
 
 const SwiperOverview: React.FC = () => (
   <>
-    <Surface>
+    <DocsArticle>
       <RenderMarkdown
         overrides={{
           ExampleSwiperBasic,
@@ -24,7 +24,7 @@ const SwiperOverview: React.FC = () => (
       >
         {content}
       </RenderMarkdown>
-    </Surface>
+    </DocsArticle>
     <TableOfContent content={content} />
   </>
 );

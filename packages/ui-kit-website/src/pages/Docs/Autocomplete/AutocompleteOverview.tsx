@@ -2,7 +2,7 @@ import React from 'react';
 import RenderMarkdown from '~/components/RenderMarkdown';
 
 import TableOfContent from '~/components/TableOfContent';
-import Surface from '@via-profit/ui-kit/src/Surface';
+import DocsArticle from '~/components/DocsArticle';
 import content from '@via-profit/ui-kit/docs/autocomplete/README.md';
 import ExampleAutocompleteOverview from '~/examples/autocomplete/ExampleAutocompleteOverview';
 import ExampleAutocompleteCreatable from '~/examples/autocomplete/ExampleAutocompleteCreatable';
@@ -12,7 +12,7 @@ import ExampleAutocompleteOverrides from '~/examples/autocomplete/ExampleAutocom
 
 const AutocompleteOverview: React.FC = () => (
   <>
-    <Surface>
+    <DocsArticle>
       <RenderMarkdown
         overrides={{
           ExampleAutocompleteOverview,
@@ -24,7 +24,7 @@ const AutocompleteOverview: React.FC = () => (
       >
         {content}
       </RenderMarkdown>
-    </Surface>
+    </DocsArticle>
     <TableOfContent content={content} />
   </>
 );

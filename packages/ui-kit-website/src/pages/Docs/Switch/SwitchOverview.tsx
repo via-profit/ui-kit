@@ -1,7 +1,7 @@
 import React from 'react';
 
 import TableOfContent from '~/components/TableOfContent';
-import Surface from '@via-profit/ui-kit/src/Surface';
+import DocsArticle from '~/components/DocsArticle';
 import RenderMarkdown from '~/components/RenderMarkdown';
 import ExampleSwitchBasic from '~/examples/switch/ExampleSwitchBasic';
 import ExampleSwitchLabel from '~/examples/switch/ExampleSwitchLabel';
@@ -13,7 +13,7 @@ import content from '@via-profit/ui-kit/docs/switch/README.md';
 
 const SwitchOverview: React.FC = () => (
   <>
-    <Surface>
+    <DocsArticle>
       <RenderMarkdown
         overrides={{
           ExampleSwitchBasic,
@@ -26,7 +26,7 @@ const SwitchOverview: React.FC = () => (
       >
         {content}
       </RenderMarkdown>
-    </Surface>
+    </DocsArticle>
     <TableOfContent content={content} />
   </>
 );

@@ -1,4 +1,5 @@
-const HEADER_HEIGHT = 80;
+// Header height (3.75rem) plus a gap
+const HEADER_HEIGHT = 76;
 
 /**
  * Scrolls the window to the markdown heading anchor (`<a id="...">`) taking the header into account.

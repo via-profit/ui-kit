@@ -1,7 +1,7 @@
 import React from 'react';
 
 import TableOfContent from '~/components/TableOfContent';
-import Surface from '@via-profit/ui-kit/src/Surface';
+import DocsArticle from '~/components/DocsArticle';
 import RenderMarkdown from '~/components/RenderMarkdown';
 import content from '@via-profit/ui-kit/docs/highlighted/README.md';
 import ExampleHighlightedOverview from '~/examples/highlighted/ExampleHighlightedOverview';
@@ -9,11 +9,11 @@ import ExampleHighlightedOverrides from '~/examples/highlighted/ExampleHighlight
 
 const CountryFlagsOverview: React.FC = () => (
   <>
-    <Surface>
+    <DocsArticle>
       <RenderMarkdown overrides={{ ExampleHighlightedOverview, ExampleHighlightedOverrides }}>
         {content}
       </RenderMarkdown>
-    </Surface>
+    </DocsArticle>
     <TableOfContent content={content} />
   </>
 );

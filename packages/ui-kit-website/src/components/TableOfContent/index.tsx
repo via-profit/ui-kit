@@ -3,8 +3,6 @@ import styled from '@emotion/styled';
 import { css } from '@emotion/react';
 import { FormattedMessage } from 'react-intl';
 import { Link, useLocation } from 'react-router-dom';
-import Surface from '@via-profit/ui-kit/src/Surface';
-import Paragraph from '@via-profit/ui-kit/src/Typography/Paragraph';
 
 import scrollToAnchorElement, { setLocationHash } from '~/utils/scrollToAnchor';
 
@@ -12,28 +10,32 @@ export interface TableOfContentProps {
   readonly content: string;
 }
 
-const StyledContainer = styled.div`
-  padding-left: 1em;
-  @media all and (max-width: 1100px) {
+const StyledContainer = styled.aside`
+  position: sticky;
+  top: calc(var(--header-height) + 1.75rem);
+  flex: 0 0 14rem;
+  width: 14rem;
+  max-height: calc(100vh - var(--header-height) - 3.5rem);
+  overflow-y: auto;
+
+  @media all and (max-width: 1200px) {
     display: none;
   }
 `;
 
-const Inner = styled(Surface)`
-  position: sticky;
-  right: 0;
-  top: 6rem;
-  bottom: 1rem;
-  z-index: ${({ theme }) => theme.zIndex.header};
-  width: 20em;
-  max-height: calc(100vh - 7rem);
-  overflow-y: auto;
-  @media all and (max-width: 1280px) {
-    width: 16em;
-  }
-  @media all and (max-width: 1200px) {
-    font-size: 0.9em;
-  }
+const Heading = styled.div`
+  margin-bottom: 0.75rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: ${({ theme }) => theme.color.textSecondary.toString()};
+`;
+
+const Nav = styled.nav`
+  display: flex;
+  flex-direction: column;
+  border-left: 1px solid ${({ theme }) => theme.color.border.toString()};
 `;
 
 type StyledLinkProps = {
@@ -41,28 +43,33 @@ type StyledLinkProps = {
 };
 
 const StyledLink = styled(Link, { shouldForwardProp: p => p[0] !== '$' })<StyledLinkProps>`
+  position: relative;
   display: block;
-  font-size: 0.9em;
+  margin-left: -1px;
+  padding: 0.3rem 0 0.3rem 0.9rem;
+  font-size: 0.82rem;
+  line-height: 1.4;
   text-decoration: none;
-  padding: 0.4em 0.6em;
-  color: ${({ theme }) => theme.color.textPrimary.toString()};
-  transition: all 120ms ease-out;
-  border-radius: ${({ theme }) => theme.shape.radiusFactor}em;
-  :hover {
-    color: ${({ theme }) => theme.color.accentPrimary.toString()};
-    background-color: ${({ theme }) => theme.color.accentPrimary.alpha(0.1).toString()};
+  color: ${({ theme }) => theme.color.textSecondary.toString()};
+  border-left: 2px solid transparent;
+  transition:
+    color 120ms ease-out,
+    border-color 120ms ease-out;
+
+  &:hover {
+    color: ${({ theme }) => theme.color.textPrimary.toString()};
   }
 
   ${({ $isActive, theme }) =>
     $isActive &&
     css`
       color: ${theme.color.accentPrimary.toString()};
-      background-color: ${theme.color.accentPrimary.alpha(0.1).toString()};
-    `}
-`;
+      border-left-color: ${theme.color.accentPrimary.toString()};
 
-const Heading = styled(Paragraph)`
-  font-weight: 600;
+      &:hover {
+        color: ${theme.color.accentPrimary.toString()};
+      }
+    `}
 `;
 
 type Elem = {
@@ -208,23 +215,21 @@ const TableOfContent: React.FC<TableOfContentProps> = props => {
 
   return (
     <StyledContainer>
-      <Inner>
-        <Heading>
-          <FormattedMessage defaultMessage="Содержание" />
-        </Heading>
-        <nav>
-          {listItems.map(({ label, link }) => (
-            <StyledLink
-              onClick={event => scrollToAnchor(link, event)}
-              to={`#${link}`}
-              key={link}
-              $isActive={activeAnchor === link}
-            >
-              {label}
-            </StyledLink>
-          ))}
-        </nav>
-      </Inner>
+      <Heading>
+        <FormattedMessage defaultMessage="На этой странице" />
+      </Heading>
+      <Nav>
+        {listItems.map(({ label, link }) => (
+          <StyledLink
+            onClick={event => scrollToAnchor(link, event)}
+            to={`#${link}`}
+            key={link}
+            $isActive={activeAnchor === link}
+          >
+            {label}
+          </StyledLink>
+        ))}
+      </Nav>
     </StyledContainer>
   );
 };

@@ -2,7 +2,7 @@ import React from 'react';
 import RenderMarkdown from '~/components/RenderMarkdown';
 
 import TableOfContent from '~/components/TableOfContent';
-import Surface from '@via-profit/ui-kit/src/Surface';
+import DocsArticle from '~/components/DocsArticle';
 import content from '@via-profit/ui-kit/docs/avatar/README.md';
 import ExampleAvatarOverview from '~/examples/avatar/ExampleAvatarOverview';
 import ExampleAvatarOnline from '~/examples/avatar/ExampleAvatarOnline';
@@ -13,7 +13,7 @@ import ExampleAvatarOverrides from '~/examples/avatar/ExampleAvatarOverrides';
 
 const AvatarOverview: React.FC = () => (
   <>
-    <Surface>
+    <DocsArticle>
       <RenderMarkdown
         overrides={{
           ExampleAvatarOverview,
@@ -26,7 +26,7 @@ const AvatarOverview: React.FC = () => (
       >
         {content}
       </RenderMarkdown>
-    </Surface>
+    </DocsArticle>
     <TableOfContent content={content} />
   </>
 );

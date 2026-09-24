@@ -1,7 +1,7 @@
 import React from 'react';
 
 import TableOfContent from '~/components/TableOfContent';
-import Surface from '@via-profit/ui-kit/src/Surface';
+import DocsArticle from '~/components/DocsArticle';
 import RenderMarkdown from '~/components/RenderMarkdown';
 import ExampleAccordionBasic from '~/examples/accordion/ExampleAccordionBasic';
 import ExampleAccordionMultiple from '~/examples/accordion/ExampleAccordionMultiple';
@@ -11,7 +11,7 @@ import content from '@via-profit/ui-kit/docs/accordion/README.md';
 
 const AccordionOverview: React.FC = () => (
   <>
-    <Surface>
+    <DocsArticle>
       <RenderMarkdown
         overrides={{
           ExampleAccordionBasic,
@@ -22,7 +22,7 @@ const AccordionOverview: React.FC = () => (
       >
         {content}
       </RenderMarkdown>
-    </Surface>
+    </DocsArticle>
     <TableOfContent content={content} />
   </>
 );

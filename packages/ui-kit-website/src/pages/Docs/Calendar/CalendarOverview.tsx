@@ -1,7 +1,7 @@
 import React from 'react';
 
 import TableOfContent from '~/components/TableOfContent';
-import Surface from '@via-profit/ui-kit/src/Surface';
+import DocsArticle from '~/components/DocsArticle';
 import RenderMarkdown from '~/components/RenderMarkdown';
 import ExampleCalendarOverivew from '~/examples/calendar/ExampleCalendarOverivew';
 import ExampleCalendarOverrides from '~/examples/calendar/ExampleCalendarOverrides';
@@ -12,7 +12,7 @@ import content from '@via-profit/ui-kit/docs/calendar/README.md';
 
 const Buttons: React.FC = () => (
   <>
-    <Surface>
+    <DocsArticle>
       <RenderMarkdown
         overrides={{
           ExampleCalendarOverivew,
@@ -24,7 +24,7 @@ const Buttons: React.FC = () => (
       >
         {content}
       </RenderMarkdown>
-    </Surface>
+    </DocsArticle>
     <TableOfContent content={content} />
   </>
 );

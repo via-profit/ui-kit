@@ -1,15 +1,24 @@
 {
-  "+glFq7": {
-    "defaultMessage": "Сегодня"
-  },
-  "3NyjbW": {
-    "defaultMessage": "Выбрана дата: {value}"
+  "1wC7aj": {
+    "defaultMessage": "Включить светлую тему"
   },
   "44pMfw": {
     "defaultMessage": "Скрыть"
   },
+  "4YsRb6": {
+    "defaultMessage": "Перейти к документации"
+  },
+  "83McUk": {
+    "defaultMessage": "Скопировано"
+  },
   "8xa/OX": {
     "defaultMessage": "Кликни вне этого элемента"
+  },
+  "AIyaKV": {
+    "defaultMessage": "Кнопки, поля ввода, календари, меню и модальные окна с темами оформления и переопределяемыми частями."
+  },
+  "Al8pFl": {
+    "defaultMessage": "На этой странице"
   },
   "Br9+8Z": {
     "defaultMessage": "Какой-либо контент"
@@ -20,11 +29,14 @@
   "DtpCdE": {
     "defaultMessage": "к 9 Мая"
   },
-  "Fm08lU": {
-    "defaultMessage": "Сменить тему"
+  "ELrvsD": {
+    "defaultMessage": "Открыть меню"
   },
   "G0WBwd": {
     "defaultMessage": "Всего кликов: {counter}"
+  },
+  "JYk3jK": {
+    "defaultMessage": "Документация"
   },
   "L0LsrI": {
     "defaultMessage": "Какой-то контент"
@@ -38,29 +50,41 @@
   "QmljCN": {
     "defaultMessage": "Выбрано: {selected}"
   },
+  "QwcCkF": {
+    "defaultMessage": "Найти компонент"
+  },
   "RwqXf6": {
     "defaultMessage": "Показать"
+  },
+  "SWd3Sf": {
+    "defaultMessage": "Ничего не найдено"
+  },
+  "TqYfpb": {
+    "defaultMessage": "Найти компонент…"
+  },
+  "XnLtsK": {
+    "defaultMessage": "Главная"
   },
   "YHFvoS": {
     "defaultMessage": "Открыть календарь"
   },
-  "YaMZGV": {
-    "defaultMessage": "Меню"
+  "YJVtiA": {
+    "defaultMessage": "Введение"
   },
-  "aVcslC": {
-    "defaultMessage": "Аватар"
+  "fGrmor": {
+    "defaultMessage": "Начало"
   },
-  "b+Rsl5": {
-    "defaultMessage": "Поле ввода телефона"
+  "fU31LB": {
+    "defaultMessage": "Набор компонентов для"
   },
-  "bvxjPH": {
-    "defaultMessage": "Типографика"
+  "grmDdc": {
+    "defaultMessage": "Такой страницы нет"
   },
   "gwIXyk": {
     "defaultMessage": "Ничего не выбрано"
   },
-  "iNeTTO": {
-    "defaultMessage": "Содержание"
+  "h52LFb": {
+    "defaultMessage": "Включить тёмную тему"
   },
   "l775qE": {
     "defaultMessage": "Открыть Popper"
@@ -68,11 +92,17 @@
   "n4Y9Sg": {
     "defaultMessage": "Открыть диалог"
   },
+  "n8HMS9": {
+    "defaultMessage": "ваших интерфейсов"
+  },
+  "oAO9Hr": {
+    "defaultMessage": "Компоненты"
+  },
   "wBODsZ": {
     "defaultMessage": "Текущая дата в шаблоном {template} — {result}"
   },
-  "whQBin": {
-    "defaultMessage": "Календарь"
+  "xa3ExB": {
+    "defaultMessage": "Копировать"
   },
   "yeuMJs": {
     "defaultMessage": "Строка 22.02.2003 распарсенная с шаблоном {template} — {result}"

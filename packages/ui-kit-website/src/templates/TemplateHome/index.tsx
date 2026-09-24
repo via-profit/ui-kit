@@ -6,27 +6,19 @@ import Header from '~/components/Header';
 import PageWrapper from '~/components/PageWrapper';
 import Footer from '~/components/Footer';
 
-const Wrapper = styled.div`
+const Content = styled.main`
   flex: 1;
   display: flex;
-  flex-flow: row nowrap;
-  color: ${({ theme }) => theme.color.accentPrimary.toString()};
-`;
-
-const Content = styled.div`
-  flex: 1;
-  padding: 0 1em 1em;
+  flex-direction: column;
 `;
 
 const HomeTemplate: React.FC = () => (
   <PageWrapper>
     <Header />
-    <Wrapper>
-      <Content>
-        <Outlet />
-        <ScrollRestoration />
-      </Content>
-    </Wrapper>
+    <Content>
+      <Outlet />
+      <ScrollRestoration />
+    </Content>
     <Footer />
   </PageWrapper>
 );

@@ -2,13 +2,13 @@ import React from 'react';
 import RenderMarkdown from '~/components/RenderMarkdown';
 
 import TableOfContent from '~/components/TableOfContent';
-import Surface from '@via-profit/ui-kit/src/Surface';
+import DocsArticle from '~/components/DocsArticle';
 import content from '@via-profit/ui-kit/docs/click-outside/README.md';
 import ExampleClickOutsideOverview from '~/examples/click-outside/ExampleClickOutsideOverview';
 
 const BadgeOverview: React.FC = () => (
   <>
-    <Surface>
+    <DocsArticle>
       <RenderMarkdown
         overrides={{
           ExampleClickOutsideOverview,
@@ -16,7 +16,7 @@ const BadgeOverview: React.FC = () => (
       >
         {content}
       </RenderMarkdown>
-    </Surface>
+    </DocsArticle>
     <TableOfContent content={content} />
   </>
 );

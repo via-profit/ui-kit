@@ -2,14 +2,14 @@ import React from 'react';
 import RenderMarkdown from '~/components/RenderMarkdown';
 
 import TableOfContent from '~/components/TableOfContent';
-import Surface from '@via-profit/ui-kit/src/Surface';
+import DocsArticle from '~/components/DocsArticle';
 import content from '@via-profit/ui-kit/docs/selectbox/README.md';
 import ExampleSelectboxOverview from '~/examples/selectbox/ExampleSelectboxOverview';
 import ExampleSelectboxMultiple from '~/examples/selectbox/ExampleSelectboxMultiple';
 
 const SelectboxOverview: React.FC = () => (
   <>
-    <Surface>
+    <DocsArticle>
       <RenderMarkdown
         overrides={{
           ExampleSelectboxOverview,
@@ -18,7 +18,7 @@ const SelectboxOverview: React.FC = () => (
       >
         {content}
       </RenderMarkdown>
-    </Surface>
+    </DocsArticle>
     <TableOfContent content={content} />
   </>
 );

@@ -4,13 +4,13 @@ import MarkdownRender from '~/components/RenderMarkdown';
 import TableOfContent from '~/components/TableOfContent';
 import content from '@via-profit/ui-kit/docs/loading-indicator/README.md';
 import ExampleLoadingindicatorSpinner from '~/examples/loading-indicator/ExampleLoadingindicatorSpinner';
-import Surface from '@via-profit/ui-kit/src/Surface';
+import DocsArticle from '~/components/DocsArticle';
 
 const LoadingIndicator: React.FC = () => (
   <>
-    <Surface>
+    <DocsArticle>
       <MarkdownRender overrides={{ ExampleLoadingindicatorSpinner }}>{content}</MarkdownRender>
-    </Surface>
+    </DocsArticle>
     <TableOfContent content={content} />
   </>
 );

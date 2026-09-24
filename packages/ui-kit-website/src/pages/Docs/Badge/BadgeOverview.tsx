@@ -2,7 +2,7 @@ import React from 'react';
 import RenderMarkdown from '~/components/RenderMarkdown';
 
 import TableOfContent from '~/components/TableOfContent';
-import Surface from '@via-profit/ui-kit/src/Surface';
+import DocsArticle from '~/components/DocsArticle';
 import content from '@via-profit/ui-kit/docs/badge/README.md';
 import ExampleBadgeOverview from '~/examples/badge/ExampleBadgeOverview';
 import ExampleBadgeVariants from '~/examples/badge/ExampleBadgeVariants';
@@ -12,7 +12,7 @@ import ExampleBadgeOverrides from '~/examples/badge/ExampleBadgeOverrides';
 
 const BadgeOverview: React.FC = () => (
   <>
-    <Surface>
+    <DocsArticle>
       <RenderMarkdown
         overrides={{
           ExampleBadgeOverview,
@@ -24,7 +24,7 @@ const BadgeOverview: React.FC = () => (
       >
         {content}
       </RenderMarkdown>
-    </Surface>
+    </DocsArticle>
     <TableOfContent content={content} />
   </>
 );

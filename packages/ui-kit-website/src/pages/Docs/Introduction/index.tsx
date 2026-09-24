@@ -1,12 +1,12 @@
 import React from 'react';
 import MarkdownRender from '~/components/RenderMarkdown';
-import Surface from '@via-profit/ui-kit/src/Surface';
+import DocsArticle from '~/components/DocsArticle';
 import content from '@via-profit/ui-kit/docs/README.md';
 
 const Introduction: React.FC = () => (
-  <Surface>
+  <DocsArticle>
     <MarkdownRender>{content}</MarkdownRender>
-  </Surface>
+  </DocsArticle>
 );
 
 export default Introduction;
