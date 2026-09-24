@@ -26,7 +26,7 @@ const GiantSpinner = styled(Spinner)`
 `;
 
 const ExampleLoadingindicatorSpinner: React.FC = () => (
-  <div>
+  <div style={{position: 'relative', padding: '8em 0'}}>
     <Surface title="Spinner">
       <Container>
         <StandardSpinner />

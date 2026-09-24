@@ -13,6 +13,7 @@
   "license": "MIT",
   "scripts": {
     "start": "cross-env NODE_ENV=development webpack serve --config ./webpack/webpack-config-client.js",
+    "build": "cross-env NODE_ENV=production webpack --config ./webpack/webpack-config-client.js",
     "lint": "eslint --fix .",
     "i18n:extract": "npm run i18n:extract:ru && npm run i18n:extract:en",
     "i18n:compile": "formatjs compile-folder ./src/lang ./src/translations",

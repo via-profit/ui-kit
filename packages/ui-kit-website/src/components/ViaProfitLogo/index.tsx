@@ -66,7 +66,7 @@ const ViaProfitLogo: React.ForwardRefRenderFunction<SVGSVGElement, ViaProfitLogo
 
       {/* Emblem with the cut-out mark */}
       <path
-        fill={theme.color.accentPrimary.toString()}
+        fill={theme.color.textPrimary.toString()}
         mask={`url(#${maskID})`}
         d="M1220 610C1220 946.894 946.894 1220 610 1220C273.106 1220 0 946.894 0 610C0 273.106 273.106 0 610 0C946.894 0 1220 273.106 1220 610Z"
       />

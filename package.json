@@ -5,6 +5,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "npm run start --workspace packages/ui-kit-website",
+    "build:website": "npm run build --workspace packages/ui-kit-website",
     "build": "npm run build --workspace packages/ui-kit",
     "i18n": "npm run i18n --workspace packages/ui-kit-website",
     "postinstall": "node ./scripts/postinstall.js"
