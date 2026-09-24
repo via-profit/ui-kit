@@ -34,7 +34,7 @@ export type UseDatePickerFormatPayload = {
 
 export const useDatePickerFormat = (): UseDatePickerFormatPayload => {
   const templateValidChars = React.useMemo(
-    () => ['y', 'Y', 'yy', 'yyyy', 'd', 'dd', 'D', 'm', 'mm'],
+    () => ['y', 'Y', 'yy', 'yyyy', 'YYYY', 'd', 'dd', 'D', 'DD', 'm', 'mm'],
     [],
   );
 
@@ -103,12 +103,14 @@ export const useDatePickerFormat = (): UseDatePickerFormatPayload => {
       template.split('').forEach((char, charIndex) => {
         switch (char) {
           case 'y':
+          case 'Y':
             data.years.push(input[charIndex]);
             break;
           case 'm':
             data.months.push(input[charIndex]);
             break;
           case 'd':
+          case 'D':
             data.days.push(input[charIndex]);
             break;
 
@@ -118,11 +120,28 @@ export const useDatePickerFormat = (): UseDatePickerFormatPayload => {
         }
       });
 
-      return new Date(
-        parseInt(data.years.join(''), 10),
-        parseInt(data.months.join(''), 10) - 1, // Fucking month indexes
-        parseInt(data.days.join(''), 10),
-      );
+      let year = parseInt(data.years.join(''), 10);
+      const month = parseInt(data.months.join(''), 10) - 1; // Fucking month indexes
+      const day = parseInt(data.days.join(''), 10);
+
+      if (isNaN(year) || isNaN(month) || isNaN(day)) {
+        return null;
+      }
+
+      // Two-digit year means the current century (new Date() maps 0-99 to 1900-1999)
+      if (data.years.length <= 2) {
+        year += 2000;
+      }
+
+      const date = new Date(year, month, day);
+      date.setFullYear(year);
+
+      // Reject overflowed dates like 31.02 instead of silently moving them to March
+      if (date.getFullYear() !== year || date.getMonth() !== month || date.getDate() !== day) {
+        return null;
+      }
+
+      return date;
     },
     [validateTemplate],
   );

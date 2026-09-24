@@ -93,6 +93,11 @@ export type DatePickerProps = Omit<TextFieldProps, 'value' | 'onChange' | 'overr
   /**
    * Label for the Today button. If label passed, then button will be rendered
    */
+  readonly todayButtonLabel?: string;
+
+  /**
+   * @deprecated Use `todayButtonLabel` instead
+   */
   readonly toodayButtonLabel?: string;
 
   /**
@@ -149,7 +154,10 @@ const DatePicker: React.FC<DatePickerProps> = props => {
     badges = [],
     displayLeadingZero = false,
     resetButtonLabel,
+    todayButtonLabel: todayButtonLabelProp,
     toodayButtonLabel,
+    markToday,
+    weekDayLabelFormat,
     heading,
     subheading,
     view,
@@ -159,37 +167,37 @@ const DatePicker: React.FC<DatePickerProps> = props => {
     ...restInputProps
   } = props;
 
-  const {
-    // Calendar overrides
-    Body,
-    Cell,
-    EmptyCell,
-    Paper,
-    Header,
-    WeekRow,
-    DateContainer,
-    Toolbar,
-    YearsSelector,
-    MonthsSelector,
-    MonthCell,
-    DayBadge,
-    Footer,
-    ControlButton,
-    Heading,
-    Subheading,
-    IconPrev,
-    IconNext,
-    WeekDaysBar,
+  const todayButtonLabel = todayButtonLabelProp ?? toodayButtonLabel;
 
-    // Textfield overrides
-    Input,
-    ErrorText,
-    IconWrapper,
-    InputWrapper,
-    Label,
-    Asterisk,
-    Container,
-  } = overrides || {};
+  const calendarOverrides = React.useMemo(() => {
+    if (!overrides) {
+      return undefined;
+    }
+
+    const {
+      Input: _Input,
+      ErrorText: _ErrorText,
+      IconWrapper: _IconWrapper,
+      InputWrapper: _InputWrapper,
+      Label: _Label,
+      Asterisk: _Asterisk,
+      Container: _Container,
+      ...rest
+    } = overrides;
+
+    return rest as CalendarOverrides;
+  }, [overrides]);
+
+  const textFieldOverrides = React.useMemo((): TextFieldOverrides | undefined => {
+    if (!overrides) {
+      return undefined;
+    }
+
+    const { Input, ErrorText, IconWrapper, InputWrapper, Label, Asterisk, Container } = overrides;
+
+    return { Input, ErrorText, IconWrapper, InputWrapper, Label, Asterisk, Container };
+  }, [overrides]);
+
   const [currentValue, setCurrentValue] = React.useState(value);
   const valueRef = React.useRef(value);
   const [textFieldRef, setTextFieldRef] = React.useState<HTMLDivElement | null>(null);
@@ -197,14 +205,19 @@ const DatePicker: React.FC<DatePickerProps> = props => {
   const { getMaskByTemplate, formatInputByTemplate, parseInputByTemplate } = useDatePickerFormat();
 
   React.useEffect(() => {
-    const a = value || new Date();
-    const b = valueRef.current || new Date();
+    const a = value;
+    const b = valueRef.current;
 
-    if (
-      a.getFullYear() !== b.getFullYear() ||
-      a.getMonth() !== b.getMonth() ||
-      a.getDate() !== b.getDate()
-    ) {
+    // null <-> date transitions must be detected too
+    const isSameDay =
+      a === b ||
+      (a !== null &&
+        b !== null &&
+        a.getFullYear() === b.getFullYear() &&
+        a.getMonth() === b.getMonth() &&
+        a.getDate() === b.getDate());
+
+    if (!isSameDay) {
       valueRef.current = value;
       setCurrentValue(value);
     }
@@ -289,8 +302,6 @@ const DatePicker: React.FC<DatePickerProps> = props => {
     ],
   );
 
-  const calendarValue = React.useMemo(() => currentValue || new Date(), [currentValue]);
-
   const calendarChange: CalendarProps['onChange'] = React.useCallback(
     date => {
       if (date) {
@@ -313,15 +324,7 @@ const DatePicker: React.FC<DatePickerProps> = props => {
         {...restInputProps}
         value={currentValue ? formatInputByTemplate(currentValue, template) : ''}
         onChange={handleChange}
-        // overrides={{
-        //   Input,
-        //   ErrorText,
-        //   IconWrapper,
-        //   InputWrapper,
-        //   Label,
-        //   Asterisk,
-        //   Container,
-        // }}
+        overrides={textFieldOverrides}
       />
 
       <ClickOutside onOutsideClick={() => setOpenSate(false)} mouseEvent="onMouseDown">
@@ -334,35 +337,17 @@ const DatePicker: React.FC<DatePickerProps> = props => {
             badges={badges}
             displayLeadingZero={displayLeadingZero}
             resetButtonLabel={resetButtonLabel}
-            todayButtonLabel={toodayButtonLabel}
+            todayButtonLabel={todayButtonLabel}
+            markToday={markToday}
+            weekDayLabelFormat={weekDayLabelFormat}
             heading={heading}
             subheading={subheading}
             view={view}
             views={views}
             footer={footer}
-            value={calendarValue}
+            value={currentValue}
             onChange={calendarChange}
-            // overrides={{
-            //   Body,
-            //   Cell,
-            //   EmptyCell,
-            //   Paper,
-            //   Header,
-            //   WeekRow,
-            //   DateContainer,
-            //   Toolbar,
-            //   YearsSelector,
-            //   MonthsSelector,
-            //   MonthCell,
-            //   DayBadge,
-            //   Footer,
-            //   ControlButton,
-            //   Heading,
-            //   Subheading,
-            //   IconPrev,
-            //   IconNext,
-            //   WeekDaysBar,
-            // }}
+            overrides={calendarOverrides}
           />
         </Popper>
       </ClickOutside>
