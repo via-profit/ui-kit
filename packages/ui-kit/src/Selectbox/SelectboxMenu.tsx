@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import Menu, { MenuProps, MenuRef, OnRequestClose, Value } from '../Menu';
-import { OnChange } from 'Selectbox';
+import type { OnChange } from './index';
 
 export interface SelectbosMenuProps<T, Multiple extends boolean | undefined = undefined>
   extends MenuProps<T, Multiple> {
