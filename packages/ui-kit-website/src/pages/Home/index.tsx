@@ -7,9 +7,7 @@ import { useIntl } from 'react-intl';
 import docsNavigation from '~/utils/docsNavigation';
 import { GITHUB_URL } from '~/components/Header';
 import GithubIcon from '~/components/Icons/GithubIcon';
-import ViaProfitLogo from '~/components/ViaProfitLogo';
-
-const COMPANY_URL = 'https://github.com/via-profit';
+import Logo from '~/components/Logo';
 
 const gradient = (theme: Theme) =>
   `linear-gradient(90deg, ${theme.color.accentSecondary.toString()}, ${theme.color.accentPrimary.toString()})`;
@@ -127,17 +125,10 @@ const SecondaryButton = styled.a`
   }
 `;
 
-const CompanyLogo = styled.a`
+const PackageName = styled(Logo)`
   position: relative;
-  display: inline-flex;
   margin-top: 3.5rem;
-  font-size: 2.75rem;
-  opacity: 0.9;
-  transition: opacity 120ms ease-out;
-
-  &:hover {
-    opacity: 1;
-  }
+  font-size: 1.6rem;
 `;
 
 const Section = styled.section`
@@ -224,9 +215,7 @@ const Home: React.FC = () => {
           </SecondaryButton>
         </Actions>
         <div>
-          <CompanyLogo href={COMPANY_URL} target="_blank" rel="noopener noreferrer">
-            <ViaProfitLogo />
-          </CompanyLogo>
+          <PackageName />
         </div>
       </Hero>
 

@@ -4,7 +4,7 @@ import { css } from '@emotion/react';
 import { Link, NavLink } from 'react-router-dom';
 import { useIntl } from 'react-intl';
 
-import Logo from '~/components/Logo';
+import ViaProfitLogo from '~/components/ViaProfitLogo';
 import GithubIcon from '~/components/Icons/GithubIcon';
 import MenuIcon from '~/components/Icons/MenuOutline';
 import ThemeSwitcher from './ThemeSwitcher';
@@ -28,6 +28,7 @@ const Container = styled.header`
 
 const LogoLink = styled(Link)`
   display: inline-flex;
+  font-size: 1.9rem;
   text-decoration: none;
 `;
 
@@ -113,8 +114,8 @@ const Header: React.FC<HeaderProps> = props => {
           <MenuIcon />
         </MenuButton>
       )}
-      <LogoLink to="/" aria-label="UI Kit">
-        <Logo />
+      <LogoLink to="/" aria-label="Via Profit UI Kit">
+        <ViaProfitLogo />
       </LogoLink>
       <Nav>
         <NavItem to="/" end>
