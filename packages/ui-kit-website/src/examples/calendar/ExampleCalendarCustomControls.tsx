@@ -11,7 +11,7 @@ const ExampleCalendarCustomControls: React.FC = () => {
     <div>
       <Calendar
         value={value}
-        onChange={onChange}
+        onChange={date => date && onChange(date)}
         footer={
           <>
             <Button

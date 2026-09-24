@@ -18,13 +18,13 @@ const ExampleCalendarViews: React.FC = () => {
         markToday
         subheading={
           <span>
-            {value[0] ? (
+            {value?.[0] ? (
               <FormattedDate value={value[0]} year="numeric" month="2-digit" day="2-digit" />
             ) : (
               '-'
             )}
             <span> between </span>
-            {value[1] ? (
+            {value?.[1] ? (
               <FormattedDate value={value[1]} year="numeric" month="2-digit" day="2-digit" />
             ) : (
               '-'

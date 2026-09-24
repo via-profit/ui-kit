@@ -1,6 +1,6 @@
 import React from 'react';
 import Autocomplete, { AutocompleteItem, FilterItems } from '@via-profit/ui-kit/src/Autocomplete';
-import type { AutocompleteTextFieldProps } from '@via-profit/ui-kit/src/Autocomplete/AutocompleteTextField';
+import type { TextFieldProps } from '@via-profit/ui-kit/src/TextField';
 import PhoneField, {
   PhoneFieldProps,
   templates,
@@ -43,10 +43,10 @@ const StyledPhoneField = styled(PhoneField)<PhoneFieldProps>`
         : theme.color.textPrimary.lighten(150).toString()};
   }
 `;
-const StyledTextFieldWithRef: React.ForwardRefRenderFunction<
-  HTMLDivElement,
-  AutocompleteTextFieldProps
-> = (p, r) => {
+const StyledTextFieldWithRef: React.ForwardRefRenderFunction<HTMLDivElement, TextFieldProps> = (
+  p,
+  r,
+) => {
   const { value, onChange, ...restProps } = p;
 
   return (

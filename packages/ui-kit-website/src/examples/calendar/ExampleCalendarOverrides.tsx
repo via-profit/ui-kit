@@ -12,7 +12,7 @@ const ExampleCalendarOverrides: React.FC = () => {
       <div>
         <Calendar
           value={date}
-          onChange={setDate}
+          onChange={value => value && setDate(value)}
           locale="ru-RU"
           markToday
           overrides={{
