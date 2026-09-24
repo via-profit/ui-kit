@@ -10,6 +10,7 @@ import ThemeProvider from '~/providers/ThemeProvider';
 import LocaleProvider from './providers/LocaleProvider';
 import routes from '~/routes';
 import reduxDefaultState from '~/redux/defaultState';
+import { readUiCookies } from '~/utils/uiCookies';
 
 const bootstrap = () => {
   const rootElement = document.getElementById('app');
@@ -24,6 +25,8 @@ const bootstrap = () => {
     ui: {
       ...state.ui,
       ...preloadedStates?.REDUX?.ui,
+      // Settings chosen by the user (theme, etc.)
+      ...readUiCookies(),
     },
   }));
 
