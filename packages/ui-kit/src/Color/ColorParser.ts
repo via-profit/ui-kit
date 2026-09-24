@@ -168,6 +168,10 @@ export class ColorParser {
 
     const inputColor = value.trim().toLowerCase();
 
+    if (inputColor === 'transparent') {
+      return { r: 0, g: 0, b: 0, a: 0 };
+    }
+
     // Проверка на именованный цвет
     if (this.webColors[inputColor]) {
       return this.parse(this.webColors[inputColor]);
@@ -238,30 +242,76 @@ export class ColorParser {
     throw new Error(`Invalid HEX color: ${hex}`);
   }
 
+  /**
+   * Returns function arguments: `rgb(10, 20 30 / 50%)` -> ['10', '20', '30', '50%']
+   */
+  private static getArgs(value: string): string[] {
+    const inner = value.substring(value.indexOf('(') + 1, value.lastIndexOf(')'));
+
+    return inner.split(/[\s,/]+/).filter(Boolean);
+  }
+
+  private static parseNumber(value: string, color: string): number {
+    const num = parseFloat(value);
+    if (isNaN(num)) {
+      throw new Error(`Invalid color value: ${color}`);
+    }
+
+    return num;
+  }
+
+  /**
+   * Alpha may be a number (0..1) or a percentage (0%..100%)
+   */
+  private static parseAlpha(value: string | undefined, color: string): number {
+    if (typeof value === 'undefined') {
+      return 1;
+    }
+
+    const num = this.parseNumber(value, color);
+
+    return this.clamp(value.endsWith('%') ? num / 100 : num, 0, 1);
+  }
+
   private static parseRgb(rgb: string): ParsedColor {
-    const matches = rgb.match(/[\d.]+/g);
-    if (!matches || matches.length < 3) {
+    const args = this.getArgs(rgb);
+    if (args.length < 3) {
       throw new Error(`Invalid RGB color: ${rgb}`);
     }
 
+    // Channel may be a number (0..255) or a percentage (0%..100%)
+    const channel = (value: string) => {
+      const num = this.parseNumber(value, rgb);
+
+      return this.clamp(Math.round(value.endsWith('%') ? (num * 255) / 100 : num), 0, 255);
+    };
+
     return {
-      r: this.clamp(parseInt(matches[0], 10), 0, 255),
-      g: this.clamp(parseInt(matches[1], 10), 0, 255),
-      b: this.clamp(parseInt(matches[2], 10), 0, 255),
-      a: matches[3] ? this.clamp(parseFloat(matches[3]), 0, 1) : 1,
+      r: channel(args[0]),
+      g: channel(args[1]),
+      b: channel(args[2]),
+      a: this.parseAlpha(args[3], rgb),
     };
   }
 
   private static parseHsl(hsl: string): ParsedColor {
-    const matches = hsl.match(/[\d.]+/g);
-    if (!matches || matches.length < 3) {
+    const args = this.getArgs(hsl);
+    if (args.length < 3) {
       throw new Error(`Invalid HSL color: ${hsl}`);
     }
 
-    const h = parseFloat(matches[0]) / 360;
-    const s = parseFloat(matches[1]) / 100;
-    const l = parseFloat(matches[2]) / 100;
-    const a = matches[3] ? this.clamp(parseFloat(matches[3]), 0, 1) : 1;
+    let hue = this.parseNumber(args[0], hsl);
+    if (args[0].endsWith('turn')) {
+      hue *= 360;
+    } else if (args[0].endsWith('rad')) {
+      hue = (hue * 180) / Math.PI;
+    }
+
+    // Negative and >360 hues are wrapped around the color wheel
+    const h = (((hue % 360) + 360) % 360) / 360;
+    const s = this.clamp(this.parseNumber(args[1], hsl), 0, 100) / 100;
+    const l = this.clamp(this.parseNumber(args[2], hsl), 0, 100) / 100;
+    const a = this.parseAlpha(args[3], hsl);
 
     const rgb = this.hslToRgb(h, s, l);
 
