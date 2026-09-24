@@ -230,17 +230,6 @@ const DEFAULT_OVERRIDES = {
   Container,
 } as const;
 
-const generateGuid = (): string => {
-  const u = Date.now().toString(16) + Math.random().toString(16) + '0'.repeat(16);
-
-  return [
-    u.substring(0, 8),
-    u.substring(8, 12),
-    '4000-8' + u.substring(13, 16),
-    u.substring(16, 28),
-  ].join('-');
-};
-
 const Selectbox = React.forwardRef(
   <T, Multiple extends boolean | undefined = undefined>(
     props: SelectboxProps<T, Multiple>,
@@ -263,7 +252,6 @@ const Selectbox = React.forwardRef(
       overrides,
       id,
       label,
-      onFocus,
       requiredAsterisk,
       error,
       errorText,
@@ -284,19 +272,9 @@ const Selectbox = React.forwardRef(
       [overrides],
     );
 
-    const inputID = React.useMemo(() => {
-      if (typeof id === 'string') {
-        return id;
-      }
-
-      return generateGuid();
-    }, [id]);
-
-    React.useEffect(() => {
-      if (isOpen && menuRef.current) {
-        menuRef.current.scrollToFirstSelected();
-      }
-    }, [isOpen]);
+    // useId is stable between server and client renders
+    const generatedID = React.useId();
+    const inputID = typeof id === 'string' ? id : generatedID;
 
     const renderValueAsString = React.useCallback(() => {
       if ((!multiple && !value) || (multiple && (value as readonly T[]).length === 0)) {
@@ -353,12 +331,17 @@ const Selectbox = React.forwardRef(
     );
 
     React.useEffect(() => {
+      // A closed selectbox has nothing to close
+      if (!isOpen) {
+        return undefined;
+      }
+
       window.document.addEventListener(mouseEventMap.onMouseDown, handleMouseDown);
 
       return () => {
         window.document.removeEventListener(mouseEventMap.onMouseDown, handleMouseDown);
       };
-    }, [handleMouseDown]);
+    }, [handleMouseDown, isOpen]);
 
     const buttonProps = React.useMemo(
       () => ({
@@ -380,16 +363,12 @@ const Selectbox = React.forwardRef(
       [inputID, error],
     );
 
-    if (!items?.length && !isLoading) {
-      return null;
-    }
-
     return (
       <overridesMap.Container>
         {label != null && (
           <overridesMap.Label {...labelProps}>
             {label}
-            {requiredAsterisk != null && (
+            {requiredAsterisk != null && requiredAsterisk !== false && (
               <overridesMap.Asterisk>
                 {typeof requiredAsterisk === 'boolean' ? '*' : requiredAsterisk}
               </overridesMap.Asterisk>
@@ -397,7 +376,12 @@ const Selectbox = React.forwardRef(
           </overridesMap.Label>
         )}
         <overridesMap.ButtonWrapper fullWidth={fullWidth} error={error} isOpen={isOpen}>
-          <overridesMap.Button {...buttonProps} onClick={handleButtonClick} ref={setRefs}>
+          <overridesMap.Button
+            {...buttonProps}
+            id={inputID}
+            onClick={handleButtonClick}
+            ref={setRefs}
+          >
             {renderValueAsString()}
           </overridesMap.Button>
         </overridesMap.ButtonWrapper>
