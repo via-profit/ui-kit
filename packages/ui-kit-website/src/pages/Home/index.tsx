@@ -7,6 +7,9 @@ import { useIntl } from 'react-intl';
 import docsNavigation from '~/utils/docsNavigation';
 import { GITHUB_URL } from '~/components/Header';
 import GithubIcon from '~/components/Icons/GithubIcon';
+import ViaProfitLogo from '~/components/ViaProfitLogo';
+
+const COMPANY_URL = 'https://github.com/via-profit';
 
 const gradient = (theme: Theme) =>
   `linear-gradient(90deg, ${theme.color.accentSecondary.toString()}, ${theme.color.accentPrimary.toString()})`;
@@ -124,20 +127,17 @@ const SecondaryButton = styled.a`
   }
 `;
 
-const Palette = styled.div`
+const CompanyLogo = styled.a`
   position: relative;
-  display: flex;
-  justify-content: center;
-  gap: 0.6rem;
-  margin-top: 3rem;
-`;
+  display: inline-flex;
+  margin-top: 3.5rem;
+  font-size: 2.75rem;
+  opacity: 0.9;
+  transition: opacity 120ms ease-out;
 
-const Swatch = styled.span<{ $color: string }>`
-  width: 2.25rem;
-  height: 2.25rem;
-  border-radius: 50%;
-  background: ${({ $color }) => $color};
-  border: 1px solid ${({ theme }) => theme.color.border.toString()};
+  &:hover {
+    opacity: 1;
+  }
 `;
 
 const Section = styled.section`
@@ -223,13 +223,11 @@ const Home: React.FC = () => {
             GitHub
           </SecondaryButton>
         </Actions>
-        <Palette aria-hidden="true">
-          <Swatch $color="#2a2f38" />
-          <Swatch $color="#c9ced6" />
-          <Swatch $color="#22c7d6" />
-          <Swatch $color="#1f8ad6" />
-          <Swatch $color="#2f7fe6" />
-        </Palette>
+        <div>
+          <CompanyLogo href={COMPANY_URL} target="_blank" rel="noopener noreferrer">
+            <ViaProfitLogo />
+          </CompanyLogo>
+        </div>
       </Hero>
 
       <Section>
