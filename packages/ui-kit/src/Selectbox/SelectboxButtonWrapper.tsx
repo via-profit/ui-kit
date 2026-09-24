@@ -1,6 +1,5 @@
 import * as React from 'react';
 import styled from '@emotion/styled';
-import { css } from '@emotion/react';
 
 export type SelectboxButtonWrapperProps = React.HTMLAttributes<HTMLDivElement> & {
   readonly fullWidth?: boolean;

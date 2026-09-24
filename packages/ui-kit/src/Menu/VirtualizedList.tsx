@@ -26,15 +26,13 @@ export type VirtualizedListProps<T> = {
 };
 
 const VirtualizedList = React.forwardRef(
-  <T,>(props: VirtualizedListProps<T>, ref: React.ForwardedRef<VirtualizedListRef>) => {
-    return (
-      <AutoHeightWrapper>
-        {height =>
-          height > 0 && <VirtualizedListComponent {...(props as any)} height={height} ref={ref} />
-        }
-      </AutoHeightWrapper>
-    );
-  },
+  <T,>(props: VirtualizedListProps<T>, ref: React.ForwardedRef<VirtualizedListRef>) => (
+    <AutoHeightWrapper>
+      {height =>
+        height > 0 && <VirtualizedListComponent {...(props as any)} height={height} ref={ref} />
+      }
+    </AutoHeightWrapper>
+  ),
 );
 
 VirtualizedList.displayName = 'VirtualizedList';
