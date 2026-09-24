@@ -79,7 +79,6 @@ const BaseModal: React.FC<BaseModalProps> = props => {
     destroyTimeout = defaultState.destroyTimeout,
     onRequestClose,
   } = props;
-  const destroyTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
   const [domLoaded, setDomLoaded] = React.useState(false);
 
   const overridesMap = React.useMemo(
@@ -96,15 +95,6 @@ const BaseModal: React.FC<BaseModalProps> = props => {
      * Client render detection
      */
     setDomLoaded(true);
-
-    const timeout = destroyTimeoutRef.current;
-
-    // unload destroy timeout
-    return () => {
-      if (timeout) {
-        clearTimeout(timeout);
-      }
-    };
   }, []);
 
   const portalEl = React.useMemo(() => {

@@ -64,6 +64,13 @@ export const ContextProvider: React.FC<ContextProviderProps> = props => {
     ...initialState,
   });
 
+  // Keep the props up to date (isOpen is managed by ModalWrapper itself),
+  // otherwise a stale onRequestClose callback would be called
+  const { onRequestClose, closeOnEscape, closeOnOverlayClick, destroyTimeout } = initialState;
+  React.useEffect(() => {
+    dispatch(actionSetState({ onRequestClose, closeOnEscape, closeOnOverlayClick, destroyTimeout }));
+  }, [onRequestClose, closeOnEscape, closeOnOverlayClick, destroyTimeout]);
+
   return <context.Provider value={{ state, dispatch }}>{children}</context.Provider>;
 };
 

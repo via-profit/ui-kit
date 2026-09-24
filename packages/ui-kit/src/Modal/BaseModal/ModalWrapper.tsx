@@ -24,12 +24,18 @@ export type ModalWrapperProps = {
   readonly children: React.ReactNode | readonly React.ReactNode[];
 };
 
+/**
+ * Count of the modals which lock the body scroll
+ */
+let bodyLocksCount = 0;
+
 const ModalWrapper: React.FC<ModalWrapperProps> = props => {
   const { children, isOpen: isOpenProp, autofocus = true } = props;
   const { state, dispatch } = useContext();
-  const initialOpenStateRef = React.useRef(isOpenProp);
-  const [alreadyMounted, setMountState] = React.useState(true);
   const { closeOnEscape, isMounted, isOpen, destroyTimeout, onRequestClose } = state;
+  const timerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+  const bodyLockedRef = React.useRef(false);
+  const isFirstRunRef = React.useRef(true);
   const containerRef = React.useRef<HTMLDivElement | null>(null);
   const id = PORTAL_ID + React.useId();
 
@@ -83,15 +89,37 @@ const ModalWrapper: React.FC<ModalWrapperProps> = props => {
     return widthNoScroll - widthWithScroll;
   }, []);
 
+  const lockBody = React.useCallback(() => {
+    if (!bodyLockedRef.current) {
+      bodyLockedRef.current = true;
+      bodyLocksCount += 1;
+      window.document.body?.classList.add('-modal-over');
+    }
+  }, []);
+
+  const unlockBody = React.useCallback(() => {
+    if (bodyLockedRef.current) {
+      bodyLockedRef.current = false;
+      bodyLocksCount = Math.max(0, bodyLocksCount - 1);
+
+      if (bodyLocksCount === 0) {
+        window.document.body?.classList.remove('-modal-over');
+      }
+    }
+  }, []);
+
   /**
    * Component will unmount
-   * Mark component as unmounted
+   * Clear pending timers and unlock the body scroll even if the modal is still open
    */
   React.useEffect(
     () => () => {
-      setMountState(false);
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+      }
+      unlockBody();
     },
-    [],
+    [unlockBody],
   );
 
   React.useEffect(() => {
@@ -141,43 +169,48 @@ const ModalWrapper: React.FC<ModalWrapperProps> = props => {
    * and sets visibility property to false otherwise
    */
   React.useEffect(() => {
-    if (isOpen !== isOpenProp || initialOpenStateRef.current) {
-      /**
-       * Mark as mounted and wait minimum loop of event (15ms) then mark as open
-       */
-      if (isOpenProp) {
-        dispatch(actionSetState({ isMounted: true }));
-        window.document.body?.classList.add('-modal-over');
+    const isFirstRun = isFirstRunRef.current;
+    isFirstRunRef.current = false;
 
-        setTimeout(() => {
-          if (alreadyMounted) {
-            dispatch(actionSetState({ isOpen: true }));
-          }
-        }, 120);
-
-        return;
-      }
-
-      /**
-       * Mark as closed and wait destroyTimeout then mark as unmounted
-       */
-      if (!isOpenProp) {
-        dispatch(actionSetState({ isOpen: false }));
-
-        setTimeout(() => {
-          if (alreadyMounted) {
-            const portal = window.document.querySelector(`#${PORTAL_ID}`);
-            if (portal?.children?.length === 1) {
-              window.document.body?.classList.remove('-modal-over');
-            }
-            dispatch(actionSetState({ isMounted: false }));
-          }
-        }, destroyTimeout);
-
-        return;
-      }
+    // Nothing to close on mount
+    if (isFirstRun && !isOpenProp) {
+      return;
     }
-  }, [isOpenProp, isOpen, alreadyMounted, destroyTimeout, dispatch, getScrollWidth]);
+
+    // Previous transition (open or close) must not finish after the new one started
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+      timerRef.current = null;
+    }
+
+    /**
+     * Mark as mounted and wait minimum loop of event then mark as open
+     */
+    if (isOpenProp) {
+      dispatch(actionSetState({ isMounted: true }));
+      lockBody();
+
+      timerRef.current = setTimeout(() => {
+        timerRef.current = null;
+        dispatch(actionSetState({ isOpen: true }));
+      }, 120);
+
+      return;
+    }
+
+    /**
+     * Mark as closed and wait destroyTimeout then mark as unmounted
+     */
+    dispatch(actionSetState({ isOpen: false }));
+
+    timerRef.current = setTimeout(() => {
+      timerRef.current = null;
+      unlockBody();
+      dispatch(actionSetState({ isMounted: false }));
+    }, destroyTimeout);
+    // destroyTimeout is read at the moment of closing
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpenProp, dispatch, lockBody, unlockBody]);
 
   return React.useMemo(
     () =>
