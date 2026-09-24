@@ -145,7 +145,6 @@ export const Swiper = React.forwardRef((props: SwiperProps, ref: React.Forwarded
   const isAnimating = React.useRef(false);
   const autoplayTimer = React.useRef<NodeJS.Timeout>();
   const mounted = React.useRef(true);
-  const normalizeTimeout = React.useRef<NodeJS.Timeout>();
 
   // #region Real Index
   const realIndex = React.useMemo(() => {
@@ -221,7 +220,9 @@ export const Swiper = React.forwardRef((props: SwiperProps, ref: React.Forwarded
 
   const goToIndex = React.useCallback(
     (i: number) => {
-      if (isAnimating.current) return;
+      // In the infinite mode the index is normalized after the transition, so wait for it.
+      // In the regular mode the transition is simply retargeted
+      if (infinite && isAnimating.current) return;
 
       let targetIndex = i;
 
@@ -373,13 +374,15 @@ export const Swiper = React.forwardRef((props: SwiperProps, ref: React.Forwarded
         setIndex(nextIndex);
       }
 
-      isAnimating.current = true;
+      // A click without movement does not start a transition, so transitionend never comes
+      // and the flag would block autoplay and goToIndex forever
+      isAnimating.current = nextIndex !== index || (snap && offset !== 0);
       dragging.current = false;
       setIsDragging(false);
 
       (e.target as HTMLElement).releasePointerCapture(e.pointerId);
     },
-    [threshold, dragThreshold, index, maxIndex, snap, infinite, total],
+    [threshold, dragThreshold, index, maxIndex, snap, infinite, total, offset],
   );
 
   const onLostPointerCapture = React.useCallback(
@@ -459,9 +462,18 @@ export const Swiper = React.forwardRef((props: SwiperProps, ref: React.Forwarded
       normalizeIndex(); // <-- вот здесь
     };
 
-    track.addEventListener('transitionend', handleTransitionEnd);
+    const handleTransitionCancel = (e: TransitionEvent) => {
+      if (e.propertyName !== 'transform') return;
+      isAnimating.current = false;
+    };
 
-    return () => track.removeEventListener('transitionend', handleTransitionEnd);
+    track.addEventListener('transitionend', handleTransitionEnd);
+    track.addEventListener('transitioncancel', handleTransitionCancel);
+
+    return () => {
+      track.removeEventListener('transitionend', handleTransitionEnd);
+      track.removeEventListener('transitioncancel', handleTransitionCancel);
+    };
   }, [normalizeIndex]);
 
   // #region Mount
