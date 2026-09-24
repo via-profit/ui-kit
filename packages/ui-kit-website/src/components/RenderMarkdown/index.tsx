@@ -84,27 +84,28 @@ const Heading = styled(H1)`
   margin-top: 0;
 `;
 
-const relativeToAbsolute = (base: string, rel: string): string => {
-  const resultArray = base.split('/');
-
-  if (!base.match(/\/$/)) {
-    resultArray.pop();
-  }
+/**
+ * Resolves the markdown link relative to the current page.
+ * Every docs page renders a `README.md` of the directory, so the page path is the directory
+ * of the document: `./button` from `/docs` -> `/docs/button`, `../calendar` from `/docs/menu` -> `/docs/calendar`
+ */
+const relativeToAbsolute = (baseDir: string, rel: string): string => {
+  const resultArray = baseDir.split('/').filter(Boolean);
 
   rel.split('/').forEach(item => {
     if (item === '..') {
-      // resultArray.pop();
+      resultArray.pop();
 
       return;
     }
-    if (item === '.') {
+    if (item === '.' || item === '') {
       return;
     }
 
     resultArray.push(item);
   });
 
-  return resultArray.join('/');
+  return `/${resultArray.join('/')}`;
 };
 
 const titleToAnchor = (headername: string | React.ReactNode): string => {

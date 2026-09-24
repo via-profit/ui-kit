@@ -1,5 +1,4 @@
 import React from 'react';
-import { useLocation } from 'react-router-dom';
 
 import TableOfContent from '~/components/TableOfContent';
 import Surface from '@via-profit/ui-kit/src/Surface';
@@ -8,24 +7,15 @@ import content from '@via-profit/ui-kit/docs/theming/README.md';
 import ExampleThemeProvider from '~/examples/theming/ExampleThemeProvider';
 import ExampleMultiThemming from '~/examples/theming/ExampleMultiThemming';
 
-const ThemingOverview: React.FC = () => {
-  const { pathname } = useLocation();
-  const modifiedContent = React.useMemo(() => {
-    const currentSegment = pathname.split('/').reverse()[0];
-
-    return content.replace(/\.\//g, `./${currentSegment}/`);
-  }, [pathname]);
-
-  return (
-    <>
-      <Surface>
-        <RenderMarkdown overrides={{ ExampleThemeProvider, ExampleMultiThemming }}>
-          {modifiedContent}
-        </RenderMarkdown>
-      </Surface>
-      <TableOfContent content={content} />
-    </>
-  );
-};
+const ThemingOverview: React.FC = () => (
+  <>
+    <Surface>
+      <RenderMarkdown overrides={{ ExampleThemeProvider, ExampleMultiThemming }}>
+        {content}
+      </RenderMarkdown>
+    </Surface>
+    <TableOfContent content={content} />
+  </>
+);
 
 export default ThemingOverview;
