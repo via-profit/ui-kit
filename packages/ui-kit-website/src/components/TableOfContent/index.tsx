@@ -6,6 +6,8 @@ import { Link, useLocation } from 'react-router-dom';
 import Surface from '@via-profit/ui-kit/src/Surface';
 import Paragraph from '@via-profit/ui-kit/src/Typography/Paragraph';
 
+import scrollToAnchorElement, { setLocationHash } from '~/utils/scrollToAnchor';
+
 export interface TableOfContentProps {
   readonly content: string;
 }
@@ -182,20 +184,19 @@ const TableOfContent: React.FC<TableOfContentProps> = props => {
     };
 
     // Небольшая задержка для корректного определения после монтирования
-    setTimeout(findInitialActive, 100);
+    const timeout = setTimeout(findInitialActive, 100);
+
+    return () => {
+      clearTimeout(timeout);
+    };
   }, [listItems]);
 
   const scrollToAnchor = React.useCallback(
     (link: string, event: React.MouseEvent) => {
       event.preventDefault();
-      const element = document.querySelector(`a[id="${link}"]`);
 
-      if (element) {
-        const yOffset = -80; // app header height
-        const y = element.getBoundingClientRect().top + window.scrollY + yOffset;
-
-        window.scrollTo({ top: y, behavior: 'smooth' });
-        window.history.pushState(true, '', `${pathname}#${link}`);
+      if (scrollToAnchorElement(link)) {
+        setLocationHash(pathname, link);
       }
     },
     [pathname],

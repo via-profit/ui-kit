@@ -23,6 +23,7 @@ import {
 } from '@via-profit/ui-kit/src/Table';
 
 import OpenInNewIcon from '~/components/Icons/OpenOutline';
+import scrollToAnchor, { setLocationHash } from '~/utils/scrollToAnchor';
 import SyntaxHighlighter from '~/components/SyntaxHighlighter';
 
 interface Props {
@@ -112,14 +113,23 @@ const titleToAnchor = (headername: string | React.ReactNode): string => {
   const anchorName = String(headername)
     .toLowerCase()
     .replace(/[\s,/]/g, '-')
-    .replace(/[^0-9a-zA-Z-А-Яа-яёЁйЙ]/gi, '');
+    // The hyphen is the last in the class, otherwise `Z-А` is a range of ~1000 chars
+    .replace(/[^0-9a-zA-ZА-Яа-яёЁйЙ-]/gi, '');
 
   return anchorName;
 };
 
 const MarkdownRender: React.FC<Props> = props => {
   const { children, overrides } = props;
-  const { pathname } = useLocation();
+  const { pathname, hash } = useLocation();
+
+  // Pages are loaded asynchronously, so ScrollRestoration can not find the anchor
+  // from the URL and scrolls to top. Scroll to it when the markdown is rendered
+  React.useEffect(() => {
+    if (hash) {
+      scrollToAnchor(decodeURIComponent(hash.slice(1)), 'auto');
+    }
+  }, [hash, children]);
 
   return (
     <Markdown
@@ -207,20 +217,15 @@ const MarkdownRender: React.FC<Props> = props => {
             }
 
             if (String(href || '').match(/#[a-zA-Z0-9а-яёй-]+$/i)) {
-              const anchorName = String(href || '').match(/#([a-z0-9а-яёй-]+)$/)?.[1] || '';
+              const anchorName = String(href || '').match(/#([a-z0-9а-яёй-]+)$/i)?.[1] || '';
 
               return (
                 <AnchorLink
                   onClick={event => {
                     event.preventDefault();
-                    const element = document.querySelector(`a[id="${anchorName}"]`);
 
-                    if (element) {
-                      const yOffset = -80; // app header height
-                      const y = element.getBoundingClientRect().top + window.scrollY + yOffset;
-
-                      window.scrollTo({ top: y, behavior: 'smooth' });
-                      window.history.pushState(true, '', `${pathname}#${anchorName}`);
+                    if (scrollToAnchor(anchorName)) {
+                      setLocationHash(pathname, anchorName);
                     }
                   }}
                   title={typeof title === 'string' ? title : undefined}
@@ -244,8 +249,8 @@ const MarkdownRender: React.FC<Props> = props => {
               typeof lang === 'string'
                 ? lang
                 : typeof className === 'string'
-                ? className.replace(/^lang-/, '')
-                : null;
+                  ? className.replace(/^lang-/, '')
+                  : null;
 
             if (!language) {
               return <CodeInline>{String(children).replace(/\n$/, '')}</CodeInline>;
