@@ -7,9 +7,20 @@ import { actionSetPartial, useContextDispatch, useContextState } from './context
 import IconClear from './IconClear';
 import { PositionStrategy } from '../Popper';
 import { mouseEventMap } from '../ClickOutside';
-import Menu, { AnchorPos, GetOptionSelected, MenuItemProps, MenuProps, MenuRef, OnRequestClose, Value } from '../Menu';
+import Menu, {
+  AnchorPos,
+  GetOptionSelected,
+  MenuItemProps,
+  MenuProps,
+  MenuRef,
+  OnRequestClose,
+  Value,
+} from '../Menu';
 
-export type AutocompleteTextFieldProps = Omit<TextFieldProps, 'value' | 'onChange' | 'children' | 'overrides'>;
+export type AutocompleteTextFieldProps = Omit<
+  TextFieldProps,
+  'value' | 'onChange' | 'children' | 'overrides'
+>;
 
 export interface AutocompleteProps<T, Multiple extends boolean | undefined = undefined>
   extends AutocompleteTextFieldProps {
@@ -285,6 +296,45 @@ const Autocomplete = React.forwardRef(
       [clear],
     );
 
+    const applyFilterForItems = React.useCallback(
+      (inputValue: string, itemList: readonly T[]) => {
+        const query = inputValue.toLowerCase().trim();
+
+        // Apply filter
+        return typeof filterItems !== 'function' || query.length === 0
+          ? itemList
+          : filterItems(itemList, { query, inputValue });
+      },
+      [filterItems],
+    );
+
+    /**
+     * Restore the input text from the current value (used by clearOnBlur)
+     */
+    const restoreInputValue = React.useCallback(() => {
+      const newInputValue =
+        currentValue === null
+          ? ''
+          : selectedItemToString(currentValue as Multiple extends undefined ? T : readonly T[]);
+
+      const newFilteredItems = multiple ? filteredItems : applyFilterForItems(newInputValue, items);
+
+      dispatch(
+        actionSetPartial({
+          filteredItems: newFilteredItems,
+          inputValue: newInputValue,
+        }),
+      );
+    }, [
+      currentValue,
+      selectedItemToString,
+      multiple,
+      filteredItems,
+      applyFilterForItems,
+      items,
+      dispatch,
+    ]);
+
     const inputKeydownEvent = React.useCallback(
       (event: React.KeyboardEvent<HTMLInputElement>) => {
         if (!isFocusedRef.current) {
@@ -343,8 +393,19 @@ const Autocomplete = React.forwardRef(
 
           //   break;
 
-          case 'Escape':
           case 'Tab':
+            // Focus leaves the field, so clearOnBlur applies as for the outside click
+            if (clearOnBlur) {
+              restoreInputValue();
+            }
+
+            if (currentOpen) {
+              onRequestClose(event);
+            }
+
+            break;
+
+          case 'Escape':
             if (currentOpen) {
               onRequestClose(event);
             }
@@ -356,19 +417,14 @@ const Autocomplete = React.forwardRef(
             break;
         }
       },
-      [currentOpen, onRequestClose, onRequestOpen, filteredItems.length],
-    );
-
-    const applyFilterForItems = React.useCallback(
-      (inputValue: string, itemList: readonly T[]) => {
-        const query = inputValue.toLowerCase().trim();
-
-        // Apply filter
-        return typeof filterItems !== 'function' || query.length === 0
-          ? itemList
-          : filterItems(itemList, { query, inputValue });
-      },
-      [filterItems],
+      [
+        currentOpen,
+        onRequestClose,
+        onRequestOpen,
+        filteredItems.length,
+        clearOnBlur,
+        restoreInputValue,
+      ],
     );
 
     const renderChildren: MenuProps<T>['children'] = React.useCallback(
@@ -449,23 +505,7 @@ const Autocomplete = React.forwardRef(
         // Click outside
         if (needToClose && currentOpen) {
           if (clearOnBlur) {
-            const newInputValue =
-              currentValue === null
-                ? ''
-                : selectedItemToString(
-                    currentValue as Multiple extends undefined ? T : readonly T[],
-                  );
-
-            const newFilteredItems = multiple
-              ? filteredItems
-              : applyFilterForItems(newInputValue, items);
-
-            dispatch(
-              actionSetPartial({
-                filteredItems: newFilteredItems,
-                inputValue: newInputValue,
-              }),
-            );
+            restoreInputValue();
           }
 
           if (isOpen) {
@@ -479,22 +519,7 @@ const Autocomplete = React.forwardRef(
       return () => {
         window.document.removeEventListener(mouseEventMap.onMouseDown, mouseDownEvent);
       };
-    }, [
-      onRequestClose,
-      anchorElement,
-      filteredItems,
-      items,
-      isOpen,
-      clearOnBlur,
-      currentOpen,
-      dispatch,
-      value,
-      selectedItemToString,
-      currentValue,
-      applyFilterForItems,
-      inputValue,
-      multiple,
-    ]);
+    }, [onRequestClose, anchorElement, isOpen, clearOnBlur, currentOpen, restoreInputValue]);
 
     const onSelectMenuItem: NonNullable<MenuProps<T, Multiple>['onSelectItem']> = React.useCallback(
       item => {

@@ -22,16 +22,19 @@ const Autocomplete = React.forwardRef(
       ...restProps
     } = props;
 
+    // The initial state is used only on mount, so do not recompute it (and run filterItems) on every render
+    const [initialState] = React.useState(() =>
+      createInitialState({
+        items,
+        selectedItemToString,
+        filterItems,
+        value,
+        isOpen,
+      }),
+    );
+
     return (
-      <ContextProvider
-        initialState={createInitialState({
-          items,
-          selectedItemToString,
-          filterItems,
-          value,
-          isOpen,
-        })}
-      >
+      <ContextProvider initialState={initialState}>
         <AutocompleteContainer
           {...restProps}
           items={items}

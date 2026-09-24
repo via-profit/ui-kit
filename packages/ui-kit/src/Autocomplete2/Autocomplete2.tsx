@@ -31,7 +31,7 @@ const Autocomplete2 = React.forwardRef(
      */
     const filterItems = React.useCallback(
       (items: readonly Item[], data: { readonly query: string }) => {
-        const { query } = data;
+        const query = data.query.toLocaleLowerCase();
 
         return items.filter(item => item.label.toLocaleLowerCase().indexOf(query) !== -1);
       },
