@@ -145,34 +145,18 @@ const TextField = React.forwardRef(
       ...nativeInputProps
     } = props;
 
-
     const [focused, setFocused] = React.useState(false);
-    const inputID = React.useMemo(() => {
-      if (typeof id === 'string') {
-        return id;
-      }
-
-      const u = Date.now().toString(16) + Math.random().toString(16) + '0'.repeat(16);
-
-      return [
-        u.substring(0, 8),
-        u.substring(8, 12),
-        '4000-8' + u.substring(13, 16),
-        u.substring(16, 28),
-      ].join('-');
-    }, [id]);
-
-    const stableOnChange = React.useCallback(onChange ? onChange : () => undefined, [onChange]); // уже есть
-// const stableOnFocus = React.useCallback(onFocus, [onFocus]); // уже есть
-// const stableOnBlur = React.useCallback(onBlur, [onBlur]); // уже есть
+    // useId is stable between server and client renders
+    const generatedID = React.useId();
+    const inputID = typeof id === 'string' ? id : generatedID;
 
     const inputChange: React.ChangeEventHandler<HTMLInputElement> = React.useCallback(
       event => {
-        if (stableOnChange) {
-          stableOnChange(event);
+        if (typeof onChange === 'function') {
+          onChange(event);
         }
       },
-      [stableOnChange],
+      [onChange],
     );
 
     const inputFocus: React.FocusEventHandler<HTMLInputElement> = React.useCallback(

@@ -131,21 +131,9 @@ const TextArea: React.ForwardRefRenderFunction<HTMLDivElement, TextAreaProps> = 
   } = props;
 
   const [focused, setFocused] = React.useState(false);
-  const inputID = React.useMemo(() => {
-    if (typeof id === 'string') {
-      return id;
-    }
-
-    const u = Date.now().toString(16) + Math.random().toString(16) + '0'.repeat(16);
-    const guid = [
-      u.substring(0, 8),
-      u.substring(8, 12),
-      '4000-8' + u.substring(13, 16),
-      u.substring(16, 28),
-    ].join('-');
-
-    return guid;
-  }, [id]);
+  // useId is stable between server and client renders
+  const generatedID = React.useId();
+  const inputID = typeof id === 'string' ? id : generatedID;
 
   const inputChange: React.ChangeEventHandler<HTMLTextAreaElement> = React.useCallback(
     event => {
@@ -209,7 +197,9 @@ const TextArea: React.ForwardRefRenderFunction<HTMLDivElement, TextAreaProps> = 
       {typeof label !== 'undefined' && label !== null && (
         <overridesMap.Label htmlFor={inputID} error={error}>
           {label}
-          {typeof requiredAsterisk !== 'undefined' && requiredAsterisk !== null && (
+          {typeof requiredAsterisk !== 'undefined' &&
+            requiredAsterisk !== null &&
+            requiredAsterisk !== false && (
             <overridesMap.Asterisk>
               {typeof requiredAsterisk === 'boolean' ? '*' : requiredAsterisk}
             </overridesMap.Asterisk>
