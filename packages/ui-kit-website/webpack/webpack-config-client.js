@@ -4,7 +4,6 @@ const dotenv = require('dotenv');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const webpack = require('webpack');
 const TerserPlugin = require('terser-webpack-plugin');
-const LoadablePlugin = require('@loadable/webpack-plugin');
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 const Mustache = require('mustache');
 require('webpack-dev-server');
@@ -67,51 +66,41 @@ const webpackProdConfig = {
     },
   },
   plugins: [
-
-    new LoadablePlugin({
-      filename: '/public/loadable-stats.json',
-    }),
     ...(isDev
       ? [
-        /**
-         * Development plugins
-         */
-        new webpack.HotModuleReplacementPlugin(),
-        new ReactRefreshWebpackPlugin({
-          overlay: false,
+          /**
+           * Development plugins
+           */
+          new webpack.HotModuleReplacementPlugin(),
+          new ReactRefreshWebpackPlugin({
+            overlay: false,
+          }),
+        ]
+      : []),
+
+    /**
+     * The site is a client-only SPA (there is no SSR server),
+     * so the same rendered template is used in both modes and emitted as index.html
+     */
+    new HtmlWebpackPlugin({
+      templateContent: Mustache.render(
+        fs.readFileSync(path.resolve(__dirname, '../src/assets/index.mustache'), {
+          encoding: 'utf8',
         }),
-        new HtmlWebpackPlugin({
-          templateContent: Mustache.render(
-            fs.readFileSync(path.resolve(__dirname, '../src/assets/index.mustache'), {
-              encoding: 'utf8',
+        {
+          /**
+           * Compile preloadedState data as Base64 string
+           */
+          preloadedStatesBase64: Buffer.from(
+            JSON.stringify({
+              REDUX: {},
             }),
-            {
-              /**
-               * Compile preloadedState data as Base64 string
-               */
-              preloadedStatesBase64: Buffer.from(
-                JSON.stringify({
-                  REDUX: {},
-                }),
-              ).toString('base64'),
-            },
-          ),
-        }),
-      ]
-      : [
-        /**
-         * Production plugins
-         */
-        new HtmlWebpackPlugin({
-          excludeChunks: ['app'], // exclude main entypoint
-          templateContent: fs.readFileSync(
-            path.resolve(__dirname, '../src/assets/index.mustache'),
-            {
-              encoding: 'utf8',
-            },
-          ),
-          filename: path.resolve(__dirname, '../dist/server/index.mustache'),
-          minify: {
+          ).toString('base64'),
+        },
+      ),
+      minify: isDev
+        ? false
+        : {
             caseSensitive: true,
             collapseWhitespace: true,
             keepClosingSlash: true,
@@ -121,8 +110,7 @@ const webpackProdConfig = {
             removeStyleLinkTypeAttributes: true,
             useShortDoctype: true,
           },
-        }),
-      ]),
+    }),
   ],
   devtool: isDev ? 'inline-source-map' : false,
   devServer: isDev

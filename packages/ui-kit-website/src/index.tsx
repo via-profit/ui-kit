@@ -1,7 +1,6 @@
 import React from 'react';
-import { createRoot, hydrateRoot } from 'react-dom/client';
+import { createRoot } from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import { loadableReady } from '@loadable/component';
 import { CacheProvider as CSSCacheProvider } from '@emotion/react';
 import createCache from '@emotion/cache';
 
@@ -12,13 +11,12 @@ import LocaleProvider from './providers/LocaleProvider';
 import routes from '~/routes';
 import reduxDefaultState from '~/redux/defaultState';
 
-const bootstrap = async () => {
+const bootstrap = () => {
   const rootElement = document.getElementById('app');
   if (!rootElement) {
     throw new Error('Root element with id #app not found');
   }
 
-  await loadableReady();
   const cssCache = createCache({ key: 'app' });
   const preloadedStates = readPreloadedState();
   const router = createBrowserRouter(routes);
@@ -41,14 +39,9 @@ const bootstrap = async () => {
     </ReduxProvider>
   );
 
-  if (process.env.NODE_ENV !== 'development') {
-    hydrateRoot(rootElement, AppData);
-  }
-
-  if (process.env.NODE_ENV === 'development') {
-    const root = createRoot(rootElement);
-    root.render(AppData);
-  }
+  // The site is rendered on the client only (there is no SSR), so there is nothing to hydrate
+  const root = createRoot(rootElement);
+  root.render(AppData);
 };
 
 bootstrap();
