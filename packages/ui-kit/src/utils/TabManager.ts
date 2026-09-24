@@ -31,7 +31,7 @@ type Stack = {
  *     window.document.addEventListener('keydown', keydown);
  *
  *      return () => {
- *         window.document.addEventListener('keydown', keydown);
+ *         window.document.removeEventListener('keydown', keydown);
  *      }
  *   }, []);
  *
@@ -73,7 +73,6 @@ class TabManager {
     this.#stack = this.#stack.filter(stackElem => {
       const founded = stackElem.container === container;
       if (founded && revertBackFocus && stackElem.lastFocused instanceof HTMLElement) {
-        console.debug('revert back focus to', stackElem.lastFocused);
         stackElem.lastFocused.focus();
       }
 
@@ -81,80 +80,80 @@ class TabManager {
     });
   }
 
-  getElementsList() {
+  getElementsList(): HTMLElement[] {
     const { stackElement } = this.getTopOfTheStack();
 
-    const universe = stackElement.container.querySelectorAll(
-      'input, button, select, textarea, a[href]',
+    if (!stackElement) {
+      return [];
+    }
+
+    const universe = stackElement.container.querySelectorAll<HTMLElement>(
+      'input, button, select, textarea, a[href], [tabindex]',
     );
-    const list: HTMLElement[] = Array.prototype.filter.call(universe, function (item) {
-      return item.tabIndex >= 0;
-    });
+    const list = Array.prototype.filter.call(
+      universe,
+      (item: HTMLElement) =>
+        item.tabIndex >= 0 &&
+        !(item as HTMLButtonElement).disabled &&
+        item !== stackElement.container,
+    ) as HTMLElement[];
 
-    list.sort((a, b) => {
-      if (a.tabIndex === 0) {
-        return 1;
-      }
-      if (b.tabIndex === 0) {
-        return -1;
-      }
-
-      if (a.tabIndex < b.tabIndex) {
-        return -1;
-      }
-      if (a.tabIndex > b.tabIndex) {
-        return 1;
-      }
-
-      return 0;
-    });
+    // Positive tabIndex goes first (ascending), then tabIndex=0 in the DOM order.
+    // Array.prototype.sort is stable, so equal keys keep the DOM order
+    const sortKey = (el: HTMLElement) =>
+      el.tabIndex === 0 ? Number.MAX_SAFE_INTEGER : el.tabIndex;
+    list.sort((a, b) => sortKey(a) - sortKey(b));
 
     return list;
   }
 
+  /**
+   * Index of the currently focused element in the list.
+   * Uses the real focus, so a focus set by mouse is taken into account
+   */
+  getCurrentIndex(list: readonly HTMLElement[]): number {
+    const { stackElement } = this.getTopOfTheStack();
+    const activeIndex = list.findIndex(el => el === document.activeElement);
+
+    if (activeIndex !== -1) {
+      return activeIndex;
+    }
+
+    return stackElement ? stackElement.lastIndex : -1;
+  }
+
+  focusByIndex(list: readonly HTMLElement[], index: number) {
+    const { stackElement } = this.getTopOfTheStack();
+    const el = list[index];
+
+    if (!stackElement || !el) {
+      return;
+    }
+
+    stackElement.lastIndex = index;
+    el.focus();
+  }
+
   focusNext() {
-    const { stackElement, stackIndex } = this.getTopOfTheStack();
     const list = this.getElementsList();
 
-    const nextIndex = stackElement.lastIndex + 1;
-    if (list[nextIndex]) {
-      list[nextIndex].focus();
-      this.#stack[stackIndex].lastIndex = nextIndex;
-
+    if (list.length === 0) {
       return;
     }
 
-    // Othrwise
-    const nextEl = list[0];
-    if (nextEl) {
-      this.#stack[stackIndex].lastIndex = 0;
-
-      nextEl.focus();
-
-      return;
-    }
+    const nextIndex = this.getCurrentIndex(list) + 1;
+    this.focusByIndex(list, nextIndex < list.length ? nextIndex : 0);
   }
 
   focusPrev() {
-    const { stackElement, stackIndex } = this.getTopOfTheStack();
     const list = this.getElementsList();
-    const nextIndex = stackElement.lastIndex - 1;
-    if (list[nextIndex]) {
-      list[nextIndex].focus();
-      this.#stack[stackIndex].lastIndex = nextIndex;
 
+    if (list.length === 0) {
       return;
     }
 
-    // Othrwise
-    const nextEl = list[list.length - 1];
-    if (nextEl) {
-      this.#stack[stackIndex].lastIndex = list.length - 1;
-
-      nextEl.focus();
-
-      return;
-    }
+    const prevIndex = this.getCurrentIndex(list) - 1;
+    this.focusByIndex(list, prevIndex >= 0 ? prevIndex : list.length - 1);
   }
 }
 
