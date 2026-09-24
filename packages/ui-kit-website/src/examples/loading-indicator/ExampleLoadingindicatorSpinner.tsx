@@ -7,6 +7,8 @@ import Spinner from '@via-profit/ui-kit/src/LoadingIndicator';
 const Container = styled.div`
   display: flex;
   align-items: center;
+  position: relative;
+  padding: 8em 0;
 `;
 
 const StandardSpinner = styled(Spinner)`
@@ -26,7 +28,7 @@ const GiantSpinner = styled(Spinner)`
 `;
 
 const ExampleLoadingindicatorSpinner: React.FC = () => (
-  <div style={{position: 'relative', padding: '8em 0'}}>
+  <div>
     <Surface title="Spinner">
       <Container>
         <StandardSpinner />
