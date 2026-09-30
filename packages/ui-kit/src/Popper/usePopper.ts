@@ -3,9 +3,8 @@ import { PositionStrategy } from './PopperContainer';
 
 /**
  * Base directions for popper positioning.
- * These are the primary axes around which the popper can be placed.
+ * The popper is centered along the chosen side of the anchor.
  *
- * @default 'bottom' (when used as anchorPos)
  * @example
  * ```tsx
  * type Direction = 'top' | 'bottom' | 'left' | 'right';
@@ -14,57 +13,49 @@ import { PositionStrategy } from './PopperContainer';
 export type Direction = 'top' | 'left' | 'right' | 'bottom';
 
 /**
- * Auto placement modifiers that enable intelligent positioning.
- * The popper will automatically choose the best placement that fits in the viewport.
- * - `auto`: Dynamically selects the optimal direction
- * - `auto-top`, `auto-bottom`, `auto-left`, `auto-right`: Auto placement with priority given to the specified direction
+ * Auto placements. With `autoFlip` the popper picks the first placement that fits in the viewport.
+ * - `auto`: Tries all placements starting with the bottom ones
+ * - `auto-top`, `auto-bottom`, `auto-left`, `auto-right`: Tries all placements starting with the specified side
+ *
+ * Without `autoFlip` `auto` works as `bottom`, `auto-top` as `top` and so on.
  *
  * @example
  * ```tsx
  * // Will try to place on top first, but will flip if needed
- * <Popper anchorPos="auto-top">...</Popper>
- *
- * // Will try all directions equally
- * <Popper anchorPos="auto">...</Popper>
+ * <Popper anchorPos="auto-top" autoFlip>...</Popper>
  * ```
  */
 export type AutoModifier = 'auto' | 'auto-top' | 'auto-bottom' | 'auto-left' | 'auto-right';
-// export type AutoModifier = 'auto' | 'auto-top' | 'auto-bottom' | 'auto-left' | 'auto-right';
 
 /**
- * Precise placement modifiers for fine-tuned positioning.
- * These combine a base direction with specific alignment options:
- * - `start`/`end`: Aligns to the beginning or end of the anchor (useful for RTL layouts)
- * - `left`/`right`: Horizontal alignment for vertical placements
- * - `top`/`bottom`: Vertical alignment for horizontal placements
+ * Placements that combine a side with an alignment along it:
+ * - `start`/`end`: Aligns to the left/right edge of the anchor (text direction is not taken into account)
+ * - `left`/`right`: Same as `start`/`end`
+ * - `top`/`bottom`: Vertical alignment for the left and right sides
+ * - `fill`: Stretches the popper to the anchor width
  *
  * @example
  * ```tsx
- * // Corner placements
- * <Popper anchorPos="top-left">Aligns to top-left corner</Popper>
- *
- * // Logical placements (RTL-friendly)
- * <Popper anchorPos="bottom-start">Aligns to bottom edge, start side</Popper>
- *
- * // Side alignments
- * <Popper anchorPos="left-top">Aligns to left side, top edge</Popper>
+ * <Popper anchorPos="bottom-start">Below the anchor, aligned to its left edge</Popper>
+ * <Popper anchorPos="left-top">Left of the anchor, aligned to its top edge</Popper>
+ * <Popper anchorPos="bottom-fill">Below the anchor, as wide as the anchor</Popper>
  * ```
  */
 export type Modifier =
-  | 'top-start' // Top edge, start side (left in LTR, right in RTL)
-  | 'top-end' // Top edge, end side (right in LTR, left in RTL)
-  | 'top-left' // Top edge, left side (absolute)
-  | 'top-right' // Top edge, right side (absolute)
-  | 'bottom-end' // Bottom edge, end side (right in LTR, left in RTL)
-  | 'bottom-start' // Bottom edge, start side (left in LTR, right in RTL)
-  | 'bottom-right' // Bottom edge, right side (absolute)
-  | 'bottom-left' // Bottom edge, left side (absolute)
-  | 'left-top' // Left edge, top side
-  | 'left-bottom' // Left edge, bottom side
-  | 'right-top' // Right edge, top side
-  | 'right-bottom' // Right edge, bottom side
-  | 'bottom-fill'
-  | 'top-fill';
+  | 'top-start' // Top side, left edge
+  | 'top-end' // Top side, right edge
+  | 'top-left' // Same as top-start
+  | 'top-right' // Same as top-end
+  | 'bottom-end' // Bottom side, right edge
+  | 'bottom-start' // Bottom side, left edge
+  | 'bottom-right' // Same as bottom-end
+  | 'bottom-left' // Same as bottom-start
+  | 'left-top' // Left side, top edge
+  | 'left-bottom' // Left side, bottom edge
+  | 'right-top' // Right side, top edge
+  | 'right-bottom' // Right side, bottom edge
+  | 'bottom-fill' // Bottom side, anchor width
+  | 'top-fill'; // Top side, anchor width
 
 /**
  * Available placement options for the popper.
@@ -73,12 +64,13 @@ export type Modifier =
  *
  * Categories:
  * - **Basic directions**: `top`, `bottom`, `left`, `right` - Centered placement
- * - **Corner placements**: `top-left`, `top-right`, `bottom-left`, `bottom-right` - Aligned to corners
- * - **Logical placements**: `top-start`, `top-end`, `bottom-start`, `bottom-end` - RTL-aware alignment
+ * - **Edge placements**: `top-start`, `top-end`, `bottom-start`, `bottom-end`
+ *   and their aliases `top-left`, `top-right`, `bottom-left`, `bottom-right`
  * - **Side alignments**: `left-top`, `left-bottom`, `right-top`, `right-bottom` - Edge-aligned
- * - **Auto placements**: `auto`, `auto-top`, `auto-bottom`, `auto-left`, `auto-right` - Intelligent positioning
+ * - **Fill placements**: `top-fill`, `bottom-fill` - As wide as the anchor
+ * - **Auto placements**: `auto`, `auto-top`, `auto-bottom`, `auto-left`, `auto-right` - Picked by `autoFlip`
  *
- * @default 'bottom'
+ * @default 'auto'
  * @example
  * ```tsx
  * // Basic centered placement
@@ -88,10 +80,7 @@ export type Modifier =
  * <Popper anchorPos="top-right">Attached to top-right corner</Popper>
  *
  * // Auto placement with priority
- * <Popper anchorPos="auto-left">Try left first, then find best fit</Popper>
- *
- * // RTL-aware placement
- * <Popper anchorPos="top-start">Respects text direction</Popper>
+ * <Popper anchorPos="auto-left" autoFlip>Try left first, then find best fit</Popper>
  * ```
  */
 export type AnchorPos = Direction | Modifier | AutoModifier;

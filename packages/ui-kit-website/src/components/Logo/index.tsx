@@ -31,10 +31,10 @@ const Package = styled.span`
 /**
  * Text logo in the style of a package name: <@via-profit/ui-kit>
  */
-const Logo: React.ForwardRefRenderFunction<HTMLSpanElement, React.HTMLAttributes<HTMLSpanElement>> = (
-  props,
-  ref,
-) => (
+const Logo: React.ForwardRefRenderFunction<
+  HTMLSpanElement,
+  React.HTMLAttributes<HTMLSpanElement>
+> = (props, ref) => (
   <Wordmark {...props} ref={ref}>
     <Bracket>&lt;</Bracket>
     @via-profit/

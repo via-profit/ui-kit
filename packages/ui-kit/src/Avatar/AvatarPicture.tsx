@@ -41,6 +41,11 @@ export type AvatarPictureProps = React.HTMLAttributes<HTMLPictureElement> & {
    * **Default**: `circular`
    */
   readonly variant?: 'circular' | 'rounded' | 'square';
+
+  /**
+   * HTML image alt attribute
+   */
+  readonly alt?: string;
 };
 
 const Picture = styled.picture<{ $variant: AvatarPictureProps['variant'] }>`
@@ -75,11 +80,11 @@ const Picture = styled.picture<{ $variant: AvatarPictureProps['variant'] }>`
   }}
 `;
 
-const AvatarPicture: React.ForwardRefRenderFunction<HTMLSpanElement, AvatarPictureProps> = (
+const AvatarPicture: React.ForwardRefRenderFunction<HTMLPictureElement, AvatarPictureProps> = (
   props,
   ref,
 ) => {
-  const { src, variant, ...nativeProps } = props;
+  const { src, variant, alt, ...nativeProps } = props;
 
   const defaultSrc = React.useMemo(() => {
     if (typeof src === 'undefined' || src?.length === 0) {
@@ -100,7 +105,8 @@ const AvatarPicture: React.ForwardRefRenderFunction<HTMLSpanElement, AvatarPictu
 
     retData = src.find(src => src.type === 'image/jpeg');
 
-    return retData ? retData : null;
+    // Without png or jpeg the first image is better than an empty src
+    return retData || src[0] || null;
   }, [src]);
 
   return (
@@ -108,7 +114,7 @@ const AvatarPicture: React.ForwardRefRenderFunction<HTMLSpanElement, AvatarPictu
       {src.map(({ isDefault, ...srcProps }) => (
         <source key={`${srcProps.srcSet}:${srcProps.type}`} {...srcProps} />
       ))}
-      <img src={defaultSrc?.srcSet || ''} />
+      <img src={defaultSrc?.srcSet || ''} alt={alt} />
     </Picture>
   );
 };

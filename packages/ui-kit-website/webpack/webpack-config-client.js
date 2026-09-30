@@ -126,23 +126,23 @@ const webpackProdConfig = {
   devtool: isDev ? 'inline-source-map' : false,
   devServer: isDev
     ? {
-      historyApiFallback: {
-        verbose: true,
-        disableDotRule: true,
-      },
-      hot: true,
-      // liveReload: true,
-      compress: true,
-      port: Number(parsed?.SERVER_PORT || 8080),
-      host: parsed?.SERVER_HOSTNAME,
-    }
+        historyApiFallback: {
+          verbose: true,
+          disableDotRule: true,
+        },
+        hot: true,
+        // liveReload: true,
+        compress: true,
+        port: Number(parsed?.SERVER_PORT || 8080),
+        host: parsed?.SERVER_HOSTNAME,
+      }
     : undefined,
   performance: isDev
     ? {
-      hints: false,
-      maxEntrypointSize: 512000,
-      maxAssetSize: 512000,
-    }
+        hints: false,
+        maxEntrypointSize: 512000,
+        maxAssetSize: 512000,
+      }
     : {},
   resolve: {
     extensions: ['.js', '.jsx', '.ts', '.tsx', '.css'],

@@ -4,13 +4,24 @@ import TableOfContent from '~/components/TableOfContent';
 import DocsArticle from '~/components/DocsArticle';
 import RenderMarkdown from '~/components/RenderMarkdown';
 import content from '@via-profit/ui-kit/docs/masked-field/README.md';
-import ExampleMaskedFieldBasic from '~/examples/masked-field/ExampleMaskedFieldBasic';
-import ExampleMaskedFieldPhone from '~/examples/masked-field/ExampleMaskedFieldPhone';
+import ExampleMaskedFieldOverview from '~/examples/masked-field/ExampleMaskedFieldOverview';
+import ExampleMaskedFieldValidation from '~/examples/masked-field/ExampleMaskedFieldValidation';
+import ExampleMaskedFieldValue from '~/examples/masked-field/ExampleMaskedFieldValue';
+import ExampleMaskedFieldDynamic from '~/examples/masked-field/ExampleMaskedFieldDynamic';
+import ExampleMaskedFieldTransform from '~/examples/masked-field/ExampleMaskedFieldTransform';
 
 const MaskedFieldOverview: React.FC = () => (
   <>
     <DocsArticle>
-      <RenderMarkdown overrides={{ ExampleMaskedFieldBasic, ExampleMaskedFieldPhone }}>
+      <RenderMarkdown
+        overrides={{
+          ExampleMaskedFieldOverview,
+          ExampleMaskedFieldValidation,
+          ExampleMaskedFieldValue,
+          ExampleMaskedFieldDynamic,
+          ExampleMaskedFieldTransform,
+        }}
+      >
         {content}
       </RenderMarkdown>
     </DocsArticle>

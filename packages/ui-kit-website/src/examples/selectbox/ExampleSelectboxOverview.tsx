@@ -46,7 +46,7 @@ const ExampleSelectboxOverview: React.FC = () => {
       >
         {({ item, index }, itemProps) => (
           <SelectboxItem {...itemProps} key={item.code + index}>
-            {index +1} {item.name}
+            {index + 1} {item.name}
           </SelectboxItem>
         )}
       </Selectbox>

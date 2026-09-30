@@ -13,14 +13,14 @@ const colors = ColorGenerator.generatePalette('swiper', 8);
 
 const ExampleSwiperSlidesPerView: React.FC = () => (
   <div>
-  <Swiper slidesPerView={3} infinite>
-    {colors.map((color, index) => (
-      <Slide key={color.toString()} style={{ backgroundColor: color.darken(80).toString() }}>
-        Индекс {index}
-      </Slide>
-    ))}
-  </Swiper>
-    <p>{' '}</p>
+    <Swiper slidesPerView={3} infinite>
+      {colors.map((color, index) => (
+        <Slide key={color.toString()} style={{ backgroundColor: color.darken(80).toString() }}>
+          Индекс {index}
+        </Slide>
+      ))}
+    </Swiper>
+    <p> </p>
     <Swiper slidesPerView={3}>
       {colors.map((color, index) => (
         <Slide key={color.toString()} style={{ backgroundColor: color.darken(80).toString() }}>

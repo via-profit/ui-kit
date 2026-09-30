@@ -23,31 +23,33 @@ export const useMasked = () => {
       caret: 0,
     };
 
-    value
-      .replace(/\s+/g, '')
-      .split('')
-      .forEach((character, charIndex) => {
-        const isMatch = mask.some(pattern => {
-          if (typeof pattern === 'string') {
+    // Whitespaces are skipped in place, not stripped beforehand:
+    // charIndex must stay the index in the original value to be compared with the caret
+    value.split('').forEach((character, charIndex) => {
+      if (/\s/.test(character)) {
+        return;
+      }
 
-            return character === pattern && character;
-          }
-
-          if (pattern instanceof RegExp) {
-            return new RegExp(pattern).test(character);
-          }
-
-          return false;
-        });
-
-        if (isMatch) {
-          data.text = `${data.text}${character}`;
-
-          if (charIndex < (caret || 0)) {
-            data.caret += 1;
-          }
+      const isMatch = mask.some(pattern => {
+        if (typeof pattern === 'string') {
+          return character === pattern && character;
         }
+
+        if (pattern instanceof RegExp) {
+          return new RegExp(pattern).test(character);
+        }
+
+        return false;
       });
+
+      if (isMatch) {
+        data.text = `${data.text}${character}`;
+
+        if (charIndex < (caret || 0)) {
+          data.caret += 1;
+        }
+      }
+    });
 
     const result: ParseInputPayload = {
       ...data,
@@ -65,7 +67,7 @@ export const useMasked = () => {
     };
 
     if (parsedValue === '') {
-      return data;
+      return { text: '', caret, isValid: false };
     }
 
     const requiredCount = mask.filter(pattern => pattern instanceof RegExp).length;
@@ -121,7 +123,8 @@ export const useMasked = () => {
 
     const result: FormatParsedPayload = {
       text: data.text,
-      caret: data.caret,
+      // Extra input beyond the mask is dropped, the caret must not point past the text
+      caret: Math.min(data.caret, data.text.length),
       // Valid when every RegExp position of the mask is filled
       isValid: requiredCount > 0 && filledCount === requiredCount,
     };

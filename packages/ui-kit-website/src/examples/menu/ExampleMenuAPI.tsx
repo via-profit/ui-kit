@@ -32,10 +32,7 @@ const ExampleMenuAPI: React.FC = () => {
   return (
     <>
       <Container>
-        <Button
-          variant="standard"
-          onClick={el => setAnchorEl(el.currentTarget)}
-        >
+        <Button variant="standard" onClick={el => setAnchorEl(el.currentTarget)}>
           Open
         </Button>
         <Button
@@ -57,10 +54,7 @@ const ExampleMenuAPI: React.FC = () => {
           Select highlighted item in list
         </Button>
 
-        <Button
-          variant="standard"
-          onClick={() => setAnchorEl(null)}
-        >
+        <Button variant="standard" onClick={() => setAnchorEl(null)}>
           Close
         </Button>
 
@@ -73,7 +67,6 @@ const ExampleMenuAPI: React.FC = () => {
           autofocus={false}
           value={value}
           maxWidth={180}
-
           items={items}
           getOptionSelected={({ item, value }) => item.id === value.id}
           onSelectItem={item => setValue(item)}

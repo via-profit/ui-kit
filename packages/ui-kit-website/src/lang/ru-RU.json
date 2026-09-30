@@ -2,11 +2,14 @@
   "1wC7aj": {
     "defaultMessage": "Включить светлую тему"
   },
-  "44pMfw": {
-    "defaultMessage": "Скрыть"
-  },
   "4YsRb6": {
     "defaultMessage": "Перейти к документации"
+  },
+  "5UhzNy": {
+    "defaultMessage": "Что это?"
+  },
+  "7TwBQ2": {
+    "defaultMessage": "Дата рождения"
   },
   "83McUk": {
     "defaultMessage": "Скопировано"
@@ -20,12 +23,6 @@
   "Al8pFl": {
     "defaultMessage": "На этой странице"
   },
-  "Br9+8Z": {
-    "defaultMessage": "Какой-либо контент"
-  },
-  "DHVnVh": {
-    "defaultMessage": "закрыть диалог"
-  },
   "DtpCdE": {
     "defaultMessage": "к 9 Мая"
   },
@@ -38,14 +35,14 @@
   "JYk3jK": {
     "defaultMessage": "Документация"
   },
-  "L0LsrI": {
-    "defaultMessage": "Какой-то контент"
+  "K4wZ5T": {
+    "defaultMessage": "Телефон (Россия или Беларусь)"
   },
   "LUCzCR": {
     "defaultMessage": "Выберите"
   },
-  "OpBahx": {
-    "defaultMessage": "Открыть popper"
+  "QasLUC": {
+    "defaultMessage": "Результат"
   },
   "QmljCN": {
     "defaultMessage": "Выбрано: {selected}"
@@ -53,14 +50,26 @@
   "QwcCkF": {
     "defaultMessage": "Найти компонент"
   },
-  "RwqXf6": {
-    "defaultMessage": "Показать"
+  "RSH+Mj": {
+    "defaultMessage": "Телефон для связи"
+  },
+  "Rv4/dP": {
+    "defaultMessage": "Анкор"
   },
   "SWd3Sf": {
     "defaultMessage": "Ничего не найдено"
   },
+  "SZGWYB": {
+    "defaultMessage": "Подставить номер"
+  },
   "TqYfpb": {
     "defaultMessage": "Найти компонент…"
+  },
+  "URJ2aL": {
+    "defaultMessage": "Содержимое Popper"
+  },
+  "WoHYhC": {
+    "defaultMessage": "Текущая позиция: {placement}"
   },
   "XnLtsK": {
     "defaultMessage": "Главная"
@@ -71,14 +80,29 @@
   "YJVtiA": {
     "defaultMessage": "Введение"
   },
+  "Yspb5g": {
+    "defaultMessage": "Закрыть Popper"
+  },
   "Z5DW4P": {
     "defaultMessage": "Список изменений"
+  },
+  "bPtegp": {
+    "defaultMessage": "Телефон"
+  },
+  "cgAw8y": {
+    "defaultMessage": "Введите номер полностью"
   },
   "fGrmor": {
     "defaultMessage": "Начало"
   },
   "fU31LB": {
     "defaultMessage": "Набор компонентов для"
+  },
+  "ftHGHa": {
+    "defaultMessage": "Номер карты"
+  },
+  "glc6iH": {
+    "defaultMessage": "Введите дату полностью"
   },
   "grmDdc": {
     "defaultMessage": "Такой страницы нет"
@@ -89,17 +113,26 @@
   "h52LFb": {
     "defaultMessage": "Включить тёмную тему"
   },
+  "kSJhYU": {
+    "defaultMessage": "Исходная строка"
+  },
   "l775qE": {
     "defaultMessage": "Открыть Popper"
-  },
-  "n4Y9Sg": {
-    "defaultMessage": "Открыть диалог"
   },
   "n8HMS9": {
     "defaultMessage": "ваших интерфейсов"
   },
+  "npyYek": {
+    "defaultMessage": "Очистить"
+  },
   "oAO9Hr": {
     "defaultMessage": "Компоненты"
+  },
+  "peF0Pd": {
+    "defaultMessage": "Подсказка закроется по клику в любом месте страницы"
+  },
+  "uE1mMh": {
+    "defaultMessage": "text: «{text}», isValid: {isValid}"
   },
   "wBODsZ": {
     "defaultMessage": "Текущая дата в шаблоном {template} — {result}"

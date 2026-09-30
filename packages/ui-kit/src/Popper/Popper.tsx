@@ -21,9 +21,9 @@ export interface PopperProps extends React.HTMLAttributes<HTMLDivElement> {
 
   /**
    * The HTML element to which the popper will be attached and positioned relative to.
-   * If `null` or undefined, the popper will not be positioned.
+   * While it is `null`, the popper stays hidden even if `isOpen` is `true`.
    *
-   * @default undefined
+   * @required
    * @example
    * ```tsx
    * const [anchor, setAnchor] = useState<HTMLButtonElement | null>(null);
@@ -45,15 +45,35 @@ export interface PopperProps extends React.HTMLAttributes<HTMLDivElement> {
    */
   readonly anchorPos?: AnchorPos;
 
+  /**
+   * Placements to try right after `anchorPos` when `autoFlip` is enabled.
+   * For `auto` placements this is the full list of placements to try.
+   * For the other placements `auto` and `*-fill` values of this list are ignored.
+   *
+   * @default undefined
+   * @example
+   * ```tsx
+   * <Popper anchorPos="bottom-fill" autoFlip alternativePlacements={['top-fill']}>...</Popper>
+   * ```
+   */
   readonly alternativePlacements?: readonly AnchorPos[];
 
+  /**
+   * Called when the actual placement changes, e.g. after a flip caused by `autoFlip`
+   *
+   * @default undefined
+   * @example
+   * ```tsx
+   * <Popper autoFlip onAnchorPosChanged={placement => setArrowSide(placement)}>...</Popper>
+   * ```
+   */
   readonly onAnchorPosChanged?: (anchorPos: AnchorPos) => void;
 
   /**
    * The z-index value for the popper container.
    * Used to control the stacking order of the popper relative to other elements.
    *
-   * @default theme.zIndex.modal
+   * @default theme.zIndex.modal for the `fixed` strategy, not set for `absolute`
    * @example
    * ```tsx
    * <Popper zIndex={9999}>...</Popper>
@@ -90,8 +110,9 @@ export interface PopperProps extends React.HTMLAttributes<HTMLDivElement> {
 
   /**
    * The positioning strategy to use.
-   * - `'fixed'`: Positions relative to the viewport. Works reliably in all cases.
-   * - `'absolute'`: Positions relative to the nearest positioned ancestor.
+   * - `'fixed'`: Renders into a portal and positions relative to the viewport.
+   *              The popper is kept inside the viewport and is not clipped by `overflow: hidden` parents.
+   * - `'absolute'`: Renders in place and positions relative to the nearest positioned ancestor.
    *                 When using 'absolute', make sure a parent element has `position: relative`.
    *
    * @default 'fixed'
@@ -105,13 +126,12 @@ export interface PopperProps extends React.HTMLAttributes<HTMLDivElement> {
 
   /**
    * Minimum distance (in pixels) that the popper must maintain from the viewport edges.
-   * Used to prevent the popper from being positioned too close to the screen boundaries.
-   * The popper will try to flip to another placement if it cannot maintain this margin.
+   * With `autoFlip` a placement that breaks this margin is skipped.
+   * With the `fixed` strategy the popper is also shifted to keep this margin.
    *
    * @default 30
    * @example
    * ```tsx
-   * // Larger margin for better visibility
    * <Popper viewportMargin={16}>...</Popper>
    *
    * // No margin (allow touching edges)

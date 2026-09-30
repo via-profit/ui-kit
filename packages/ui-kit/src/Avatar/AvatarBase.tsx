@@ -110,7 +110,7 @@ const AvatarBase: React.ForwardRefRenderFunction<HTMLSpanElement, AvatarBaseProp
     <overridesMap.Container {...nativeProps} color={color} ref={ref}>
       {typeof src !== 'undefined' && src !== null && src?.length !== 0 && (
         <overridesMap.IconWrapper>
-          <overridesMap.Picture src={src} variant={variant} />
+          <overridesMap.Picture src={src} variant={variant} alt={alt} />
         </overridesMap.IconWrapper>
       )}
 

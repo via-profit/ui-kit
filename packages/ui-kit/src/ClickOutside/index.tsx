@@ -18,6 +18,13 @@ export interface ClickOutsideProps {
    * **Default**: `onMouseDown`
    */
   readonly mouseEvent?: OutsideMouseEventName | false;
+
+  /**
+   * Elements whose clicks are not treated as outside clicks,
+   * e.g. the button that toggles a popper.\
+   * `null` and `undefined` entries are skipped
+   */
+  readonly ignoreElements?: readonly (Element | null | undefined)[];
 }
 
 type OutsideMouseEventName = 'onClick' | 'onMouseDown' | 'onMouseUp';
@@ -31,8 +38,12 @@ export const mouseEventMap: Record<OutsideMouseEventName, 'click' | 'mousedown' 
 export type OnOutsideClick = (event?: React.MouseEvent<HTMLElement> | MouseEvent) => void;
 
 const ClickOutside: React.FC<ClickOutsideProps> = props => {
-  const { children, mouseEvent = 'onMouseDown', onOutsideClick } = props;
+  const { children, mouseEvent = 'onMouseDown', onOutsideClick, ignoreElements } = props;
   const ref = React.useRef<HTMLElement | null>(null);
+
+  // A ref keeps an inline array from resubscribing the listener on every render
+  const ignoreElementsRef = React.useRef(ignoreElements);
+  ignoreElementsRef.current = ignoreElements;
 
   React.useEffect(() => {
     const mouseDownEvent = (event: MouseEvent) => {
@@ -40,7 +51,10 @@ const ClickOutside: React.FC<ClickOutsideProps> = props => {
       let needToClose = true;
 
       while (parentElem && 'parentNode' in parentElem) {
-        if (parentElem === ref.current) {
+        if (
+          parentElem === ref.current ||
+          ignoreElementsRef.current?.some(element => element === parentElem)
+        ) {
           needToClose = false;
           break;
         }

@@ -14,7 +14,10 @@ const Badge = styled.span<Styles>`
 `;
 
 const ExampleColorBasic: React.FC = () => {
-  const background = React.useMemo(() => Color.fromString('red').darken(50).luminance(0.5).hexString(), []);
+  const background = React.useMemo(
+    () => Color.fromString('red').darken(50).luminance(0.5).hexString(),
+    [],
+  );
   const foreground = React.useMemo(() => Color.fromString('red').lighten(200).hexString(), []);
 
   return (

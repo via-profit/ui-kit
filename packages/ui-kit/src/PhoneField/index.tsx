@@ -126,26 +126,21 @@ const PhoneField: React.ForwardRefRenderFunction<HTMLDivElement, PhoneFieldProps
       isValid,
     } = formatParsedInput(parsed.text, parsed.caret);
 
-    onChange(
-      {
-        ...event,
-        currentTarget: {
-          ...event.currentTarget,
-          value: text,
-        },
-      },
-      {
-        value: text,
-        placeholder,
-        CountryFlag,
-        template,
-        countryCode,
-        callingCode,
-        number,
-        isValid,
-        combined: `${callingCode ?? ''}${number}`,
-      },
-    );
+    // Spreading the event would drop its prototype methods (preventDefault etc.)
+    // and the input properties (name, id...), so the formatted text is written to the input itself
+    event.currentTarget.value = text;
+
+    onChange(event, {
+      value: text,
+      placeholder,
+      CountryFlag,
+      template,
+      countryCode,
+      callingCode,
+      number,
+      isValid,
+      combined: `${callingCode ?? ''}${number}`,
+    });
 
     setState(prev => ({
       ...prev,
@@ -179,7 +174,7 @@ const PhoneField: React.ForwardRefRenderFunction<HTMLDivElement, PhoneFieldProps
       )}
       {...textFieldProps}
       value={currentValue}
-      placeholder={placeholder}
+      placeholder={textFieldProps.placeholder ?? placeholder}
       onChange={handleChange}
       inputRef={input => {
         textInputRef.current = input;

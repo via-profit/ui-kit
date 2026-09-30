@@ -19,7 +19,13 @@ const ExampleSwiperApi: React.FC = () => {
 
   return (
     <div>
-      <Swiper infinite ref={swiperRef} onSlideChange={setCurrentIndex} draggable={false} slidesPerView={3}>
+      <Swiper
+        infinite
+        ref={swiperRef}
+        onSlideChange={setCurrentIndex}
+        draggable={false}
+        slidesPerView={3}
+      >
         {colors.map((color, index) => (
           <Slide key={color.toString()} style={{ backgroundColor: color.darken(60).toString() }}>
             Слайд {index + 1}
@@ -29,7 +35,8 @@ const ExampleSwiperApi: React.FC = () => {
 
       <Button
         // disabled={currentIndex === 0}
-        onClick={() => swiperRef.current?.prev()}>
+        onClick={() => swiperRef.current?.prev()}
+      >
         Предыдущий слайд
       </Button>
       <Button

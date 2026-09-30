@@ -89,6 +89,15 @@ export interface MenuProps<T, Multiple extends boolean | undefined = undefined> 
   readonly closeOutsideClick?: boolean;
 
   /**
+   * Also close the list when the anchor element is clicked.\
+   * Leave it `false` when the anchor toggles the list by itself,
+   * otherwise the anchor click closes the list and the anchor opens it again\
+   * \
+   * **Default**: `false`
+   */
+  readonly closeOnAnchorClick?: boolean;
+
+  /**
    * Allow the multiple selection
    * \
    * **Default**: `false`
@@ -336,6 +345,7 @@ const MenuContainer = React.forwardRef(
       overrides,
       children,
       closeOutsideClick = true,
+      closeOnAnchorClick = false,
       isOpen = false,
       anchorPos = 'bottom',
       alternativePlacements = ['bottom', 'top'],
@@ -720,6 +730,7 @@ const MenuContainer = React.forwardRef(
       <ClickOutside
         onOutsideClick={onRequestClose}
         mouseEvent={isOpen && closeOutsideClick ? 'onMouseDown' : false}
+        ignoreElements={closeOnAnchorClick ? undefined : [anchorElement]}
       >
         <PopperComponent
           isOpen={Boolean(isOpen)}

@@ -61,7 +61,6 @@ const ExampleAutocompleteMultiple: React.FC = () => {
 
             return queries.some(q => name.includes(q));
           });
-
         }}
         onRequestClose={() => setIsOpen(false)}
         onRequestOpen={() => setIsOpen(true)}

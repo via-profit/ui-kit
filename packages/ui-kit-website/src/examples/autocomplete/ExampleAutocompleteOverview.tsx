@@ -15,9 +15,7 @@ const ExampleAutocompleteOverview: React.FC = () => {
   const handleChange = React.useCallback((item: Item | null) => setValue(item), []);
   const selectedItemToString = React.useCallback((item: Item) => item.name, []);
   const filterItems: FilterItems<Item> = React.useCallback(
-    (items, { query }) => items.filter(item =>
-      item.name.toLocaleLowerCase().indexOf(query) !== -1,
-    ),
+    (items, { query }) => items.filter(item => item.name.toLocaleLowerCase().indexOf(query) !== -1),
     [],
   );
 

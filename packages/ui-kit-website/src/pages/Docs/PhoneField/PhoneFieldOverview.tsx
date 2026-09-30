@@ -4,6 +4,9 @@ import TableOfContent from '~/components/TableOfContent';
 import DocsArticle from '~/components/DocsArticle';
 import RenderMarkdown from '~/components/RenderMarkdown';
 import ExamplePhoneFieldOverview from '~/examples/phone-field/ExamplePhoneFieldOverview';
+import ExamplePhoneFieldValidation from '~/examples/phone-field/ExamplePhoneFieldValidation';
+import ExamplePhoneFieldTemplates from '~/examples/phone-field/ExamplePhoneFieldTemplates';
+import ExamplePhoneFieldFormat from '~/examples/phone-field/ExamplePhoneFieldFormat';
 import content from '@via-profit/ui-kit/docs/phone-field/README.md';
 
 const PhoneFieldOverview: React.FC = () => (
@@ -12,6 +15,9 @@ const PhoneFieldOverview: React.FC = () => (
       <RenderMarkdown
         overrides={{
           ExamplePhoneFieldOverview,
+          ExamplePhoneFieldValidation,
+          ExamplePhoneFieldTemplates,
+          ExamplePhoneFieldFormat,
         }}
       >
         {content}

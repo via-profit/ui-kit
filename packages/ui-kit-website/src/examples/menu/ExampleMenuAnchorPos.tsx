@@ -134,8 +134,6 @@ const ExampleMenuAnchorPos: React.FC = () => {
         isActive={anchorPos === 'bottom-fill'}
         onChange={() => setAnchorPos('bottom-fill')}
       />
-
-
     </>
   );
 };

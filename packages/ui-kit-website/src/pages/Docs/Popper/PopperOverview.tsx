@@ -6,8 +6,8 @@ import DocsArticle from '~/components/DocsArticle';
 import content from '@via-profit/ui-kit/docs/popper/README.md';
 import ExamplePopperOverview from '~/examples/popper/ExamplePopperOverview';
 import ExamplePopperAnchorPos from '~/examples/popper/ExamplePopperAnchorPos';
+import ExamplePopperAutoFlip from '~/examples/popper/ExamplePopperAutoFlip';
 import ExamplePopperOutsideClick from '~/examples/popper/ExamplePopperOutsideClick';
-import ExamplePopperModal from '~/examples/popper/ExamplePopperModal';
 
 const PopperOverview: React.FC = () => (
   <>
@@ -16,8 +16,8 @@ const PopperOverview: React.FC = () => (
         overrides={{
           ExamplePopperOverview,
           ExamplePopperAnchorPos,
+          ExamplePopperAutoFlip,
           ExamplePopperOutsideClick,
-          ExamplePopperModal,
         }}
       >
         {content}

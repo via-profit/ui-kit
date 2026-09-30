@@ -1,34 +1,27 @@
 import React from 'react';
 import styled from '@emotion/styled';
 import Avatar from '@via-profit/ui-kit/src/Avatar';
-
-import AvatarContainer from '@via-profit/ui-kit/src/Avatar/AvatarContainer';
-import AvatarTextWrapper from '@via-profit/ui-kit/src/Avatar/AvatarTextWrapper';
-
-const StyledContainer = styled(AvatarContainer)`
-  background-color: purple !important;
-`;
+import AvatarTextWrapper, {
+  AvatarTextWrapperProps,
+} from '@via-profit/ui-kit/src/Avatar/AvatarTextWrapper';
 
 const StyledTextWrapper = styled(AvatarTextWrapper)`
-  color: #fff !important;
+  font-size: 1em;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
 `;
+
+const TextWrapper = React.forwardRef<HTMLSpanElement, AvatarTextWrapperProps>(
+  function TextWrapper(props, ref) {
+    return <StyledTextWrapper {...props} ref={ref} />;
+  },
+);
+
 const ExampleAvatarOverrides: React.FC = () => (
-  <>
-    <Avatar
-      variant="circular"
-      isOnline
-      overrides={{
-        Container: React.forwardRef(function Override(props, ref) {
-          return <StyledContainer {...props} ref={ref} />;
-        }),
-        TextWrapper: React.forwardRef(function Override(props, ref) {
-          return <StyledTextWrapper {...props} ref={ref} />;
-        }),
-      }}
-    >
-      S
-    </Avatar>
-  </>
+  <Avatar color="primary" overrides={{ TextWrapper }}>
+    ап
+  </Avatar>
 );
 
 export default ExampleAvatarOverrides;

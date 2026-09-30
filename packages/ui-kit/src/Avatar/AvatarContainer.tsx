@@ -15,8 +15,7 @@ export type AvatarContainerProps = React.HTMLAttributes<HTMLSpanElement> & {
 };
 
 type StyledProps = {
-  readonly color?: AvatarContainerProps['color'];
-  readonly size?: string;
+  readonly $size?: string;
 };
 
 const StyledAvatar = styled.span<StyledProps>`
@@ -28,27 +27,22 @@ const StyledAvatar = styled.span<StyledProps>`
   transition: all 180ms ease-out 0s;
   background: none;
   position: relative;
-  width: ${({ size }) => size || '2.5em'};
-  height: ${({ size }) => size || '2.5em'};
+  width: ${({ $size }) => $size || '2.5em'};
+  height: ${({ $size }) => $size || '2.5em'};
   display: inline-flex;
   align-items: center;
-  color: ${({ color, theme }) => {
-    switch (true) {
-      case typeof color === 'undefined':
-      default:
-        return theme.color.textPrimary.toString();
-    }
-  }};
+  color: ${({ theme }) => theme.color.textPrimary.toString()};
 `;
 
 const AvatarContainer: React.ForwardRefRenderFunction<HTMLSpanElement, AvatarContainerProps> = (
   props,
   ref,
 ) => {
-  const { children, ...nativeProps } = props;
+  // The color is applied by <Avatar>, it must not reach the DOM as an attribute
+  const { children, size, color, ...nativeProps } = props;
 
   return (
-    <StyledAvatar {...nativeProps} ref={ref}>
+    <StyledAvatar {...nativeProps} $size={size} ref={ref}>
       {children}
     </StyledAvatar>
   );

@@ -3,6 +3,7 @@
 ## Содержание
 
 - [Описание](#описание)
+- [Исключение элементов](#исключение-элементов)
 - [Свойства](#свойства)
 
 ## Описание
@@ -30,13 +31,63 @@ export default Example;
 
 <ExampleClickOutsideOverview />
 
+## Исключение элементов
+
+Иногда клик за пределами компонента не должен считаться кликом снаружи. Типичный случай — кнопка, которая открывает и закрывает выпадающий элемент: без исключения нажатие на неё сначала вызовет `onOutsideClick` и закроет элемент, а затем обработчик кнопки сразу откроет его снова.
+
+Передайте такие элементы в свойство `ignoreElements`. Клики по ним и по их потомкам не вызывают `onOutsideClick`. Значения `null` и `undefined` пропускаются, поэтому можно передать элемент, который ещё не отрисован:
+
+```tsx
+import React from 'react';
+import Button from '@via-profit/ui-kit/Button';
+import Popper from '@via-profit/ui-kit/Popper';
+import Surface from '@via-profit/ui-kit/Surface';
+import ClickOutside from '@via-profit/ui-kit/ClickOutside';
+
+const Example: React.FC = () => {
+  const [anchorElement, setAnchorElement] = React.useState<HTMLButtonElement | null>(null);
+
+  return (
+    <>
+      <Button onClick={event => setAnchorElement(anchorElement ? null : event.currentTarget)}>
+        Открыть
+      </Button>
+
+      <ClickOutside ignoreElements={[anchorElement]} onOutsideClick={() => setAnchorElement(null)}>
+        <Popper anchorElement={anchorElement} isOpen={Boolean(anchorElement)}>
+          <Surface>Содержимое</Surface>
+        </Popper>
+      </ClickOutside>
+    </>
+  );
+};
+
+export default Example;
+```
+
+Живой пример есть в документации [`<Popper>`](../popper/README.md#закрытие-по-клику-снаружи).
+
 ## Свойства
 
 ### `children`
-Реакт элемент. **Важно: Не используйте фрагмент в качестве дочернего элемента.**
+React-элемент, клики за пределами которого отслеживаются. Элемент должен передавать `ref` в DOM-элемент.
+**Важно: не используйте фрагмент в качестве дочернего элемента.**
+- Тип: `React.ReactElement`
+- Обязательное: **да**
 
 ### `onOutsideClick`
-Коллбэк функция, которая будет вызвана по наступлению события.
+Функция, которая вызывается при клике за пределами элемента.
+- Тип: `(event?: React.MouseEvent<HTMLElement> | MouseEvent) => void`
+- Обязательное: **да**
 
-### `onOutsideClick`
-Тип события, на которое будет реагировать компонент
+### `mouseEvent`
+Событие мыши, на которое реагирует компонент. `false` отключает отслеживание.
+- Тип: `'onClick' | 'onMouseDown' | 'onMouseUp' | false`
+- По умолчанию: `'onMouseDown'`
+- Обязательное: нет
+
+### `ignoreElements`
+Элементы, клики по которым (и по их потомкам) не считаются кликами снаружи. Значения `null` и `undefined` пропускаются.
+- Тип: `readonly (Element | null | undefined)[]`
+- По умолчанию: `undefined`
+- Обязательное: нет

@@ -8,7 +8,8 @@ import ExampleAvatarOverview from '~/examples/avatar/ExampleAvatarOverview';
 import ExampleAvatarOnline from '~/examples/avatar/ExampleAvatarOnline';
 import ExampleAvatarVariants from '~/examples/avatar/ExampleAvatarVariants';
 import ExampleAvatarColors from '~/examples/avatar/ExampleAvatarColors';
-import ExampleAvatarIcons from '~/examples/avatar/ExampleAvatarIcons';
+import ExampleAvatarSize from '~/examples/avatar/ExampleAvatarSize';
+import ExampleAvatarClickable from '~/examples/avatar/ExampleAvatarClickable';
 import ExampleAvatarOverrides from '~/examples/avatar/ExampleAvatarOverrides';
 
 const AvatarOverview: React.FC = () => (
@@ -20,7 +21,8 @@ const AvatarOverview: React.FC = () => (
           ExampleAvatarOnline,
           ExampleAvatarVariants,
           ExampleAvatarColors,
-          ExampleAvatarIcons,
+          ExampleAvatarSize,
+          ExampleAvatarClickable,
           ExampleAvatarOverrides,
         }}
       >

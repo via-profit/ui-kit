@@ -179,7 +179,8 @@ const Card = styled(Link)`
 
   &:hover {
     border-color: ${({ theme }) => theme.color.accentPrimary.alpha(0.6).toString()};
-    box-shadow: 0 0 0 1px ${({ theme }) => theme.color.accentPrimary.alpha(0.2).toString()},
+    box-shadow:
+      0 0 0 1px ${({ theme }) => theme.color.accentPrimary.alpha(0.2).toString()},
       0 0.5rem 1.5rem -0.75rem ${({ theme }) => theme.color.accentPrimary.alpha(0.5).toString()};
   }
 

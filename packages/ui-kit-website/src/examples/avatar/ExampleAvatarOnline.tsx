@@ -1,35 +1,25 @@
 import React from 'react';
-import Avatar from '@via-profit/ui-kit/src/Avatar';
 import styled from '@emotion/styled';
+import Avatar from '@via-profit/ui-kit/src/Avatar';
 
-const AvatarGroup = styled.div`
-  & > span {
-    margin: 0 0.4em 0.4em 0%;
-  }
-
-  & > span:last-of-type {
-    margin-right: 0;
-  }
+const Group = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5em;
 `;
 
 const ExampleAvatarOnline: React.FC = () => (
-  <AvatarGroup>
+  <Group>
     <Avatar
-      variant="circular"
-      src={[
-        {
-          srcSet: 'https://i.pravatar.cc/300',
-          type: 'image/jpeg',
-          isDefault: true,
-        },
-        {
-          srcSet: 'https://i.pravatar.cc/300',
-          type: 'image/webp',
-        },
-      ]}
+      src={[{ srcSet: 'https://i.pravatar.cc/150?img=32', type: 'image/jpeg' }]}
+      alt="Мария Иванова"
       isOnline
     />
-  </AvatarGroup>
+    <Avatar variant="rounded" color="primary" isOnline>
+      ИП
+    </Avatar>
+  </Group>
 );
 
 export default ExampleAvatarOnline;

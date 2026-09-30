@@ -3,54 +3,34 @@ import Button from '@via-profit/ui-kit/src/Button';
 import Popper from '@via-profit/ui-kit/src/Popper';
 import Surface from '@via-profit/ui-kit/src/Surface';
 import ClickOutside from '@via-profit/ui-kit/src/ClickOutside';
-import styled from '@emotion/styled';
+import { useTheme } from '@emotion/react';
 import { FormattedMessage } from 'react-intl';
 
-const StyledAnchorContainer = styled.div`
-  width: 22em;
-  height: 22em;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: ${({ theme }) => theme.color.backgroundPrimary.toString()};
-  border-radius: ${({ theme }) => theme.shape.radiusFactor}em;
-  position: relative;
-`;
-
 const ExamplePopperOutsideClick: React.FC = () => {
+  const theme = useTheme();
   const [anchorElement, setAnchorElement] = React.useState<HTMLButtonElement | null>(null);
 
   return (
-    <StyledAnchorContainer>
+    <>
       <Button onClick={event => setAnchorElement(anchorElement ? null : event.currentTarget)}>
-        <FormattedMessage defaultMessage="Открыть Popper" />
+        <FormattedMessage defaultMessage="Что это?" />
       </Button>
 
-      <ClickOutside
-        mouseEvent="onMouseUp"
-        onOutsideClick={event => {
-          if (event && event.target instanceof HTMLElement) {
-            if (anchorElement && anchorElement.contains(event.target)) {
-              return;
-            }
-          }
-
-          setAnchorElement(null);
-        }}
-      >
+      <ClickOutside ignoreElements={[anchorElement]} onOutsideClick={() => setAnchorElement(null)}>
         <Popper
-          anchorPos="top"
-          autoFlip
           anchorElement={anchorElement}
           isOpen={Boolean(anchorElement)}
-          positionStrategy="absolute"
+          anchorPos="right"
+          autoFlip
+          offset={8}
+          zIndex={theme.zIndex.header - 1}
         >
           <Surface>
-            <FormattedMessage defaultMessage="Какой-то контент" />
+            <FormattedMessage defaultMessage="Подсказка закроется по клику в любом месте страницы" />
           </Surface>
         </Popper>
       </ClickOutside>
-    </StyledAnchorContainer>
+    </>
   );
 };
 

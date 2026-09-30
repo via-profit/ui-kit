@@ -17,14 +17,6 @@ const StyledAvatarBase = styled(AvatarBase)<StyledProps>`
   position: relative;
   color: ${({ $color }) => $color.toString()};
   background-color: ${({ $background }) => $background.toString()};
-  ${({ $background }) => {
-    switch (true) {
-      case $background.getLuminance() > 0.49:
-        return $background.darken(40).alpha(0.8).toString();
-      default:
-        return $background.darken(20).alpha(0.5).toString();
-    }
-  }};
   &:hover {
     background-color: ${({ $background, $clickable }) =>
       $clickable && $background.darken(30).toString()};
@@ -66,6 +58,7 @@ const Avatar: React.ForwardRefRenderFunction<HTMLSpanElement, AvatarProps> = (pr
     children,
     color,
     onClick,
+    onKeyDown,
     isOnline,
     size,
     src,
@@ -76,6 +69,19 @@ const Avatar: React.ForwardRefRenderFunction<HTMLSpanElement, AvatarProps> = (pr
   } = props;
   const theme = useTheme();
   const clickable = React.useMemo(() => typeof onClick === 'function', [onClick]);
+
+  // A clickable avatar acts as a button, so it is activated by Enter and Space too
+  const handleKeyDown = React.useCallback(
+    (event: React.KeyboardEvent<HTMLSpanElement>) => {
+      onKeyDown?.(event);
+
+      if (clickable && !event.defaultPrevented && (event.key === 'Enter' || event.key === ' ')) {
+        event.preventDefault();
+        event.currentTarget.click();
+      }
+    },
+    [clickable, onKeyDown],
+  );
 
   const { $background, $color } = React.useMemo(() => {
     switch (true) {
@@ -130,11 +136,13 @@ const Avatar: React.ForwardRefRenderFunction<HTMLSpanElement, AvatarProps> = (pr
       $background={$background}
       color={color}
       onClick={onClick}
+      onKeyDown={handleKeyDown}
       size={size}
       src={src}
       variant={variant}
       alt={alt}
-      tabIndex={clickable ? 0 : -1}
+      role={clickable ? 'button' : undefined}
+      tabIndex={clickable ? 0 : undefined}
       ref={ref}
       overrides={overrides}
       isOnline={isOnline}

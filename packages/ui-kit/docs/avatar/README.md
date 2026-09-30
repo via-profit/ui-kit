@@ -3,32 +3,39 @@
 ## Содержание
 
 - [Описание](#описание)
-- [Варианты](#варианты)
+- [Форма](#форма)
 - [Цвета](#цвета)
 - [Размер](#размер)
-- [Изображения](#изображения)
-- [Онлайн-индикатор](#онлайн)
+- [Изображение](#изображение)
+- [Онлайн-статус](#онлайн-статус)
+- [Нажатие](#нажатие)
 - [Переопределение](#переопределение)
 - [Свойства](#свойства)
 
 ## Описание
 
-Компонент `<Avatar>` создаёт элемент, используемый для отображения фотографии/иконки сущности, например фотография профиля. Компонент помогает пользователю ориентироваться в списке.
+Компонент `<Avatar>` отображает фотографию, инициалы или иконку пользователя либо другой сущности.
+
+Если передано свойство `src`, аватар показывает изображение. Иначе он показывает `children` — обычно инициалы или иконку.
 
 _Пример использования:_
 
 ```tsx
 import React from 'react';
 import Avatar from '@via-profit/ui-kit/Avatar';
+import BellIcon from './BellIcon';
 
 const Example: React.FC = () => (
-  <Avatar
-    variant="circular"
-    src={[{ srcSet: 'https://i.pravatar.cc/300', type: 'image/jpeg', isDefault: true }]}
-    isOnline
-  >
-    S
-  </Avatar>
+  <>
+    <Avatar
+      src={[{ srcSet: 'https://example.com/anna.jpg', type: 'image/jpeg' }]}
+      alt="Анна Смирнова"
+    />
+    <Avatar color="primary">АС</Avatar>
+    <Avatar color="secondary">
+      <BellIcon />
+    </Avatar>
+  </>
 );
 
 export default Example;
@@ -36,13 +43,13 @@ export default Example;
 
 <ExampleAvatarOverview />
 
-## Варианты
+## Форма
 
-Аватар имеет 3 варианта формы: `circular` и `rounded` и `square`. По умолчанию, используется форма `circular`.
+Свойство `variant` задаёт форму аватара:
 
-- **circular** — отображает круглый аватар
-- **rounded** — отображает аватар со скругленными краями
-- **square** — отображает квадратный аватар
+- **`circular`** — круг (по умолчанию)
+- **`rounded`** — квадрат со скруглёнными углами
+- **`square`** — квадрат
 
 _Пример использования:_
 
@@ -53,8 +60,8 @@ import Avatar from '@via-profit/ui-kit/Avatar';
 const Example: React.FC = () => (
   <>
     <Avatar variant="circular">C</Avatar>
-    <Avatar variant="Rounded">R</Avatar>
-    <Avatar variant="Square">S</Avatar>
+    <Avatar variant="rounded">R</Avatar>
+    <Avatar variant="square">S</Avatar>
   </>
 );
 
@@ -65,104 +72,165 @@ export default Example;
 
 ## Цвета
 
-Вы можете указать одно из трёх зарезервированных значений `default` `primary` `secondary`, или **rgb(a)**/**hex** код произвольного цвета. По умолчанию, используется цвет стиля `default`.
+Свойство `color` задаёт цвет фона аватара. Оно принимает одно из значений `default`, `primary`, `secondary` либо любой цвет CSS: **hex**, **rgb(a)** или название цвета, например `lightpink`.
 
-В качестве цвета вы можете передать и псевдоним цвета, например, **lightpink** что будет соответствовать коду цвета `#ffb6c1`,
+- **`default`** — немного темнее фона `Surface` (по умолчанию)
+- **`primary`** — основной цвет акцента темы
+- **`secondary`** — второстепенный цвет акцента темы
 
-- **default** — Цвет кнопки совпадает с цветом заднего плана
-- **primary** — Используется основной цвет акцента
-- **secondary** — Используется второстепенный цвет акцента
+Цвет текста подбирается автоматически. Для `primary` и `secondary` берётся контрастный цвет из темы. Для произвольного цвета — основной цвет текста темы, если он достаточно контрастен с фоном, иначе цвет фона `Surface`.
+
+Цвет фона виден, только когда аватар показывает `children`: изображение закрывает его полностью.
+
+_Пример использования:_
+
+```tsx
+import React from 'react';
+import Avatar from '@via-profit/ui-kit/Avatar';
+
+const Example: React.FC = () => (
+  <>
+    <Avatar>D</Avatar>
+    <Avatar color="primary">P</Avatar>
+    <Avatar color="secondary">S</Avatar>
+    <Avatar color="lightpink">LP</Avatar>
+    <Avatar color="#529d29">G</Avatar>
+    <Avatar color="rgb(40, 40, 90)">R</Avatar>
+  </>
+);
+
+export default Example;
+```
 
 <ExampleAvatarColors />
 
 ## Размер
 
-Вы можете указать размер аватара, с помощью свойства `size`. Свойство принимает строку с размером в **px**,**em**,**rem** По умолчанию, используется размер **2.5em**.
-
-## Изображения
-
-Аватар может отображать изображение,переданое в свойстве `src`. Свойство `src` принимает массив объектов с 3 ключами:
-
-- `srcSet` — Строка с адресом картинки
-- `type` — **MimeType** файла, например **image/jpeg**
-- `isDefault` — Не обязательное булево значение, если **true**, то компонент будет использовать это изображение **по умолчанию**. Т.е. картинка будет показана браузером, если он не поддерживает современные форматы изображений. Поэтому этот флаг необходимо указывать на изображение в формате **png** или **jpeg**
-
-Так же компоненту можно передать свойство `onClick`. Переданная функция выполнится при нажатии на аватар
-
-Компонент так же принимает потомков `children`. Дети могут быть строкой или JSX компонентом. Зачастую эта функция используется если аватар не задан или необходимо отрендерить иконку
+Все размеры аватара заданы в `em`, поэтому проще всего менять его размер через `font-size`: вместе с аватаром пропорционально изменятся инициалы и индикатор онлайн-статуса. По умолчанию аватар имеет размер `2.5em`.
 
 _Пример использования:_
 
 ```tsx
+import React from 'react';
 import Avatar from '@via-profit/ui-kit/Avatar';
-import MyIcon from './MyIcon';
 
 const Example: React.FC = () => (
-  <Avatar
-    variant="circular"
-    onClick={() => setDialogOpen(true)}
-    src={[
-      {
-        srcSet: 'https://i.pravatar.cc/300',
-        type: 'image/jpeg',
-        isDefault: true,
-      },
-      {
-        srcSet: 'https://i.pravatar.cc/300',
-        type: 'image/webp',
-      },
-    ]}
-  />
-
-  <Avatar variant="square" onClick={() => setDialogOpen(true)}>
-    H
-  </Avatar>
+  <>
+    <Avatar style={{ fontSize: '0.75em' }} isOnline>S</Avatar>
+    <Avatar isOnline>M</Avatar>
+    <Avatar style={{ fontSize: '1.5em' }} isOnline>L</Avatar>
+    <Avatar style={{ fontSize: '2em' }} isOnline>XL</Avatar>
+  </>
 );
+
+export default Example;
 ```
 
-<ExampleAvatarIcons />
+<ExampleAvatarSize />
 
-## Онлайн
+Свойство `size` задаёт ширину и высоту аватара в любых единицах CSS (`'48px'`, `'3rem'`). Размер инициалов и индикатора онлайн-статуса при этом не меняется. Используйте `size`, когда нужен точный размер аватара с изображением.
 
-Аватар может отображать онлайн статус пользователя. Для этого необходимо передать булево значение `isOnline`
+## Изображение
+
+Свойство `src` принимает массив вариантов изображения. Аватар отрисовывает их в элементе `<picture>`, и браузер выбирает первый поддерживаемый формат. Каждый вариант — объект с полями:
+
+- `srcSet` — адрес изображения, можно с дескрипторами, как в атрибуте `srcset`
+- `type` — MIME-тип изображения, например `image/webp` или `image/jpeg`
+- `isDefault` — если `true`, это изображение используется браузерами, которые не поддерживают `<picture>` и другие форматы из списка
+
+Если ни один вариант не отмечен `isDefault`, по умолчанию используется изображение в формате PNG, затем JPEG, затем первое в списке. Поэтому, если вы добавляете современный формат вроде WebP, добавьте и PNG или JPEG.
+
+Обязательно передавайте `alt` — описание изображения для программ чтения с экрана. Обычно это имя пользователя.
 
 _Пример использования:_
 
 ```tsx
+import React from 'react';
 import Avatar from '@via-profit/ui-kit/Avatar';
-import MyIcon from './MyIcon';
 
 const Example: React.FC = () => (
   <Avatar
-    variant="circular"
+    alt="Анна Смирнова"
     src={[
-      {
-        srcSet: 'https://i.pravatar.cc/300',
-        type: 'image/jpeg',
-        isDefault: true,
-      },
-      {
-        srcSet: 'https://i.pravatar.cc/300',
-        type: 'image/webp',
-      },
+      { srcSet: 'https://example.com/anna.webp', type: 'image/webp' },
+      { srcSet: 'https://example.com/anna.jpg', type: 'image/jpeg', isDefault: true },
     ]}
-    isOnline
   />
 );
+
+export default Example;
+```
+
+Если передан `src`, `children` не отображаются — в том числе когда изображение не удалось загрузить.
+
+## Онлайн-статус
+
+Свойство `isOnline` показывает в правом нижнем углу зелёный индикатор онлайн-статуса.
+
+_Пример использования:_
+
+```tsx
+import React from 'react';
+import Avatar from '@via-profit/ui-kit/Avatar';
+
+const Example: React.FC = () => (
+  <>
+    <Avatar
+      src={[{ srcSet: 'https://example.com/maria.jpg', type: 'image/jpeg' }]}
+      alt="Мария Иванова"
+      isOnline
+    />
+    <Avatar variant="rounded" color="primary" isOnline>
+      ИП
+    </Avatar>
+  </>
+);
+
+export default Example;
 ```
 
 <ExampleAvatarOnline />
+
+## Нажатие
+
+Если передан `onClick`, аватар работает как кнопка: получает фокус клавишей Tab, нажимается клавишами Enter и пробел, а при наведении меняет цвет фона и курсор. Для программ чтения с экрана он получает роль `button`.
+
+_Пример использования:_
+
+```tsx
+import React from 'react';
+import Avatar from '@via-profit/ui-kit/Avatar';
+
+const Example: React.FC = () => {
+  const [isOnline, setIsOnline] = React.useState(true);
+
+  return (
+    <Avatar
+      src={[{ srcSet: 'https://example.com/elena.jpg', type: 'image/jpeg' }]}
+      alt="Елена Козлова"
+      isOnline={isOnline}
+      onClick={() => setIsOnline(value => !value)}
+    />
+  );
+};
+
+export default Example;
+```
+
+Нажмите на аватар, чтобы переключить онлайн-статус:
+
+<ExampleAvatarClickable />
 
 ## Переопределение
 
 Компонент `<Avatar>` является составным и реализован при помощи следующих компонентов:
 
-- `<Container>` — Компонент обертка аватара
-- `<TextWrapper>` — Обёртка для текста
-- `<IconWrapper>` — Обёртка изображения в случае его отображения
-- `<Picture>` — Компонент изображения
+- `<Container>` — корневой элемент `<span>`
+- `<TextWrapper>` — обёртка для `children`, когда изображение не передано
+- `<IconWrapper>` — обёртка для изображения
+- `<Picture>` — элемент `<picture>` с изображением
 
-Используйте свойство `overrides` чтобы переопределить один или несколько компонентов:
+Используйте свойство `overrides`, чтобы переопределить один или несколько компонентов. Переопределённый компонент должен передавать `ref` в корневой элемент. Проще всего расширить стандартный компонент с помощью `styled`:
 
 _Пример использования:_
 
@@ -170,33 +238,24 @@ _Пример использования:_
 import React from 'react';
 import styled from '@emotion/styled';
 import Avatar from '@via-profit/ui-kit/Avatar';
-
-import AvatarContainer from '@via-profit/ui-kit/Avatar/AvatarContainer';
-import AvatarOnlineBadge from '@via-profit/ui-kit/Avatar/AvatarOnlineBadge';
-import AvatarTextWrapper from '@via-profit/ui-kit/Avatar/AvatarTextWrapper';
-
-const StyledContainer = styled(AvatarContainer)`
-  background-color: purple !important;
-`;
+import AvatarTextWrapper, { AvatarTextWrapperProps } from '@via-profit/ui-kit/Avatar/AvatarTextWrapper';
 
 const StyledTextWrapper = styled(AvatarTextWrapper)`
-  color: #fff !important;
+  font-size: 1em;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
 `;
 
+const TextWrapper = React.forwardRef<HTMLSpanElement, AvatarTextWrapperProps>(
+  function TextWrapper(props, ref) {
+    return <StyledTextWrapper {...props} ref={ref} />;
+  },
+);
+
 const Example: React.FC = () => (
-  <Avatar
-    variant="circular"
-    isOnline
-    overrides={{
-      Container: React.forwardRef(function Override(props, ref) {
-        return <StyledContainer {...props} ref={ref} />;
-      }),
-      TextWrapper: React.forwardRef(function Override(props, ref) {
-        return <StyledTextWrapper {...props} ref={ref} />;
-      }),
-    }}
-  >
-    S
+  <Avatar color="primary" overrides={{ TextWrapper }}>
+    ап
   </Avatar>
 );
 
@@ -205,37 +264,55 @@ export default Example;
 
 <ExampleAvatarOverrides />
 
----
-
 ## Свойства
 
-### `variant`
-Вариант отображения формы аватара.
-- Тип: `'circular' | 'rounded' | 'square'`
-- По умолчанию: `'circular'`
-- Обязательное: **да**
+Помимо перечисленных ниже, `<Avatar>` принимает [стандартные атрибуты](https://developer.mozilla.org/ru/docs/Web/HTML/Element/span#атрибуты) элемента `<span>` и передаёт их в `<Container>`. `ref` указывает на этот же элемент.
 
-### `color`
-Цвет аватара. Может быть предопределенным значением или пользовательским цветом в формате **hex** или **rgb(a)**.
-- Тип: `'default' | 'secondary' | 'primary' | string`
-- По умолчанию: `'default'`
-- Обязательное: нет
-
-### `src`
-Массив объектов ссылок на изображения с поддержкой различных форматов и srcSet.
-- Тип: `Array<{ srcSet: string; type: MimeType; isDefault?: boolean; }>`
+### `children`
+Содержимое аватара без изображения: инициалы, иконка или любой другой элемент. Не отображается, если передан `src`.
+- Тип: `React.ReactNode`
 - По умолчанию: `undefined`
 - Обязательное: нет
 
-### `onClick`
-Функция, вызываемая при нажатии на аватар.
-- Тип: `function`
+### `variant`
+Форма аватара. Подробнее в разделе [Форма](#форма).
+- Тип: `'circular' | 'rounded' | 'square'`
+- По умолчанию: `'circular'`
+- Обязательное: нет
+
+### `color`
+Цвет фона. Подробнее в разделе [Цвета](#цвета).
+- Тип: `'default' | 'primary' | 'secondary' | string`
+- По умолчанию: `'default'`
+- Обязательное: нет
+
+### `size`
+Ширина и высота аватара. Не влияет на размер инициалов и индикатора онлайн-статуса, подробнее в разделе [Размер](#размер).
+- Тип: `string`
+- По умолчанию: `'2.5em'`
+- Обязательное: нет
+
+### `src`
+Варианты изображения. Подробнее в разделе [Изображение](#изображение).
+- Тип: `Array<{ srcSet: string; type: MimeType; isDefault?: boolean }>`
+- По умолчанию: `undefined`
+- Обязательное: нет
+
+### `alt`
+Описание изображения — атрибут `alt` элемента `<img>`.
+- Тип: `string`
 - По умолчанию: `undefined`
 - Обязательное: нет
 
 ### `isOnline`
-Если передан `true`, отображается индикатор онлайн-статуса.
+Если `true`, отображается индикатор онлайн-статуса.
 - Тип: `boolean`
+- По умолчанию: `false`
+- Обязательное: нет
+
+### `onClick`
+Функция, вызываемая при нажатии на аватар мышью или клавишами Enter и пробел. Если передана, аватар работает как кнопка, подробнее в разделе [Нажатие](#нажатие).
+- Тип: `React.MouseEventHandler<HTMLSpanElement>`
 - По умолчанию: `undefined`
 - Обязательное: нет
 
@@ -246,25 +323,21 @@ export default Example;
 - Обязательное: нет
 
 #### `overrides.Container`
-Компонент-обертка для всего аватара.
-- Тип: `React.Component`
-- По умолчанию: `<AvatarContainer>`
-
-#### `overrides.IconWrapper`
-Компонент-обертка для изображения аватара.
-- Тип: `React.Component`
-- По умолчанию: `<AvatarIconWrapper>`
+Корневой элемент.
+- Тип: `React.ComponentType<AvatarContainerProps & React.RefAttributes<HTMLSpanElement>>`
+- По умолчанию: `AvatarContainer`
 
 #### `overrides.TextWrapper`
-Компонент-обертка для текста аватара (инициалы или текстовая метка).
-- Тип: `React.Component`
-- По умолчанию: `<AvatarTextWrapper>`
+Обёртка для `children`.
+- Тип: `React.ComponentType<AvatarTextWrapperProps & React.RefAttributes<HTMLSpanElement>>`
+- По умолчанию: `AvatarTextWrapper`
+
+#### `overrides.IconWrapper`
+Обёртка для изображения.
+- Тип: `React.ComponentType<AvatarIconWrapperProps & React.RefAttributes<HTMLSpanElement>>`
+- По умолчанию: `AvatarIconWrapper`
 
 #### `overrides.Picture`
-Компонент самого изображения аватара.
-- Тип: `React.Component`
-- По умолчанию: `<AvatarDeleteButton>`
-
----
-
-Помимо перечисленных свойств, компонент принимает [стандартные атрибуты](https://developer.mozilla.org/ru/docs/Web/HTML/Element/span#атрибуты) HTML элемента `<span>`
+Элемент `<picture>` с изображением.
+- Тип: `React.ComponentType<AvatarPictureProps & React.RefAttributes<HTMLPictureElement>>`
+- По умолчанию: `AvatarPicture`

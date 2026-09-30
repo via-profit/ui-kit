@@ -13,33 +13,31 @@ import CN from '../CountryFlags/CN';
 export const templates: PhoneTemplate[] = [
   // Russian template
   ['RU', <RU key="ru-1" />, '7', '+x (xxx) xxx-xx-xx', '+7 (987) 654-32-10', /^\+$/], // must be at first (Default RU)
-  ['RU', <RU key="ru-2" />, '7', '8 (xxx) xxx-xx-xx', '8 (987) 654-32-10', /^8[^1]{0,}/], // 8912...
+  // 81... is Japan without «+»: Russian area codes never start with 1
+  ['RU', <RU key="ru-2" />, '7', '8 (xxx) xxx-xx-xx', '8 (987) 654-32-10', /^8(?!1)/], // 8912...
   [
     'RU',
     <RU key="ru-3" />,
     '7',
     '+7 (xxx) xxx-xx-xx',
     '+7 (987) 654-32-10',
-    /^\+{0,1}7([0-5]|[8-9])[0-9][0-9]/,
+    // Also matches a bare «+7» while typing, so the flag does not blink; 76 and 77 are Kazakhstan
+    /^\+{0,1}7(?![67])/,
   ], // +79...
 
   // Other fucking countries
   ['BY', <BY key="by" />, '375', '+375 (xx) xxx-xx-xx', '+375 (98) 765-43-21', /^\+{0,1}375/],
   ['CN', <CN key="cn" />, '86', '+86 (xxx) xxxx-xxxx', '+86 (138) 0013-8000', /^\+{0,1}86/],
-  ['KZ', <KZ key="kz-1" />, '7', '+997 (xx) xxx-xx-xx', '+997 (98) 765-43-21', /^\+{0,1}997/],
-  [
-    'KZ',
-    <KZ key="kz-2" />,
-    '7',
-    '+7 (xxx) xxx-xx-xx',
-    '+7 (600) 765-43-21',
-    /^\+{0,1}7[6-7][0-9][0-9]/,
-  ], // +7600 - +7700
+  ['KZ', <KZ key="kz-1" />, '997', '+997 (xx) xxx-xx-xx', '+997 (98) 765-43-21', /^\+{0,1}997/],
+  ['KZ', <KZ key="kz-2" />, '7', '+7 (xxx) xxx-xx-xx', '+7 (600) 765-43-21', /^\+{0,1}7[67]/], // +76, +77
   ['UA', <UA key="ua" />, '380', '+380 (xx) xxx-xxxx', '+380 (98) 765-4321', /^\+{0,1}380/],
-  ['JP', <JP key="jp" />, '81', '+81 (xx) xxx-xxxx', '+81 (98) 765-4321', /^\+{0,1}81/],
-  ['US', <US key="us" />, '1', '+1 xxx xxx-xx-xx', '+1 987 654-32-10', /^\+{0,1}1/],
-
-  ['IL', <IL key="il" />, '972', '+972 xx xxx-xx-xx', '+972 65 432-10-01', /^\+972/],
+  // Mobile numbers (070, 080, 090) have 10 digits, landlines have 9
+  ['JP', <JP key="jp-1" />, '81', '+81 (xx) xxxx-xxxx', '+81 (90) 1234-5678', /^\+{0,1}81[789]0/],
+  ['JP', <JP key="jp-2" />, '81', '+81 (xx) xxx-xxxx', '+81 (98) 765-4321', /^\+{0,1}81/],
+  ['US', <US key="us" />, '1', '+1 (xxx) xxx-xxxx', '+1 (987) 654-3210', /^\+{0,1}1/],
+  // Mobile (5x) and VoIP (7x) numbers have 9 digits, landlines have 8
+  ['IL', <IL key="il-1" />, '972', '+972 xx xxx-xx-xx', '+972 50 432-10-01', /^\+{0,1}972[57]/],
+  ['IL', <IL key="il-2" />, '972', '+972 x xxx-xxxx', '+972 3 432-1001', /^\+{0,1}972/],
 ];
 
 export default templates;

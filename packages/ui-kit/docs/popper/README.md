@@ -4,14 +4,17 @@
 
 - [Описание](#описание)
 - [Позиция](#позиция)
-- [Автоматическое позиционирование](#автоматическое-позиционирование)
-- [Всплывающая подсказка](#всплывающая-подсказка)
+- [Автоматический выбор позиции](#автоматический-выбор-позиции)
+- [Закрытие по клику снаружи](#закрытие-по-клику-снаружи)
+- [Стратегия позиционирования](#стратегия-позиционирования)
 - [Переопределение](#переопределение)
 - [Свойства](#свойства)
 
 ## Описание
 
-Компонент `<Popper>` позволяет создавать всплывающие (dropdown) элементы меню, которые могут или должны быть привязаны к какому-либо компоненту, например, всплывающая подсказка, которая отображается рядом с кнопкой.
+Компонент `<Popper>` отображает всплывающий элемент рядом с другим элементом страницы — анкором. На его основе построены `<Menu>`, `<Selectbox>`, `<Autocomplete>` и `<DatePicker>`. Используйте его для подсказок, всплывающих панелей и собственных выпадающих списков.
+
+Popper только позиционирует содержимое: у него нет фона, тени и отступов, поэтому содержимое обычно оборачивают в `<Surface>`. Popper также не закрывается сам — видимостью управляет свойство `isOpen` (см. [Закрытие по клику снаружи](#закрытие-по-клику-снаружи)).
 
 _Пример использования:_
 
@@ -30,11 +33,16 @@ const Example: React.FC = () => {
         color="primary"
         onClick={event => setAnchorElement(anchorElement ? null : event.currentTarget)}
       >
-        Открыть Popper
+        {anchorElement ? 'Закрыть Popper' : 'Открыть Popper'}
       </Button>
 
-      <Popper anchorElement={anchorElement} isOpen={Boolean(anchorElement)}>
-        <Surface>Popper контент</Surface>
+      <Popper
+        anchorElement={anchorElement}
+        isOpen={Boolean(anchorElement)}
+        anchorPos="bottom-start"
+        offset={8}
+      >
+        <Surface>Содержимое Popper</Surface>
       </Popper>
     </>
   );
@@ -47,68 +55,69 @@ export default Example;
 
 ## Позиция
 
-Компонент принимает свойство `anchorPos`, которое регулирует позиционирование элемента относительно его анкора. Все позиции можно разделить на несколько категорий:
+Свойство `anchorPos` задаёт, с какой стороны от анкора появится Popper и как он выровнен по этой стороне. Значение по умолчанию — `auto` (без `autoFlip` оно работает как `bottom`, подробнее в разделе [Автоматический выбор позиции](#автоматический-выбор-позиции)).
 
-### Основные направления
+| Сторона | Значения | Выравнивание |
+|---------|----------|--------------|
+| Сверху | `top`, `top-start`, `top-end`, `top-fill` | по центру, по левому краю, по правому краю, на всю ширину анкора |
+| Снизу | `bottom`, `bottom-start`, `bottom-end`, `bottom-fill` | по центру, по левому краю, по правому краю, на всю ширину анкора |
+| Слева | `left`, `left-top`, `left-bottom` | по центру, по верхнему краю, по нижнему краю |
+| Справа | `right`, `right-top`, `right-bottom` | по центру, по верхнему краю, по нижнему краю |
+| Авто | `auto`, `auto-top`, `auto-bottom`, `auto-left`, `auto-right` | см. [Автоматический выбор позиции](#автоматический-выбор-позиции) |
 
-- **`top`** — По центру сверху
-- **`bottom`** — По центру снизу (значение по умолчанию)
-- **`left`** — По центру слева
-- **`right`** — По центру справа
+Значения `top-left`, `top-right`, `bottom-left` и `bottom-right` — синонимы `top-start`, `top-end`, `bottom-start` и `bottom-end`. Направление текста (RTL) не учитывается: `start` всегда означает левый край, `end` — правый.
 
-### Позиции с привязкой к углам
+Позиции `top-fill` и `bottom-fill` устанавливают ширину Popper равной ширине анкора. Так устроены выпадающие списки `<Selectbox>`.
 
-- **`top-left`**, **`top-right`** — Сверху, прижато к левому/правому краю
-- **`bottom-left`**, **`bottom-right`** — Снизу, прижато к левому/правому краю
-- **`left-top`**, **`left-bottom`** — Слева, прижато к верхнему/нижнему краю
-- **`right-top`**, **`right-bottom`** — Справа, прижато к верхнему/нижнему краю
+Свойство `offset` задаёт расстояние между анкором и Popper в пикселях. Отрицательное значение заставит Popper наехать на анкор.
 
-### Позиции с выравниванием (Popper.js стиль)
+Выберите позицию, чтобы увидеть, как она работает:
 
-- **`top-start`**, **`top-end`** — Сверху, выравнивание по началу/концу (аналогично top-left/top-right)
-- **`bottom-start`**, **`bottom-end`** — Снизу, выравнивание по началу/концу (аналогично bottom-left/bottom-right)
+<ExamplePopperAnchorPos />
 
-### Автоматическое позиционирование
+## Автоматический выбор позиции
 
-- **`auto`** — Автоматический выбор оптимального направления
-- **`auto-top`**, **`auto-bottom`**, **`auto-left`**, **`auto-right`** — Автоматический выбор с приоритетом указанного направления
+По умолчанию Popper всегда остаётся с указанной стороны от анкора, даже если не помещается в окне браузера. Со свойством `autoFlip` Popper перебирает позиции, пока не найдёт ту, в которой он целиком помещается в окне с учётом отступа `viewportMargin`:
 
-### Таблица всех доступных позиций
+- для явной позиции (например, `top-start`) сначала пробуется она сама, затем позиции из `alternativePlacements`, затем остальные позиции с той же стороны, затем с противоположной и, для верха и низа, по бокам;
+- для `top-fill` и `bottom-fill` — сначала указанная позиция, затем противоположная `fill`-позиция, затем позиции из `alternativePlacements`;
+- для `auto` перебираются все позиции, кроме `fill` (или только `alternativePlacements`, если они заданы). `auto` начинает перебор снизу, а `auto-top`, `auto-bottom`, `auto-left` и `auto-right` — с указанной стороны.
 
-| Категория | Значения |
-|-----------|----------|
-| **Верх** | `top`, `top-left`, `top-right`, `top-start`, `top-end` |
-| **Низ** | `bottom`, `bottom-left`, `bottom-right`, `bottom-start`, `bottom-end` |
-| **Лево** | `left`, `left-top`, `left-bottom` |
-| **Право** | `right`, `right-top`, `right-bottom` |
-| **Авто** | `auto`, `auto-top`, `auto-bottom`, `auto-left`, `auto-right` |
+Если ни одна позиция не подошла, используется исходная (для `auto` — `bottom`, для `auto-top` — `top` и т. д.).
 
-_Пример использования различных позиций:_
+При `positionStrategy="fixed"` Popper, который не поместился, дополнительно сдвигается внутрь окна, чтобы не выходить за его края.
+
+Без `autoFlip` значение `auto` работает как `bottom`, а `auto-top`, `auto-left` и т. д. — как `top`, `left` и т. д.
+
+Позиция пересчитывается при прокрутке, изменении размеров окна, анкора и самого Popper. Чтобы узнать, какая позиция выбрана, используйте `onAnchorPosChanged`: он вызывается каждый раз, когда фактическая позиция меняется. Это пригодится, например, чтобы развернуть стрелку подсказки.
+
+_Пример использования:_
 
 ```tsx
 import React from 'react';
-import Popper from '@via-profit/ui-kit/Popper';
+import Popper, { AnchorPos } from '@via-profit/ui-kit/Popper';
 import Button from '@via-profit/ui-kit/Button';
 import Surface from '@via-profit/ui-kit/Surface';
 
 const Example: React.FC = () => {
   const [anchorElement, setAnchorElement] = React.useState<HTMLButtonElement | null>(null);
-  const [placement, setPlacement] = React.useState<AnchorPos>('bottom');
+  const [placement, setPlacement] = React.useState<AnchorPos>('top');
 
   return (
     <>
-      <Button onClick={event => setAnchorElement(event.currentTarget)}>
+      <Button onClick={event => setAnchorElement(anchorElement ? null : event.currentTarget)}>
         Открыть Popper
       </Button>
 
       <Popper
-        anchorPos={placement}
         anchorElement={anchorElement}
         isOpen={Boolean(anchorElement)}
+        anchorPos="top"
+        autoFlip
+        offset={8}
+        onAnchorPosChanged={setPlacement}
       >
-        <Surface>
-          Текущая позиция: {placement}
-        </Surface>
+        <Surface>Текущая позиция: {placement}</Surface>
       </Popper>
     </>
   );
@@ -117,52 +126,15 @@ const Example: React.FC = () => {
 export default Example;
 ```
 
-<ExamplePopperAnchorPos />
+Откройте Popper и прокрутите страницу так, чтобы кнопка оказалась у верхнего края окна — Popper переместится под кнопку:
 
-## Автоматическое позиционирование
+<ExamplePopperAutoFlip />
 
-Свойство `autoFlip` позволяет автоматически изменять позицию popover'а, если он не помещается в видимой области экрана. При установке `autoFlip={true}` (значение по умолчанию), компонент будет пробовать различные варианты позиционирования, пока не найдет подходящий.
+## Закрытие по клику снаружи
 
-Порядок перебора позиций зависит от исходной позиции:
-- Для `top` сначала пробуются все вариации сверху, затем снизу, затем по бокам
-- Для `bottom` сначала пробуются все вариации снизу, затем сверху, затем по бокам
-- И так далее для каждой позиции
+Popper не отслеживает клики, поэтому закрывать его нужно самостоятельно. Удобнее всего обернуть его в `<ClickOutside>`.
 
-_Пример с автоматическим переворотом:_
-
-```tsx
-import React from 'react';
-import Popper from '@via-profit/ui-kit/Popper';
-import Button from '@via-profit/ui-kit/Button';
-import Surface from '@via-profit/ui-kit/Surface';
-
-const Example: React.FC = () => {
-  const [anchorElement, setAnchorElement] = React.useState<HTMLButtonElement | null>(null);
-
-  return (
-    <>
-      <Button onClick={event => setAnchorElement(event.currentTarget)}>
-        Открыть Popper
-      </Button>
-
-      <Popper
-        anchorPos="top"
-        autoFlip={true}
-        anchorElement={anchorElement}
-        isOpen={Boolean(anchorElement)}
-      >
-        <Surface>
-          Если не помещусь сверху, автоматически перевернусь
-        </Surface>
-      </Popper>
-    </>
-  );
-};
-```
-
-## Всплывающая подсказка
-
-С помощью Popper возможно реализовать функционал всплывающей подсказки, которая появляется, к примеру, по клику на кнопку:
+Клик по самому анкору тоже происходит «снаружи» Popper. Если кнопка сама открывает и закрывает Popper, передайте её в свойство `ignoreElements` — иначе нажатие на кнопку сначала закроет Popper, а затем кнопка сразу откроет его снова.
 
 _Пример использования:_
 
@@ -179,27 +151,18 @@ const Example: React.FC = () => {
   return (
     <>
       <Button onClick={event => setAnchorElement(anchorElement ? null : event.currentTarget)}>
-        Открыть Popper
+        Что это?
       </Button>
 
-      <ClickOutside
-        onOutsideClick={event => {
-          // Проверяем, что не кликнули по кнопке
-          if (event && event.target instanceof HTMLElement) {
-            if (anchorElement && anchorElement.contains(event.target)) {
-              return;
-            }
-          }
-
-          setAnchorElement(null);
-        }}
-      >
+      <ClickOutside ignoreElements={[anchorElement]} onOutsideClick={() => setAnchorElement(null)}>
         <Popper
-          anchorPos="auto"
           anchorElement={anchorElement}
           isOpen={Boolean(anchorElement)}
+          anchorPos="right"
+          autoFlip
+          offset={8}
         >
-          <Surface>Какой-то контент</Surface>
+          <Surface>Подсказка закроется по клику в любом месте страницы</Surface>
         </Popper>
       </ClickOutside>
     </>
@@ -211,13 +174,21 @@ export default Example;
 
 <ExamplePopperOutsideClick />
 
+## Стратегия позиционирования
+
+Свойство `positionStrategy` определяет, где и как отрисовывается Popper.
+
+**`fixed`** (по умолчанию). Popper отрисовывается через портал в элемент `<div id="ui-kit-portal">` в конце `<body>` и позиционируется относительно окна браузера. Поэтому его не обрезают родители с `overflow: hidden` и он оказывается поверх остального содержимого — `z-index` по умолчанию равен `theme.zIndex.modal`. Popper не выходит за края окна: если он не помещается, то прижимается к краю с отступом `viewportMargin`.
+
+**`absolute`**. Popper отрисовывается на месте, внутри родительского элемента, и позиционируется относительно ближайшего родителя с `position: relative` (или `absolute`, `fixed`). Такой Popper прокручивается вместе с родителем, но может быть обрезан родителем с `overflow: hidden`. `z-index` по умолчанию не задаётся, а к краям окна Popper не прижимается. Эта стратегия используется в примере с выбором позиции выше.
+
 ## Переопределение
 
 Компонент `<Popper>` является составным и реализован при помощи следующих компонентов:
 
-- `<Container>` — Компонент нативного элемента `<div>`
+- `<Container>` — элемент `<div>`, внутри которого отрисовывается содержимое. Он получает стили позиционирования и все нативные свойства, переданные в `<Popper>`
 
-Используйте свойство `overrides` чтобы переопределить один или несколько компонентов:
+Используйте свойство `overrides`, чтобы переопределить один или несколько компонентов. Переопределённый компонент должен передавать `ref` и `style` в корневой элемент, иначе Popper не сможет его измерить и спозиционировать. Проще всего обернуть стандартный `PopperContainer`: он сам применяет `zIndex` и `positionStrategy`.
 
 _Пример использования:_
 
@@ -226,39 +197,38 @@ import React from 'react';
 import Button from '@via-profit/ui-kit/Button';
 import Popper from '@via-profit/ui-kit/Popper';
 import Surface from '@via-profit/ui-kit/Surface';
+import PopperContainer, { PopperContainerProps } from '@via-profit/ui-kit/Popper/PopperContainer';
+
+const Container = React.forwardRef<HTMLDivElement, PopperContainerProps>(
+  function Container(props, ref) {
+    return (
+      <PopperContainer
+        {...props}
+        style={{
+          ...props.style,
+          filter: 'drop-shadow(0 4px 12px rgba(0, 0, 0, 0.2))',
+        }}
+        ref={ref}
+      />
+    );
+  },
+);
 
 const Example: React.FC = () => {
   const [anchorElement, setAnchorElement] = React.useState<HTMLButtonElement | null>(null);
 
   return (
     <>
-      <Button onClick={event => setAnchorElement(event.currentTarget)}>
+      <Button onClick={event => setAnchorElement(anchorElement ? null : event.currentTarget)}>
         Открыть Popper
       </Button>
 
       <Popper
         anchorElement={anchorElement}
         isOpen={Boolean(anchorElement)}
-        overrides={{
-          Container: React.forwardRef(function Override(props, ref) {
-            return (
-              <div
-                {...props}
-                style={{
-                  ...props.style,
-                  backgroundColor: 'rgba(208, 255, 0, 0.5)',
-                  borderRadius: '8px',
-                  padding: '4px',
-                }}
-                ref={ref}
-              />
-            );
-          }),
-        }}
+        overrides={{ Container }}
       >
-        <Surface>
-          Кастомный контейнер с фоном
-        </Surface>
+        <Surface>Popper с тенью</Surface>
       </Popper>
     </>
   );
@@ -267,46 +237,84 @@ const Example: React.FC = () => {
 export default Example;
 ```
 
-## Свойства
+Кроме `style`, `Container` получает свойства `zIndex` и `positionStrategy`, а также атрибуты `data-popper-placement` (фактическая позиция) и `data-popper-strategy`. По атрибуту `data-popper-placement` удобно стилизовать Popper в зависимости от позиции без переопределения компонентов:
 
-### `isOpen`
-Определяет является ли компонент открытым (видимым)
-
-### `anchorElement`
-Анкор. HTML-элемент или `null`. Позиционирование будет выполняться относительно этого элемента
-
-### `anchorPos`
-Вариант позиционирования относительно анкора. Подробнее в разделе [Позиция](#позиция)
-
-### `autoFlip`
-Автоматически изменять позицию, если элемент не помещается в видимой области
-
-### `offset`
-Дополнительное смещение от анкора в пикселях
-
-### `zIndex`
-Перманентное указание свойства `z-index` для элемента
-
-### `positionStrategy`
-Стратегия позиционирования: `absolute` - относительно документа, `fixed` - относительно окна
-
-### `overrides`
-Объект элементов для переопределения составных компонентов Popper
-
-### `overrides.Container`
-Компонент нативного `<div>`, который является контейнером
-
-### Тип AnchorPos
-
-```ts
-type AnchorPos =
-  | 'top' | 'top-left' | 'top-right' | 'top-start' | 'top-end'
-  | 'bottom' | 'bottom-left' | 'bottom-right' | 'bottom-start' | 'bottom-end'
-  | 'left' | 'left-top' | 'left-bottom'
-  | 'right' | 'right-top' | 'right-bottom'
-  | 'auto' | 'auto-top' | 'auto-bottom' | 'auto-left' | 'auto-right';
+```css
+[data-popper-placement^='top'] .arrow {
+  bottom: -4px;
+}
 ```
 
-## Особенности работы
+## Свойства
 
-**Портал**: Popper рендерится в портале с ID `ui-kit-portal`, что гарантирует правильное наложение поверх других элементов
+Помимо перечисленных ниже, `<Popper>` принимает нативные свойства элемента `<div>` (`className`, `style`, `onMouseEnter` и т. д.) и передаёт их в `<Container>`. `ref` указывает на этот же элемент.
+
+### `isOpen`
+Если `true`, Popper отображается. Если `false`, Popper не отрисовывается совсем.
+- Тип: `boolean`
+- Обязательное: **да**
+
+### `anchorElement`
+Элемент, рядом с которым отображается Popper. Пока значение `null`, Popper не отображается, даже если `isOpen` равен `true`.
+- Тип: `HTMLElement | null`
+- Обязательное: **да**
+
+### `anchorPos`
+Позиция относительно анкора. Подробнее в разделе [Позиция](#позиция).
+- Тип: `AnchorPos`
+- По умолчанию: `'auto'`
+- Обязательное: нет
+
+### `autoFlip`
+Если `true`, Popper меняет позицию, когда не помещается в окне браузера. Подробнее в разделе [Автоматический выбор позиции](#автоматический-выбор-позиции).
+- Тип: `boolean`
+- По умолчанию: `false`
+- Обязательное: нет
+
+### `alternativePlacements`
+Позиции, которые при `autoFlip` пробуются сразу после `anchorPos`, раньше остальных. Для `auto` это полный список перебираемых позиций. Для остальных значений `anchorPos` позиции `auto` и `*-fill` из этого списка игнорируются.
+- Тип: `readonly AnchorPos[]`
+- По умолчанию: `undefined`
+- Обязательное: нет
+
+### `onAnchorPosChanged`
+Вызывается, когда меняется фактическая позиция Popper, например после переворота при `autoFlip`. Аргументом передаётся новая позиция.
+- Тип: `(anchorPos: AnchorPos) => void`
+- По умолчанию: `undefined`
+- Обязательное: нет
+
+### `offset`
+Расстояние между анкором и Popper в пикселях. Отрицательное значение заставит Popper наехать на анкор.
+- Тип: `number`
+- По умолчанию: `0`
+- Обязательное: нет
+
+### `viewportMargin`
+Минимальный отступ от краёв окна браузера в пикселях. Позиция, при которой Popper оказывается ближе к краю, считается неподходящей при `autoFlip`. При `positionStrategy="fixed"` Popper также сдвигается, чтобы соблюсти этот отступ.
+- Тип: `number`
+- По умолчанию: `30`
+- Обязательное: нет
+
+### `positionStrategy`
+Стратегия позиционирования. Подробнее в разделе [Стратегия позиционирования](#стратегия-позиционирования).
+- Тип: `'fixed' | 'absolute'`
+- По умолчанию: `'fixed'`
+- Обязательное: нет
+
+### `zIndex`
+Значение `z-index` контейнера.
+- Тип: `number`
+- По умолчанию: `theme.zIndex.modal` при `positionStrategy="fixed"`, иначе не задано
+- Обязательное: нет
+
+### `overrides`
+Объект для переопределения составных компонентов Popper.
+- Тип: `Object`
+- По умолчанию: `undefined`
+- Обязательное: нет
+
+#### `overrides.Container`
+Контейнер содержимого Popper.
+- Тип: `React.ComponentType<PopperContainerProps & React.RefAttributes<HTMLDivElement>>`
+- По умолчанию: `undefined`
+- Обязательное: нет
