@@ -277,7 +277,7 @@ const Selectbox = React.forwardRef(
     const inputID = typeof id === 'string' ? id : generatedID;
 
     const renderValueAsString = React.useCallback(() => {
-      if ((!multiple && !value) || (multiple && (value as readonly T[]).length === 0)) {
+      if ((!multiple && value == null) || (multiple && (value as readonly T[]).length === 0)) {
         return notSetLabel;
       }
 

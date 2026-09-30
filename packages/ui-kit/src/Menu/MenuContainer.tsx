@@ -443,7 +443,8 @@ const MenuContainer = React.forwardRef(
         if (index < 0 || index >= items.length) return;
 
         const item = items[index];
-        if (!item) return;
+        // Falsy items such as 0 or an empty string are valid options
+        if (item === undefined) return;
 
         if (typeof onSelectItem === 'function') {
           if (multiple) {

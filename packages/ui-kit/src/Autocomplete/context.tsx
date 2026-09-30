@@ -53,9 +53,10 @@ export const createInitialState = <T, Multiple extends boolean | undefined = und
   readonly filterItems: FilterItems<T> | undefined;
 }): State => {
   const { filterItems, isOpen, items, selectedItemToString, value } = params;
-  const inputValue = !value
-    ? ''
-    : selectedItemToString(value as Multiple extends undefined ? T : readonly T[]);
+  const inputValue =
+    value == null
+      ? ''
+      : selectedItemToString(value as Multiple extends undefined ? T : readonly T[]);
 
   const data = {
     inputValue: inputValue,
