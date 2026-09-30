@@ -27,19 +27,23 @@ const CurrentDay = styled(DayOfCurrentMonth)`
   color: ${({ theme }) => theme.color.accentPrimaryContrast.toString()};
 `;
 
+// The limits are created once: new Date instances on every render reset the memoized values of the hook
+const minDate = new Date(new Date().getFullYear() - 100, 0, 1);
+const maxDate = new Date(new Date().getFullYear() + 100, 0, 1);
+
 const ExampleCalendarHooks: React.FC = () => {
-  const currenrtDate = new Date();
+  const currentDate = new Date();
   const { getWeeks, getDayLabel } = useCalendar({
     locale: 'ru-RU',
     weekStartDay: 'monday',
     displayLeadingZero: false,
-    minDate: new Date(new Date().getFullYear() - 100, 0, 1),
-    maxDate: new Date(new Date().getFullYear() + 100, 0, 1),
+    minDate,
+    maxDate,
   });
 
   return (
     <div>
-      {getWeeks(currenrtDate).map(week => {
+      {getWeeks(currentDate).map(week => {
         const { days, weekNumber } = week;
 
         return (
@@ -48,7 +52,7 @@ const ExampleCalendarHooks: React.FC = () => {
               const { date, isToday } = day;
               const dayLabel = getDayLabel(date);
               const key = date.getTime();
-              const isDayOfCurrentMonth = date.getMonth() === currenrtDate.getMonth();
+              const isDayOfCurrentMonth = date.getMonth() === currentDate.getMonth();
 
               if (isToday) {
                 return <CurrentDay key={key}>{dayLabel}</CurrentDay>;

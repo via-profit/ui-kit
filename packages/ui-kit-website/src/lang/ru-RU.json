@@ -2,14 +2,29 @@
   "+YLRv8": {
     "defaultMessage": "Уведомления по email"
   },
+  "+glFq7": {
+    "defaultMessage": "Сегодня"
+  },
   "+v01ok": {
     "defaultMessage": "Поиск"
+  },
+  "/HWodq": {
+    "defaultMessage": "Вперёд"
   },
   "/Y7Xvk": {
     "defaultMessage": "Сократите описание на {count} симв."
   },
+  "/iVKaj": {
+    "defaultMessage": "Новая коллекция"
+  },
   "/k0HOS": {
     "defaultMessage": "Заявка отправлена"
+  },
+  "/mIHBS": {
+    "defaultMessage": "Покупатель"
+  },
+  "/qjQzi": {
+    "defaultMessage": "Заказы"
   },
   "/r++P0": {
     "defaultMessage": "Показать индикатор"
@@ -20,17 +35,32 @@
   "00zAyg": {
     "defaultMessage": "Слева"
   },
+  "08AUbP": {
+    "defaultMessage": "Бесплатная доставка от 3 000 ₽"
+  },
   "0hXzly": {
     "defaultMessage": "Сколько идут деньги при возврате?"
   },
   "0oiyyK": {
     "defaultMessage": "Сыр"
   },
+  "0t5q4G": {
+    "defaultMessage": "Профиль"
+  },
   "14rZNT": {
     "defaultMessage": "Вы подписаны"
   },
+  "1802ig": {
+    "defaultMessage": "Неделя"
+  },
+  "1CQvhk": {
+    "defaultMessage": "H4. Группа"
+  },
   "1SdHYt": {
     "defaultMessage": "Действия"
+  },
+  "1V+YWA": {
+    "defaultMessage": "Чай"
   },
   "1q4ylj": {
     "defaultMessage": "Справа"
@@ -47,17 +77,35 @@
   "2WTbIX": {
     "defaultMessage": "Открыть"
   },
+  "2hGz++": {
+    "defaultMessage": "Категории"
+  },
+  "3G8RXK": {
+    "defaultMessage": "Дата"
+  },
   "3QtlsR": {
     "defaultMessage": "Молоко 3,2%, 1 л"
   },
   "3j6hgF": {
     "defaultMessage": "Новости"
   },
+  "3lJwgX": {
+    "defaultMessage": "Кофе"
+  },
   "42ZwvD": {
     "defaultMessage": "Потяните за правый нижний угол"
   },
+  "4XbHrm": {
+    "defaultMessage": "Через неделю"
+  },
   "4YsRb6": {
     "defaultMessage": "Перейти к документации"
+  },
+  "4iJa4R": {
+    "defaultMessage": "Выберите даты поездки"
+  },
+  "4l/bov": {
+    "defaultMessage": "Да"
   },
   "4o09IS": {
     "defaultMessage": "Продолжить редактирование"
@@ -65,11 +113,20 @@
   "4yYP4+": {
     "defaultMessage": "Закрыть без сохранения?"
   },
+  "5+FMcP": {
+    "defaultMessage": "Поддержка 24/7"
+  },
   "5UhzNy": {
     "defaultMessage": "Что это?"
   },
   "5YiEBf": {
     "defaultMessage": "Скрыть пароль"
+  },
+  "5zuHOl": {
+    "defaultMessage": "Оплата картой или при получении"
+  },
+  "73HUzt": {
+    "defaultMessage": "Наличными"
   },
   "7LQJei": {
     "defaultMessage": "Имя, телефон и email получателя."
@@ -80,14 +137,26 @@
   "7aec0X": {
     "defaultMessage": "Кнопка"
   },
+  "7an2Dd": {
+    "defaultMessage": "Завтра"
+  },
   "7boO9u": {
     "defaultMessage": "Недоступна"
+  },
+  "7k7RP7": {
+    "defaultMessage": "Сумма"
+  },
+  "7xICnr": {
+    "defaultMessage": "Начертание"
   },
   "7yp0vm": {
     "defaultMessage": "Закрыть меню"
   },
   "83McUk": {
     "defaultMessage": "Скопировано"
+  },
+  "8BMyqM": {
+    "defaultMessage": "Компания"
   },
   "8e0aIx": {
     "defaultMessage": "Описание ({length} из {max})"
@@ -113,14 +182,29 @@
   "AIyaKV": {
     "defaultMessage": "Кнопки, поля ввода, календари, меню и модальные окна с темами оформления и переопределяемыми частями."
   },
+  "AWARl9": {
+    "defaultMessage": "Курьер привезёт её за 1–2 дня"
+  },
   "AeOGzv": {
     "defaultMessage": "Мы свяжемся с вами в течение рабочего дня."
+  },
+  "AiNizt": {
+    "defaultMessage": "Выбрано: {period}"
+  },
+  "AkI54B": {
+    "defaultMessage": "Набор чашек"
   },
   "Al8pFl": {
     "defaultMessage": "На этой странице"
   },
   "B1n5mE": {
     "defaultMessage": "Уведомления в браузере"
+  },
+  "BjL5gA": {
+    "defaultMessage": "Должность"
+  },
+  "CKT+7+": {
+    "defaultMessage": "Кофемолка"
   },
   "CPPYs/": {
     "defaultMessage": "Закрыть"
@@ -134,14 +218,14 @@
   "DSS3GV": {
     "defaultMessage": "Добавить «{name}»"
   },
-  "DtpCdE": {
-    "defaultMessage": "к 9 Мая"
-  },
   "E1j2xY": {
     "defaultMessage": "Сохранение…"
   },
   "ELrvsD": {
     "defaultMessage": "Открыть меню"
+  },
+  "EXBb5Y": {
+    "defaultMessage": "Подарки"
   },
   "EiyZsC": {
     "defaultMessage": "Адрес указан неверно"
@@ -152,14 +236,38 @@
   "FIFI8K": {
     "defaultMessage": "Загрузка"
   },
+  "FQFyU2": {
+    "defaultMessage": "Бесплатная доставка"
+  },
   "G0WBwd": {
     "defaultMessage": "Всего кликов: {counter}"
+  },
+  "GU0k3x": {
+    "defaultMessage": "Разработчик"
   },
   "GZ4unH": {
     "defaultMessage": "Изменение имени"
   },
+  "Gizjoc": {
+    "defaultMessage": "Турка"
+  },
+  "H1Y3Sf": {
+    "defaultMessage": "Распродажа"
+  },
   "HD4k5p": {
     "defaultMessage": "Создать"
+  },
+  "HGGP7j": {
+    "defaultMessage": "День"
+  },
+  "HULN/i": {
+    "defaultMessage": "Кофе в зёрнах"
+  },
+  "HtlFES": {
+    "defaultMessage": "Слайд {number}"
+  },
+  "HuObhO": {
+    "defaultMessage": "Подчёркнутый"
   },
   "HxEkI9": {
     "defaultMessage": "Музыка"
@@ -167,8 +275,17 @@
   "I2nJZi": {
     "defaultMessage": "Отправить заявку"
   },
+  "Iv/a3e": {
+    "defaultMessage": "Сотрудник"
+  },
   "IydZi0": {
     "defaultMessage": "Откройте заказ в личном кабинете и нажмите «Вернуть товар». Курьер заберёт его в удобное время."
+  },
+  "J36SDn": {
+    "defaultMessage": "Акции"
+  },
+  "J8j5Bd": {
+    "defaultMessage": "Шаг 1. Выберите товар"
   },
   "JLjPpG": {
     "defaultMessage": "Квадратный переключатель"
@@ -194,17 +311,32 @@
   "KVvOpP": {
     "defaultMessage": "Город, улица, дом и квартира."
   },
+  "Kfcl3A": {
+    "defaultMessage": "H5. Подгруппа"
+  },
   "LUCzCR": {
     "defaultMessage": "Выберите"
   },
+  "M0haJ+": {
+    "defaultMessage": "Курсив"
+  },
   "MRvQ11": {
     "defaultMessage": "Черновик"
+  },
+  "Ma2KAH": {
+    "defaultMessage": "Как сделать заказ"
   },
   "MuPf/I": {
     "defaultMessage": "Не выбрано"
   },
   "MuX+YK": {
     "defaultMessage": "Найти…"
+  },
+  "N1Kr96": {
+    "defaultMessage": "Старт"
+  },
+  "NCVmPI": {
+    "defaultMessage": "H6. Мелкий заголовок"
   },
   "NOcbgn": {
     "defaultMessage": "Круглый чекбокс"
@@ -214,6 +346,12 @@
   },
   "O1w++r": {
     "defaultMessage": "Скидка 20%"
+  },
+  "OpGLKv": {
+    "defaultMessage": "Более 10 000 покупателей каждый месяц доверяют нам свои заказы."
+  },
+  "PKK8py": {
+    "defaultMessage": "Месяц"
   },
   "PZRrNc": {
     "defaultMessage": "Хорошо"
@@ -229,6 +367,9 @@
   },
   "Qk4m8d": {
     "defaultMessage": "Оплатить"
+  },
+  "QmOmkg": {
+    "defaultMessage": "H3. Подраздел"
   },
   "QmljCN": {
     "defaultMessage": "Выбрано: {selected}"
@@ -257,11 +398,20 @@
   "SZGWYB": {
     "defaultMessage": "Подставить номер"
   },
+  "Sswvg8": {
+    "defaultMessage": "Фотографии"
+  },
   "T5P/66": {
     "defaultMessage": "Телефон из справочника"
   },
   "T9uJ2Q": {
     "defaultMessage": "Бейдж"
+  },
+  "TESpTf": {
+    "defaultMessage": "Стоимость доставки: <del>300 ₽</del> <u>бесплатно</u>."
+  },
+  "THaf0F": {
+    "defaultMessage": "Настройки"
   },
   "TZSMZ5": {
     "defaultMessage": "Учитывать регистр"
@@ -281,11 +431,23 @@
   "URJ2aL": {
     "defaultMessage": "Содержимое Popper"
   },
+  "UTD42P": {
+    "defaultMessage": "Олег Кузнецов"
+  },
   "UZBvmP": {
     "defaultMessage": "Кофе молотый, 250 г"
   },
+  "Um+JQ8": {
+    "defaultMessage": "H1. Заголовок страницы"
+  },
+  "UryPEl": {
+    "defaultMessage": "Менеджер"
+  },
   "Us91UX": {
     "defaultMessage": "Изменения будут потеряны."
+  },
+  "V1JL9K": {
+    "defaultMessage": "Нет"
   },
   "V7CinP": {
     "defaultMessage": "Отменить"
@@ -293,11 +455,26 @@
   "V9PF0o": {
     "defaultMessage": "С иконкой"
   },
+  "VD3uv5": {
+    "defaultMessage": "Анна Смирнова"
+  },
+  "VU6F/B": {
+    "defaultMessage": "Шаг 2. Оформите заказ"
+  },
   "VzTL/7": {
     "defaultMessage": "Подписаться на новости"
   },
+  "WG8Gsj": {
+    "defaultMessage": "Хранилище"
+  },
   "WoHYhC": {
     "defaultMessage": "Текущая позиция: {placement}"
+  },
+  "WtODCh": {
+    "defaultMessage": "Добавьте его в корзину"
+  },
+  "XRIItI": {
+    "defaultMessage": "Выберите день"
   },
   "XXeTV2": {
     "defaultMessage": "Скидки и акции"
@@ -305,8 +482,17 @@
   "Xgd484": {
     "defaultMessage": "Отчёт за месяц"
   },
+  "XhChQ/": {
+    "defaultMessage": "Действия с файлом"
+  },
+  "Xl1XyP": {
+    "defaultMessage": "Год"
+  },
   "XnLtsK": {
     "defaultMessage": "Главная"
+  },
+  "Xzk49v": {
+    "defaultMessage": "Пример текста"
   },
   "XzwW+b": {
     "defaultMessage": "Все добавки"
@@ -314,11 +500,17 @@
   "Y0B8+n": {
     "defaultMessage": "Выбрано: {name}"
   },
+  "YDoGnv": {
+    "defaultMessage": "Показатели по месяцам"
+  },
   "YHFvoS": {
     "defaultMessage": "Открыть календарь"
   },
   "YJVtiA": {
     "defaultMessage": "Введение"
+  },
+  "YdE/Da": {
+    "defaultMessage": "Возврат в течение 14 дней"
   },
   "Ye9yD/": {
     "defaultMessage": "Фильмы"
@@ -329,11 +521,17 @@
   "Z5DW4P": {
     "defaultMessage": "Список изменений"
   },
+  "Z7GO3i": {
+    "defaultMessage": "По счёту"
+  },
   "ZQf5O2": {
     "defaultMessage": "Вернуть всех"
   },
   "ZgzE4S": {
     "defaultMessage": "Цвет: hex, rgb, hsl или название"
+  },
+  "ZreO2w": {
+    "defaultMessage": "Тестировщик"
   },
   "aJ02T/": {
     "defaultMessage": "Кофемолка ручная"
@@ -353,6 +551,12 @@
   "bi8PJO": {
     "defaultMessage": "Выберите значение"
   },
+  "blFJCR": {
+    "defaultMessage": "Френч-пресс"
+  },
+  "c0vETx": {
+    "defaultMessage": "Жирный"
+  },
   "c4F0vq": {
     "defaultMessage": "Удалить файл"
   },
@@ -362,17 +566,41 @@
   "cWOerR": {
     "defaultMessage": "Сверху"
   },
+  "caryfc": {
+    "defaultMessage": "Безопасность"
+  },
+  "cckKWH": {
+    "defaultMessage": "Оплатите заказ"
+  },
   "cgAw8y": {
     "defaultMessage": "Введите номер полностью"
+  },
+  "cnYtq/": {
+    "defaultMessage": "Заказ пришёл на следующий день, всё аккуратно упаковано. Буду заказывать ещё."
   },
   "d4UsAr": {
     "defaultMessage": "Страны"
   },
+  "dNtpfd": {
+    "defaultMessage": "Номер"
+  },
+  "dbO5Pa": {
+    "defaultMessage": "Кофемашины"
+  },
+  "e1FUEz": {
+    "defaultMessage": "Сладости"
+  },
   "e3cA6P": {
     "defaultMessage": "На всю ширину"
   },
+  "e3dEpO": {
+    "defaultMessage": "Назад"
+  },
   "e6d+rg": {
     "defaultMessage": "Файл «Отчёт.pdf» удалён"
+  },
+  "eCGUXe": {
+    "defaultMessage": "Скидки до 50%"
   },
   "ek/fk0": {
     "defaultMessage": "Удалить «{name}»"
@@ -380,14 +608,35 @@
   "evFSoB": {
     "defaultMessage": "2. Адрес доставки"
   },
+  "f3uQMj": {
+    "defaultMessage": "Мария Иванова"
+  },
+  "fDv2t3": {
+    "defaultMessage": "Посуда"
+  },
   "fGrmor": {
     "defaultMessage": "Начало"
   },
   "fU31LB": {
     "defaultMessage": "Набор компонентов для"
   },
+  "fWs/e5": {
+    "defaultMessage": "Сохранить как…"
+  },
   "ftHGHa": {
     "defaultMessage": "Номер карты"
+  },
+  "gBa6To": {
+    "defaultMessage": "Заказы за неделю"
+  },
+  "gOWq7q": {
+    "defaultMessage": "Заказ оформлен. <strong>Курьер привезёт его завтра</strong> с 10:00 до 14:00 — <em>за час до приезда</em> он позвонит."
+  },
+  "gOhkZ/": {
+    "defaultMessage": "Шаг 3. Получите посылку"
+  },
+  "geLux1": {
+    "defaultMessage": "Выручка, тыс. ₽"
   },
   "glc6iH": {
     "defaultMessage": "Введите дату полностью"
@@ -404,6 +653,9 @@
   "h52LFb": {
     "defaultMessage": "Включить тёмную тему"
   },
+  "hORJmZ": {
+    "defaultMessage": "Абзац с noMargin — без нижнего отступа."
+  },
   "hOYnBT": {
     "defaultMessage": "На проверке"
   },
@@ -419,6 +671,18 @@
   "iMGGKG": {
     "defaultMessage": "Имя: {name}"
   },
+  "irrmL5": {
+    "defaultMessage": "Добавьте товары в корзину"
+  },
+  "j+OmTL": {
+    "defaultMessage": "Запись на приём"
+  },
+  "jC3N8X": {
+    "defaultMessage": "Укажите адрес доставки"
+  },
+  "jMR5iQ": {
+    "defaultMessage": "Почему выбирают нас"
+  },
   "jX2Rp6": {
     "defaultMessage": "Новый"
   },
@@ -427,6 +691,9 @@
   },
   "kOutEh": {
     "defaultMessage": "Файл «Отчёт.pdf»"
+  },
+  "kPgnGF": {
+    "defaultMessage": "Период"
   },
   "kPxx34": {
     "defaultMessage": "Системные уведомления"
@@ -446,8 +713,20 @@
   "l775qE": {
     "defaultMessage": "Открыть Popper"
   },
+  "l7R7or": {
+    "defaultMessage": "Капельная кофеварка"
+  },
+  "lnCJFM": {
+    "defaultMessage": "Сбросить"
+  },
   "m0+ocO": {
     "defaultMessage": "Страна (загрузка с сервера)"
+  },
+  "mChl9C": {
+    "defaultMessage": "— Анна, Москва"
+  },
+  "mHkBg8": {
+    "defaultMessage": "Похожие товары"
   },
   "mWC6vf": {
     "defaultMessage": "Доставка по Москве и Московской области"
@@ -472,6 +751,12 @@
   },
   "oAO9Hr": {
     "defaultMessage": "Компоненты"
+  },
+  "oJv7x1": {
+    "defaultMessage": "Аксессуары"
+  },
+  "oQTOzK": {
+    "defaultMessage": "Картой"
   },
   "oZXhhC": {
     "defaultMessage": "Одновременно открыт только один шаг."
@@ -512,6 +797,9 @@
   "rrkgFu": {
     "defaultMessage": "Можно ли изменить адрес доставки?"
   },
+  "sHKr7O": {
+    "defaultMessage": "Укажите адрес и способ оплаты"
+  },
   "sNP24O": {
     "defaultMessage": "Нажато: {count}"
   },
@@ -521,8 +809,14 @@
   "si4+jP": {
     "defaultMessage": "Книги"
   },
+  "tJzL4t": {
+    "defaultMessage": "Возможность"
+  },
   "tK7VYa": {
     "defaultMessage": "Получать рассылку"
+  },
+  "tpgLab": {
+    "defaultMessage": "Скачать"
   },
   "u5UzxJ": {
     "defaultMessage": "Изменить имя"
@@ -536,11 +830,17 @@
   "uwaBKv": {
     "defaultMessage": "Условия использования"
   },
+  "uwf0ai": {
+    "defaultMessage": "Команда"
+  },
   "vUOyV1": {
     "defaultMessage": "Показать пароль"
   },
   "vku+vY": {
     "defaultMessage": "Доставка и оплата"
+  },
+  "vtmAY1": {
+    "defaultMessage": "Подарок к заказу"
   },
   "w1YqQ4": {
     "defaultMessage": "Новых уведомлений нет"
@@ -551,11 +851,17 @@
   "wBODsZ": {
     "defaultMessage": "Текущая дата в шаблоном {template} — {result}"
   },
+  "x5G3yc": {
+    "defaultMessage": "Итого"
+  },
   "x69X5L": {
     "defaultMessage": "Действие не выбрано"
   },
   "xIW73K": {
     "defaultMessage": "Характеристики"
+  },
+  "xQzBsD": {
+    "defaultMessage": "Дизайнер"
   },
   "xRna1X": {
     "defaultMessage": "Скрыть индикатор"
@@ -575,6 +881,9 @@
   "yeuMJs": {
     "defaultMessage": "Строка 22.02.2003 распарсенная с шаблоном {template} — {result}"
   },
+  "ynMVPX": {
+    "defaultMessage": "Пользователи"
+  },
   "yvhyJs": {
     "defaultMessage": "Основные cookie (обязательно)"
   },
@@ -592,5 +901,8 @@
   },
   "zier1/": {
     "defaultMessage": "Удалить"
+  },
+  "zouUZN": {
+    "defaultMessage": "H2. Раздел"
   }
 }

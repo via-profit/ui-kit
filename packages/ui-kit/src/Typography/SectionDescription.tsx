@@ -9,7 +9,6 @@ const SectionDescription = styled(Paragraph)`
   padding: 0 20%;
   margin-top: 2.4em;
   margin-bottom: 1em;
-  text-align: center;
 `;
 
 export default SectionDescription;

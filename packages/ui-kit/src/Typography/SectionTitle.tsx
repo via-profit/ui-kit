@@ -1,13 +1,9 @@
 import React from 'react';
 import styled from '@emotion/styled';
 
-import H2 from './H2';
+import H2, { H2Props } from './H2';
 
-type Props = {
-  style?: any;
-  className?: string;
-  children: React.ReactNode | React.ReactNode[];
-};
+export type SectionTitleProps = H2Props;
 
 const Title = styled(H2)`
   justify-content: center;
@@ -17,25 +13,35 @@ const Title = styled(H2)`
 
 const Inner = styled.span`
   position: relative;
-  & :before {
+
+  /* The accent line under the title */
+  &::before {
     content: '';
     position: absolute;
     left: 50%;
-    bottom: -15px;
-    height: 3px;
-    width: 40px;
+    bottom: -0.5em;
+    height: 0.12em;
+    width: 2.5em;
+    border-radius: 0.06em;
     transform: translate(-50%, 0);
+    background-color: ${({ theme }) => theme.color.accentPrimary.toString()};
   }
 `;
 
-const SectionTitle: React.FC<Props> = props => {
-  const { style, className, children } = props;
+/**
+ * The centered H2 with the accent line under the text
+ */
+const SectionTitle: React.ForwardRefRenderFunction<HTMLHeadingElement, SectionTitleProps> = (
+  props,
+  ref,
+) => {
+  const { children, ...nativeProps } = props;
 
   return (
-    <Title style={style} className={className}>
+    <Title {...nativeProps} ref={ref}>
       <Inner>{children}</Inner>
     </Title>
   );
 };
 
-export default SectionTitle;
+export default React.forwardRef(SectionTitle);

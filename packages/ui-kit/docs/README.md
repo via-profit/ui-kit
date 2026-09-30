@@ -11,6 +11,7 @@
 - [Поверхность](./surface/README.md)
 - [Аккордеон](./accordion/README.md)
 - [Кнопка](./button/README.md)
+- [Группа кнопок](./button-group/README.md)
 - [Переключатель](./switch/README.md)
 - [Чекбокс](./checkbox/README.md)
 - [Текстовое поле](./text-field/README.md)
@@ -30,9 +31,9 @@
 - [Селектбокс](./selectbox/README.md)
 - [Модальные окна](./modal/README.md)
 - [Бейдж](./badge/README.md)
-- [Свайпер 🤏🏼](./swiper/README.md)
+- [Свайпер](./swiper/README.md)
 - [Индикатор загрузки](./loading-indicator/README.md)
-- [Таблица 🤏🏼](./table/README.md)
+- [Таблица](./table/README.md)
 
 ## Как использовать
 

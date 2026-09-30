@@ -3,18 +3,24 @@
 ## Содержание
 
 - [Описание](#описание)
-- [Дополнительные кнопки](#дополнительные-кнопки)
-- [Хуки](#хуки)
-- [Переопределение компонентов](#переопределение-компонентов)
+- [Выбор периода](#выбор-периода)
+- [Виды: месяц, год, неделя](#виды-месяц-год-неделя)
+- [Ограничения и бейджи](#ограничения-и-бейджи)
+- [Кнопки в подвале](#кнопки-в-подвале)
+- [Клавиатура и доступность](#клавиатура-и-доступность)
+- [Управление через ref](#управление-через-ref)
+- [Переопределение](#переопределение)
+- [Хук useCalendar](#хук-usecalendar)
 - [Свойства](#свойства)
 
 ## Описание
 
-Компонент `<Calendar>` создаёт интерактивный календарь с возможностью выбора даты, переключения месяцев и прочее.
+Компонент `<Calendar>` — календарь для выбора даты, периода, месяца, года или недели. Заголовок `heading` и подзаголовок `subheading` выводятся над панелью переключения месяцев. Удобно показывать там выбранное значение.
 
-<ExampleCalendarOverivew/>
+Кнопки с названием месяца и года открывают выбор месяца и года. Стрелки листают месяцы, а в режиме выбора месяца — годы.
 
-<br />
+Календарь бывает контролируемым (`value` + `onChange`) и неконтролируемым (`defaultValue`).
+
 _Пример использования:_
 
 ```tsx
@@ -22,261 +28,17 @@ import React from 'react';
 import { FormattedDate } from 'react-intl';
 import Calendar from '@via-profit/ui-kit/Calendar';
 
-const ExampleCalendarOverivew: React.FC = () => {
-  const [value, onChange] = React.useState(new Date());
-
-  return (
-    <div>
-      <Calendar
-        value={value}
-        heading={<FormattedDate value={value} year="numeric" month="long" day="2-digit" />}
-        onChange={onChange}
-        badges={[
-          { date: new Date(2023, 11, 31), badgeContent: '1' },
-          { date: new Date(2023, 11, 7), badgeContent: '88+' },
-          { date: new Date(2023, 11, 12), badgeContent: '396+', accentColor: 'primary' },
-        ]}
-      />
-    </div>
-  );
-};
-
-export default ExampleCalendarOverivew;
-
-
-```
-
-
-
-<ExampleCalendarViews />
-
-
-## Дополнительные кнопки
-
-Календарь может содержать футер как с определёнными кнопками, такими как: кнопка сброса; кнопка перехода на текущий день, так и с кастомными элементами управления, которые возможно передать дополнительно. Для отображения заранее заготовленных кнопок используйте следующие параметры:
-
-- **resetButtonLabel** — если передан, то в футере календаря будет отображена кнопка сброса, где в качестве текста будет использовано переданное значение.
-- **toodayButtonLabel** — если передан, то в футере календаря будет отображена кнопка перехода к текущему дню, где в качестве текста будет использовано переданное значение.
-
-Для отображения собственных элементов управления следует использовать свойство `footer`, где в качестве значения снеобходимо передать `JSX` элемент с необходимым вам набором кнопок и прочих элементов управления.
-
-_Пример использования:_
-
-```tsx
-import React from 'react';
-import Calendar from '@via-profit/ui-kit/Calendar';
-import Button from '@via-profit/ui-kit/Button';
-
-const ExampleCalendarCustomControls: React.FC = () => {
-  const [value, onChange] = React.useState(new Date());
-  const intl = useIntl();
-
-  return (
-    <div>
-      <Calendar
-        value={value}
-        onChange={onChange}
-        footer={
-          <>
-            <Button onClick={() => onChange(new Date(value.getFullYear(), 4, 9))}>к 9 Мая</Button>
-          </>
-        }
-      />
-    </div>
-  );
-};
-
-export default ExampleCalendarCustomControls;
-```
-
-<ExampleCalendarCustomControls />
-
-## Хуки
-
-Компонент реализован по средствам набора свойств и методов, доступных в хуке `useCalendar`. Данный хук позволяет реализовывать собственные календари.
-
-_Использование хука:_
-
-```tsx
-const paylaod = useCalendar({
-  locale: 'ru-RU', // Локаль календаря
-  weekStartDay: 'monday', // День недели начинается с понедельника
-  displayLeadingZero: false, // Отображать дни без ведущего нуля
-  minDate: new Date(), //Минимальная доступная дата
-  maxDate: new Date(), // Максимальная доступная дата
-});
-```
-
-Хук `useCalendar` возвращает следующий набор данных:
-
-- `isToday` — Функция, принимающая один аргумент типа `Date` и возвращающая `true` в случае, если переданная дата совпадает с сегодняшним числом. **Важно: Сравнивается только год, месяц и день**
-- `isSameDay` — Функция, принимающая два аргумента типа `Date` и возвращающая `true` в случае, если переданные даты совпадают по году, месяцу и дню.
-- `getWeeks` — Функция, принимающая один аргумент типа `Date` и возвращающая массив недель. Каждый элемент массива представляет собой объект содержащий сведения о текущей неделе и список дней недели
-- `getDayLabel` — Функция, принимающая один аргумент типа `Date` и возвращающая строку, сформированную при помощи [Intl](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl) согласно установленноу локали
-- `getMonthLabel` — Функция, принимающая один аргумент типа `Date` и возвращающая строку, сформированную при помощи [Intl](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl) согласно установленноу локали
-- `getYearLabel` — Функция, принимающая один аргумент типа `Date` и возвращающая строку, сформированную при помощи [Intl](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl) согласно установленноу локали
-- `getYearsRange` — Функция, принимающая два аргумента типа `Date` и возвращающая массив лет, которые умещаются между переданными датами. **Важно: Возвращаемый массив будет ограничен параметрами minDate и maxDate**
-- `getMonthsRange` — Функция, принимающая два аргумента типа `Date` и возвращающая массив месяцев, которые умещаются между переданными датами. **Важно: Возвращаемый массив будет ограничен параметрами minDate и maxDate**
-
-_Пример использования (краткая версия):_
-
-```tsx
-import React from 'react';
-import { useCalendar } from '@via-profit/ui-kit/Calendar';
-
 const Example: React.FC = () => {
-  const currentDate = new Date(); // текущая дата от котороу будет построен календарь
-
-  const { isToday, getWeeks, getDayLabel } = useCalendar({
-    locale: 'ru-RU', // Локаль календаря
-    weekStartDay: 'monday', // День недели начинается с понедельника
-    displayLeadingZero: false, // Отображать дни без ведущего нуля
-    minDate: new Date(new Date().getFullYear() - 100, 0, 1), // 100 лет назад
-    maxDate: new Date(new Date().getFullYear() + 100, 0, 1), // 100 лет вперёд
-  });
-
-  return (
-    <div>
-      {getWeeks(currentDate).map(week => {
-        return (
-          <div key={week.weekNumber}>
-            {week.days.map(day => (
-              <span key={date.getTime()}>{getDayLabel(day.date)}</span>
-            ))}
-          </div>
-        );
-      })}
-    </div>
-  );
-};
-
-export default Example;
-```
-
-<ExampleCalendarHooks />
-
-_Пример использования (полная версия):_
-
-```tsx
-import React from 'react';
-import { useCalendar } from '@via-profit/ui-kit/Calendar';
-
-const Example: React.FC = () => {
-  const currentDate = new Date(); // текущая дата от котороу будет построен календарь
-
-  const { isToday, getWeeks, getDayLabel } = useCalendar({
-    locale: 'ru-RU', // Локаль календаря
-    weekStartDay: 'monday', // День недели начинается с понедельника
-    displayLeadingZero: false, // Отображать дни без ведущего нуля
-    minDate: new Date(new Date().getFullYear() - 100, 0, 1), // 100 лет назад
-    maxDate: new Date(new Date().getFullYear() + 100, 0, 1), // 100 лет вперёд
-  });
-
-  return (
-    <div>
-      {/* getWeeks вернет список недель */}
-      {getWeeks(currentDate).map(week => {
-        const {
-          days, // Массив дней текущей недели
-          weekNumber, // Номер недели
-        } = week;
-
-        // Рендерим каждую неделю в которой будем перебирать вложенные дни
-        return (
-          <div key={weekNumber}>
-            {/* Перебираем массив дней */}
-            {days.map(day => {
-              const {
-                date, // Дата текущего дня
-                isToday, // Признак того, что этот день совпадает с сегодняшним
-                isDisabled, // Признак того, что день попал под ограничение minDate и maxDate
-              } = day;
-              const dayLabel = getDayLabel(date);
-              const key = date.getTime();
-              const isDayOfCurrentMonth = date.getMonth() === currenrtDate.getMonth();
-
-              // Если это сегодняшний день
-              if (isToday) {
-                return <CurrentDay key={key}>{dayLabel}</CurrentDay>;
-              }
-
-              // Если это день текущего месяца
-              if (isDayOfCurrentMonth) {
-                return <DayOfCurrentMonth key={key}>{dayLabel}</DayOfCurrentMonth>;
-              }
-
-              // Если это день предыдущего или следующего месяца
-              return <DayOfAnotherMonth key={key}>{dayLabel}</DayOfAnotherMonth>;
-            })}
-          </div>
-        );
-      })}
-    </div>
-  );
-};
-
-export default Example;
-```
-
-<ExampleCalendarHooks />
-
-## Переопределение компонентов
-
-Компонент `<Calendar>` является составным и реализован при помощи следующих компонентов:
-
-- `<Body>` — Контейнер содержащий основую часть календаря (дни, список месяцев и лет)
-- `<Cell>` — Компонент, представляющий день месяца
-- `<EmptyCell>` — Компонент, представляющий заполнитель (пустой день) месяца
-- `<Paper>` — Подложка всего календаря
-- `<Header>` — Обертка заголовка календаря
-- `<WeekRow>` — Компонент одной недели в списке дней
-- `<DateContainer>` — Контейнер содержащий список дней
-- `<Toolbar>` — Компонет верхнего тулбара
-- `<YearsSelector>` — Контейнер списка лет
-- `<MonthsSelector>` — Контейнер списка месяцев
-- `<MonthCell>` — Компонент, представляющий один месяц в списке месяцев
-- `<YearCell>` — Компонент, представляющий один год в списке лет
-- `<DayBadge>` — компонент бэйдж
-- `<Footer>` — Футер календаря
-- `<ControlButton>` — Кнопка в панеле тулбара календаря
-- `<Heading>` — Текстовый заголовок календаря
-- `<Subheading>` — Текстовый подзаголовок календаря
-- `<IconPrev>` — Иконка, расположенная на кнопке переключения на предыдущий месяц
-- `<IconNext>` — Иконка, расположенная на кнопке переключения на следующий месяц
-- `<WeekDaysBar>` — Компонент, содержащий названия недель
-
-Используйте свойство `overrides` чтобы переопределить один или несколько компонентов:
-
-_Пример использования:_
-
-```tsx
-import React from 'react';
-import Calendar from '@via-profit/ui-kit/Calendar';
-import CalendarEmptyCell from '@via-profit/ui-kit/Calendar/CalendarEmptyCell';
-
-import DizzyFace from './DizzyFace';
-
-const Example: React.FC = () => {
-  const [date, setDate] = React.useState<Date>(new Date());
+  const [date, setDate] = React.useState<Date | null>(new Date());
 
   return (
     <Calendar
       value={date}
       onChange={setDate}
-      locale="ru-RU"
-      markToday
-      overrides={{
-        // Перезаписываем EmptyCell.
-        // Обратите внимание, что здесь прокидывается ref, однако
-        // прокинуть ref можно и при объявлении компонента, главное не забыть
-        EmptyCell: React.forwardRef(function EmptyCell(props, ref) {
-          return (
-            <CalendarEmptyCell {...props} ref={ref}>
-              <DizzyFace />
-            </CalendarEmptyCell>
-          );
-        }),
-      }}
+      heading={date ? <FormattedDate value={date} day="numeric" month="long" /> : '—'}
+      todayButtonLabel="Сегодня"
+      prevButtonLabel="Назад"
+      nextButtonLabel="Вперёд"
     />
   );
 };
@@ -284,138 +46,363 @@ const Example: React.FC = () => {
 export default Example;
 ```
 
+<ExampleCalendarBasic />
+
+## Выбор периода
+
+Со свойством `range` значение — массив `[начало, конец]`. Первый клик выбирает начало периода (`[date, null]`), второй — конец. Если второй день раньше первого, даты меняются местами. Следующий клик начинает новый период.
+
+```tsx
+import Calendar, { CalendarValue } from '@via-profit/ui-kit/Calendar';
+
+const [range, setRange] = React.useState<CalendarValue<true>>(null);
+
+<Calendar range value={range} onChange={setRange} resetButtonLabel="Сбросить" />;
+```
+
+<ExampleCalendarRange />
+
+## Виды: месяц, год, неделя
+
+Свойство `views` задаёт виды календаря и их порядок:
+
+- `days` — дни месяца;
+- `months` — месяцы года;
+- `years` — годы;
+- `weeks` — недели (только с `range`): клик выбирает неделю целиком.
+
+После выбора в одном виде календарь переходит к следующему, более подробному. Если такого вида нет, выбор завершается и вызывается `onChange`:
+
+- `views={['months', 'years']}` — выбор месяца, значение — первое число месяца. С `range` — `[первый день, конец последнего дня]`;
+- `views={['years']}` — выбор года, значение — 1 января. С `range` — весь год;
+- `views={['weeks']}` вместе с `range` — выбор недели.
+
+Первым показывается вид `initialView`, а без него — первый из `views`. Свойство `view` делает вид контролируемым.
+
+```tsx
+<Calendar value={month} onChange={setMonth} views={['months', 'years']} />
+<Calendar value={year} onChange={setYear} views={['years']} />
+<Calendar range value={week} onChange={setWeek} views={['weeks']} />
+```
+
+<ExampleCalendarViews />
+
+## Ограничения и бейджи
+
+- `minDate` и `maxDate` ограничивают выбор: дни вне диапазона недоступны, месяцы и годы вне диапазона не показываются. Границы включают день целиком: при `minDate={new Date()}` сегодня доступно. По умолчанию — сто лет назад и вперёд;
+- `badges` — отметки на днях, например количество событий. Цвет отметки задаёт `accentColor`.
+
+```tsx
+const today = new Date();
+
+<Calendar
+  value={date}
+  onChange={setDate}
+  minDate={today}
+  maxDate={new Date(today.getFullYear(), today.getMonth(), today.getDate() + 30)}
+  badges={[{ date: new Date(2026, 9, 2), badgeContent: 3 }]}
+/>;
+```
+
+<ExampleCalendarLimits />
+
+Создавайте `minDate`, `maxDate` и `badges` один раз, а не при каждом рендере: календарь пересчитывает сетку при их изменении.
+
+## Кнопки в подвале
+
+- `todayButtonLabel` — кнопка «Сегодня»: выбирает сегодняшний день;
+- `resetButtonLabel` — кнопка сброса: возвращает значение, месяц и вид, которые были при первом рендере;
+- `footer` — свои элементы в подвале.
+
+Кнопка показывается, только если передан её текст.
+
+```tsx
+<Calendar
+  value={date}
+  onChange={setDate}
+  footer={
+    <>
+      <Button onClick={() => setDate(tomorrow)}>Завтра</Button>
+      <Button onClick={() => setDate(nextWeek)}>Через неделю</Button>
+    </>
+  }
+/>
+```
+
+<ExampleCalendarCustomControls />
+
+## Клавиатура и доступность
+
+В сетку дней Tab попадает один раз — на выбранный день, сегодняшний или первый доступный. Дальше:
+
+| Клавиша | Действие |
+| --- | --- |
+| ← / → | предыдущий / следующий день |
+| ↑ / ↓ | тот же день недели на неделю раньше / позже |
+| Home / End | начало / конец недели |
+| PageUp / PageDown | тот же день в предыдущем / следующем месяце |
+| Enter, пробел | выбрать день |
+
+При переходе через границу месяца календарь переключает месяц. Фокус не выходит за `minDate` и `maxDate`.
+
+Каждый день озвучивается программами чтения с экрана полной датой («среда, 30 сентября 2026 г.»). Выбранные дни отмечены `aria-pressed`, сегодняшний — `aria-current="date"`. Подписи стрелок задают `prevButtonLabel` и `nextButtonLabel`. Они же показываются во всплывающей подсказке.
+
+## Управление через ref
+
+`ref` календаря — объект с методами:
+
+- `setView(view)` — показать вид;
+- `setViews(views)` — изменить список видов;
+- `getActiveView()` — текущий вид;
+- `setValue(value)` — задать значение неконтролируемого календаря;
+- `setCalendarDate(date)` — показать месяц этой даты;
+- `getCalendarDate()` — дата показанного месяца;
+- `reset()` — то же, что кнопка сброса.
+
+## Переопределение
+
+Компонент `<Calendar>` является составным и реализован при помощи следующих компонентов:
+
+- `<Paper>` — подложка календаря
+- `<Header>` — шапка: заголовок, подзаголовок и панель
+- `<Heading>`, `<Subheading>` — заголовок и подзаголовок
+- `<Toolbar>` — панель со стрелками и кнопками месяца и года
+- `<ControlButton>` — кнопка панели и подвала
+- `<IconPrev>`, `<IconNext>` — иконки стрелок
+- `<WeekDaysBar>` — названия дней недели
+- `<Body>` — область с текущим видом
+- `<DateContainer>` — сетка дней
+- `<WeekRow>` — неделя в сетке дней
+- `<Cell>` — день месяца
+- `<EmptyCell>` — день соседнего месяца
+- `<DayBadge>` — отметка дня
+- `<MonthsSelector>`, `<MonthCell>` — список месяцев и месяц
+- `<YearsSelector>` — список лет
+- `<WeekRowButton>`, `<WeekDayCell>`, `<WeekDayWeekNumber>` — неделя, её день и номер в виде `weeks`
+- `<Footer>` — подвал
+
+Используйте свойство `overrides`, чтобы переопределить один или несколько компонентов. Проще всего расширить стандартный компонент с помощью `styled`. Создавайте переопределения один раз — вне компонента, а не при рендере.
+
+_Пример использования:_
+
+```tsx
+import React from 'react';
+import styled from '@emotion/styled';
+import Calendar from '@via-profit/ui-kit/Calendar';
+import CalendarEmptyCell from '@via-profit/ui-kit/Calendar/CalendarEmptyCell';
+
+// The days of the neighbour months are hidden, the grid keeps its shape
+const EmptyCell = styled(CalendarEmptyCell)`
+  visibility: hidden;
+`;
+
+// Created once, outside of the component
+const overrides = { EmptyCell };
+
+const Example: React.FC = () => {
+  const [date, setDate] = React.useState<Date | null>(new Date());
+
+  return <Calendar value={date} onChange={setDate} overrides={overrides} />;
+};
+
+export default Example;
+```
+
 <ExampleCalendarOverrides />
+
+## Хук useCalendar
+
+Календарь построен на хуке `useCalendar`. С ним можно сделать свой календарь с другой разметкой.
+
+```tsx
+const calendar = useCalendar({
+  locale: 'ru-RU', // локаль
+  weekStartDay: 'monday', // первый день недели
+  displayLeadingZero: false, // дни без ведущего нуля
+  minDate, // минимальная дата
+  maxDate, // максимальная дата
+});
+```
+
+Хук возвращает функции:
+
+- `getWeeks(date)` — недели месяца даты `date`. Неделя — `{ weekNumber, days }`, день — `{ date, isToday, isDisabled }`. В неделях есть дни соседних месяцев, чтобы сетка была полной;
+- `getDayLabel(date)` — число месяца (с ведущим нулём, если `displayLeadingZero`);
+- `getMonthLabel(date)`, `getYearLabel(date)` — название месяца и год в локали;
+- `getMonthsRange(minDate, maxDate, year)` — месяцы года, пересекающиеся с диапазоном;
+- `getYearsRange(minDate, maxDate)` — годы диапазона;
+- `isToday(date)`, `isSameDay(dateA, dateB)` — сравнение дат по году, месяцу и дню.
+
+Создавайте `minDate` и `maxDate` один раз, а не при каждом рендере.
+
+_Пример использования:_
+
+```tsx
+import React from 'react';
+import { useCalendar } from '@via-profit/ui-kit/Calendar';
+
+const minDate = new Date(new Date().getFullYear() - 100, 0, 1);
+const maxDate = new Date(new Date().getFullYear() + 100, 0, 1);
+
+const Example: React.FC = () => {
+  const currentDate = new Date();
+  const { getWeeks, getDayLabel } = useCalendar({
+    locale: 'ru-RU',
+    weekStartDay: 'monday',
+    displayLeadingZero: false,
+    minDate,
+    maxDate,
+  });
+
+  return (
+    <div>
+      {getWeeks(currentDate).map(week => (
+        <div key={week.weekNumber}>
+          {week.days.map(day => (
+            <span
+              key={day.date.getTime()}
+              style={{
+                opacity: day.date.getMonth() === currentDate.getMonth() ? 1 : 0.4,
+                fontWeight: day.isToday ? 700 : 400,
+              }}
+            >
+              {getDayLabel(day.date)}
+            </span>
+          ))}
+        </div>
+      ))}
+    </div>
+  );
+};
+
+export default Example;
+```
+
+<ExampleCalendarHooks />
 
 ## Свойства
 
-### `onChange`
-Коллбэк функция, вызываемая при выборе даты.
-
 ### `value`
-Текущее значение даты
+Значение контролируемого календаря: дата, а с `range` — `[начало, конец]`. Передавайте вместе с `onChange`.
+- Тип: `Date | null`, с `range` — `[Date, Date] | [Date, Date | null] | null`
+- По умолчанию: `undefined`
+- Обязательное: нет
 
 ### `defaultValue`
-Текущее значение даты для случая, когда календарь является неконтроллируемым компонентом
+Начальное значение неконтролируемого календаря.
+- Тип: как у `value`
+- По умолчанию: `undefined`
+- Обязательное: нет
 
-### `locale`
-Текущая локаль
+### `onChange`
+Вызывается при выборе и получает новое значение.
+- Тип: `(value) => void`
+- Обязательное: **да**
 
-### `badges`
-Массив бэйджей календаря
-
-### `minDate`
-Минимально возможная дата, доступная для выбора в календаре
-
-### `maxDate`
-Максимально возможная дата, доступная для выбора в календаре
-
-### `weekStartDay`
-День с которого начинается неделя
-
-### `weekDayLabelFormat`
-Формат отображения названия недели
-
-### `displayLeadingZero`
-Флаг определяющий необходимость отображения дня недели с ведущим нулём
-
-### `markToday`
-Флаг определяющий необходимость подсвечивания текущего (сегодняшнего) дня в календаре
-
-### `accentColor`
-Цвет подсветки активной ячейки дня
-
-### `prevMonthButtonTooltip`
-Текст всплывающей подсказки кнопки переключения на предыдущий месяц
-
-### `nextMonthButtonTooltip`
-Текст всплывающей подсказки кнопки переключения на следующий месяц
-
-### `changeMonthButtonTooltip`
-Текст всплывающей подсказки кнопки выбора месяца
-
-### `changeYearButtonTooltip`
-Текст всплывающей подсказки кнопки выбора года
-
-### `resetButtonLabel`
-Текст кнопки сброса. Если текст не предоставлен, то кнопка отображаться не будет
-
-### `toodayButtonLabel`
-Текст кнопки перехода к текущему дню. Если текст не предоставлен, то кнопка отображаться не будет
-
-### `heading`
-Заголовок календаря
-
-### `subheading`
-Подзаголовок календаря
-
-### `initialView`
-Начальное представление календаря (дни, выбор месяца, выбор года)
+### `range`
+Если `true`, выбирается период.
+- Тип: `boolean`
+- По умолчанию: `false`
+- Обязательное: нет
 
 ### `views`
-Список возможных представлений календаря (дни, выбор месяца, выбор года)
+Виды календаря. Подробнее в разделе [Виды](#виды-месяц-год-неделя).
+- Тип: `Array<'days' | 'months' | 'years' | 'weeks'>`
+- По умолчанию: `['days', 'months', 'years']`, с `range` — ещё и `'weeks'`
+- Обязательное: нет
+
+### `initialView`
+Вид, который показывается первым.
+- Тип: `'days' | 'months' | 'years' | 'weeks'`
+- По умолчанию: первый из `views`
+- Обязательное: нет
+
+### `view`
+Текущий вид контролируемого календаря. Не используйте вместе с `initialView`.
+- Тип: `'days' | 'months' | 'years' | 'weeks'`
+- По умолчанию: `undefined`
+- Обязательное: нет
+
+### `locale`
+Локаль названий месяцев, дней недели и подписей дней.
+- Тип: `string`
+- По умолчанию: `'ru-RU'`
+- Обязательное: нет
+
+### `weekStartDay`
+Первый день недели.
+- Тип: `'monday' | 'tuesday' | … | 'sunday'`
+- По умолчанию: `'monday'`
+- Обязательное: нет
+
+### `weekDayLabelFormat`
+Формат названий дней недели.
+- Тип: `'short' | 'long' | 'narrow'`
+- По умолчанию: `'short'`
+- Обязательное: нет
+
+### `displayLeadingZero`
+Если `true`, числа выводятся с ведущим нулём: `01`, `02`.
+- Тип: `boolean`
+- По умолчанию: `false`
+- Обязательное: нет
+
+### `markToday`
+Если `true`, сегодняшний день обведён.
+- Тип: `boolean`
+- По умолчанию: `true`
+- Обязательное: нет
+
+### `accentColor`
+Цвет выбранного дня, месяца и года.
+- Тип: `'primary' | 'secondary' | string`
+- По умолчанию: `'primary'`
+- Обязательное: нет
+
+### `minDate`, `maxDate`
+Границы выбора, включая день целиком.
+- Тип: `Date`
+- По умолчанию: сто лет назад и сто лет вперёд
+- Обязательное: нет
+
+### `badges`
+Отметки на днях.
+- Тип: `Array<{ date: Date; badgeContent: React.ReactNode; accentColor?: 'primary' | 'secondary' | string }>`
+- По умолчанию: `[]`
+- Обязательное: нет
+
+### `heading`, `subheading`
+Заголовок и подзаголовок.
+- Тип: `React.ReactNode`
+- По умолчанию: `undefined`
+- Обязательное: нет
+
+### `prevButtonLabel`, `nextButtonLabel`
+Подписи стрелок для программ чтения с экрана и всплывающей подсказки.
+- Тип: `string`
+- По умолчанию: `'Previous'`, `'Next'`
+- Обязательное: нет
+
+### `todayButtonLabel`
+Текст кнопки «Сегодня». Без него кнопки нет.
+- Тип: `string`
+- По умолчанию: `undefined`
+- Обязательное: нет
+
+### `resetButtonLabel`
+Текст кнопки сброса. Без него кнопки нет.
+- Тип: `string`
+- По умолчанию: `undefined`
+- Обязательное: нет
 
 ### `footer`
-Кастомные элементы, которые будут добавлены в футер календаря
+Свои элементы в подвале.
+- Тип: `React.ReactNode`
+- По умолчанию: `undefined`
+- Обязательное: нет
 
 ### `overrides`
-Объект элементов для переопределения составных компонентов календаря
-
-### `overrides .Body`
-Контейнер содержащий основую часть календаря (дни, список месяцев и лет)
-
-### `overrides .Cell`
-Компонент, представляющий день месяца
-
-### `overrides .EmptyCell`
-Компонент, представляющий заполнитель (пустой день) месяца
-
-### `overrides .Paper`
-Подложка всего календаря
-
-### `overrides .Header`
-Обертка заголовка календаря
-
-### `overrides .WeekRow`
-Компонент одной недели в списке дней
-
-### `overrides .DateContainer`
-Контейнер содержащий список дней
-
-### `overrides .Toolbar`
-Компонет верхнего тулбара
-
-### `overrides .YearsSelector`
-Контейнер списка лет
-
-### `overrides .MonthsSelector`
-Контейнер списка месяцев
-
-### `overrides .MonthCell`
-Компонент, представляющий один месяц в списке месяцев
-
-### `overrides .YearCell`
-Компонент, представляющий один год в списке лет
-
-### `overrides .DayBadge`
-компонент бэйдж
-
-### `overrides .Footer`
-Футер календаря
-
-### `overrides .ControlButton`
-Кнопка в панеле тулбара календаря
-
-### `overrides .Heading`
-Текстовый заголовок календаря
-
-### `overrides .Subheading`
-Текстовый подзаголовок календаря
-
-### `overrides .IconPrev`
-Иконка, расположенная на кнопке переключения на предыдущий месяц
-
-### `overrides .IconNext`
-Иконка, расположенная на кнопке переключения на следующий месяц
-
-### `overrides .WeekDaysBar`
-Компонент, содержащий названия недель
+Объект для переопределения составных компонентов. Подробнее в разделе [Переопределение](#переопределение).
+- Тип: `CalendarOverrides`
+- По умолчанию: `undefined`
+- Обязательное: нет

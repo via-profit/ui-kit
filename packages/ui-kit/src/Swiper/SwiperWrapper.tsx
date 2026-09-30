@@ -18,11 +18,19 @@ export const StyledWrapper = styled.div<{ $draggable: boolean }>`
     css`
       touch-action: pan-y;
     `};
+
+  /* Inside: the container clips the outer outline */
+  &:focus-visible {
+    outline: 0.14em solid ${({ theme }) => theme.color.accentPrimary.toString()};
+    outline-offset: -0.14em;
+  }
 `;
 
 const SwiperWrapper = React.forwardRef(
   (props: SwiperWrapperProps, ref: React.ForwardedRef<HTMLDivElement>) => {
-    const { children, draggable, ...restProps } = props;
+    // slidesPerView is for the overrides only, it is not a DOM attribute
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { children, draggable, slidesPerView, ...restProps } = props;
 
     return (
       <StyledWrapper {...restProps} ref={ref} $draggable={draggable}>

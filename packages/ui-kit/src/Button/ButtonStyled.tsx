@@ -4,6 +4,7 @@ import { useTheme, css, Theme } from '@emotion/react';
 
 import Color from '../Color';
 import ButtonBase, { ButtonBaseProps } from './ButtonBase';
+import ButtonGroupContext, { ButtonGroupOrientation } from '../ButtonGroup/ButtonGroupContext';
 
 export type ButtonVariant = 'standard' | 'outlined' | 'plain';
 
@@ -15,6 +16,11 @@ type StyledProps = {
   readonly $variant: ButtonVariant;
   readonly $color: Color;
   readonly $background: Color;
+
+  /**
+   * The orientation of the ButtonGroup, if the button is inside it
+   */
+  readonly $group?: ButtonGroupOrientation;
 };
 
 const parseColor = (color: string, fallback: Color) => {
@@ -149,6 +155,29 @@ const plainStyles = ({ $color, disabled, theme }: StyledProps & ThemeProps) => c
 type ThemeProps = { readonly theme: Theme; readonly disabled?: boolean };
 
 /**
+ * Inside the ButtonGroup all the variants have the same border width, so the buttons have the same size
+ * and the selected (standard) button does not shrink. Two adjacent standard buttons are separated by a thin line
+ */
+const groupStyles = ({ $group, $variant, $color }: StyledProps) =>
+  $group &&
+  css`
+    border-style: solid;
+    border-width: 0.14em;
+    ${$variant !== 'outlined' &&
+    css`
+      border-color: transparent;
+    `}
+    ${$variant === 'standard' &&
+    css`
+      [data-group-variant='standard'] + & {
+        ${$group === 'vertical' ? 'border-top-color' : 'border-left-color'}: ${$color
+          .alpha(0.25)
+          .toString()};
+      }
+    `}
+  `;
+
+/**
  * All the variants are one styled component: switching the variant (e.g. a toggle button)
  * must not remount the element, otherwise the focused button loses the focus
  */
@@ -164,14 +193,36 @@ const StyledButton = styled(ButtonBase)<StyledProps>`
         return standardStyles(props);
     }
   }}
+  ${groupStyles}
 `;
 
 const ButtonStyled: React.ForwardRefRenderFunction<HTMLButtonElement, ButtonStyledProps> = (
   props,
   ref,
 ) => {
-  const { children, disabled, color, variant = 'standard', ...restProps } = props;
+  const group = React.useContext(ButtonGroupContext);
+  const { children, onClick, ...buttonProps } = props;
+  const buttonValue =
+    typeof buttonProps.value !== 'undefined' ? String(buttonProps.value) : undefined;
+  const isSelectable = Boolean(group?.selectable && typeof buttonValue !== 'undefined');
+  const isSelected = isSelectable && Boolean(group?.isSelected(String(buttonValue)));
+
+  // Inside the ButtonGroup the own props of the button win over the props of the group
+  const {
+    disabled = group?.disabled,
+    color = isSelected ? group?.selectedColor : group?.color,
+    variant = group ? (isSelected ? 'standard' : group.variant) : 'standard',
+    ...restProps
+  } = buttonProps;
   const theme = useTheme();
+
+  const handleClick: React.MouseEventHandler<HTMLButtonElement> = event => {
+    onClick?.(event);
+
+    if (isSelectable && !event.defaultPrevented && group) {
+      group.toggle(String(buttonValue));
+    }
+  };
 
   const { $color, $background } = React.useMemo(() => {
     if (variant === 'standard') {
@@ -188,8 +239,12 @@ const ButtonStyled: React.ForwardRefRenderFunction<HTMLButtonElement, ButtonStyl
       $variant={variant}
       $color={$color}
       $background={$background}
+      $group={group?.orientation}
+      data-group-variant={group ? variant : undefined}
       disabled={disabled}
+      aria-pressed={isSelectable ? isSelected : undefined}
       {...restProps}
+      onClick={handleClick}
       ref={ref}
     >
       {children}

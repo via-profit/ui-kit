@@ -12,7 +12,7 @@ const Blockquote = styled.blockquote`
   & > p:first-of-type {
     margin-top: 0;
   }
-  & > p:last-child {
+  & > p:last-of-type {
     margin-bottom: 0;
   }
 `;

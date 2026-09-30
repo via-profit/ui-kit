@@ -8,7 +8,7 @@ const Styled = styled.del`
   color: currentColor;
 `;
 
-const Em: React.ForwardRefRenderFunction<HTMLModElement, DelProps> = (props, ref) => {
+const Del: React.ForwardRefRenderFunction<HTMLModElement, DelProps> = (props, ref) => {
   const { children, ...nativeProps } = props;
 
   return (
@@ -18,4 +18,4 @@ const Em: React.ForwardRefRenderFunction<HTMLModElement, DelProps> = (props, ref
   );
 };
 
-export default React.forwardRef(Em);
+export default React.forwardRef(Del);

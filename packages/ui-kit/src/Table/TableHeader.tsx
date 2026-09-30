@@ -4,10 +4,14 @@ import styled from '@emotion/styled';
 export type TableHeaderProps = React.HTMLAttributes<HTMLTableSectionElement>;
 
 const StyledTableHeader = styled.thead`
-  display: table-header-group;
   vertical-align: middle;
-  & [role='row'] {
+
+  & > tr > th,
+  & > tr > td {
     border-bottom: none;
+    font-weight: 500;
+    background-color: ${({ theme }) => theme.color.accentPrimary.darken(10).toString()};
+    color: ${({ theme }) => theme.color.accentPrimaryContrast.toString()};
   }
 `;
 

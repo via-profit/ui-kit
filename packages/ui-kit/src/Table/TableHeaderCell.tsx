@@ -3,17 +3,16 @@ import styled from '@emotion/styled';
 
 export type TableHeaderCellProps = React.ThHTMLAttributes<HTMLTableCellElement>;
 
+/**
+ * The column header inside `<TableHeader>` or the row header (`scope="row"`) inside `<TableBody>`.
+ * The role (columnheader/rowheader) is implied by the position, so no explicit role
+ */
 const StyledTableHeaderCell = styled.th`
-  display: table-cell;
   vertical-align: inherit;
   padding: 0.8em;
-  background-color: ${({ theme }) => theme.color.accentPrimary.darken(10).toString()};
-  color: ${({ theme }) => theme.color.accentPrimaryContrast.toString()};
-  word-break: break-all;
-  font-weight: 500;
-  @media all and (max-width: 1200px) {
-    padding: 0.4em;
-  }
+  text-align: start;
+  font-weight: 600;
+  border-bottom: 0.1em solid ${({ theme }) => theme.color.surface.darken(20).toString()};
 `;
 
 const TableHeaderCell: React.ForwardRefRenderFunction<
@@ -23,7 +22,7 @@ const TableHeaderCell: React.ForwardRefRenderFunction<
   const { children, ...nativeProps } = props;
 
   return (
-    <StyledTableHeaderCell role="rowheader" {...nativeProps} ref={ref}>
+    <StyledTableHeaderCell {...nativeProps} ref={ref}>
       {children}
     </StyledTableHeaderCell>
   );

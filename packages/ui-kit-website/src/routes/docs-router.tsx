@@ -9,6 +9,7 @@ const TemplateDocs = loadable(() => import('~/templates/TemplateDocs/index'));
 const NotFound = loadable(() => import('~/pages/NotFound/index'));
 const Introduction = loadable(() => import('~/pages/Docs/Introduction'));
 const ButtonOverview = loadable(() => import('~/pages/Docs/Button/ButtonOverview'));
+const ButtonGroupOverview = loadable(() => import('~/pages/Docs/ButtonGroup/ButtonGroupOverview'));
 const SwitchOverview = loadable(() => import('~/pages/Docs/Switch/SwitchOverview'));
 const CheckboxOverview = loadable(() => import('~/pages/Docs/Checkbox/CheckboxOverview'));
 const Tables = loadable(() => import('~/pages/Docs/Table'));
@@ -65,6 +66,15 @@ const docsRouter: RouteObject = {
       element: (
         <React.Suspense fallback={<LoadingOverlay />}>
           <ButtonOverview />
+        </React.Suspense>
+      ),
+    },
+    {
+      path: 'button-group',
+      caseSensitive: true,
+      element: (
+        <React.Suspense fallback={<LoadingOverlay />}>
+          <ButtonGroupOverview />
         </React.Suspense>
       ),
     },

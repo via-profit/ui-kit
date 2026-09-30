@@ -1,24 +1,50 @@
-import * as React from 'react';
+import React from 'react';
 import styled from '@emotion/styled';
-import { ColorGenerator } from '@via-profit/ui-kit/src/Color';
 import Swiper, { SwiperSlide } from '@via-profit/ui-kit/src/Swiper';
+import { useIntl } from 'react-intl';
 
 const Slide = styled(SwiperSlide)`
-  font-size: 3em;
-  padding: 1em 0;
-  font-weight: bold;
+  flex-direction: column;
+  gap: 0.5em;
+  height: 12em;
+  padding: 1em;
+  text-align: center;
+  color: ${({ theme }) => theme.color.textPrimary.toString()};
+  background-color: ${({ theme }) => theme.color.surface.darken(20).toString()};
+
+  & h3 {
+    margin: 0;
+    font-size: 1.6em;
+  }
 `;
 
-const colors = ColorGenerator.generatePalette('swiper', 3);
+const ExampleSwiperBasic: React.FC = () => {
+  const intl = useIntl();
+  const slides = [
+    {
+      title: intl.formatMessage({ defaultMessage: 'Шаг 1. Выберите товар' }),
+      text: intl.formatMessage({ defaultMessage: 'Добавьте его в корзину' }),
+    },
+    {
+      title: intl.formatMessage({ defaultMessage: 'Шаг 2. Оформите заказ' }),
+      text: intl.formatMessage({ defaultMessage: 'Укажите адрес и способ оплаты' }),
+    },
+    {
+      title: intl.formatMessage({ defaultMessage: 'Шаг 3. Получите посылку' }),
+      text: intl.formatMessage({ defaultMessage: 'Курьер привезёт её за 1–2 дня' }),
+    },
+  ];
 
-const ExampleSwiperBasic: React.FC = () => (
-  <Swiper infinite>
-    {colors.map((color, index) => (
-      <Slide key={color.toString()} style={{ backgroundColor: color.toString() }}>
-        Слайд {index + 1}
-      </Slide>
-    ))}
-  </Swiper>
-);
+  return (
+    <Swiper aria-label={intl.formatMessage({ defaultMessage: 'Как сделать заказ' })}>
+      {slides.map(slide => (
+        <Slide key={slide.title}>
+          <h3>{slide.title}</h3>
+          <span>{slide.text}</span>
+        </Slide>
+      ))}
+    </Swiper>
+  );
+};
 
 export default ExampleSwiperBasic;

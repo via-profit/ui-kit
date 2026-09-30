@@ -4,8 +4,8 @@ import styled from '@emotion/styled';
 export type H5Props = React.HTMLAttributes<HTMLHeadingElement>;
 
 const Styled = styled.h5`
-  font-size: 1.2em;
-  font-weight: 300;
+  font-size: 1em;
+  font-weight: 500;
   color: currentColor;
 `;
 

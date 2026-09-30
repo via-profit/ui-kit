@@ -38,7 +38,13 @@ export const SwiperSlide = React.forwardRef(
     } = props as SwiperSlideProps;
 
     return (
-      <StyledSlide data-is-visible={isVisible} data-is-nearby={isNearby} {...restProps} $slidesPerView={slidesPerView} ref={ref}>
+      <StyledSlide
+        data-is-visible={isVisible}
+        data-is-nearby={isNearby}
+        {...restProps}
+        $slidesPerView={slidesPerView}
+        ref={ref}
+      >
         {isVisible || isNearby ? children : null}
       </StyledSlide>
     );

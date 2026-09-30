@@ -1,38 +1,51 @@
 import React from 'react';
-import Calendar, { CalendarRef, CalendarValue } from '@via-profit/ui-kit/src/Calendar';
-import { FormattedDate } from 'react-intl';
+import styled from '@emotion/styled';
+import Calendar, { CalendarValue } from '@via-profit/ui-kit/src/Calendar';
+import { useIntl } from 'react-intl';
+
+const Row = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 1.5em;
+`;
 
 const ExampleCalendarViews: React.FC = () => {
-  const calendarRef = React.useRef<CalendarRef<true> | null>(null);
-  const [value, setValue] = React.useState<CalendarValue<true>>([new Date(), new Date()]);
+  const intl = useIntl();
+  const [month, setMonth] = React.useState<Date | null>(new Date());
+  const [year, setYear] = React.useState<Date | null>(new Date());
+  const [week, setWeek] = React.useState<CalendarValue<true>>(null);
 
   return (
-    <div>
+    <Row>
       <Calendar
-        ref={calendarRef}
+        value={month}
+        onChange={setMonth}
+        views={['months', 'years']}
+        locale={intl.locale}
+        heading={intl.formatMessage({ defaultMessage: 'Месяц' })}
+        subheading={month ? intl.formatDate(month, { month: 'long', year: 'numeric' }) : '—'}
+      />
+      <Calendar
+        value={year}
+        onChange={setYear}
+        views={['years']}
+        locale={intl.locale}
+        heading={intl.formatMessage({ defaultMessage: 'Год' })}
+        subheading={year ? String(year.getFullYear()) : '—'}
+      />
+      <Calendar
         range
-        view="weeks"
-        value={value}
+        value={week}
+        onChange={setWeek}
         views={['weeks']}
-        onChange={setValue}
-        markToday
+        locale={intl.locale}
+        heading={intl.formatMessage({ defaultMessage: 'Неделя' })}
         subheading={
-          <span>
-            {value?.[0] ? (
-              <FormattedDate value={value[0]} year="numeric" month="2-digit" day="2-digit" />
-            ) : (
-              '-'
-            )}
-            <span> between </span>
-            {value?.[1] ? (
-              <FormattedDate value={value[1]} year="numeric" month="2-digit" day="2-digit" />
-            ) : (
-              '-'
-            )}
-          </span>
+          week?.[0] && week[1] ? `${intl.formatDate(week[0])} — ${intl.formatDate(week[1])}` : '—'
         }
       />
-    </div>
+    </Row>
   );
 };
 

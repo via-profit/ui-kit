@@ -31,7 +31,6 @@ const CalendarMonthCell: React.ForwardRefRenderFunction<
   CalendarMonthCellProps
 > = (props, ref) => {
   const { children, isSelected, accentColor, ...restProps } = props;
-  const myRef = React.useRef<HTMLButtonElement | null>(null);
 
   return (
     <Btn
@@ -39,17 +38,7 @@ const CalendarMonthCell: React.ForwardRefRenderFunction<
       type="button"
       variant={isSelected ? 'standard' : 'plain'}
       color={isSelected ? accentColor : 'default'}
-      ref={el => {
-        if (typeof ref === 'function') {
-          ref(el);
-        }
-
-        if (ref && typeof ref === 'object') {
-          ref.current = el;
-        }
-
-        myRef.current = el;
-      }}
+      ref={ref}
     >
       {children}
     </Btn>

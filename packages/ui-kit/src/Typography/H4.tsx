@@ -4,7 +4,7 @@ import styled from '@emotion/styled';
 export type H4Props = React.HTMLAttributes<HTMLHeadingElement>;
 
 const Styled = styled.h4`
-  font-size: 1.2em;
+  font-size: 1.1em;
   font-weight: 500;
   color: currentColor;
 `;

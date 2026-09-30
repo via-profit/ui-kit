@@ -1,12 +1,14 @@
 import React from 'react';
 import styled from '@emotion/styled';
 
-export type TableBodyProps = React.TableHTMLAttributes<HTMLTableSectionElement>;
+export type TableBodyProps = React.HTMLAttributes<HTMLTableSectionElement>;
 
 const StyledTableBody = styled.tbody`
-  display: table-row-group;
   vertical-align: middle;
-  & > [role='row']:last-of-type {
+
+  /* No line under the last row: the table has its own edge */
+  & > tr:last-of-type > th,
+  & > tr:last-of-type > td {
     border-bottom: none;
   }
 `;

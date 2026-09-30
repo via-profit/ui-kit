@@ -4,12 +4,9 @@ import styled from '@emotion/styled';
 export type TableCellProps = React.TdHTMLAttributes<HTMLTableCellElement>;
 
 const StyledTableCell = styled.td`
-  display: table-cell;
   vertical-align: inherit;
   padding: 0.8em;
-  @media all and (max-width: 1200px) {
-    padding: 0.4em;
-  }
+  border-bottom: 0.1em solid ${({ theme }) => theme.color.surface.darken(20).toString()};
 `;
 
 const TableCell: React.ForwardRefRenderFunction<HTMLTableCellElement, TableCellProps> = (
@@ -19,7 +16,7 @@ const TableCell: React.ForwardRefRenderFunction<HTMLTableCellElement, TableCellP
   const { children, ...nativeProps } = props;
 
   return (
-    <StyledTableCell role="cell" {...nativeProps} ref={ref}>
+    <StyledTableCell {...nativeProps} ref={ref}>
       {children}
     </StyledTableCell>
   );

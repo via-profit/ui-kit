@@ -23,8 +23,8 @@ import IconPrev, { CalendarIconPrevProps } from './CalendarIconPrev';
 import IconNext, { CalendarIconNextProps } from './CalendarIconNext';
 import WeekDaysBar, { CalendarWeekDaysBarProps, WeekNameLabelFormat } from './CalendarWeekDaysBar';
 import { CalendarValue, useCalendar, Week, WeekDayName } from './use-calendar';
-import Swiper, { SwiperRef, SwiperSlide } from '../Swiper';
 import styled from '@emotion/styled';
+import { keyframes } from '@emotion/react';
 
 export * from './use-calendar';
 export * from './CalendarWeekDaysBar';
@@ -116,6 +116,19 @@ export type CalendarProps<IsRangeValue extends boolean | undefined = undefined> 
   readonly todayButtonLabel?: string;
 
   /**
+   * The label of the «previous» button for screen readers and the tooltip.
+   * The button switches the month in the days view and the year in the months view\
+   * **Default:** `Previous`
+   */
+  readonly prevButtonLabel?: string;
+
+  /**
+   * The label of the «next» button for screen readers and the tooltip\
+   * **Default:** `Next`
+   */
+  readonly nextButtonLabel?: string;
+
+  /**
    * Heading
    */
   readonly heading?: React.ReactNode;
@@ -184,7 +197,7 @@ export interface CalendarOverrides {
    * Empty cell element
    */
   readonly EmptyCell?: React.ComponentType<
-    CalendarEmptyCellProps & React.RefAttributes<HTMLButtonElement>
+    CalendarEmptyCellProps & React.RefAttributes<HTMLSpanElement>
   >;
 
   /**
@@ -201,7 +214,7 @@ export interface CalendarOverrides {
    * Week row container element
    */
   readonly WeekRow?: React.ComponentType<
-    CalendarWeekRowProps & React.RefAttributes<HTMLDivElement>
+    CalendarWeekRowProps & React.RefAttributes<HTMLSpanElement>
   >;
 
   /**
@@ -275,12 +288,16 @@ export interface CalendarOverrides {
   /**
    * Prev icon element in prev month button
    */
-  readonly IconPrev?: React.ComponentType<CalendarIconPrevProps & React.RefAttributes<SVGElement>>;
+  readonly IconPrev?: React.ComponentType<
+    CalendarIconPrevProps & React.RefAttributes<SVGSVGElement>
+  >;
 
   /**
    * Next icon element in next month button
    */
-  readonly IconNext?: React.ComponentType<CalendarIconNextProps & React.RefAttributes<SVGElement>>;
+  readonly IconNext?: React.ComponentType<
+    CalendarIconNextProps & React.RefAttributes<SVGSVGElement>
+  >;
 
   /**
    * Weeks bar  element
@@ -296,9 +313,33 @@ export type CalendarBadge = {
   readonly accentColor?: 'primary' | 'secondary' | string;
 };
 
-const StyledSwiper = styled(Swiper)`
-  height: 100%;
+const viewAppear = keyframes`
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
 `;
+
+/**
+ * Only the active view is rendered: the hidden views are not focusable and not announced
+ */
+const ViewContainer = styled.div`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  animation: ${viewAppear} 0.2s ease-out;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+`;
+
+const dateKey = (date: Date) => `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
 
 export type CalendarRef<IsRangeValue extends boolean | undefined = undefined> = {
   readonly setView: (view: CalendarView) => void;
@@ -341,25 +382,16 @@ const computeView = (inputParams: {
   inputViews: readonly CalendarView[] | undefined;
 }): CalendarView => {
   const { inputView, inputViews, inputInitialView } = inputParams;
-  if (typeof inputView === 'undefined' && inputViews) {
-    return inputViews[0];
+  const requested = inputView ?? inputInitialView;
+
+  if (requested && inputViews && !inputViews.includes(requested)) {
+    throw new Error(
+      `The view «${requested}» must be one of the \`views\`: ${inputViews.join(', ')}`,
+    );
   }
 
-  if (typeof inputView === 'undefined' && inputViews) {
-    return inputViews[0];
-  }
-
-  if (inputViews && typeof inputView === 'string') {
-    if (!inputViews.includes(inputView)) {
-      throw new Error('Property views must be contained property initialView');
-    }
-  }
-
-  if (typeof inputView === 'string') {
-    return inputView;
-  }
-
-  return inputInitialView ?? inputView ?? 'days';
+  // The requested view wins over the first of the views
+  return requested ?? inputViews?.[0] ?? 'days';
 };
 
 const computeCalendarDate = (params: {
@@ -432,6 +464,8 @@ const CalendarComponent = React.forwardRef(
       footer,
       overrides,
       range = false,
+      prevButtonLabel = 'Previous',
+      nextButtonLabel = 'Next',
     } = props;
 
     /**
@@ -522,7 +556,7 @@ const CalendarComponent = React.forwardRef(
       [overrides],
     );
 
-    const swiperRef = React.useRef<SwiperRef | null>(null);
+    const dateContainerRef = React.useRef<HTMLDivElement | null>(null);
 
     /**
      * Inside date value
@@ -538,9 +572,20 @@ const CalendarComponent = React.forwardRef(
      * Selected value
      */
     const inputValueRef = React.useRef(inputValue);
-    const [value, setValue] = React.useState<CalendarValue<IsRangeValue>>(
+    const [internalValue, setValue] = React.useState<CalendarValue<IsRangeValue>>(
       inputValue ?? defaultValue ?? null,
     );
+    // Controlled: the value is always the `value` property, even if the parent did not accept the change
+    const value =
+      typeof inputValue !== 'undefined'
+        ? (inputValue as CalendarValue<IsRangeValue>)
+        : internalValue;
+
+    /**
+     * The day with the keyboard focus in the days view (roving tabindex)
+     */
+    const [focusedDate, setFocusedDate] = React.useState<Date | null>(null);
+    const shouldMoveFocus = React.useRef(false);
 
     /**
      * Current view mode
@@ -572,12 +617,6 @@ const CalendarComponent = React.forwardRef(
           setViews(nextViews);
         }
         setView(view);
-
-        const index = nextViews.findIndex(v => v === view);
-
-        if (index > -1) {
-          swiperRef.current?.goToIndex(index);
-        }
       },
       [setViews, views],
     );
@@ -708,6 +747,7 @@ const CalendarComponent = React.forwardRef(
 
     const handleCellDateClick = React.useCallback(
       (selectedDate: Date) => () => {
+        setFocusedDate(selectedDate);
         const nextView = getNextAvailableView();
 
         if (nextView) {
@@ -771,7 +811,7 @@ const CalendarComponent = React.forwardRef(
           }
         }
       },
-      [calendarDate, getNextAvailableView, onChange, selectView, range, inputValue],
+      [getNextAvailableView, onChange, selectView, range, inputValue],
     );
 
     /**
@@ -879,10 +919,127 @@ const CalendarComponent = React.forwardRef(
       [minDate, maxDate, getMonthsRange, calendarDate],
     );
 
+    const minDay = React.useMemo(
+      () => new Date(minDate.getFullYear(), minDate.getMonth(), minDate.getDate()),
+      [minDate],
+    );
+    const maxDay = React.useMemo(
+      () => new Date(maxDate.getFullYear(), maxDate.getMonth(), maxDate.getDate()),
+      [maxDate],
+    );
+
+    const dayLabelFormatter = React.useMemo(
+      () =>
+        typeof Intl !== 'undefined'
+          ? new Intl.DateTimeFormat(locale, {
+              weekday: 'long',
+              day: 'numeric',
+              month: 'long',
+              year: 'numeric',
+            })
+          : null,
+      [locale],
+    );
+
+    /**
+     * The only day in the tab order: the focused, the selected, today or the first available one
+     */
+    const tabbableDateKey = React.useMemo(() => {
+      const month = calendarDate.getMonth();
+      const days = weeks
+        .flatMap(week => week.days)
+        .filter(day => day.date.getMonth() === month && !day.isDisabled);
+      const selected = isRangeValue(value) ? value?.[0] : isNotRangeValue(value) ? value : null;
+      const candidates = [focusedDate, selected, new Date()];
+      const found = candidates
+        .map(candidate => candidate && days.find(day => isSameDay(day.date, candidate)))
+        .find(Boolean);
+
+      return found ? dateKey(found.date) : days[0] ? dateKey(days[0].date) : null;
+    }, [calendarDate, weeks, value, focusedDate, isSameDay]);
+
+    /**
+     * Arrows move by a day and a week, Home/End — to the start/end of the week,
+     * PageUp/PageDown — by a month. Crossing the month border switches the month
+     */
+    const handleDaysKeyDown = React.useCallback(
+      (event: React.KeyboardEvent<HTMLDivElement>) => {
+        const key = (event.target as HTMLElement).closest<HTMLElement>('[data-date]')?.dataset.date;
+        if (!key) return;
+
+        const [y, m, d] = key.split('-').map(Number);
+        const current = new Date(y, m, d);
+        const weekDay =
+          (current.getDay() -
+            ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'].indexOf(
+              weekStartDay,
+            ) +
+            7) %
+          7;
+        let target: Date;
+
+        switch (event.key) {
+          case 'ArrowLeft':
+            target = new Date(y, m, d - 1);
+            break;
+          case 'ArrowRight':
+            target = new Date(y, m, d + 1);
+            break;
+          case 'ArrowUp':
+            target = new Date(y, m, d - 7);
+            break;
+          case 'ArrowDown':
+            target = new Date(y, m, d + 7);
+            break;
+          case 'Home':
+            target = new Date(y, m, d - weekDay);
+            break;
+          case 'End':
+            target = new Date(y, m, d + 6 - weekDay);
+            break;
+          case 'PageUp':
+            target = new Date(y, m - 1, Math.min(d, new Date(y, m, 0).getDate()));
+            break;
+          case 'PageDown':
+            target = new Date(y, m + 1, Math.min(d, new Date(y, m + 2, 0).getDate()));
+            break;
+          default:
+            return;
+        }
+
+        event.preventDefault();
+
+        // Stay inside minDate/maxDate
+        if (target.getTime() < minDay.getTime()) target = minDay;
+        if (target.getTime() > maxDay.getTime()) target = maxDay;
+
+        setFocusedDate(target);
+        shouldMoveFocus.current = true;
+
+        if (
+          target.getMonth() !== calendarDate.getMonth() ||
+          target.getFullYear() !== calendarDate.getFullYear()
+        ) {
+          setCalendarDate(new Date(target.getFullYear(), target.getMonth(), 1));
+        }
+      },
+      [weekStartDay, minDay, maxDay, calendarDate],
+    );
+
+    // Move the DOM focus after the keyboard navigation has rendered the new day
+    React.useEffect(() => {
+      if (shouldMoveFocus.current && focusedDate) {
+        shouldMoveFocus.current = false;
+        dateContainerRef.current
+          ?.querySelector<HTMLElement>(`[data-date="${dateKey(focusedDate)}"]`)
+          ?.focus();
+      }
+    }, [focusedDate, calendarDate]);
+
     const renderViewDays = React.useCallback(
       () => (
-        <overridesMap.DateContainer>
-          {getWeeks(calendarDate).map(week => (
+        <overridesMap.DateContainer ref={dateContainerRef} onKeyDown={handleDaysKeyDown}>
+          {weeks.map(week => (
             <overridesMap.WeekRow key={week.weekNumber}>
               {week.days.map(day => {
                 if (day.date.getMonth() === calendarDate.getMonth()) {
@@ -904,9 +1061,16 @@ const CalendarComponent = React.forwardRef(
                     isSelected = Boolean(value && isSameDay(value, day.date));
                   }
 
+                  const key = dateKey(day.date);
+
                   return (
                     <overridesMap.Cell
                       key={day.date.getTime()}
+                      data-date={key}
+                      tabIndex={key === tabbableDateKey ? 0 : -1}
+                      aria-label={dayLabelFormatter?.format(day.date)}
+                      aria-pressed={isSelected || fill}
+                      aria-current={day.isToday ? 'date' : undefined}
                       isToday={markToday && day.isToday}
                       isDisabled={day.isDisabled}
                       accentColor={accentColor}
@@ -928,7 +1092,7 @@ const CalendarComponent = React.forwardRef(
                 }
 
                 return (
-                  <overridesMap.EmptyCell key={day.date.getTime()}>
+                  <overridesMap.EmptyCell key={day.date.getTime()} aria-hidden>
                     {getDayLabel(day.date)}
                   </overridesMap.EmptyCell>
                 );
@@ -941,13 +1105,16 @@ const CalendarComponent = React.forwardRef(
         accentColor,
         badges,
         calendarDate,
+        dayLabelFormatter,
         getDayLabel,
-        getWeeks,
         handleCellDateClick,
+        handleDaysKeyDown,
         isSameDay,
         markToday,
         overridesMap,
+        tabbableDateKey,
         value,
+        weeks,
       ],
     );
 
@@ -1067,8 +1234,6 @@ const CalendarComponent = React.forwardRef(
       ],
     );
 
-    const initialIndex = React.useMemo(() => views.findIndex(v => v === view), [views, view]);
-
     const getActiveView = React.useCallback(() => view, [view]);
 
     const getCalendarDate = React.useCallback(() => calendarDate, [calendarDate]);
@@ -1101,7 +1266,9 @@ const CalendarComponent = React.forwardRef(
             <overridesMap.ControlButton
               iconOnly
               onClick={handlePrevNextClick('prev')}
-              disabled={['months', 'years'].includes(view)}
+              disabled={view === 'years'}
+              aria-label={prevButtonLabel}
+              title={prevButtonLabel}
             >
               <overridesMap.IconPrev />
             </overridesMap.ControlButton>
@@ -1137,7 +1304,9 @@ const CalendarComponent = React.forwardRef(
             <overridesMap.ControlButton
               iconOnly
               onClick={handlePrevNextClick('next')}
-              disabled={['months', 'years'].includes(view)}
+              disabled={view === 'years'}
+              aria-label={nextButtonLabel}
+              title={nextButtonLabel}
             >
               <overridesMap.IconNext />
             </overridesMap.ControlButton>
@@ -1153,31 +1322,12 @@ const CalendarComponent = React.forwardRef(
         )}
 
         <overridesMap.Body>
-          <StyledSwiper draggable={false} ref={swiperRef} initialIndex={initialIndex}>
-            {views.map(viewName => {
-              let renderedView;
-              switch (viewName) {
-                case 'days':
-                  renderedView = renderViewDays();
-                  break;
-                case 'weeks':
-                  renderedView = renderViewWeeks();
-                  break;
-                case 'months':
-                  renderedView = renderViewMonths();
-                  break;
-                case 'years':
-                  renderedView = renderViewYears();
-                  break;
-
-                default:
-                  renderedView = null;
-                  break;
-              }
-
-              return <SwiperSlide key={viewName}>{renderedView}</SwiperSlide>;
-            })}
-          </StyledSwiper>
+          <ViewContainer key={view}>
+            {view === 'days' && renderViewDays()}
+            {view === 'weeks' && renderViewWeeks()}
+            {view === 'months' && renderViewMonths()}
+            {view === 'years' && renderViewYears()}
+          </ViewContainer>
         </overridesMap.Body>
         {(typeof resetButtonLabel !== 'undefined' ||
           typeof todayButtonLabel !== 'undefined' ||

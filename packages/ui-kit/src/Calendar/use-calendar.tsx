@@ -1,8 +1,9 @@
 import React from 'react';
 
-export type CalendarValue<Range> = Range extends undefined
-  ? Date | null
-  : [Date, Date] | [Date, Date | null] | null;
+// Only `range={true}` is the range value: `undefined` and `false` are the single date
+export type CalendarValue<Range> = Range extends true
+  ? [Date, Date] | [Date, Date | null] | null
+  : Date | null;
 
 export type WeekDayName =
   | 'sunday'

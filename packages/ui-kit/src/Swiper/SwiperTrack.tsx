@@ -6,6 +6,7 @@ type TrackStyleProps = {
   readonly $offset: number;
   readonly $dragging: boolean;
   readonly $disableAnimation?: boolean;
+  readonly $momentum?: boolean;
   readonly $slidesPerView: number;
 };
 
@@ -15,14 +16,24 @@ export type SwiperTrackProps = React.HTMLAttributes<HTMLDivElement> & {
   readonly offset: number;
   readonly dragging: boolean;
   readonly disableAnimation?: boolean;
+
+  /**
+   * The long decelerating transition after a free swipe (snap=false)
+   */
+  readonly momentum?: boolean;
   readonly slidesPerView: number;
 };
 
 const StyledTrack = styled.div<TrackStyleProps>`
   display: flex;
   height: 100%;
-  transition: ${({ $dragging, $disableAnimation }) =>
-    $dragging || $disableAnimation ? 'none' : 'transform 0.3s ease'};
+  transition: ${({ $dragging, $disableAnimation, $momentum }) => {
+    if ($dragging || $disableAnimation) {
+      return 'none';
+    }
+
+    return $momentum ? 'transform 0.6s cubic-bezier(0.25, 1, 0.5, 1)' : 'transform 0.3s ease';
+  }};
   will-change: transform;
   transform: ${({ $index, $offset, $slidesPerView }) =>
     `translateX(calc(${-(($index * 100) / $slidesPerView)}% + ${$offset}px))`};
@@ -30,8 +41,16 @@ const StyledTrack = styled.div<TrackStyleProps>`
 
 export const SwiperTrack = React.forwardRef(
   (props: SwiperTrackProps, ref: React.ForwardedRef<HTMLDivElement>) => {
-    const { children, index, offset, dragging, disableAnimation, slidesPerView, ...restProps } =
-      props;
+    const {
+      children,
+      index,
+      offset,
+      dragging,
+      disableAnimation,
+      momentum,
+      slidesPerView,
+      ...restProps
+    } = props;
 
     return (
       <StyledTrack
@@ -39,6 +58,7 @@ export const SwiperTrack = React.forwardRef(
         $index={index}
         $offset={offset}
         $disableAnimation={disableAnimation}
+        $momentum={momentum}
         $slidesPerView={slidesPerView}
         {...restProps}
         ref={ref}

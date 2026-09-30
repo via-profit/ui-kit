@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 
 /**
  * @deprecated - Use `Span` instead\
- * Example: `import Span from '@via-profit/ui-kit/Span'`
+ * Example: `import Span from '@via-profit/ui-kit/Typography/Span'`
  */
 const Base = styled.span`
   font-size: 1em;

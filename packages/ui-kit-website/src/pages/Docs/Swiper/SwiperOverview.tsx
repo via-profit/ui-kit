@@ -6,9 +6,9 @@ import RenderMarkdown from '~/components/RenderMarkdown';
 import content from '@via-profit/ui-kit/docs/swiper/README.md';
 import ExampleSwiperBasic from '~/examples/swiper/ExampleSwiperBasic';
 import ExampleSwiperInfinite from '~/examples/swiper/ExampleSwiperInfinite';
-import ExampleSwiperChangeSlides from '~/examples/swiper/ExampleSwiperChangeSlides';
 import ExampleSwiperApi from '~/examples/swiper/ExampleSwiperApi';
 import ExampleSwiperSlidesPerView from '~/examples/swiper/ExampleSwiperSlidesPerView';
+import ExampleSwiperFree from '~/examples/swiper/ExampleSwiperFree';
 
 const SwiperOverview: React.FC = () => (
   <>
@@ -17,9 +17,9 @@ const SwiperOverview: React.FC = () => (
         overrides={{
           ExampleSwiperBasic,
           ExampleSwiperInfinite,
-          ExampleSwiperChangeSlides,
           ExampleSwiperApi,
           ExampleSwiperSlidesPerView,
+          ExampleSwiperFree,
         }}
       >
         {content}

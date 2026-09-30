@@ -3,8 +3,6 @@ import styled from '@emotion/styled';
 import YearCell, { CalendarYearCellProps } from './CalendarYearCell';
 
 import useCalendar from './use-calendar';
-import VirtualizedList from '../Menu/VirtualizedList';
-// import VirtualizedItem from '../Menu/VirtualizedItem';
 
 export type CalendarYearsSelectorProps = {
   readonly years: readonly number[];
@@ -24,7 +22,6 @@ export type CalendarYearsSelectorProps = {
 
   /**
    * Minimum date limit
-
    */
   readonly minDate: Date;
 
@@ -53,36 +50,24 @@ export type CalendarYearsSelectorOverrides = {
   >;
 };
 
-type ItemChunk = Item[];
-
-type Item = {
-  readonly label: string;
-  readonly value: number;
-};
-
+/**
+ * A plain scrollable grid: a couple of hundreds buttons do not need the virtualization
+ */
 const SelectorContainer = styled.div`
-  display: flex;
   flex: 1;
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  overflow-y: auto;
   padding: 0.8em;
   height: 100%;
-  width: 100%;
+  box-sizing: border-box;
 `;
 
-const SelectorContainerInner = styled.div`
-  flex: 1;
-  position: relative;
-`;
-
-const Chunk = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-`;
 const CalendarYearsSelector: React.ForwardRefRenderFunction<
   HTMLDivElement,
   CalendarYearsSelectorProps
 > = (props, ref) => {
-  const containerRef = React.useRef<HTMLDivElement | null>(null);
   const {
     years,
     date,
@@ -93,7 +78,8 @@ const CalendarYearsSelector: React.ForwardRefRenderFunction<
     maxDate,
     onChange,
   } = props;
-  const [maxHeight, setMaxHeight] = React.useState<number | undefined>(undefined);
+  const containerRef = React.useRef<HTMLDivElement | null>(null);
+  const selectedRef = React.useRef<HTMLButtonElement | null>(null);
 
   const overridesMap = React.useMemo(
     () => ({
@@ -110,57 +96,47 @@ const CalendarYearsSelector: React.ForwardRefRenderFunction<
     displayLeadingZero: false,
   });
 
-  const items2: readonly ItemChunk[] = React.useMemo(() => {
-    const list: Item[][] = [];
-    for (let i = 0; i < years.length; i += 3) {
-      list.push(
-        years.slice(i, i + 3).map(year => {
-          const item: Item = {
-            value: year,
-            label: getYearLabel(new Date(year, date.getMonth(), date.getDate(), 0, 0, 0, 0)),
-          };
-
-          return item;
-        }),
-      );
-    }
-
-    return list;
-  }, [date, getYearLabel, years]);
-
+  // Show the selected year in the middle of the list.
+  // The container is scrolled directly: scrollIntoView would scroll the page too
   React.useLayoutEffect(() => {
-    if (containerRef.current) {
-      setMaxHeight(containerRef.current.getBoundingClientRect().height);
+    const container = containerRef.current;
+    const selected = selectedRef.current;
+    if (container && selected) {
+      container.scrollTop =
+        selected.offsetTop -
+        container.offsetTop -
+        container.clientHeight / 2 +
+        selected.offsetHeight / 2;
     }
   }, []);
 
-  const renderItem = React.useCallback(
-    (item: ItemChunk) => (
-      <Chunk>
-        {item.map(item => {
-          const isSelected = date.getFullYear() === item.value;
-
-          return (
-            <overridesMap.YearCell
-              key={item.value}
-              accentColor={accentColor}
-              isSelected={isSelected}
-              onClick={() => onChange(item.value)}
-            >
-              {item.label}
-            </overridesMap.YearCell>
-          );
-        })}
-      </Chunk>
-    ),
-    [accentColor, date, onChange, overridesMap],
-  );
+  const setRefs = (el: HTMLDivElement | null) => {
+    containerRef.current = el;
+    if (typeof ref === 'function') {
+      ref(el);
+    } else if (ref) {
+      ref.current = el;
+    }
+  };
 
   return (
-    <SelectorContainer ref={ref}>
-      <SelectorContainerInner ref={containerRef}>
-        {maxHeight && <VirtualizedList items={items2} renderItem={renderItem} />}
-      </SelectorContainerInner>
+    <SelectorContainer ref={setRefs}>
+      {years.map(year => {
+        const isSelected = date.getFullYear() === year;
+
+        return (
+          <overridesMap.YearCell
+            key={year}
+            ref={isSelected ? selectedRef : undefined}
+            accentColor={accentColor}
+            isSelected={isSelected}
+            aria-pressed={isSelected}
+            onClick={() => onChange(year)}
+          >
+            {getYearLabel(new Date(year, 0, 1))}
+          </overridesMap.YearCell>
+        );
+      })}
     </SelectorContainer>
   );
 };

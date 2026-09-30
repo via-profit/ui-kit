@@ -1,56 +1,95 @@
 import React from 'react';
 import {
   Table,
+  TableCaption,
   TableHeader,
   TableBody,
+  TableFooter,
+  TableRow,
   TableHeaderCell,
   TableCell,
-  TableRow,
-  TableFooter,
 } from '@via-profit/ui-kit/src/Table';
+import { FormattedMessage, useIntl } from 'react-intl';
 
-type Person = {
-  readonly firstName: string;
-  readonly age: number;
-  readonly sex: 'Male' | 'Female' | 'Pidoras';
+type Order = {
+  readonly id: number;
+  readonly date: Date;
+  readonly customer: string;
+  readonly amount: number;
 };
 
+// Numbers are aligned to the right, so the digits are under each other
+const numeric: React.CSSProperties = { textAlign: 'right', fontVariantNumeric: 'tabular-nums' };
+
 const ExampleTableBasic: React.FC = () => {
-  const persons: Person[] = [
-    { firstName: 'Ivan', age: 38, sex: 'Male' },
-    { firstName: 'Oleg', age: 11, sex: 'Male' },
-    { firstName: 'Andrey', age: 56, sex: 'Male' },
-    { firstName: 'Olga', age: 26, sex: 'Female' },
-    { firstName: 'Anna', age: 24, sex: 'Female' },
-    { firstName: 'Kira', age: 25, sex: 'Female' },
-    { firstName: 'Egor', age: 44, sex: 'Male' },
-    { firstName: 'Slava', age: 13, sex: 'Male' },
-    { firstName: 'Alexey', age: 16, sex: 'Male' },
+  const intl = useIntl();
+  const orders: readonly Order[] = [
+    {
+      id: 1042,
+      date: new Date(2026, 8, 28),
+      customer: intl.formatMessage({ defaultMessage: 'Иван Петров' }),
+      amount: 4590,
+    },
+    {
+      id: 1043,
+      date: new Date(2026, 8, 29),
+      customer: intl.formatMessage({ defaultMessage: 'Анна Смирнова' }),
+      amount: 12300,
+    },
+    {
+      id: 1044,
+      date: new Date(2026, 8, 29),
+      customer: intl.formatMessage({ defaultMessage: 'Олег Кузнецов' }),
+      amount: 870,
+    },
+    {
+      id: 1045,
+      date: new Date(2026, 8, 30),
+      customer: intl.formatMessage({ defaultMessage: 'Мария Иванова' }),
+      amount: 2150,
+    },
   ];
+  const money = (value: number) =>
+    intl.formatNumber(value, { style: 'currency', currency: 'RUB', maximumFractionDigits: 0 });
+  const total = orders.reduce((sum, order) => sum + order.amount, 0);
 
   return (
     <Table fullWidth>
+      <TableCaption>
+        <FormattedMessage defaultMessage="Заказы за неделю" />
+      </TableCaption>
       <TableHeader>
         <TableRow>
-          <TableHeaderCell>Имя</TableHeaderCell>
-          <TableHeaderCell>Возраст</TableHeaderCell>
-          <TableHeaderCell>Пол</TableHeaderCell>
+          <TableHeaderCell>
+            <FormattedMessage defaultMessage="Номер" />
+          </TableHeaderCell>
+          <TableHeaderCell>
+            <FormattedMessage defaultMessage="Дата" />
+          </TableHeaderCell>
+          <TableHeaderCell>
+            <FormattedMessage defaultMessage="Покупатель" />
+          </TableHeaderCell>
+          <TableHeaderCell style={numeric}>
+            <FormattedMessage defaultMessage="Сумма" />
+          </TableHeaderCell>
         </TableRow>
       </TableHeader>
       <TableBody>
-        {persons.map(({ firstName, age, sex }) => (
-          <TableRow key={`${firstName}-${age}`}>
-            <TableCell>{firstName}</TableCell>
-            <TableCell>{age}</TableCell>
-            <TableCell>{sex}</TableCell>
+        {orders.map(order => (
+          <TableRow key={order.id}>
+            <TableCell>{order.id}</TableCell>
+            <TableCell>{intl.formatDate(order.date)}</TableCell>
+            <TableCell>{order.customer}</TableCell>
+            <TableCell style={numeric}>{money(order.amount)}</TableCell>
           </TableRow>
         ))}
       </TableBody>
       <TableFooter>
         <TableRow>
-          <TableCell>a</TableCell>
-          <TableCell>b</TableCell>
-          <TableCell>c</TableCell>
+          <TableCell colSpan={3}>
+            <FormattedMessage defaultMessage="Итого" />
+          </TableCell>
+          <TableCell style={numeric}>{money(total)}</TableCell>
         </TableRow>
       </TableFooter>
     </Table>

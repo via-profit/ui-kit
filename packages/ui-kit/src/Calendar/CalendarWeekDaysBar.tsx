@@ -50,9 +50,12 @@ const CalendarWeekDaysBar: React.ForwardRefRenderFunction<
   );
 
   return (
-    <Container {...restProps} ref={ref}>
-      {weekDayLabels.map(label => (
-        <CalendarWeekDayLabel key={label}>{label}</CalendarWeekDayLabel>
+    // Hidden from screen readers: every day cell has the full date label with the weekday
+    <Container aria-hidden {...restProps} ref={ref}>
+      {weekDayLabels.map((label, index) => (
+        // The narrow labels repeat (e.g. «С» for Wednesday and Saturday), so the key is the index
+        // eslint-disable-next-line react/no-array-index-key
+        <CalendarWeekDayLabel key={index}>{label}</CalendarWeekDayLabel>
       ))}
     </Container>
   );

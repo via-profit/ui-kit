@@ -35,7 +35,7 @@ const StyledBadge = styled.span<BadgeContentStyles>`
   z-index: 1;
 `;
 
-const CalendarDayBadge: React.ForwardRefRenderFunction<HTMLButtonElement, CalendarDayBadgeProps> = (
+const CalendarDayBadge: React.ForwardRefRenderFunction<HTMLSpanElement, CalendarDayBadgeProps> = (
   props,
   ref,
 ) => {

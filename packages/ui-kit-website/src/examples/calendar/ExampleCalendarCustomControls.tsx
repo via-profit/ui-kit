@@ -1,29 +1,34 @@
 import React from 'react';
-import { useIntl } from 'react-intl';
 import Calendar from '@via-profit/ui-kit/src/Calendar';
 import Button from '@via-profit/ui-kit/src/Button';
+import { FormattedMessage, useIntl } from 'react-intl';
+
+const addDays = (days: number) => {
+  const now = new Date();
+
+  return new Date(now.getFullYear(), now.getMonth(), now.getDate() + days);
+};
 
 const ExampleCalendarCustomControls: React.FC = () => {
-  const [value, onChange] = React.useState(new Date());
   const intl = useIntl();
+  const [date, setDate] = React.useState<Date | null>(new Date());
 
   return (
-    <div>
-      <Calendar
-        value={value}
-        onChange={date => date && onChange(date)}
-        footer={
-          <>
-            <Button
-              style={{ marginRight: '0.5em' }}
-              onClick={() => onChange(new Date(value.getFullYear(), 4, 9))}
-            >
-              {intl.formatMessage({ defaultMessage: 'к 9 Мая' })}
-            </Button>
-          </>
-        }
-      />
-    </div>
+    <Calendar
+      value={date}
+      onChange={setDate}
+      locale={intl.locale}
+      footer={
+        <>
+          <Button onClick={() => setDate(addDays(1))}>
+            <FormattedMessage defaultMessage="Завтра" />
+          </Button>
+          <Button onClick={() => setDate(addDays(7))}>
+            <FormattedMessage defaultMessage="Через неделю" />
+          </Button>
+        </>
+      }
+    />
   );
 };
 
