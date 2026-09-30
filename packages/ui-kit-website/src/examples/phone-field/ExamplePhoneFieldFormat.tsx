@@ -12,7 +12,7 @@ import {
 import { FormattedMessage } from 'react-intl';
 
 const phones = [
-  '79122129984',
+  '79876543210',
   '8 912 212 99 84',
   '+7 701 234 56 78',
   '+375291234567',

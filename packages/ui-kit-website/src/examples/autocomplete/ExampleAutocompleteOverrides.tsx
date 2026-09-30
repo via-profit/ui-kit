@@ -7,7 +7,7 @@ import * as flags from '@via-profit/ui-kit/src/CountryFlags';
 import { FormattedMessage } from 'react-intl';
 
 const phones = [
-  { country: 'RU', number: '9122191984', callingCode: '7', value: '+7 (912) 219-19-84' },
+  { country: 'RU', number: '9876543210', callingCode: '7', value: '+7 (987) 654-32-10' },
   { country: 'RU', number: '9196599997', callingCode: '7', value: '+7 (919) 659-99-97' },
   { country: 'KZ', number: '717274616', callingCode: '7', value: '+7 (717) 274-61-60' },
   { country: 'BY', number: '241235526', callingCode: '375', value: '+375 (24) 123-55-26' },
