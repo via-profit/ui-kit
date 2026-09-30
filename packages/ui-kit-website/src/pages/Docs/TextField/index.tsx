@@ -4,8 +4,10 @@ import TableOfContent from '~/components/TableOfContent';
 import DocsArticle from '~/components/DocsArticle';
 import RenderMarkdown from '~/components/RenderMarkdown';
 import ExampleTextFieldOverview from '~/examples/text-field/ExampleTextFieldOverview';
-import ExampleTextFieldOverrides from '~/examples/text-field/ExampleTextFieldOverrides';
+import ExampleTextFieldValidation from '~/examples/text-field/ExampleTextFieldValidation';
 import ExampleTextFieldIcons from '~/examples/text-field/ExampleTextFieldIcons';
+import ExampleTextFieldStates from '~/examples/text-field/ExampleTextFieldStates';
+import ExampleTextFieldOverrides from '~/examples/text-field/ExampleTextFieldOverrides';
 import content from '@via-profit/ui-kit/docs/text-field/README.md';
 
 const TextFields: React.FC = () => (
@@ -14,8 +16,10 @@ const TextFields: React.FC = () => (
       <RenderMarkdown
         overrides={{
           ExampleTextFieldOverview,
-          ExampleTextFieldOverrides,
+          ExampleTextFieldValidation,
           ExampleTextFieldIcons,
+          ExampleTextFieldStates,
+          ExampleTextFieldOverrides,
         }}
       >
         {content}

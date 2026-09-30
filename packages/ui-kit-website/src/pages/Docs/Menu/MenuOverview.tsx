@@ -5,9 +5,9 @@ import TableOfContent from '~/components/TableOfContent';
 import RenderMarkdown from '~/components/RenderMarkdown';
 import content from '@via-profit/ui-kit/docs/menu/README.md';
 import ExampleMenuOverview from '~/examples/menu/ExampleMenuOverview';
+import ExampleMenuActions from '~/examples/menu/ExampleMenuActions';
 import ExampleMenuMultiple from '~/examples/menu/ExampleMenuMultiple';
 import ExampleMenuAPI from '~/examples/menu/ExampleMenuAPI';
-import ExampleMenuAnchorPos from '~/examples/menu/ExampleMenuAnchorPos';
 
 const MenuOverview: React.FC = () => (
   <>
@@ -15,9 +15,9 @@ const MenuOverview: React.FC = () => (
       <RenderMarkdown
         overrides={{
           ExampleMenuOverview,
+          ExampleMenuActions,
           ExampleMenuMultiple,
           ExampleMenuAPI,
-          ExampleMenuAnchorPos,
         }}
       >
         {content}

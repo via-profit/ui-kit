@@ -283,7 +283,7 @@ const Phone: React.FC<{ readonly value: string }> = ({ value }) => {
 
 ## Свойства
 
-Помимо перечисленных ниже, `<MaskedField>` принимает все свойства [`<TextField>`](../text-field/README.md#свойства), кроме `type`: поле всегда текстовое.
+Помимо перечисленных ниже, `<MaskedField>` принимает все свойства [`<TextField>`](../text-field/README.md#свойства). Из значений `type` поддерживается только `tel` (он показывает на телефонах цифровую клавиатуру), остальные заменяются на `text`: в полях других типов нельзя управлять положением курсора.
 
 ### `mask`
 Маска или функция, возвращающая маску для текущего текста. Подробнее в разделах [Маска](#маска) и [Динамическая маска](#динамическая-маска).
@@ -297,10 +297,11 @@ const Phone: React.FC<{ readonly value: string }> = ({ value }) => {
 
 ### `onChange`
 Вызывается при каждом изменении текста пользователем.
-- Тип: `(payload: { text: string; caret: number; isValid: boolean }) => void`
+- Тип: `(payload: { text: string; caret: number; isValid: boolean }, event: React.ChangeEvent<HTMLInputElement>) => void`
   - `text` — отформатированный текст (после `transform`, если он задан)
   - `caret` — позиция курсора
   - `isValid` — заполнены ли все позиции маски
+  - `event` — событие `change` поля ввода; `event.currentTarget.value` уже содержит `text`
 - Обязательное: **да**
 
 ### `transform`

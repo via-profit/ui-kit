@@ -1,14 +1,10 @@
 import React from 'react';
 import Autocomplete, { AutocompleteItem, FilterItems } from '@via-profit/ui-kit/src/Autocomplete';
 import type { TextFieldProps } from '@via-profit/ui-kit/src/TextField';
-import PhoneField, {
-  PhoneFieldProps,
-  templates,
-  usePhoneUtils,
-} from '@via-profit/ui-kit/src/PhoneField';
+import PhoneField, { templates, usePhoneUtils } from '@via-profit/ui-kit/src/PhoneField';
 import Highlighted from '@via-profit/ui-kit/src/Highlighted';
 import * as flags from '@via-profit/ui-kit/src/CountryFlags';
-import styled from '@emotion/styled';
+import { FormattedMessage } from 'react-intl';
 
 const phones = [
   { country: 'RU', number: '9122191984', callingCode: '7', value: '+7 (912) 219-19-84' },
@@ -20,37 +16,15 @@ const phones = [
   { country: 'JP', number: '156878255', callingCode: '81', value: '+81 (15) 687-8255' },
 ];
 
-const StyledPhoneField = styled(PhoneField)<PhoneFieldProps>`
-  &[data-popper-placement='top-fill'] > div {
-    outline: none;
-    border-top: 0;
-    border-top-left-radius: 0;
-    border-top-right-radius: 0;
-    border-color: ${({ theme }) =>
-      theme.isDark
-        ? theme.color.textPrimary.darken(100).toString()
-        : theme.color.textPrimary.lighten(150).toString()};
-  }
-
-  &[data-popper-placement='bottom-fill'] > div {
-    outline: none;
-    border-bottom: 0;
-    border-bottom-left-radius: 0;
-    border-bottom-right-radius: 0;
-    border-color: ${({ theme }) =>
-      theme.isDark
-        ? theme.color.textPrimary.darken(100).toString()
-        : theme.color.textPrimary.lighten(150).toString()};
-  }
-`;
-const StyledTextFieldWithRef: React.ForwardRefRenderFunction<HTMLDivElement, TextFieldProps> = (
+// <Autocomplete> passes the TextField props, <PhoneField> formats the typed number
+const PhoneTextFieldWithRef: React.ForwardRefRenderFunction<HTMLDivElement, TextFieldProps> = (
   p,
   r,
 ) => {
   const { value, onChange, ...restProps } = p;
 
   return (
-    <StyledPhoneField
+    <PhoneField
       ref={r}
       {...restProps}
       templates={templates}
@@ -64,7 +38,7 @@ const StyledTextFieldWithRef: React.ForwardRefRenderFunction<HTMLDivElement, Tex
   );
 };
 
-const StyledTextField = React.forwardRef(StyledTextFieldWithRef);
+const PhoneTextField = React.forwardRef(PhoneTextFieldWithRef);
 
 type Item = (typeof phones)[0];
 
@@ -86,6 +60,7 @@ const ExampleAutocompleteOverrides: React.FC = () => {
 
   return (
     <Autocomplete
+      label={<FormattedMessage defaultMessage="Телефон из справочника" />}
       value={value}
       items={phones}
       isOpen={isOpen}
@@ -96,7 +71,7 @@ const ExampleAutocompleteOverrides: React.FC = () => {
       onChange={item => setValue(item)}
       selectedItemToString={item => item.value}
       overrides={{
-        TextField: StyledTextField,
+        TextField: PhoneTextField,
       }}
     >
       {({ item, inputValue }, itemProps) => (

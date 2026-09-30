@@ -13,6 +13,8 @@ const Input = styled.input<{
 }>`
   padding: 1em 1.2em;
   font-size: 1em;
+  /* Form controls do not inherit the font by default (textarea is monospace) */
+  font-family: inherit;
   background: none;
   border-radius: inherit;
   margin: 0;

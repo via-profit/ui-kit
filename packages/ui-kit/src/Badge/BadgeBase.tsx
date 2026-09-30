@@ -32,7 +32,17 @@ export interface BadgeBaseProps extends Omit<BadgeNativeProps, 'color'> {
    */
   readonly color?: BadgeContainerProps['color'];
 
+  /**
+   * If passed, the delete button is shown. Its click does not reach `onClick` of the badge
+   */
   readonly onDelete?: React.MouseEventHandler<HTMLButtonElement>;
+
+  /**
+   * Accessible label of the delete button (it contains only an icon)\
+   * \
+   * **Default**: `'Delete'`
+   */
+  readonly deleteButtonLabel?: string;
 
   /**
    * Overridable components map
@@ -70,7 +80,19 @@ export interface BadgeBaseOverrides {
 }
 
 const BadgeBase: React.ForwardRefRenderFunction<HTMLSpanElement, BadgeBaseProps> = (props, ref) => {
-  const { children, startIcon, color, variant, overrides, onDelete, ...nativeProps } = props;
+  const {
+    children,
+    startIcon,
+    color,
+    variant,
+    overrides,
+    onDelete,
+    deleteButtonLabel = 'Delete',
+    onClick,
+    onKeyDown,
+    ...nativeProps
+  } = props;
+  const clickable = typeof onClick === 'function';
   const overridesMap = React.useMemo(
     () => ({
       TextWrapper: overrides?.TextWrapper || TextWrapper,
@@ -81,8 +103,44 @@ const BadgeBase: React.ForwardRefRenderFunction<HTMLSpanElement, BadgeBaseProps>
     [overrides],
   );
 
+  // A clickable badge acts as a button, so it is activated by Enter and Space too
+  const handleKeyDown = React.useCallback(
+    (event: React.KeyboardEvent<HTMLSpanElement>) => {
+      onKeyDown?.(event);
+
+      // The keys of the focused delete button must not activate the badge
+      if (
+        clickable &&
+        !event.defaultPrevented &&
+        event.target === event.currentTarget &&
+        (event.key === 'Enter' || event.key === ' ')
+      ) {
+        event.preventDefault();
+        event.currentTarget.click();
+      }
+    },
+    [clickable, onKeyDown],
+  );
+
+  const handleDelete = React.useCallback(
+    (event: React.MouseEvent<HTMLButtonElement>) => {
+      // Deleting is not a click on the badge
+      event.stopPropagation();
+      onDelete?.(event);
+    },
+    [onDelete],
+  );
+
   return (
-    <overridesMap.Container {...nativeProps} color={color} ref={ref}>
+    <overridesMap.Container
+      role={clickable ? 'button' : undefined}
+      tabIndex={clickable ? 0 : undefined}
+      {...nativeProps}
+      onClick={onClick}
+      onKeyDown={handleKeyDown}
+      color={color}
+      ref={ref}
+    >
       {typeof startIcon !== 'undefined' && startIcon !== null && (
         <overridesMap.IconWrapper>{startIcon}</overridesMap.IconWrapper>
       )}
@@ -90,7 +148,12 @@ const BadgeBase: React.ForwardRefRenderFunction<HTMLSpanElement, BadgeBaseProps>
       <overridesMap.TextWrapper>{children}</overridesMap.TextWrapper>
 
       {typeof onDelete === 'function' && (
-        <overridesMap.ButtonDelete variant={variant} onClick={onDelete} color={color} />
+        <overridesMap.ButtonDelete
+          variant={variant}
+          onClick={handleDelete}
+          color={color}
+          aria-label={deleteButtonLabel}
+        />
       )}
     </overridesMap.Container>
   );

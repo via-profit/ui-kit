@@ -19,7 +19,7 @@ const ExampleAutocompleteCreatable: React.FC = () => {
   return (
     <>
       <Autocomplete
-        label="Creatable"
+        label="Страна"
         value={value}
         items={items}
         isOpen={isOpen}
@@ -27,15 +27,19 @@ const ExampleAutocompleteCreatable: React.FC = () => {
         onRequestOpen={() => setIsOpen(true)}
         onChange={item => setValue(item)}
         selectedItemToString={item => item.name}
-        filterItems={(items, { query }) => {
+        filterItems={(items, { query, inputValue }) => {
           const filtered = items.filter(
             item => item.name.toLocaleLowerCase().indexOf(query) !== -1,
           );
 
-          if (query.length > 0) {
+          // query is lowercased, the new item keeps the text as it was typed
+          const name = inputValue.trim();
+          const exists = filtered.some(item => item.name.toLocaleLowerCase() === query);
+
+          if (name.length > 0 && !exists) {
             filtered.push({
-              code: window.crypto.randomUUID(),
-              name: query,
+              code: `new:${name}`,
+              name,
               isVirtual: true,
             });
           }

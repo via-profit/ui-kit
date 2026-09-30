@@ -1,7 +1,8 @@
 import React from 'react';
+import styled from '@emotion/styled';
 import Selectbox, { SelectboxItem } from '@via-profit/ui-kit/src/Selectbox';
 import Badge from '@via-profit/ui-kit/src/Badge';
-import styled from '@emotion/styled';
+import { FormattedMessage, useIntl } from 'react-intl';
 
 import countries from './countries.json';
 
@@ -10,51 +11,49 @@ type Item = {
   readonly name: string;
 };
 
-const BadgeContainer = styled.div`
-  & > span {
-    margin: 0 0.4em 0.4em 0%;
-  }
-
-  & > span:last-of-type {
-    margin-right: 0;
-  }
+const Badges = styled.span`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3em;
 `;
 
 const ExampleSelectboxMultiple: React.FC = () => {
-  const [value, setValue] = React.useState<readonly Item[]>([]);
+  const intl = useIntl();
+  const [value, setValue] = React.useState<readonly Item[]>(
+    countries.filter(country => ['BR', 'RU', 'IN'].includes(country.code)),
+  );
   const [isOpen, setIsOpen] = React.useState(false);
 
   return (
-    <>
-      <BadgeContainer>
-        {value.map(item => (
-          <Badge
-            variant="outlined"
-            color="primary"
-            onDelete={() => setValue(values => values.filter(v => v.code !== item.code))}
-            key={item.code}
-          >
-            {item.name}
-          </Badge>
-        ))}
-      </BadgeContainer>
-      <Selectbox
-        multiple
-        value={value}
-        items={countries}
-        isOpen={isOpen}
-        onRequestClose={() => setIsOpen(false)}
-        onRequestOpen={() => setIsOpen(true)}
-        onChange={items => setValue(items)}
-        selectedItemToString={items => items.map(({ name }) => name).join(', ')}
-      >
-        {({ item }, itemProps) => (
-          <SelectboxItem {...itemProps} key={item.code}>
-            {item.name}
-          </SelectboxItem>
-        )}
-      </Selectbox>
-    </>
+    <Selectbox
+      label={<FormattedMessage defaultMessage="Страны" />}
+      notSetLabel={intl.formatMessage({ defaultMessage: 'Не выбрано' })}
+      multiple
+      fullWidth
+      value={value}
+      items={countries}
+      isOpen={isOpen}
+      onRequestOpen={() => setIsOpen(true)}
+      onRequestClose={() => setIsOpen(false)}
+      onChange={items => setValue(items)}
+      getOptionSelected={({ item, value }) => item.code === value.code}
+      selectedItemToString={items => items.map(item => item.name).join(', ')}
+      renderValue={items => (
+        <Badges>
+          {items.map(item => (
+            <Badge key={item.code} variant="outlined" color="primary">
+              {item.name}
+            </Badge>
+          ))}
+        </Badges>
+      )}
+    >
+      {({ item }, itemProps) => (
+        <SelectboxItem {...itemProps} key={item.code}>
+          {item.name}
+        </SelectboxItem>
+      )}
+    </Selectbox>
   );
 };
 

@@ -50,20 +50,20 @@ export const createInitialState = <T, Multiple extends boolean | undefined = und
   readonly value: Value<T, Multiple> | null;
   readonly selectedItemToString: ItemToString<T, Multiple>;
   readonly isOpen?: boolean;
+  readonly multiple?: Multiple;
   readonly filterItems: FilterItems<T> | undefined;
 }): State => {
-  const { filterItems, isOpen, items, selectedItemToString, value } = params;
-  const inputValue =
-    value == null
-      ? ''
-      : selectedItemToString(value as Multiple extends undefined ? T : readonly T[]);
+  const { filterItems, isOpen, items, selectedItemToString, value, multiple } = params;
+  // With multiple the field holds only the search text, the selected items are tags
+  const inputValue = multiple || value == null ? '' : selectedItemToString(value as T);
 
   const data = {
     inputValue: inputValue,
     query: inputValue.trim().toLocaleLowerCase(),
   };
 
-  const filteredItems = filterItems ? filterItems(items, data) : items;
+  // As while typing: an empty query shows all the items
+  const filteredItems = filterItems && data.query !== '' ? filterItems(items, data) : items;
 
   return {
     ...defaultState,

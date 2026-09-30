@@ -18,9 +18,13 @@ export interface MaskedFieldProps extends Omit<TextFieldProps, 'value' | 'onChan
   readonly mask: Mask | GetMask;
 
   /**
-   * Function will be called when field value was changed
+   * Function will be called when field value was changed.\
+   * `event.currentTarget.value` already contains the formatted text
    */
-  readonly onChange: (payload: FormatParsedPayload) => void;
+  readonly onChange: (
+    payload: FormatParsedPayload,
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => void;
 
   /**
    * If you are not using a simple mask, you can provide a function to analyze the input value
@@ -83,11 +87,19 @@ const MaskedField: React.ForwardRefRenderFunction<HTMLDivElement, MaskedFieldPro
       const finalText = transform ? transform(formatted.text) : formatted.text;
 
       setInputValue(finalText);
-      onChange({
-        caret: formatted.caret,
-        isValid: formatted.isValid,
-        text: finalText,
-      });
+
+      // The input shows finalText after the render anyway,
+      // this makes the event consistent with the payload
+      event.currentTarget.value = finalText;
+
+      onChange(
+        {
+          caret: formatted.caret,
+          isValid: formatted.isValid,
+          text: finalText,
+        },
+        event,
+      );
 
       // Устанавливаем caret после рендера
       requestAnimationFrame(() => {
@@ -114,7 +126,8 @@ const MaskedField: React.ForwardRefRenderFunction<HTMLDivElement, MaskedFieldPro
     <TextField
       ref={ref}
       {...nativeProps}
-      type="text"
+      // The caret can be moved only in text-like inputs, `tel` also brings up the phone keypad
+      type={nativeProps.type === 'tel' ? 'tel' : 'text'}
       value={inputValue}
       onChange={handleOnChange}
       inputRef={setInputRef}

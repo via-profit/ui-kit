@@ -29,7 +29,6 @@ export type MenuItemProps = React.HTMLAttributes<HTMLDivElement> & {
  */
 export type MenuItemCommonProps = MenuItemProps;
 
-
 const StyledMenuItem = styled.div<{ selected?: boolean; hovered?: boolean }>`
   cursor: pointer;
   user-select: none;
@@ -98,6 +97,8 @@ export const MenuItem = React.forwardRef((props: MenuItemProps, ref: React.Ref<H
       onMouseLeave={onMouseLeave}
       onMouseEnter={onMouseEnter}
       onClick={onClick}
+      role="option"
+      aria-selected={selected}
       selected={selected}
       hovered={hovered}
     >

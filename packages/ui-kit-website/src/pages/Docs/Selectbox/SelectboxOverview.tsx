@@ -6,6 +6,8 @@ import DocsArticle from '~/components/DocsArticle';
 import content from '@via-profit/ui-kit/docs/selectbox/README.md';
 import ExampleSelectboxOverview from '~/examples/selectbox/ExampleSelectboxOverview';
 import ExampleSelectboxMultiple from '~/examples/selectbox/ExampleSelectboxMultiple';
+import ExampleSelectboxStates from '~/examples/selectbox/ExampleSelectboxStates';
+import ExampleSelectboxOverrides from '~/examples/selectbox/ExampleSelectboxOverrides';
 
 const SelectboxOverview: React.FC = () => (
   <>
@@ -14,6 +16,8 @@ const SelectboxOverview: React.FC = () => (
         overrides={{
           ExampleSelectboxOverview,
           ExampleSelectboxMultiple,
+          ExampleSelectboxStates,
+          ExampleSelectboxOverrides,
         }}
       >
         {content}

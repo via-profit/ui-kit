@@ -1,7 +1,7 @@
 import React from 'react';
 import Autocomplete, { AutocompleteItem } from '@via-profit/ui-kit/src/Autocomplete';
-import Button from '@via-profit/ui-kit/src/Button';
 import Highlighted from '@via-profit/ui-kit/src/Highlighted';
+import { FormattedMessage } from 'react-intl';
 
 import countries from './countries.json';
 
@@ -34,7 +34,9 @@ const ExampleAutocompleteFetch: React.FC = () => {
             }
 
             const list = countries
-              .filter(item => item.name.toLocaleLowerCase().indexOf(query) !== -1)
+              .filter(
+                item => item.name.toLocaleLowerCase().indexOf(query.toLocaleLowerCase()) !== -1,
+              )
               .splice(0, 10);
             resolve(list);
           },
@@ -67,10 +69,8 @@ const ExampleAutocompleteFetch: React.FC = () => {
 
   return (
     <>
-      <Button onClick={() => setValue(countries.find(c => c.code === 'RU') || null)}>set RU</Button>
-      <Button onClick={() => setValue(countries.find(c => c.code === 'US') || null)}>set US</Button>
-
       <Autocomplete
+        label={<FormattedMessage defaultMessage="Страна (загрузка с сервера)" />}
         value={value}
         items={items}
         isLoading={isLoading}

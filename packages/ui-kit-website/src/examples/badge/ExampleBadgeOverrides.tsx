@@ -1,34 +1,22 @@
 import React from 'react';
 import styled from '@emotion/styled';
 import Badge from '@via-profit/ui-kit/src/Badge';
-
-import BadgeContainer from '@via-profit/ui-kit/src/Badge/BadgeContainer';
 import BadgeTextWrapper from '@via-profit/ui-kit/src/Badge/BadgeTextWrapper';
+import { FormattedMessage } from 'react-intl';
 
-const StyledContainer = styled(BadgeContainer)`
-  background-color: red !important;
+// Defined once at module level, not during the render
+const TextWrapper = styled(BadgeTextWrapper)`
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
 `;
 
-const StyledTextWrapper = styled(BadgeTextWrapper)`
-  color: #fff !important;
-`;
+const overrides = { TextWrapper };
 
 const ExampleBadgeOverrides: React.FC = () => (
-  <>
-    <Badge
-      variant="standard"
-      overrides={{
-        Container: React.forwardRef(function Override(props, ref) {
-          return <StyledContainer {...props} ref={ref} />;
-        }),
-        TextWrapper: React.forwardRef(function Override(props, ref) {
-          return <StyledTextWrapper {...props} ref={ref} />;
-        }),
-      }}
-    >
-      Standard
-    </Badge>
-  </>
+  <Badge color="primary" overrides={overrides}>
+    <FormattedMessage defaultMessage="Скидка 20%" />
+  </Badge>
 );
 
 export default ExampleBadgeOverrides;

@@ -30,6 +30,7 @@ const Autocomplete = React.forwardRef(
         filterItems,
         value,
         isOpen,
+        multiple,
       }),
     );
 

@@ -7,6 +7,7 @@ export type TextFieldInputWrapperProps = React.HTMLAttributes<HTMLDivElement> & 
   readonly fullWidth?: boolean;
   readonly readOnly?: boolean;
   readonly focused?: boolean;
+  readonly disabled?: boolean;
 };
 
 const Wrapper = styled.div<{
@@ -14,6 +15,7 @@ const Wrapper = styled.div<{
   $readOnly?: boolean;
   $fullWidth?: boolean;
   $focused?: boolean;
+  $disabled?: boolean;
 }>`
   display: flex;
   align-items: stretch;
@@ -45,11 +47,22 @@ const Wrapper = styled.div<{
         border-color: ${props.theme.color.error.lighten(0.6).toString()};
       }
     `}
+  ${props =>
+    props.$disabled &&
+    css`
+      color: ${props.theme.color.textPrimary.alpha(0.4).toString()};
+      cursor: not-allowed;
+
+      & input,
+      & textarea {
+        cursor: not-allowed;
+      }
+    `}
 `;
 
 export const TextFieldInputWrapper = React.forwardRef(
   (props: TextFieldInputWrapperProps, ref: React.ForwardedRef<HTMLDivElement>) => {
-    const { focused, error, readOnly, fullWidth, children, ...nativeProps } = props;
+    const { focused, error, readOnly, fullWidth, disabled, children, ...nativeProps } = props;
 
     return (
       <Wrapper
@@ -58,6 +71,7 @@ export const TextFieldInputWrapper = React.forwardRef(
         $focused={focused}
         $readOnly={readOnly}
         $fullWidth={Boolean(fullWidth)}
+        $disabled={disabled}
         ref={ref}
       >
         {children}

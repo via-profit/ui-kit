@@ -5,37 +5,14 @@
 - [Описание](#описание)
 - [Варианты](#варианты)
 - [Цвета](#цвета)
-- [Иконки](#иконки)
+- [Иконка и удаление](#иконка-и-удаление)
+- [Нажатие](#нажатие)
 - [Переопределение](#переопределение)
 - [Свойства](#свойства)
 
 ## Описание
 
-Компонент `<Badge>` создаёт элемент, используемый в качестве индикатора, например когда необходимо отобразить выбранные элементы.
-
-_Пример использования:_
-
-```tsx
-import React from 'react';
-import Badge from '@via-profit/ui-kit/Badge';
-
-const Example: React.FC = () => (
-  <Badge variant="outlined" color="secondary">
-    Standard secondary
-  </Badge>
-);
-
-export default Example;
-```
-
-<ExampleBadgeOverview />
-
-## Варианты
-
-Бейджи выполнены в двух вариациях: `standard` и `outlined`. По умолчанию, используется стиль `standard`.
-
-- **standard** — отображает обычный бейдж со сплошной заливкой согласно переданному цвету
-- **outlined** — отображает бейдж с окантовкой согласно переданному цвету
+Компонент `<Badge>` — небольшая метка: статус, категория, выбранный элемент или тег. Бейдж может показывать иконку, кнопку удаления и работать как кнопка.
 
 _Пример использования:_
 
@@ -45,63 +22,137 @@ import Badge from '@via-profit/ui-kit/Badge';
 
 const Example: React.FC = () => (
   <>
-    <Badge variant="standard">Standard</Badge>
-    <Badge variant="outlined">Outlined</Badge>
+    <Badge>Черновик</Badge>
+    <Badge color="primary">Новый</Badge>
+    <Badge variant="outlined" color="secondary">
+      На проверке
+    </Badge>
   </>
 );
 
 export default Example;
 ```
 
+<ExampleBadgeOverview />
+
+## Варианты
+
+Свойство `variant` задаёт вид бейджа:
+
+- **`standard`** — сплошная заливка цветом `color` (по умолчанию)
+- **`outlined`** — рамка и текст цвета `color` без заливки
+
 <ExampleBadgeVariants />
 
 ## Цвета
 
-Вы можете указать одно из трёх зарезервированных значений `default` `primary` `secondary`, или **rgb(a)**/**hex** код произвольного цвета. По умолчанию, используется цвет стиля `default`.
+Свойство `color` принимает одно из значений `default`, `primary`, `secondary` либо любой цвет CSS: **hex**, **rgb(a)** или название цвета, например `lightpink`.
 
-В качестве цвета вы можете передать и псевдоним цвета, например, **lightpink** что будет соответствовать коду цвета `#ffb6c1`,
+- **`default`** — нейтральный цвет: немного темнее фона `Surface` у `standard`, светлая рамка у `outlined` (по умолчанию)
+- **`primary`** — основной цвет акцента темы
+- **`secondary`** — второстепенный цвет акцента темы
 
-- **default** — Цвет кнопки совпадает с цветом заднего плана
-- **primary** — Используется основной цвет акцента
-- **secondary** — Используется второстепенный цвет акцента
+Цвет текста в варианте `standard` подбирается автоматически: для `primary` и `secondary` берётся контрастный цвет из темы, для произвольного цвета — основной цвет текста темы, если он достаточно контрастен с фоном, иначе цвет фона `Surface`.
 
-_Пример использования:_
+```tsx
+<Badge color="primary">primary</Badge>
+<Badge variant="outlined" color="#529d29">
+  #529d29
+</Badge>
+```
 
 <ExampleBadgeColors />
 
-## Иконки
+## Иконка и удаление
 
-Бейдж может отображать иконку, переданную в свойстве `startIcon`. Помимо иконки можно передать функцию в качестве свойства `onDelete` и в этом случае бейдж отобразит кнопку удаления.
-**Важно:** Передавать следует не React компонент, а JSX выражение:
+`startIcon` добавляет иконку перед текстом. Передавайте элемент (`<UserIcon />`), а не компонент (`UserIcon`).
+
+Если передан `onDelete`, в бейдже появляется кнопка удаления. Она содержит только иконку, поэтому для программ чтения с экрана у неё есть подпись `deleteButtonLabel` (по умолчанию `'Delete'`) — лучше указать, что именно удаляется. Нажатие на кнопку удаления не вызывает `onClick` самого бейджа.
+
+_Пример использования:_
 
 ```tsx
+import React from 'react';
 import Badge from '@via-profit/ui-kit/Badge';
-import MyIcon from './MyIcon';
 
-const Example: React.FC = () => (
-  <Badge
-    startIcon={<MyIcon />}
-    variant="outlined"
-    color="secondary"
-    onDelete={event => someDeleteFunction()}
-  >
-    Oleg Dolgoperedryagov
-  </Badge>
-);
+const Example: React.FC = () => {
+  const [users, setUsers] = React.useState(['Анна Смирнова', 'Иван Петров', 'Мария Иванова']);
+
+  return (
+    <>
+      {users.map(user => (
+        <Badge
+          key={user}
+          variant="outlined"
+          color="primary"
+          startIcon={<UserIcon />}
+          deleteButtonLabel={`Удалить «${user}»`}
+          onDelete={() => setUsers(current => current.filter(u => u !== user))}
+        >
+          {user}
+        </Badge>
+      ))}
+    </>
+  );
+};
+
+export default Example;
 ```
 
 <ExampleBadgeIcons />
 
+## Нажатие
+
+Если передан `onClick`, бейдж работает как кнопка: получает фокус клавишей Tab, нажимается клавишами Enter и пробел, а при наведении меняет цвет и курсор. Для программ чтения с экрана он получает роль `button`. Бейдж без `onClick` на наведение не реагирует.
+
+Так можно сделать, например, фильтр по категориям. Атрибут `aria-pressed` сообщает программам чтения с экрана, выбран ли бейдж:
+
+```tsx
+import React from 'react';
+import Badge from '@via-profit/ui-kit/Badge';
+
+const categories = ['Книги', 'Музыка', 'Фильмы', 'Игры'];
+
+const Example: React.FC = () => {
+  const [selected, setSelected] = React.useState<readonly string[]>(['Книги']);
+
+  const toggle = (category: string) =>
+    setSelected(current =>
+      current.includes(category) ? current.filter(c => c !== category) : [...current, category],
+    );
+
+  return (
+    <>
+      {categories.map(category => (
+        <Badge
+          key={category}
+          color="primary"
+          variant={selected.includes(category) ? 'standard' : 'outlined'}
+          aria-pressed={selected.includes(category)}
+          onClick={() => toggle(category)}
+        >
+          {category}
+        </Badge>
+      ))}
+    </>
+  );
+};
+
+export default Example;
+```
+
+<ExampleBadgeClickable />
+
 ## Переопределение
 
-Компонент `<Button>` является составным и реализован при помощи следующих компонентов:
+Компонент `<Badge>` является составным и реализован при помощи следующих компонентов:
 
-- `<Container>` — Компонент нативного элемента бейджа `<span>`
-- `<TextWrapper>` — Обёртка для текста
-- `<IconWrapper>` — Обёртка иконки в случае её отображения
-- `<ButtonDelete>` — Кнопка удаления в случае её отображения
+- `<Container>` — корневой элемент `<span>`
+- `<IconWrapper>` — обёртка `startIcon`
+- `<TextWrapper>` — обёртка текста
+- `<ButtonDelete>` — кнопка удаления
 
-Используйте свойство `overrides` чтобы переопределить один или несколько компонентов:
+Используйте свойство `overrides`, чтобы переопределить один или несколько компонентов. Проще всего расширить стандартный компонент с помощью `styled`. Создавайте переопределения один раз — вне компонента, а не при рендере.
 
 _Пример использования:_
 
@@ -109,31 +160,20 @@ _Пример использования:_
 import React from 'react';
 import styled from '@emotion/styled';
 import Badge from '@via-profit/ui-kit/Badge';
-
-import BadgeContainer from '@via-profit/ui-kit/Badge/BadgeContainer';
 import BadgeTextWrapper from '@via-profit/ui-kit/Badge/BadgeTextWrapper';
 
-const StyledContainer = styled(BadgeContainer)`
-  background-color: red !important;
+const TextWrapper = styled(BadgeTextWrapper)`
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
 `;
 
-const StyledTextWrapper = styled(BadgeTextWrapper)`
-  color: #fff !important;
-`;
+// Created once, outside of the component
+const overrides = { TextWrapper };
 
 const Example: React.FC = () => (
-  <Badge
-    variant="standard"
-    overrides={{
-      Container: React.forwardRef(function Override(props, ref) {
-        return <StyledContainer {...props} ref={ref} />;
-      }),
-      TextWrapper: React.forwardRef(function Override(props, ref) {
-        return <StyledTextWrapper {...props} ref={ref} />;
-      }),
-    }}
-  >
-    Standard
+  <Badge color="primary" overrides={overrides}>
+    Скидка 20%
   </Badge>
 );
 
@@ -142,60 +182,48 @@ export default Example;
 
 <ExampleBadgeOverrides />
 
----
-
 ## Свойства
 
+Помимо перечисленных ниже, `<Badge>` принимает [стандартные атрибуты](https://developer.mozilla.org/ru/docs/Web/HTML/Element/span#атрибуты) элемента `<span>`. `ref` указывает на корневой элемент.
+
 ### `variant`
-Вариант отображения бейджа.
+Вид бейджа. Подробнее в разделе [Варианты](#варианты).
 - Тип: `'standard' | 'outlined'`
 - По умолчанию: `'standard'`
-- Обязательное: **да**
+- Обязательное: нет
 
 ### `color`
-Цвет бейджа. Может быть предопределенным значением или пользовательским цветом в формате **hex** или **rgb(a)**.
-- Тип: `'default' | 'secondary' | 'primary' | string`
+Цвет бейджа. Подробнее в разделе [Цвета](#цвета).
+- Тип: `'default' | 'primary' | 'secondary' | string`
 - По умолчанию: `'default'`
 - Обязательное: нет
 
 ### `startIcon`
-Элемент иконки, отображаемой слева от текста бейджа.
+Иконка перед текстом.
 - Тип: `JSX.Element`
 - По умолчанию: `undefined`
 - Обязательное: нет
 
-### `onDelete`
-Функция, вызываемая при нажатии на кнопку удаления. Кнопка удаления отображается только при передаче этого свойства.
-- Тип: `function`
+### `onClick`
+Если передан, бейдж работает как кнопка. Подробнее в разделе [Нажатие](#нажатие).
+- Тип: `React.MouseEventHandler<HTMLSpanElement>`
 - По умолчанию: `undefined`
+- Обязательное: нет
+
+### `onDelete`
+Если передан, отображается кнопка удаления, и функция вызывается при нажатии на неё.
+- Тип: `React.MouseEventHandler<HTMLButtonElement>`
+- По умолчанию: `undefined`
+- Обязательное: нет
+
+### `deleteButtonLabel`
+Подпись кнопки удаления для программ чтения с экрана.
+- Тип: `string`
+- По умолчанию: `'Delete'`
 - Обязательное: нет
 
 ### `overrides`
-Объект для переопределения составных компонентов бейджа.
-- Тип: `Object`
+Объект для переопределения составных компонентов. Подробнее в разделе [Переопределение](#переопределение).
+- Тип: `BadgeBaseOverrides`
 - По умолчанию: `undefined`
 - Обязательное: нет
-
-#### `overrides.Container`
-Компонент нативного элемента `<span>`.
-- Тип: `React.Component`
-- По умолчанию: `<BadgeContainer>`
-
-#### `overrides.IconWrapper`
-Компонент-обертка для иконки, отображаемой слева от текста бейджа.
-- Тип: `React.Component`
-- По умолчанию: `<BadgeIconWrapper>`
-
-#### `overrides.TextWrapper`
-Компонент-обертка для текста бейджа.
-- Тип: `React.Component`
-- По умолчанию: `<BadgeTextWrapper>`
-
-#### `overrides.ButtonDelete`
-Компонент кнопки удаления бейджа.
-- Тип: `React.Component`
-- По умолчанию: `<BadgeDeleteButton>`
-
----
-
-Помимо перечисленных свойств, компонент принимает [стандартные атрибуты](https://developer.mozilla.org/ru/docs/Web/HTML/Element/span#атрибуты) HTML элемента `<span>`

@@ -1,6 +1,24 @@
 {
+  "+v01ok": {
+    "defaultMessage": "Поиск"
+  },
+  "/Y7Xvk": {
+    "defaultMessage": "Сократите описание на {count} симв."
+  },
+  "/r++P0": {
+    "defaultMessage": "Показать индикатор"
+  },
+  "1SdHYt": {
+    "defaultMessage": "Действия"
+  },
   "1wC7aj": {
     "defaultMessage": "Включить светлую тему"
+  },
+  "2WTbIX": {
+    "defaultMessage": "Открыть"
+  },
+  "42ZwvD": {
+    "defaultMessage": "Потяните за правый нижний угол"
   },
   "4YsRb6": {
     "defaultMessage": "Перейти к документации"
@@ -8,14 +26,26 @@
   "5UhzNy": {
     "defaultMessage": "Что это?"
   },
+  "5YiEBf": {
+    "defaultMessage": "Скрыть пароль"
+  },
   "7TwBQ2": {
     "defaultMessage": "Дата рождения"
+  },
+  "7yp0vm": {
+    "defaultMessage": "Закрыть меню"
   },
   "83McUk": {
     "defaultMessage": "Скопировано"
   },
+  "8e0aIx": {
+    "defaultMessage": "Описание ({length} из {max})"
+  },
   "8xa/OX": {
     "defaultMessage": "Кликни вне этого элемента"
+  },
+  "9qM3tS": {
+    "defaultMessage": "Низкий"
   },
   "AIyaKV": {
     "defaultMessage": "Кнопки, поля ввода, календари, меню и модальные окна с темами оформления и переопределяемыми частями."
@@ -23,14 +53,35 @@
   "Al8pFl": {
     "defaultMessage": "На этой странице"
   },
+  "DSS3GV": {
+    "defaultMessage": "Добавить «{name}»"
+  },
   "DtpCdE": {
     "defaultMessage": "к 9 Мая"
+  },
+  "E1j2xY": {
+    "defaultMessage": "Сохранение…"
   },
   "ELrvsD": {
     "defaultMessage": "Открыть меню"
   },
+  "EiyZsC": {
+    "defaultMessage": "Адрес указан неверно"
+  },
+  "ErCGHh": {
+    "defaultMessage": "Укажите адрес электронной почты"
+  },
+  "FIFI8K": {
+    "defaultMessage": "Загрузка"
+  },
   "G0WBwd": {
     "defaultMessage": "Всего кликов: {counter}"
+  },
+  "HD4k5p": {
+    "defaultMessage": "Создать"
+  },
+  "HxEkI9": {
+    "defaultMessage": "Музыка"
   },
   "JYk3jK": {
     "defaultMessage": "Документация"
@@ -38,8 +89,29 @@
   "K4wZ5T": {
     "defaultMessage": "Телефон (Россия или Беларусь)"
   },
+  "KTFgNH": {
+    "defaultMessage": "Выручка выросла на 12%, количество заказов — на 8%."
+  },
   "LUCzCR": {
     "defaultMessage": "Выберите"
+  },
+  "MRvQ11": {
+    "defaultMessage": "Черновик"
+  },
+  "MuPf/I": {
+    "defaultMessage": "Не выбрано"
+  },
+  "MuX+YK": {
+    "defaultMessage": "Найти…"
+  },
+  "O145N1": {
+    "defaultMessage": "Страна"
+  },
+  "O1w++r": {
+    "defaultMessage": "Скидка 20%"
+  },
+  "PuZv4f": {
+    "defaultMessage": "Пароль"
   },
   "QasLUC": {
     "defaultMessage": "Результат"
@@ -50,11 +122,17 @@
   "QwcCkF": {
     "defaultMessage": "Найти компонент"
   },
+  "R7ozCe": {
+    "defaultMessage": "Опишите ваш вопрос"
+  },
   "RSH+Mj": {
     "defaultMessage": "Телефон для связи"
   },
   "Rv4/dP": {
     "defaultMessage": "Анкор"
+  },
+  "SMzCPW": {
+    "defaultMessage": "Сохранить"
   },
   "SWd3Sf": {
     "defaultMessage": "Ничего не найдено"
@@ -62,17 +140,29 @@
   "SZGWYB": {
     "defaultMessage": "Подставить номер"
   },
+  "T5P/66": {
+    "defaultMessage": "Телефон из справочника"
+  },
   "TqYfpb": {
     "defaultMessage": "Найти компонент…"
   },
   "URJ2aL": {
     "defaultMessage": "Содержимое Popper"
   },
+  "V9PF0o": {
+    "defaultMessage": "С иконкой"
+  },
   "WoHYhC": {
     "defaultMessage": "Текущая позиция: {placement}"
   },
+  "Xgd484": {
+    "defaultMessage": "Отчёт за месяц"
+  },
   "XnLtsK": {
     "defaultMessage": "Главная"
+  },
+  "Y0B8+n": {
+    "defaultMessage": "Выбрано: {name}"
   },
   "YHFvoS": {
     "defaultMessage": "Открыть календарь"
@@ -80,17 +170,38 @@
   "YJVtiA": {
     "defaultMessage": "Введение"
   },
+  "Ye9yD/": {
+    "defaultMessage": "Фильмы"
+  },
   "Yspb5g": {
     "defaultMessage": "Закрыть Popper"
   },
   "Z5DW4P": {
     "defaultMessage": "Список изменений"
   },
+  "ZQf5O2": {
+    "defaultMessage": "Вернуть всех"
+  },
+  "abKIRE": {
+    "defaultMessage": "Начните вводить название"
+  },
   "bPtegp": {
     "defaultMessage": "Телефон"
   },
+  "bi8PJO": {
+    "defaultMessage": "Выберите значение"
+  },
   "cgAw8y": {
     "defaultMessage": "Введите номер полностью"
+  },
+  "d4UsAr": {
+    "defaultMessage": "Страны"
+  },
+  "e3cA6P": {
+    "defaultMessage": "На всю ширину"
+  },
+  "ek/fk0": {
+    "defaultMessage": "Удалить «{name}»"
   },
   "fGrmor": {
     "defaultMessage": "Начало"
@@ -113,11 +224,29 @@
   "h52LFb": {
     "defaultMessage": "Включить тёмную тему"
   },
+  "hOYnBT": {
+    "defaultMessage": "На проверке"
+  },
+  "hT3OZn": {
+    "defaultMessage": "Иван Петров"
+  },
+  "i8KTyz": {
+    "defaultMessage": "Комментарий"
+  },
+  "jX2Rp6": {
+    "defaultMessage": "Новый"
+  },
   "kSJhYU": {
     "defaultMessage": "Исходная строка"
   },
+  "kktCY9": {
+    "defaultMessage": "Выбрано действие: {label}"
+  },
   "l775qE": {
     "defaultMessage": "Открыть Popper"
+  },
+  "m0+ocO": {
+    "defaultMessage": "Страна (загрузка с сервера)"
   },
   "n8HMS9": {
     "defaultMessage": "ваших интерфейсов"
@@ -128,19 +257,52 @@
   "oAO9Hr": {
     "defaultMessage": "Компоненты"
   },
+  "oeKhPk": {
+    "defaultMessage": "Игры"
+  },
+  "oqiCOV": {
+    "defaultMessage": "Обязательное поле"
+  },
+  "otHP0I": {
+    "defaultMessage": "Высокий"
+  },
   "peF0Pd": {
     "defaultMessage": "Подсказка закроется по клику в любом месте страницы"
+  },
+  "qXh0mH": {
+    "defaultMessage": "Имя"
+  },
+  "qpyN6B": {
+    "defaultMessage": "Недоступно"
+  },
+  "si4+jP": {
+    "defaultMessage": "Книги"
   },
   "uE1mMh": {
     "defaultMessage": "text: «{text}», isValid: {isValid}"
   },
+  "vUOyV1": {
+    "defaultMessage": "Показать пароль"
+  },
   "wBODsZ": {
     "defaultMessage": "Текущая дата в шаблоном {template} — {result}"
+  },
+  "x69X5L": {
+    "defaultMessage": "Действие не выбрано"
+  },
+  "xRna1X": {
+    "defaultMessage": "Скрыть индикатор"
   },
   "xa3ExB": {
     "defaultMessage": "Копировать"
   },
+  "xmOQfn": {
+    "defaultMessage": "Только чтение"
+  },
   "yeuMJs": {
     "defaultMessage": "Строка 22.02.2003 распарсенная с шаблоном {template} — {result}"
+  },
+  "z7B2cn": {
+    "defaultMessage": "Обычный"
   }
 }

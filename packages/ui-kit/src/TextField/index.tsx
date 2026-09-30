@@ -238,7 +238,12 @@ const TextField = React.forwardRef(
       >
         {renderLabel()}
 
-        <overridesMap.InputWrapper error={error} focused={focused} fullWidth={fullWidth}>
+        <overridesMap.InputWrapper
+          error={error}
+          focused={focused}
+          fullWidth={fullWidth}
+          disabled={nativeInputProps.disabled}
+        >
           {hasStartIcon && renderIcon('start', startIcon)}
 
           <overridesMap.Input

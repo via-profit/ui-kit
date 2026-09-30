@@ -377,6 +377,16 @@ const MenuContainer = React.forwardRef(
     // Starts as `false` so that a menu mounted in the open state is focused and scrolled too
     const isOpenRef = React.useRef(false);
     const focusTimeoutRef = React.useRef<NodeJS.Timeout>();
+    // Whether the focus is inside the list: then it is returned to the anchor on close
+    const hasFocusRef = React.useRef(false);
+    // The parent often resets the anchor together with isOpen, so the last one is kept
+    const lastAnchorRef = React.useRef<HTMLElement | null>(anchorElement);
+    if (anchorElement) {
+      lastAnchorRef.current = anchorElement;
+    }
+    // Keyboard navigation scrolls the list under a still pointer, and the browser fires
+    // mouseenter on the item that appears under it. Such events must not move the highlight
+    const isKeyboardNavigationRef = React.useRef(false);
 
     const {
       dispatch,
@@ -483,12 +493,14 @@ const MenuContainer = React.forwardRef(
     const highlightIndex = React.useCallback(
       (index: number) => {
         const validIndex = Math.max(-1, Math.min(index, items.length - 1));
-        if (validIndex !== markedIndex) {
-          dispatch(actionSetmenuState({ markedIndex: validIndex }));
-          scrollToIndex(validIndex);
-        }
+        isKeyboardNavigationRef.current = true;
+        // Always dispatched: markedIndex of this closure can be outdated (e.g. the items effect
+        // has just reset it), the reducer skips the update when nothing changes.
+        // The mouse and the keyboard share one highlight
+        dispatch(actionSetmenuState({ markedIndex: validIndex, hoveredIndex: -1 }));
+        scrollToIndex(validIndex);
       },
-      [dispatch, items.length, markedIndex, scrollToIndex],
+      [dispatch, items.length, scrollToIndex],
     );
 
     const highlightPrevItem = React.useCallback(() => {
@@ -582,6 +594,13 @@ const MenuContainer = React.forwardRef(
             onRequestClose(event);
             break;
 
+          case 'Tab':
+            // The list is rendered in a portal at the end of the page, so the next Tab stop
+            // would be lost: close the menu instead, the focus returns to the anchor
+            event.preventDefault();
+            onRequestClose(event);
+            break;
+
           default:
             break;
         }
@@ -608,21 +627,31 @@ const MenuContainer = React.forwardRef(
         // The menu is already closed by the parent, so onRequestClose must not be called again
         dispatch(actionSetmenuState({ markedIndex: -1, hoveredIndex: -1 }));
 
+        // Otherwise the focus is lost together with the unmounted list
+        if (hasFocusRef.current) {
+          hasFocusRef.current = false;
+          lastAnchorRef.current?.focus();
+        }
+
         return;
       }
 
       // При открытии
       scrollToFirstSelected();
 
-      if (autofocus) {
-        // Очищаем предыдущий таймаут
-        if (focusTimeoutRef.current) {
-          clearTimeout(focusTimeoutRef.current);
-        }
-        focusTimeoutRef.current = setTimeout(() => {
-          menuListRef.current?.focus();
-        }, 15);
+      if (focusTimeoutRef.current) {
+        clearTimeout(focusTimeoutRef.current);
       }
+
+      // A menu mounted in the open state gets its list only after the portal is mounted,
+      // so the scroll is repeated when the list surely exists
+      focusTimeoutRef.current = setTimeout(() => {
+        scrollToFirstSelected();
+
+        if (autofocus) {
+          menuListRef.current?.focus();
+        }
+      }, 15);
     }, [isOpen, autofocus, dispatch, scrollToFirstSelected]);
 
     // Обновление выбранных индексов
@@ -643,38 +672,87 @@ const MenuContainer = React.forwardRef(
       }
     }, [getSelectedIndexes, dispatch]);
 
+    // The highlight is an index, so when the items change it follows the same item
+    // or is removed. Otherwise a filtered list highlights a random item at the old index
+    const prevItemsRef = React.useRef(items);
+    const markedIndexRef = React.useRef(markedIndex);
+    markedIndexRef.current = markedIndex;
+
+    React.useEffect(() => {
+      const prevItems = prevItemsRef.current;
+      prevItemsRef.current = items;
+
+      // A new array with the same items (e.g. `items={list.filter(...)}`) is not a change
+      const isSameList =
+        prevItems.length === items.length && prevItems.every((item, i) => item === items[i]);
+      if (isSameList) {
+        return;
+      }
+
+      const prevIndex = markedIndexRef.current;
+      const markedItem = prevIndex === -1 ? undefined : prevItems[prevIndex];
+      const newIndex =
+        markedItem === undefined
+          ? -1
+          : items.findIndex(item => item === markedItem || compareFunc(item, markedItem));
+
+      if (newIndex !== prevIndex) {
+        dispatch(actionSetmenuState({ markedIndex: newIndex, hoveredIndex: -1 }));
+      }
+
+      // The old scroll position means nothing for the new list
+      if (newIndex === -1) {
+        if (menuListRef.current) {
+          menuListRef.current.scrollTop = 0;
+        }
+      } else {
+        scrollToIndex(newIndex);
+      }
+    }, [items, compareFunc, dispatch, scrollToIndex]);
+
     const itemClickHandler = React.useCallback(
       (index: number) => () => selectItem(index),
       [selectItem],
     );
 
+    // The hovered item becomes the highlighted one, so the keyboard continues from it
+    // and Enter selects it
     const itemMouseEnterHandler = React.useCallback(
       (index: number) => () => {
-        if (index !== hoveredIndex) {
-          dispatch(
-            actionSetmenuState({
-              hoveredIndex: index,
-              markedIndex: -1,
-            }),
-          );
+        if (isKeyboardNavigationRef.current) {
+          return;
+        }
+
+        if (index !== markedIndex || index !== hoveredIndex) {
+          dispatch(actionSetmenuState({ hoveredIndex: index, markedIndex: index }));
         }
       },
-      [dispatch, hoveredIndex],
+      [dispatch, hoveredIndex, markedIndex],
     );
 
     const itemMouseLeaveHandler = React.useCallback(
       (index: number) => () => {
         if (index === hoveredIndex) {
-          dispatch(
-            actionSetmenuState({
-              hoveredIndex: -1,
-              markedIndex: -1,
-            }),
-          );
+          dispatch(actionSetmenuState({ hoveredIndex: -1 }));
         }
       },
       [dispatch, hoveredIndex],
     );
+
+    // A real pointer movement ends the keyboard navigation
+    const listMouseMoveHandler = React.useCallback(() => {
+      isKeyboardNavigationRef.current = false;
+    }, []);
+
+    const listFocusHandler = React.useCallback(() => {
+      hasFocusRef.current = true;
+    }, []);
+
+    const listBlurHandler = React.useCallback((event: React.FocusEvent<HTMLDivElement>) => {
+      if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
+        hasFocusRef.current = false;
+      }
+    }, []);
 
     const onAnchorPosChangedMemo = React.useCallback(
       (newPlacement: AnchorPos) => {
@@ -693,10 +771,13 @@ const MenuContainer = React.forwardRef(
             {
               key: index,
               onMouseEnter: itemMouseEnterHandler(index),
+              // mouseenter is skipped during the keyboard navigation, so the item under a moving
+              // pointer is highlighted by mousemove
+              onMouseMove: itemMouseEnterHandler(index),
               onMouseLeave: itemMouseLeaveHandler(index),
               onClick: itemClickHandler(index),
               selected: selectedIndexes.includes(index),
-              hovered: hoveredIndex === index || markedIndex === index,
+              hovered: markedIndex === index,
             },
           ),
         ),
@@ -704,7 +785,6 @@ const MenuContainer = React.forwardRef(
         items,
         children,
         selectedIndexes,
-        hoveredIndex,
         markedIndex,
         itemMouseEnterHandler,
         itemMouseLeaveHandler,
@@ -751,6 +831,11 @@ const MenuContainer = React.forwardRef(
             ref={menuListRef}
             maxWidth={maxWidth}
             onKeyDown={listKeydownEvent}
+            onMouseMoveCapture={listMouseMoveHandler}
+            onFocus={listFocusHandler}
+            onBlur={listBlurHandler}
+            role="listbox"
+            aria-multiselectable={multiple || undefined}
           >
             {renderedChildren}
           </ListComponent>

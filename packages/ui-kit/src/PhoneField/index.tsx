@@ -1,7 +1,8 @@
 import React from 'react';
 
-import TextField, { TextFieldProps } from '../TextField';
-import { usePhoneUtils } from './usePhoneUtils';
+import { TextFieldProps } from '../TextField';
+import MaskedField, { FormatParsedPayload, ParseInput } from '../MaskedField';
+import { dropExtraPluses, templateToMask, usePhoneUtils } from './usePhoneUtils';
 import CountryFlagComponent from './CountryFlagComponent';
 import type { CountryFlag, PhoneTemplate } from './templates';
 
@@ -71,121 +72,98 @@ const PhoneField: React.ForwardRefRenderFunction<HTMLDivElement, PhoneFieldProps
   ref,
 ) => {
   const { value, templates, inputRef, withoutCountryFlag, onChange, ...textFieldProps } = props;
-  const { formatParsedInput, parseInput, parseAndFormat } = usePhoneUtils({ templates });
+  const { parseInput, parseAndFormat, getTemplateInfo } = usePhoneUtils({ templates });
   const textInputRef = React.useRef<HTMLInputElement | null>(null);
-  const initialValue = React.useRef(value);
 
-  const [state, setState] = React.useState(() => {
-    const { text, countryCode, placeholder, number, CountryFlag } = parseAndFormat(
-      String(initialValue.current),
-    );
-
-    return {
-      currentValue: text,
-      number,
-      countryCode,
-      placeholder,
-      CountryFlag,
-    };
-  });
-  const { countryCode, currentValue, placeholder, CountryFlag } = state;
+  // The current text of the field: the flag and the placeholder follow it
+  const [currentValue, setCurrentValue] = React.useState(() => parseAndFormat(String(value)).text);
+  const lastValue = React.useRef(value);
 
   React.useEffect(() => {
-    if (initialValue.current !== value) {
-      initialValue.current = value;
-
-      const formatted = parseAndFormat(String(value));
-
-      if (formatted.text !== currentValue) {
-        setState(prev => ({
-          ...prev,
-          currentValue: formatted.text,
-          countryCode: formatted.countryCode,
-          placeholder: formatted.placeholder,
-          CountryFlag: formatted.CountryFlag,
-        }));
-      }
+    if (lastValue.current !== value) {
+      lastValue.current = value;
+      setCurrentValue(parseAndFormat(String(value)).text);
     }
-  }, [countryCode, currentValue, parseAndFormat, placeholder, value]);
+  }, [parseAndFormat, value]);
 
-  const handleChange: React.ChangeEventHandler<HTMLInputElement> = event => {
-    const parsed = parseInput(
-      String(event.currentTarget.value),
-      textInputRef.current?.selectionStart || 0,
-    );
+  const { CountryFlag, placeholder } = React.useMemo(
+    () => parseAndFormat(currentValue),
+    [parseAndFormat, currentValue],
+  );
 
-    const {
-      caret,
-      text,
-      template,
-      placeholder,
-      countryCode,
-      callingCode,
-      CountryFlag,
-      number,
-      isValid,
-    } = formatParsedInput(parsed.text, parsed.caret);
+  // <MaskedField> gets the phone-specific parsing and the mask of the detected template
+  const parsePhone: ParseInput = React.useCallback(
+    (input, _mask, caret) => dropExtraPluses(parseInput(input, caret)),
+    [parseInput],
+  );
 
-    // Spreading the event would drop its prototype methods (preventDefault etc.)
-    // and the input properties (name, id...), so the formatted text is written to the input itself
-    event.currentTarget.value = text;
+  const getMask = React.useCallback(
+    (input: string) => templateToMask(getTemplateInfo(parsePhone(input, []).text).template),
+    [getTemplateInfo, parsePhone],
+  );
 
-    onChange(event, {
-      value: text,
-      placeholder,
-      CountryFlag,
-      template,
-      countryCode,
-      callingCode,
-      number,
-      isValid,
-      combined: `${callingCode ?? ''}${number}`,
-    });
+  const handleChange = React.useCallback(
+    (payload: FormatParsedPayload, event: React.ChangeEvent<HTMLInputElement>) => {
+      const formatted = parseAndFormat(payload.text);
 
-    setState(prev => ({
-      ...prev,
-      currentValue: text,
-      countryCode,
-      placeholder,
-      CountryFlag,
-    }));
-    setTimeout(() => {
-      textInputRef.current?.setSelectionRange(caret, caret);
-    }, 15);
-  };
+      setCurrentValue(payload.text);
+      onChange(event, {
+        value: payload.text,
+        placeholder: formatted.placeholder,
+        CountryFlag: formatted.CountryFlag,
+        template: formatted.template,
+        countryCode: formatted.countryCode,
+        callingCode: formatted.callingCode,
+        number: formatted.number,
+        isValid: formatted.isValid,
+        combined: `${formatted.callingCode ?? ''}${formatted.number}`,
+      });
+    },
+    [onChange, parseAndFormat],
+  );
+
+  const setInputRef = React.useCallback(
+    (input: HTMLInputElement | null) => {
+      textInputRef.current = input;
+
+      if (typeof inputRef === 'function') {
+        inputRef(input);
+      }
+      if (inputRef && typeof inputRef === 'object') {
+        inputRef.current = input;
+      }
+    },
+    [inputRef],
+  );
+
+  const startIcon = React.useMemo(
+    () =>
+      withoutCountryFlag ? undefined : (
+        <CountryFlagComponent
+          flag={CountryFlag}
+          onClick={() => {
+            if (textInputRef.current) {
+              textInputRef.current.select();
+              textInputRef.current.focus();
+            }
+          }}
+        />
+      ),
+    [CountryFlag, withoutCountryFlag],
+  );
 
   return (
-    <TextField
+    <MaskedField
       ref={ref}
-      startIcon={React.useMemo(
-        () =>
-          withoutCountryFlag ? undefined : (
-            <CountryFlagComponent
-              flag={CountryFlag}
-              onClick={() => {
-                if (textInputRef.current) {
-                  textInputRef.current.select();
-                  textInputRef.current.focus();
-                }
-              }}
-            />
-          ),
-        [CountryFlag, withoutCountryFlag],
-      )}
       {...textFieldProps}
-      value={currentValue}
+      // An explicit `startIcon={undefined}` (e.g. from <Autocomplete>) must not hide the flag
+      startIcon={textFieldProps.startIcon ?? startIcon}
+      value={value}
+      mask={getMask}
+      parseInput={parsePhone}
       placeholder={textFieldProps.placeholder ?? placeholder}
       onChange={handleChange}
-      inputRef={input => {
-        textInputRef.current = input;
-
-        if (typeof inputRef === 'function') {
-          inputRef(input);
-        }
-        if (inputRef && typeof inputRef === 'object') {
-          inputRef.current = input;
-        }
-      }}
+      inputRef={setInputRef}
     />
   );
 };

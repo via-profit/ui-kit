@@ -32,6 +32,13 @@ export const defaultState: MenuState = {
 const reducer: React.Reducer<MenuState, Actions> = (state, action) => {
   switch (action.type) {
     case 'setMenuState': {
+      const keys = Object.keys(action.payload) as (keyof MenuState)[];
+
+      // Keep the state object when nothing changes, so the menu is not re-rendered
+      if (keys.every(key => state[key] === action.payload[key])) {
+        return state;
+      }
+
       return {
         ...state,
         ...action.payload,

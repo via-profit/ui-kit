@@ -2,15 +2,21 @@ import React from 'react';
 
 import TextField, { TextFieldProps } from '../TextField';
 import Button from '../Button';
-import { StaticLoadingIndicator } from '../LoadingIndicator';
+import Spinner from '../LoadingIndicator/Spinner';
 import { actionSetPartial, useContextDispatch, useContextState } from './context';
 import IconClear from './IconClear';
+import AutocompleteTagsInput, {
+  AutocompleteTag,
+  AutocompleteTagsContext,
+} from './AutocompleteTagsInput';
 import { PositionStrategy } from '../Popper';
 import { mouseEventMap } from '../ClickOutside';
 import Menu, {
   AnchorPos,
   GetOptionSelected,
   MenuItemProps,
+  MenuList,
+  MenuListProps,
   MenuProps,
   MenuRef,
   OnRequestClose,
@@ -40,13 +46,9 @@ export interface AutocompleteProps<T, Multiple extends boolean | undefined = und
   readonly isOpen?: boolean;
 
   /**
-   * Loading indicator visibility\
-   * If `true` then visible, otherwise - hidden
-   */
-  /**
    * Anchor position\
    * \
-   * Default: `bottom`
+   * Default: `bottom-fill`
    */
   readonly anchorPos?: AnchorPos;
 
@@ -77,8 +79,7 @@ export interface AutocompleteProps<T, Multiple extends boolean | undefined = und
    * Used to prevent the popper from being positioned too close to the screen boundaries.
    * The popper will try to flip to another placement if it cannot maintain this margin.
    *
-   * **Default**: `8`
-   * ```
+   * **Default**: `30`
    */
   readonly viewportMargin?: number;
 
@@ -132,7 +133,8 @@ export interface AutocompleteProps<T, Multiple extends boolean | undefined = und
   readonly onChange?: OnChange<T, Multiple>;
 
   /**
-   * A function that transforms the selected item into a string
+   * A function that transforms the selected item into a string.\
+   * With `multiple` it is called for every selected item to get the label of its tag
    * Example:
    * ```tsx
    * <Autocomplete
@@ -198,9 +200,8 @@ export type Children<T> = (
   itemProps: MenuItemProps,
 ) => React.ReactNode;
 
-export type ItemToString<T, Multiple extends boolean | undefined = undefined> = (
-  item: Multiple extends undefined ? T : readonly T[],
-) => string;
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export type ItemToString<T, Multiple extends boolean | undefined = undefined> = (item: T) => string;
 
 export type OnChange<T, Multiple extends boolean | undefined = undefined> = (
   item: Value<T, Multiple>,
@@ -213,6 +214,26 @@ export type FilterItems<T> = (
     readonly inputValue: string;
   },
 ) => readonly T[];
+
+// Module level, so the input keeps its identity between renders and does not lose the focus
+const MULTIPLE_TEXT_FIELD_OVERRIDES = { Input: AutocompleteTagsInput };
+
+// The list must not take the focus on a click: the user keeps typing in the field
+const AutocompleteMenuList = React.forwardRef(
+  (props: MenuListProps, ref: React.ForwardedRef<HTMLDivElement>) => (
+    <MenuList
+      {...props}
+      onMouseDown={event => {
+        event.preventDefault();
+        props.onMouseDown?.(event);
+      }}
+      ref={ref}
+    />
+  ),
+);
+AutocompleteMenuList.displayName = 'AutocompleteMenuList';
+
+const MENU_OVERRIDES = { List: AutocompleteMenuList };
 
 export type AutocompleteRef = {
   clear: () => void;
@@ -312,12 +333,11 @@ const Autocomplete = React.forwardRef(
      * Restore the input text from the current value (used by clearOnBlur)
      */
     const restoreInputValue = React.useCallback(() => {
+      // With multiple the field holds only the search text, the selected items are tags
       const newInputValue =
-        currentValue === null
-          ? ''
-          : selectedItemToString(currentValue as Multiple extends undefined ? T : readonly T[]);
+        multiple || currentValue === null ? '' : selectedItemToString(currentValue as T);
 
-      const newFilteredItems = multiple ? filteredItems : applyFilterForItems(newInputValue, items);
+      const newFilteredItems = applyFilterForItems(newInputValue, items);
 
       dispatch(
         actionSetPartial({
@@ -325,15 +345,7 @@ const Autocomplete = React.forwardRef(
           inputValue: newInputValue,
         }),
       );
-    }, [
-      currentValue,
-      selectedItemToString,
-      multiple,
-      filteredItems,
-      applyFilterForItems,
-      items,
-      dispatch,
-    ]);
+    }, [currentValue, selectedItemToString, multiple, applyFilterForItems, items, dispatch]);
 
     const inputKeydownEvent = React.useCallback(
       (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -393,6 +405,16 @@ const Autocomplete = React.forwardRef(
 
           //   break;
 
+          case 'Backspace':
+            // An empty field with tags: Backspace removes the last tag
+            if (multiple && event.currentTarget.value === '' && Array.isArray(currentValue)) {
+              if (currentValue.length > 0 && typeof onChange === 'function') {
+                event.preventDefault();
+                onChange(currentValue.slice(0, -1) as Value<T, Multiple>);
+              }
+            }
+            break;
+
           case 'Tab':
             // Focus leaves the field, so clearOnBlur applies as for the outside click
             if (clearOnBlur) {
@@ -424,6 +446,9 @@ const Autocomplete = React.forwardRef(
         filteredItems.length,
         clearOnBlur,
         restoreInputValue,
+        multiple,
+        currentValue,
+        onChange,
       ],
     );
 
@@ -439,14 +464,16 @@ const Autocomplete = React.forwardRef(
         return;
       }
 
+      // With multiple the selected items are shown as tags and the search text is kept
       dispatch(
-        actionSetPartial({
-          currentValue: value,
-          inputValue:
-            value === null
-              ? ''
-              : selectedItemToString(value as Multiple extends undefined ? T : readonly T[]),
-        }),
+        actionSetPartial(
+          multiple
+            ? { currentValue: value }
+            : {
+                currentValue: value,
+                inputValue: value === null ? '' : selectedItemToString(value as T),
+              },
+        ),
       );
     }, [value, multiple, currentValue, inputValue, dispatch, selectedItemToString]);
 
@@ -502,8 +529,9 @@ const Autocomplete = React.forwardRef(
           parentElem = parentElem.parentNode as Node;
         }
 
-        // Click outside
-        if (needToClose && currentOpen) {
+        // Click outside. The menu can be already closed (no matches, Escape),
+        // but the user still leaves the field with an unfinished text
+        if (needToClose && (currentOpen || isFocusedRef.current)) {
           if (clearOnBlur) {
             restoreInputValue();
           }
@@ -523,14 +551,14 @@ const Autocomplete = React.forwardRef(
 
     const onSelectMenuItem: NonNullable<MenuProps<T, Multiple>['onSelectItem']> = React.useCallback(
       item => {
-        if (!multiple) {
-          dispatch({
-            type: 'setPartial',
-            payload: {
-              filteredItems: applyFilterForItems(selectedItemToString(item), items),
-            },
-          });
-        }
+        dispatch(
+          actionSetPartial(
+            multiple
+              ? // The search text is done, the whole list is shown again for the next choice
+                { inputValue: '', filteredItems: applyFilterForItems('', items) }
+              : { filteredItems: applyFilterForItems(selectedItemToString(item as T), items) },
+          ),
+        );
         if (typeof onChange === 'function') {
           onChange(item);
         }
@@ -542,7 +570,7 @@ const Autocomplete = React.forwardRef(
       if (currentLoading) {
         return (
           <Button iconOnly type="button" variant="plain" disabled>
-            <StaticLoadingIndicator />
+            <Spinner />
           </Button>
         );
       }
@@ -662,6 +690,28 @@ const Autocomplete = React.forwardRef(
       [anchorElement, dispatch],
     );
 
+    const tags: readonly AutocompleteTag[] = React.useMemo(() => {
+      if (!multiple || !Array.isArray(currentValue)) {
+        return [];
+      }
+
+      const selected = currentValue as readonly T[];
+
+      return selected.map((item, index) => {
+        const tagLabel = selectedItemToString(item);
+
+        return {
+          key: `${index}:${tagLabel}`,
+          label: tagLabel,
+          onDelete: () => {
+            if (typeof onChange === 'function') {
+              onChange(selected.filter((_, i) => i !== index) as Value<T, Multiple>);
+            }
+          },
+        };
+      });
+    }, [multiple, currentValue, selectedItemToString, onChange]);
+
     const inputRefRef = React.useRef(inputRef);
     React.useEffect(() => {
       inputRefRef.current = inputRef;
@@ -678,10 +728,11 @@ const Autocomplete = React.forwardRef(
     }, []);
 
     return (
-      <>
+      <AutocompleteTagsContext.Provider value={tags}>
         {React.useMemo(
           () => (
             <overridesMap.TextField
+              overrides={multiple ? MULTIPLE_TEXT_FIELD_OVERRIDES : undefined}
               placeholder={placeholder}
               label={label}
               error={error}
@@ -690,6 +741,8 @@ const Autocomplete = React.forwardRef(
               fullWidth={fullWidth}
               startIcon={startIcon}
               endIcon={endIconMemo}
+              // The browser suggestions would be shown over the menu; can be overridden by the props
+              autoComplete="off"
               {...nativeInputProps}
               onKeyDown={textFieldOnKeyDown}
               ref={setAnchorElementRef}
@@ -705,6 +758,7 @@ const Autocomplete = React.forwardRef(
             setAnchorElementRef,
             setInputElementRef,
             overridesMap,
+            multiple,
             placeholder,
             label,
             error,
@@ -726,6 +780,7 @@ const Autocomplete = React.forwardRef(
           () => (
             <Menu
               ref={menuRef}
+              overrides={MENU_OVERRIDES}
               anchorPos={anchorPos}
               alternativePlacements={alternativePlacements}
               multiple={multiple}
@@ -764,7 +819,7 @@ const Autocomplete = React.forwardRef(
             renderChildren,
           ],
         )}
-      </>
+      </AutocompleteTagsContext.Provider>
     );
   },
 );

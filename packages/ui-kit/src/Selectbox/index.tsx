@@ -43,14 +43,12 @@ export interface SelectboxProps<T, Multiple extends boolean | undefined = undefi
   /**
    * Anchor position\
    * \
-   * Default: `bottom`
+   * Default: `bottom-fill`
    */
   readonly anchorPos?: AnchorPos;
   readonly positionStrategy?: PositionStrategy;
 
   readonly autoFlip?: boolean;
-
-
 
   /**
    * Text field loading state\
@@ -119,6 +117,22 @@ export interface SelectboxProps<T, Multiple extends boolean | undefined = undefi
   readonly selectedItemToString: ItemToString<T, Multiple>;
 
   /**
+   * Renders the button content for the selected value instead of `selectedItemToString`,
+   * e.g. badges for the multiple selectbox.\
+   * Not called when nothing is selected, `notSetLabel` is shown then.\
+   * Do not render interactive elements (buttons, links): the content is placed inside a `<button>`
+   * Example:
+   * ```tsx
+   * <Selectbox
+   *   multiple
+   *   renderValue={items => items.map(item => <Badge key={item.id}>{item.name}</Badge>)}
+   *   ...
+   * />
+   * ```
+   */
+  readonly renderValue?: RenderValue<T, Multiple>;
+
+  /**
    * A function that determines which of the elements is currently selected\
    * Example:
    * ```tsx
@@ -175,7 +189,10 @@ export interface SelectboxOverrides {
   /**
    * Icon
    */
-  readonly Icon?: React.ComponentType<SelectboxChevronIconProps & React.RefAttributes<SVGElement>>;
+  // SVGProps already contain a legacy `ref`, it is replaced to keep the type usable
+  readonly Icon?: React.ComponentType<
+    Omit<SelectboxChevronIconProps, 'ref'> & React.RefAttributes<SVGSVGElement>
+  >;
 
   /**
    * Component for display error text
@@ -216,6 +233,10 @@ export type ItemToString<T, Multiple extends boolean | undefined = undefined> = 
   item: Multiple extends undefined ? T : readonly T[],
 ) => string;
 
+export type RenderValue<T, Multiple extends boolean | undefined = undefined> = (
+  value: Multiple extends undefined ? T : readonly T[],
+) => React.ReactNode;
+
 export type OnChange<T, Multiple extends boolean | undefined = undefined> = (
   item: Value<T, Multiple>,
 ) => void;
@@ -246,6 +267,7 @@ const Selectbox = React.forwardRef(
       children,
       onChange,
       selectedItemToString,
+      renderValue,
       getOptionSelected,
       onRequestOpen = () => undefined,
       onRequestClose = () => undefined,
@@ -276,13 +298,17 @@ const Selectbox = React.forwardRef(
     const generatedID = React.useId();
     const inputID = typeof id === 'string' ? id : generatedID;
 
-    const renderValueAsString = React.useCallback(() => {
+    const renderButtonContent = React.useCallback((): React.ReactNode => {
       if ((!multiple && value == null) || (multiple && (value as readonly T[]).length === 0)) {
         return notSetLabel;
       }
 
-      return selectedItemToString(value as Multiple extends undefined ? T : readonly T[]);
-    }, [multiple, selectedItemToString, value, notSetLabel]);
+      const selected = value as Multiple extends undefined ? T : readonly T[];
+
+      return typeof renderValue === 'function'
+        ? renderValue(selected)
+        : selectedItemToString(selected);
+    }, [multiple, selectedItemToString, renderValue, value, notSetLabel]);
 
     const handleButtonClick = React.useCallback(
       (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -294,6 +320,23 @@ const Selectbox = React.forwardRef(
         nativeButtonProps.onClick?.(event);
       },
       [isOpen, nativeButtonProps, onRequestClose, onRequestOpen],
+    );
+
+    // As a native select, the arrows open the list; the list then takes the focus
+    const handleButtonKeyDown = React.useCallback(
+      (event: React.KeyboardEvent<HTMLButtonElement>) => {
+        nativeButtonProps.onKeyDown?.(event);
+
+        if (
+          !isOpen &&
+          !event.defaultPrevented &&
+          (event.key === 'ArrowDown' || event.key === 'ArrowUp')
+        ) {
+          event.preventDefault();
+          onRequestOpen(event);
+        }
+      },
+      [isOpen, nativeButtonProps, onRequestOpen],
     );
 
     const setRefs = React.useCallback(
@@ -349,7 +392,8 @@ const Selectbox = React.forwardRef(
         error,
         isOpen,
         anchorPos,
-        endIcon: isLoading ? <Spinner /> : <overridesMap.Icon isOpen={isOpen} />,
+        // The static indicator: the default one is an overlay over the nearest positioned ancestor
+        endIcon: isLoading ? <Spinner size="1.2em" /> : <overridesMap.Icon isOpen={isOpen} />,
         ...nativeButtonProps,
       }),
       [fullWidth, error, isOpen, anchorPos, isLoading, overridesMap, nativeButtonProps],
@@ -380,9 +424,10 @@ const Selectbox = React.forwardRef(
             {...buttonProps}
             id={inputID}
             onClick={handleButtonClick}
+            onKeyDown={handleButtonKeyDown}
             ref={setRefs}
           >
-            {renderValueAsString()}
+            {renderButtonContent()}
           </overridesMap.Button>
         </overridesMap.ButtonWrapper>
         <overridesMap.ErrorText error={error}>{errorText}</overridesMap.ErrorText>

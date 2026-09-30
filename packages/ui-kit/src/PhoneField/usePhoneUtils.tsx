@@ -2,6 +2,7 @@ import React from 'react';
 
 import type { CountryCode, PhoneTemplate, CountryFlag } from './templates';
 import UnknownFlag from './UnknownFlag';
+import { Mask, useMasked } from '../MaskedField/useMasked';
 
 export interface Formatted {
   readonly text: string;
@@ -37,8 +38,28 @@ type Format = (text: string, caret: number, defaultCountry?: string | null) => F
 type ParseAndValidate = (inputValue: string) => boolean;
 type ParseAndFormat = (inputValue: string, caret?: number) => Formatted;
 
+/**
+ * Converts a phone template to a mask: «x» is a digit, other chars are literals
+ */
+export const templateToMask = (template: string): Mask =>
+  template.split('').map(char => (char === 'x' ? /\d/ : char));
+
+/**
+ * «+» is allowed only as the first char of a parsed phone, the other ones are dropped
+ */
+export const dropExtraPluses = (parsed: { readonly text: string; readonly caret: number }) => {
+  const { text, caret } = parsed;
+  const removedBeforeCaret = (text.slice(1, Math.max(caret, 1)).match(/\+/g) || []).length;
+
+  return {
+    text: text.charAt(0) + text.slice(1).replace(/\+/g, ''),
+    caret: caret - removedBeforeCaret,
+  };
+};
+
 export const usePhoneUtils = (params: { templates: readonly PhoneTemplate[] }) => {
   const { templates } = params;
+  const masked = useMasked();
   const templatesList = React.useMemo(
     () =>
       templates.concat([
@@ -114,59 +135,32 @@ export const usePhoneUtils = (params: { templates: readonly PhoneTemplate[] }) =
         return data;
       }
 
-      const { countryCode, callingCode, CountryFlag, template, placeholder } =
-        getTemplateInfo(inputValue);
-      const mask = template.split('').map(c => (c === 'x' ? /\d/ : c));
-
-      let charIndex = 0;
-      for (let patternIndex = 0; patternIndex < mask.length; patternIndex++) {
-        if (charIndex >= inputValue.length) {
-          break;
-        }
-
-        const char = inputValue[charIndex];
-        const template = mask[patternIndex];
-
-        // If put +, but not first
-        if (charIndex !== 0 && char === '+') {
-          break;
-        }
-
-        if (template instanceof RegExp && new RegExp(template).test(char)) {
-          data.text = `${data.text}${char}`;
-          charIndex += 1;
-        }
-
-        if (typeof template === 'string' && template === char) {
-          data.text = `${data.text}${char}`;
-          charIndex += 1;
-        }
-
-        if (typeof template === 'string' && template !== char) {
-          data.text = `${data.text}${template}`;
-          if (charIndex < caret) {
-            data.caret += 1;
-          }
-        }
-      }
-
-      // const templateLength = template.replace(/[^x\d]/g, '').split('').length;
-      // const valueLength = inputValue.replace(/[^\d]/g, '').split('').length;
-
-      const number = data.text.replace(/[^0-9]/g, '').substring(callingCode?.length || 0);
+      // The mask engine is shared with <MaskedField>, only the template is phone-specific
+      const normalized = dropExtraPluses({ text: inputValue, caret });
+      const { countryCode, callingCode, CountryFlag, template, placeholder } = getTemplateInfo(
+        normalized.text,
+      );
+      const formatted = masked.formatParsedInput(
+        normalized.text,
+        templateToMask(template),
+        normalized.caret,
+      );
+      const number = formatted.text.replace(/[^0-9]/g, '').substring(callingCode?.length || 0);
 
       return {
         ...data,
+        text: formatted.text,
+        caret: formatted.caret,
         countryCode,
         callingCode,
         CountryFlag,
         template,
         placeholder,
         number,
-        isValid: validateParsedInput(data.text, template),
+        isValid: validateParsedInput(formatted.text, template),
       };
     },
-    [getTemplateInfo, templatesList, validateParsedInput],
+    [getTemplateInfo, templatesList, validateParsedInput, masked],
   );
 
   /**

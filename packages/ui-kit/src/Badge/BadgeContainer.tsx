@@ -36,7 +36,8 @@ const BadgeContainer: React.ForwardRefRenderFunction<HTMLSpanElement, BadgeConta
   props,
   ref,
 ) => {
-  const { children, ...nativeProps } = props;
+  // The color is applied by the badge variant, it must not reach the DOM as an attribute
+  const { children, color, ...nativeProps } = props;
 
   return (
     <StyledBadge {...nativeProps} ref={ref}>

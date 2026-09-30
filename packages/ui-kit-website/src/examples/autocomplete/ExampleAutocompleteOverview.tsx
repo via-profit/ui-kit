@@ -2,6 +2,8 @@ import React from 'react';
 import Autocomplete, { AutocompleteItem, FilterItems } from '@via-profit/ui-kit/src/Autocomplete';
 import Highlighted from '@via-profit/ui-kit/src/Highlighted';
 
+import { FormattedMessage } from 'react-intl';
+
 import countries from './countries.json';
 
 type Item = (typeof countries)[0];
@@ -22,6 +24,7 @@ const ExampleAutocompleteOverview: React.FC = () => {
   return (
     <>
       <Autocomplete
+        label={<FormattedMessage defaultMessage="Страна" />}
         value={value}
         items={countries}
         openOnFocus={false}

@@ -6,7 +6,7 @@ import ButtonBase from '../Button/ButtonBase';
 import Color from '../Color';
 
 export type BadgeDeleteButtonProps = Omit<React.HTMLAttributes<HTMLButtonElement>, 'children'> & {
-  readonly color?: 'primary' | 'secondaary' | 'default' | string;
+  readonly color?: 'primary' | 'secondary' | 'default' | string;
   readonly variant?: 'standard' | 'outlined';
 };
 

@@ -91,9 +91,7 @@ export interface TextAreaOverrides {
   /**
    * label component
    */
-  readonly Label?: React.ComponentType<
-    TextFieldLabelProps & React.RefAttributes<HTMLLabelElement>
-  >;
+  readonly Label?: React.ComponentType<TextFieldLabelProps & React.RefAttributes<HTMLLabelElement>>;
 
   /**
    * label asterisk component
@@ -200,14 +198,19 @@ const TextArea: React.ForwardRefRenderFunction<HTMLDivElement, TextAreaProps> = 
           {typeof requiredAsterisk !== 'undefined' &&
             requiredAsterisk !== null &&
             requiredAsterisk !== false && (
-            <overridesMap.Asterisk>
-              {typeof requiredAsterisk === 'boolean' ? '*' : requiredAsterisk}
-            </overridesMap.Asterisk>
-          )}
+              <overridesMap.Asterisk>
+                {typeof requiredAsterisk === 'boolean' ? '*' : requiredAsterisk}
+              </overridesMap.Asterisk>
+            )}
         </overridesMap.Label>
       )}
 
-      <overridesMap.InputWrapper error={error} focused={focused} fullWidth={fullWidth}>
+      <overridesMap.InputWrapper
+        error={error}
+        focused={focused}
+        fullWidth={fullWidth}
+        disabled={nativeInputProps.disabled}
+      >
         {hasStartIcon && (
           <overridesMap.IconWrapper position="start">{startIcon}</overridesMap.IconWrapper>
         )}

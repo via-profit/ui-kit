@@ -3,13 +3,21 @@
 ## Содержание
 
 - [Описание](#описание)
+- [Меню действий](#меню-действий)
 - [Мультивыбор](#мультивыбор)
-- [Api](#api)
+- [Управление с клавиатуры](#управление-с-клавиатуры)
+- [Закрытие](#закрытие)
+- [Позиция](#позиция)
+- [API](#api)
+- [Переопределение](#переопределение)
 - [Свойства](#свойства)
+- [Свойства MenuItem](#свойства-menuitem)
 
 ## Описание
 
-Компонент `<Menu>` создаёт выпадающее меню, используещее React портал.
+Компонент `<Menu>` показывает рядом с анкором (`anchorElement`) выпадающий список элементов, из которого можно выбрать один или несколько. Меню отрисовывается через [`<Popper>`](../popper/README.md) и не закрывается само: видимостью управляет свойство `isOpen`, а о том, что меню пора закрыть, сообщает `onRequestClose`.
+
+Элементы задаются массивом `items`, а отрисовывает их функция `children`. Она получает элемент с его индексом и свойства, которые нужно передать в `<MenuItem>`: обработчики мыши и признаки `selected` и `hovered`.
 
 _Пример использования:_
 
@@ -19,34 +27,33 @@ import Button from '@via-profit/ui-kit/Button';
 import Menu from '@via-profit/ui-kit/Menu';
 import MenuItem from '@via-profit/ui-kit/Menu/MenuItem';
 
-type Item = {
-  readonly id: number;
+type Country = {
+  readonly code: string;
   readonly name: string;
 };
 
 const Example: React.FC = () => {
   const [anchorElement, setAnchorElement] = React.useState<HTMLButtonElement | null>(null);
-  const [value, setValue] = React.useState<readonly Item | null>(null);
+  const [value, setValue] = React.useState<Country | null>(null);
 
   return (
     <>
-      <Button
-        variant="standard"
-        onClick={event => setAnchorElement(!anchorElement ? event.currentTarget : null)}
-      >
-        {value ? value.name : 'Выберите'}
+      <Button onClick={event => setAnchorElement(anchorElement ? null : event.currentTarget)}>
+        {value ? `Выбрано: ${value.name}` : 'Выберите'}
       </Button>
       <Menu
         anchorElement={anchorElement}
         isOpen={Boolean(anchorElement)}
+        anchorPos="bottom-fill"
+        autoFlip
         value={value}
-        items={items}
-        getOptionSelected={({ item, value }) => item.id === value.id}
+        items={countries}
+        getOptionSelected={({ item, value }) => item.code === value.code}
         onRequestClose={() => setAnchorElement(null)}
         onSelectItem={item => setValue(item)}
       >
         {({ item }, itemProps) => (
-          <MenuItem {...itemProps} key={item.id}>
+          <MenuItem {...itemProps} key={item.code}>
             {item.name}
           </MenuItem>
         )}
@@ -55,14 +62,69 @@ const Example: React.FC = () => {
   );
 };
 
-export default ExampleMenuOverview;
+export default Example;
 ```
 
 <ExampleMenuOverview />
 
+Выбранный элемент определяется функцией `getOptionSelected`. Если она не передана, элементы сравниваются поверхностно: равны, если совпадают все их собственные поля. Для объектов с идентификатором лучше передавать `getOptionSelected` — это быстрее и надёжнее.
+
+`children` должна вернуть ровно один элемент на каждый элемент `items`: по порядку дочерних элементов списка меню прокручивается к выбранному и подсвеченному элементу.
+
+## Меню действий
+
+Меню не обязано хранить выбранное значение. Передайте `value={null}` и выполняйте действие в `onSelectItem`. Свойство `startIcon` компонента `<MenuItem>` добавляет иконку перед текстом.
+
+_Пример использования:_
+
+```tsx
+import React from 'react';
+import Button from '@via-profit/ui-kit/Button';
+import Menu from '@via-profit/ui-kit/Menu';
+import MenuItem from '@via-profit/ui-kit/Menu/MenuItem';
+
+const actions = [
+  { id: 'create', label: 'Создать', icon: <PlusIcon /> },
+  { id: 'copy', label: 'Копировать', icon: <CopyIcon /> },
+  { id: 'open', label: 'Открыть', icon: <OpenIcon /> },
+];
+
+const Example: React.FC = () => {
+  const [anchorElement, setAnchorElement] = React.useState<HTMLButtonElement | null>(null);
+
+  return (
+    <>
+      <Button onClick={event => setAnchorElement(anchorElement ? null : event.currentTarget)}>
+        Действия
+      </Button>
+      <Menu
+        anchorElement={anchorElement}
+        isOpen={Boolean(anchorElement)}
+        anchorPos="bottom-start"
+        offset={4}
+        value={null}
+        items={actions}
+        onRequestClose={() => setAnchorElement(null)}
+        onSelectItem={action => runAction(action.id)}
+      >
+        {({ item }, itemProps) => (
+          <MenuItem {...itemProps} key={item.id} startIcon={item.icon}>
+            {item.label}
+          </MenuItem>
+        )}
+      </Menu>
+    </>
+  );
+};
+
+export default Example;
+```
+
+<ExampleMenuActions />
+
 ## Мультивыбор
 
-Компонент может работать в режиме мультивыбора, для чего используется свойство `multiple`. Меню, в котором указано свойство multiple позволяет осуществлять множественный выбор элементов списка. При этом, свойство `value` становится массивом.
+Со свойством `multiple` можно выбрать несколько элементов. `value` в этом режиме — массив, а `onSelectItem` получает новый массив целиком: выбор элемента добавляет его в массив, повторный выбор — убирает. По умолчанию в этом режиме меню не закрывается после выбора (`closeOnSelect={false}`).
 
 _Пример использования:_
 
@@ -73,54 +135,39 @@ import Menu from '@via-profit/ui-kit/Menu';
 import MenuItem from '@via-profit/ui-kit/Menu/MenuItem';
 import Badge from '@via-profit/ui-kit/Badge';
 
-type Item = {
-  readonly id: number;
-  readonly name: string;
-};
-
-const items: Item[] = [...new Array(30).keys()].map(i => ({
-  id: i,
-  name: i % 3 === 0 ? `Item ${i} Eiusmod enim labore reprehenderit` : `Item ${i}`,
-}));
-
 const Example: React.FC = () => {
   const [anchorElement, setAnchorElement] = React.useState<HTMLButtonElement | null>(null);
-  const [value, setValue] = React.useState<readonly Item[]>([]);
+  const [value, setValue] = React.useState<readonly Country[]>([]);
 
   return (
     <>
       <div>
-        {value.length === 0 && <>Ничего не выбрано</>}
         {value.map(item => (
           <Badge
+            key={item.code}
             color="primary"
             variant="outlined"
-            key={item.id}
-            onDelete={() => setValue(value.filter(v => v.id !== item.id))}
+            onDelete={() => setValue(value.filter(v => v.code !== item.code))}
           >
             {item.name}
           </Badge>
         ))}
       </div>
-      <Button
-        variant="standard"
-        onClick={event => setAnchorElement(!anchorElement ? event.currentTarget : null)}
-      >
+      <Button onClick={event => setAnchorElement(anchorElement ? null : event.currentTarget)}>
         Выберите
       </Button>
       <Menu
         anchorElement={anchorElement}
         isOpen={Boolean(anchorElement)}
-        value={value}
         multiple
-        items={items}
-        closeOnSelect={false}
-        getOptionSelected={({ item, value }) => item.id === value.id}
+        value={value}
+        items={countries}
+        getOptionSelected={({ item, value }) => item.code === value.code}
         onRequestClose={() => setAnchorElement(null)}
         onSelectItem={items => setValue(items)}
       >
         {({ item }, itemProps) => (
-          <MenuItem {...itemProps} key={item.id}>
+          <MenuItem {...itemProps} key={item.code}>
             {item.name}
           </MenuItem>
         )}
@@ -134,163 +181,261 @@ export default Example;
 
 <ExampleMenuMultiple />
 
-## Using anchor position
+## Управление с клавиатуры
 
-<ExampleMenuAnchorPos />
+После открытия меню получает фокус (это отключается свойством `autofocus={false}`) и подсвечивает первый выбранный элемент, прокручивая к нему список.
 
-## Using API
+| Клавиша | Действие |
+|---------|----------|
+| <kbd>↓</kbd> / <kbd>↑</kbd> | подсветить следующий / предыдущий элемент |
+| <kbd>Home</kbd> / <kbd>End</kbd> | подсветить первый / последний элемент |
+| <kbd>Enter</kbd> | выбрать подсвеченный элемент |
+| <kbd>Esc</kbd>, <kbd>Tab</kbd> | закрыть меню (вызвать `onRequestClose`) |
 
-<ExampleMenuAPI />
+Мышь и клавиатура подсвечивают один и тот же элемент: после наведения курсора стрелки продолжают от элемента под курсором, а <kbd>Enter</kbd> выбирает его.
 
----
+Если меню закрывается, пока фокус внутри него, фокус возвращается на анкор. Так пользователь клавиатуры не теряет место на странице.
+
+Для программ чтения с экрана список имеет роль `listbox`, а элементы `<MenuItem>` — роль `option` и атрибут `aria-selected`.
+
+## Закрытие
+
+Меню вызывает `onRequestClose`, когда:
+
+- выбран элемент — если `closeOnSelect` не равно `false`. По умолчанию `true`, а в режиме `multiple` — `false`;
+- нажата клавиша <kbd>Esc</kbd> или <kbd>Tab</kbd>;
+- нажата кнопка мыши за пределами меню — если `closeOutsideClick` не равно `false`.
+
+Нажатие на анкор не считается нажатием за пределами меню: обычно анкор сам открывает и закрывает меню, и без этого нажатие на него сначала закрывало бы меню, а затем сразу открывало снова. Если анкор сам меню не закрывает, например это поле ввода, передайте `closeOnAnchorClick`.
+
+## Позиция
+
+Положение меню относительно анкора задают свойства `anchorPos`, `autoFlip`, `alternativePlacements`, `offset`, `positionStrategy` и `viewportMargin`. Они передаются в `<Popper>` и работают так же, как в нём — подробнее в [документации Popper](../popper/README.md#позиция).
+
+По умолчанию меню открывается под анкором (`anchorPos="bottom"`) и не переворачивается, если не помещается в окне. Чтобы меню открывалось сверху, когда снизу не хватает места, передайте `autoFlip`. Позиция `bottom-fill` делает меню шириной с анкор, а `maxWidth` ограничивает ширину меню.
+
+Список не выше `18em`, дальше он прокручивается.
 
 ## API
 
-Reference (`ref`) компонента `<Menu>` содержит imperative API.
+Через `ref` компонент `<Menu>` предоставляет методы для управления меню извне. Они пригодятся, когда фокус остаётся в другом элементе, — например, в поле ввода автодополнения, которое само обрабатывает клавиши. В таком случае передайте `autofocus={false}`.
 
-### `scrollToIndex`
-Прокручивает список до элемента с указанным индексом.
-- **Аргументы:** `idx: number` — Индекс искомого элемента
+_Пример использования:_
 
-### `highlightIndex`
-Прокручивает список до элемента с указанным индексом и подсвечивает его.
-- **Аргументы:** `idx: number` — Индекс искомого элемента
+```tsx
+import React from 'react';
+import Menu, { MenuRef } from '@via-profit/ui-kit/Menu';
 
-### `selectItem`
-Осуществляет выбор элемента с указанным индексом. Будет вызван метод `onSelectItem`.
-- **Аргументы:** `idx: number` — Индекс искомого элемента
+const Example: React.FC = () => {
+  const menuRef = React.useRef<MenuRef | null>(null);
 
-### `selectHighlightedItem`
-Осуществляет выбор подсвеченного элемента. Будет вызван метод `onSelectItem`.
+  return (
+    <>
+      <Button onClick={() => menuRef.current?.highlightNextItem()}>Следующий</Button>
+      <Button onClick={() => menuRef.current?.selectHighlightedItem()}>Выбрать</Button>
+      <Menu ref={menuRef} autofocus={false} {...menuProps}>
+        {renderItem}
+      </Menu>
+    </>
+  );
+};
+```
 
-### `highlightPrevItem`
-Прокручивает список до предыдущего элемента и подсвечивает его.
+<ExampleMenuAPI />
 
-### `highlightNextItem`
-Прокручивает список до следующего элемента и подсвечивает его.
+| Метод | Описание |
+|-------|----------|
+| `highlightIndex(index)` | подсвечивает элемент с индексом `index` и прокручивает к нему список |
+| `highlightPrevItem()` | подсвечивает предыдущий элемент |
+| `highlightNextItem()` | подсвечивает следующий элемент |
+| `highlightFirstItem()` | подсвечивает первый элемент |
+| `highlightLastItem()` | подсвечивает последний элемент |
+| `selectItem(index)` | выбирает элемент с индексом `index`, как если бы на него нажали |
+| `selectHighlightedItem()` | выбирает подсвеченный элемент |
+| `scrollToIndex(index)` | прокручивает список к элементу с индексом `index`, если он не виден |
+| `scrollToFirstSelected()` | подсвечивает первый выбранный элемент и прокручивает к нему список |
+| `focus()` | переводит фокус на список |
+| `getListElement()` | возвращает HTML-элемент списка или `null` |
 
-### `highlightFirstItem`
-Прокручивает список до первого элемента и подсвечивает его.
+## Переопределение
 
-### `highlightLastItem`
-Прокручивает список до последнего элемента и подсвечивает его.
+Компонент `<Menu>` является составным и реализован при помощи следующих компонентов:
 
-### `scrollToFirstSelected`
-Прокручивает список до первого выбранного элемента.
+- `<Popper>` — позиционирует меню относительно анкора
+- `<List>` — контейнер списка. Получает `ref`, обработчики клавиатуры и фокуса и атрибуты `role`, `aria-multiselectable`, которые нужно передать корневому элементу
 
-### `focus`
-Устанавливает фокус на список.
+Используйте свойство `overrides`, чтобы переопределить один или несколько компонентов. Проще всего расширить стандартный компонент:
 
-### `getListElement`
-Получает ссылку на HTML элемент списка (контейнер).
+```tsx
+import React from 'react';
+import styled from '@emotion/styled';
+import Menu from '@via-profit/ui-kit/Menu';
+import MenuList, { MenuListProps } from '@via-profit/ui-kit/Menu/MenuList';
 
----
+const StyledList = styled(MenuList)`
+  max-height: 30em;
+`;
+
+const List = React.forwardRef<HTMLDivElement, MenuListProps>(function List(props, ref) {
+  return <StyledList {...props} ref={ref} />;
+});
+
+<Menu overrides={{ List }} {...menuProps} />;
+```
+
+Элементы списка переопределять не нужно: их отрисовывает `children`, и вместо `<MenuItem>` можно использовать свой компонент, передав ему `itemProps`.
 
 ## Свойства
 
 ### `isOpen`
-Определяет состояние меню: открыто или закрыто.
+Если `true`, меню отображается.
 - Тип: `boolean`
-- По умолчанию: (обязательный параметр)
+- Обязательное: **да**
+
+### `anchorElement`
+Элемент, рядом с которым отображается меню. Пока значение `null`, меню не отображается.
+- Тип: `HTMLElement | null`
 - Обязательное: **да**
 
 ### `items`
-Массив элементов списка.
-- Тип: `Array<T>`
-- По умолчанию: (обязательный параметр)
+Элементы списка.
+- Тип: `readonly T[]`
 - Обязательное: **да**
 
 ### `value`
-Выбранное значение.
-- Тип: `T | null`
-- По умолчанию: (обязательный параметр)
+Выбранный элемент (`T | null`) или, при `multiple`, массив выбранных элементов (`readonly T[]`).
+- Тип: `T | null | readonly T[]`
 - Обязательное: **да**
 
 ### `children`
-Коллбэк функция рендера элементов списка. Функция будет вызвана с двумя аргументами:
-- **1 аргумент:** `{ item: T, index: number }`
-- **2 аргумент:** `{ selected: boolean, hovered: boolean, onMouseEnter: MouseHandle, onMouseLeave: MouseHandle, onClick: MouseHandle }` — следует передать компоненту `<MenuItem>`.
-- Тип: `function({item: T, index: number}, itemProps): ReactNode`
-- По умолчанию: (обязательный параметр)
+Функция отрисовки элемента. Получает `{ item, index }` и `itemProps` — свойства для `<MenuItem>`: `key`, `selected`, `hovered`, `onClick`, `onMouseEnter`, `onMouseMove`, `onMouseLeave`.
+- Тип: `(data: { item: T; index: number }, itemProps: MenuItemProps) => React.ReactNode`
 - Обязательное: **да**
 
 ### `onSelectItem`
-Коллбэк функция, вызываемая при выборе элемента в списке. В качестве аргумента передается выбранный элемент. Если `multiple={true}`, в качестве аргумента передается массив со всеми выбранными элементами.
-- Тип: `function(item: T) | function(items: Array<T>)`
-- По умолчанию: (не указано)
-- Обязательное: нет
-
-### `anchorElement`
-Элемент, к которому будет привязан список. Игнорируется, если `anchorPos="static"`.
-- Тип: `HTMLElement | null | undefined`
-- По умолчанию: (не указано)
-- Обязательное: нет
-
-### `getOptionSelected`
-Функция, определяющая, является ли элемент списка выбранным. Вызывается для каждого элемента списка.
-- Тип: `function({ item: T, value: T }): boolean`
-- По умолчанию: (не указано)
+Вызывается при выборе элемента. Получает выбранный элемент или, при `multiple`, новый массив выбранных элементов.
+- Тип: `(value: T) => void` или `(value: readonly T[]) => void`
+- По умолчанию: `undefined`
 - Обязательное: нет
 
 ### `onRequestClose`
-Функция, вызываемая при закрытии списка.
-- Тип: `function(event: Event)`
-- По умолчанию: (не указано)
+Вызывается, когда меню нужно закрыть. Подробнее в разделе [Закрытие](#закрытие).
+- Тип: `(event?: KeyboardEvent | MouseEvent) => void`
+- По умолчанию: `undefined`
 - Обязательное: нет
 
-### `closeOutsideClick`
-Определяет, будет ли вызван `onRequestClose` при клике вне списка. Клик по анкору не учитывается, см. `closeOnAnchorClick`.
-- Тип: `boolean`
-- По умолчанию: `true`
+### `getOptionSelected`
+Определяет, выбран ли элемент. Подробнее в разделе [Описание](#описание).
+- Тип: `(payload: { item: T; value: T }) => boolean`
+- По умолчанию: поверхностное сравнение полей
 - Обязательное: нет
 
-### `closeOnAnchorClick`
-Если `true`, клик по анкору тоже вызывает `onRequestClose`. По умолчанию анкор пропускается: обычно он сам открывает и закрывает меню, и без этого нажатие на него сначала закрывало бы меню, а затем сразу открывало снова. Включите, если меню должно закрываться кликом по анкору, который сам его не закрывает, например по полю ввода.
+### `multiple`
+Разрешает выбор нескольких элементов.
 - Тип: `boolean`
 - По умолчанию: `false`
 - Обязательное: нет
 
 ### `closeOnSelect`
-Определяет, будет ли вызван `onRequestClose` при выборе элемента из списка.
+Если `true`, после выбора элемента вызывается `onRequestClose`.
+- Тип: `boolean`
+- По умолчанию: `true`, а при `multiple` — `false`
+- Обязательное: нет
+
+### `closeOutsideClick`
+Если `true`, нажатие кнопки мыши за пределами меню и анкора вызывает `onRequestClose`.
 - Тип: `boolean`
 - По умолчанию: `true`
 - Обязательное: нет
 
-### `multiple`
-Флаг, определяющий возможность множественного выбора элементов.
+### `closeOnAnchorClick`
+Если `true`, нажатие на анкор тоже вызывает `onRequestClose`. Подробнее в разделе [Закрытие](#закрытие).
 - Тип: `boolean`
 - По умолчанию: `false`
 - Обязательное: нет
 
 ### `autofocus`
-Определяет, следует ли устанавливать фокус на список сразу после открытия.
+Если `true`, после открытия фокус переходит на список.
 - Тип: `boolean`
 - По умолчанию: `true`
 - Обязательное: нет
 
 ### `anchorPos`
-Определяет расположение выпадающего списка относительно анкора (`anchorElement`).
-- Тип: `'auto' | 'auto-start-end' | 'top-start' | 'top-end' | 'top' | 'bottom' | 'top-start-end' | 'bottom-start-end' | 'bottom-start' | 'bottom-end' | 'static'`
-- По умолчанию: `'auto'`
+Позиция меню относительно анкора. Подробнее в [документации Popper](../popper/README.md#позиция).
+- Тип: `AnchorPos`
+- По умолчанию: `'bottom'`
+- Обязательное: нет
+
+### `autoFlip`
+Если `true`, меню меняет позицию, когда не помещается в окне.
+- Тип: `boolean`
+- По умолчанию: `false`
+- Обязательное: нет
+
+### `alternativePlacements`
+Позиции, которые пробуются при `autoFlip`. Подробнее в [документации Popper](../popper/README.md#автоматический-выбор-позиции).
+- Тип: `readonly AnchorPos[]`
+- По умолчанию: `['bottom', 'top']`
+- Обязательное: нет
+
+### `onAnchorPosChanged`
+Вызывается, когда меняется фактическая позиция меню.
+- Тип: `(anchorPos: AnchorPos) => void`
+- По умолчанию: `undefined`
+- Обязательное: нет
+
+### `offset`
+Расстояние между анкором и меню в пикселях.
+- Тип: `number`
+- По умолчанию: `0`
+- Обязательное: нет
+
+### `positionStrategy`
+Стратегия позиционирования. Подробнее в [документации Popper](../popper/README.md#стратегия-позиционирования).
+- Тип: `'fixed' | 'absolute'`
+- По умолчанию: `'fixed'`
+- Обязательное: нет
+
+### `viewportMargin`
+Минимальный отступ меню от краёв окна в пикселях.
+- Тип: `number`
+- По умолчанию: `30`
+- Обязательное: нет
+
+### `maxWidth`
+Максимальная ширина меню. Число — в пикселях, строка — в любых единицах CSS.
+- Тип: `number | string`
+- По умолчанию: `undefined`
 - Обязательное: нет
 
 ### `zIndex`
-Значение `z-index` для списка.
+Значение `z-index` меню.
 - Тип: `number`
 - По умолчанию: `theme.zIndex.modal`
 - Обязательное: нет
 
 ### `overrides`
-Объект для переопределения составных компонентов меню.
-- Тип: `Object`
+Объект для переопределения составных компонентов меню. Подробнее в разделе [Переопределение](#переопределение).
+- Тип: `{ List?: React.ComponentType<MenuListProps>; Popper?: React.ComponentType<PopperProps> }`
 - По умолчанию: `undefined`
 - Обязательное: нет
 
-#### `overrides.List`
-Элемент списка.
-- Тип: `React.Component`
-- По умолчанию: `<MenuList>`
+## Свойства MenuItem
 
----
+Помимо перечисленных ниже, `<MenuItem>` принимает стандартные атрибуты элемента `<div>`.
 
-Помимо перечисленных свойств, компонент принимает [стандартные атрибуты](https://developer.mozilla.org/ru/docs/Web/HTML/Element/div#атрибуты) HTML элемента `<div>`
+### `selected`
+Если `true`, элемент отображается выбранным.
+- Тип: `boolean`
+- Обязательное: **да** (передаётся в `itemProps`)
+
+### `hovered`
+Если `true`, элемент отображается подсвеченным.
+- Тип: `boolean`
+- Обязательное: **да** (передаётся в `itemProps`)
+
+### `startIcon`
+Иконка или другой элемент перед текстом.
+- Тип: `React.ReactNode`
+- По умолчанию: `undefined`
+- Обязательное: нет

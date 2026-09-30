@@ -31,6 +31,8 @@ const StyledButton = styled.button<StyledProps>`
   padding: 0.8em 1em;
   cursor: ${({ disabled }) => (disabled ? 'default' : 'pointer')};
   font-size: 1em;
+  /* Buttons do not inherit the font by default */
+  font-family: inherit;
   border-width: 0;
   outline-style: solid;
   outline-color: transparent;

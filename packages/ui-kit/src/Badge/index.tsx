@@ -1,7 +1,8 @@
 import React from 'react';
 
-import BadgeStandard, { BadgeStandardProps } from './BadgeStandard';
-import BadgeOutlined, { BadgeOutlinedProps } from './BadgeOutlined';
+import BadgeStyled from './BadgeStyled';
+import type { BadgeStandardProps } from './BadgeStandard';
+import type { BadgeOutlinedProps } from './BadgeOutlined';
 
 export type BadgeProps = (BadgeStandardProps | BadgeOutlinedProps) & {
   /**
@@ -13,14 +14,9 @@ export type BadgeProps = (BadgeStandardProps | BadgeOutlinedProps) & {
   readonly variant?: 'standard' | 'outlined';
 };
 
-const Badge: React.ForwardRefRenderFunction<HTMLSpanElement, BadgeProps> = (props, ref) => {
-  const { variant, ...badgeProps } = props;
-
-  if (variant === 'outlined') {
-    return <BadgeOutlined {...badgeProps} ref={ref} />;
-  }
-
-  return <BadgeStandard {...badgeProps} ref={ref} />;
-};
+// One component for both variants, so changing the variant does not remount the badge
+const Badge: React.ForwardRefRenderFunction<HTMLSpanElement, BadgeProps> = (props, ref) => (
+  <BadgeStyled {...props} ref={ref} />
+);
 
 export default React.forwardRef(Badge);

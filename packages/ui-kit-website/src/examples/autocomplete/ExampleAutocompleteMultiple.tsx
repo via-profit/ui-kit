@@ -1,80 +1,83 @@
 import React from 'react';
-import Autocomplete, { AutocompleteItem } from '@via-profit/ui-kit/src/Autocomplete';
+import Autocomplete, { AutocompleteItem, FilterItems } from '@via-profit/ui-kit/src/Autocomplete';
 import Highlighted from '@via-profit/ui-kit/src/Highlighted';
-import Badge from '@via-profit/ui-kit/src/Badge';
-import styled from '@emotion/styled';
+import { FormattedMessage, useIntl } from 'react-intl';
 
+import PlusIcon from '../../components/Icons/PlusOutline';
 import countries from './countries.json';
 
 type Item = {
   readonly code: string;
   readonly name: string;
+  readonly isVirtual?: boolean;
 };
 
-const BadgeContainer = styled.div`
-  & > span {
-    margin: 0 0.4em 0.4em 0%;
+const filterItems: FilterItems<Item> = (items, { query, inputValue }) => {
+  const filtered = items.filter(item => item.name.toLocaleLowerCase().includes(query));
+
+  // query is lowercased, the new item keeps the text as it was typed
+  const name = inputValue.trim();
+  const exists = items.some(item => item.name.toLocaleLowerCase() === query);
+
+  if (name.length > 0 && !exists) {
+    return [...filtered, { code: `new:${name}`, name, isVirtual: true }];
   }
 
-  & > span:last-of-type {
-    margin-right: 0;
-  }
-`;
+  return filtered;
+};
 
 const ExampleAutocompleteMultiple: React.FC = () => {
-  const [value, setValue] = React.useState<readonly Item[]>([
-    { name: 'Brazil', code: 'BR' },
-    { name: 'Russian Federation', code: 'RU' },
-    { name: 'India', code: 'IN' },
-    { name: 'China', code: 'CN' },
-    { name: 'South Africa', code: 'ZA' },
-  ]);
+  const intl = useIntl();
+  const [items, setItems] = React.useState<readonly Item[]>(countries);
+  const [value, setValue] = React.useState<readonly Item[]>(
+    countries.filter(country => ['BR', 'RU', 'IN', 'CN', 'ZA'].includes(country.code)),
+  );
   const [isOpen, setIsOpen] = React.useState(false);
 
+  const handleChange = (newValue: readonly Item[]) => {
+    // The chosen virtual item becomes a real one: it is added to the list and to the value
+    const created = newValue
+      .filter(item => item.isVirtual)
+      .map(({ code, name }) => ({ code, name }));
+
+    if (created.length > 0) {
+      setItems(current => [...current, ...created]);
+    }
+
+    setValue(newValue.map(item => (item.isVirtual ? { code: item.code, name: item.name } : item)));
+  };
+
   return (
-    <>
-      <BadgeContainer>
-        {value.map(item => (
-          <Badge
-            variant="outlined"
-            color="primary"
-            onDelete={() => setValue(values => values.filter(v => v.code !== item.code))}
-            key={item.code}
-          >
-            {item.name}
-          </Badge>
-        ))}
-      </BadgeContainer>
-      <Autocomplete
-        multiple
-        value={value}
-        items={countries}
-        isOpen={isOpen}
-        filterItems={(items, { query }) => {
-          const queries = query
-            .split(',')
-            .map(q => q.trim().toLowerCase())
-            .filter(Boolean);
-
-          return items.filter(item => {
-            const name = item.name.toLowerCase();
-
-            return queries.some(q => name.includes(q));
-          });
-        }}
-        onRequestClose={() => setIsOpen(false)}
-        onRequestOpen={() => setIsOpen(true)}
-        onChange={items => setValue(items)}
-        getOptionSelected={({ item, value }) => value.code === item.code}
-        selectedItemToString={items => items.map(({ name }) => name).join(', ')}
-      >
-        {({ item, inputValue }, itemProps) => (
-          <AutocompleteItem {...itemProps} key={item.code}>
+    <Autocomplete
+      label={<FormattedMessage defaultMessage="Страны" />}
+      placeholder={intl.formatMessage({ defaultMessage: 'Начните вводить название' })}
+      multiple
+      fullWidth
+      value={value}
+      items={items}
+      isOpen={isOpen}
+      onRequestOpen={() => setIsOpen(true)}
+      onRequestClose={() => setIsOpen(false)}
+      onChange={handleChange}
+      getOptionSelected={({ item, value }) => item.code === value.code}
+      selectedItemToString={item => item.name}
+      filterItems={filterItems}
+    >
+      {({ item, inputValue }, itemProps) => (
+        <AutocompleteItem
+          {...itemProps}
+          key={item.code}
+          startIcon={item.isVirtual ? <PlusIcon /> : undefined}
+          variant={item.isVirtual ? 'virtual' : 'standard'}
+        >
+          {item.isVirtual ? (
+            <FormattedMessage defaultMessage="Добавить «{name}»" values={{ name: item.name }} />
+          ) : (
             <Highlighted text={item.name} highlight={inputValue} />
-          </AutocompleteItem>
-        )}
-      </Autocomplete>
-    </>
+          )}
+        </AutocompleteItem>
+      )}
+    </Autocomplete>
   );
 };
 
