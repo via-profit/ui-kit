@@ -1,21 +1,57 @@
 {
+  "+YLRv8": {
+    "defaultMessage": "Уведомления по email"
+  },
   "+v01ok": {
     "defaultMessage": "Поиск"
   },
   "/Y7Xvk": {
     "defaultMessage": "Сократите описание на {count} симв."
   },
+  "/k0HOS": {
+    "defaultMessage": "Заявка отправлена"
+  },
   "/r++P0": {
     "defaultMessage": "Показать индикатор"
+  },
+  "/yZWnY": {
+    "defaultMessage": "Снизу"
+  },
+  "00zAyg": {
+    "defaultMessage": "Слева"
+  },
+  "0hXzly": {
+    "defaultMessage": "Сколько идут деньги при возврате?"
+  },
+  "0oiyyK": {
+    "defaultMessage": "Сыр"
+  },
+  "14rZNT": {
+    "defaultMessage": "Вы подписаны"
   },
   "1SdHYt": {
     "defaultMessage": "Действия"
   },
+  "1q4ylj": {
+    "defaultMessage": "Справа"
+  },
   "1wC7aj": {
     "defaultMessage": "Включить светлую тему"
   },
+  "2ASsuR": {
+    "defaultMessage": "Навигация"
+  },
+  "2Sh6hx": {
+    "defaultMessage": "Я принимаю условия использования"
+  },
   "2WTbIX": {
     "defaultMessage": "Открыть"
+  },
+  "3QtlsR": {
+    "defaultMessage": "Молоко 3,2%, 1 л"
+  },
+  "3j6hgF": {
+    "defaultMessage": "Новости"
   },
   "42ZwvD": {
     "defaultMessage": "Потяните за правый нижний угол"
@@ -23,14 +59,29 @@
   "4YsRb6": {
     "defaultMessage": "Перейти к документации"
   },
+  "4o09IS": {
+    "defaultMessage": "Продолжить редактирование"
+  },
+  "4yYP4+": {
+    "defaultMessage": "Закрыть без сохранения?"
+  },
   "5UhzNy": {
     "defaultMessage": "Что это?"
   },
   "5YiEBf": {
     "defaultMessage": "Скрыть пароль"
   },
+  "7LQJei": {
+    "defaultMessage": "Имя, телефон и email получателя."
+  },
   "7TwBQ2": {
     "defaultMessage": "Дата рождения"
+  },
+  "7aec0X": {
+    "defaultMessage": "Кнопка"
+  },
+  "7boO9u": {
+    "defaultMessage": "Недоступна"
   },
   "7yp0vm": {
     "defaultMessage": "Закрыть меню"
@@ -41,17 +92,44 @@
   "8e0aIx": {
     "defaultMessage": "Описание ({length} из {max})"
   },
+  "8iCGx4": {
+    "defaultMessage": "Своя тема внутри блока"
+  },
   "8xa/OX": {
     "defaultMessage": "Кликни вне этого элемента"
+  },
+  "9ZHc7h": {
+    "defaultMessage": "Карточка"
+  },
+  "9q5KsU": {
+    "defaultMessage": "Оформлен 30 сентября"
   },
   "9qM3tS": {
     "defaultMessage": "Низкий"
   },
+  "9rYy7B": {
+    "defaultMessage": "Грибы"
+  },
   "AIyaKV": {
     "defaultMessage": "Кнопки, поля ввода, календари, меню и модальные окна с темами оформления и переопределяемыми частями."
   },
+  "AeOGzv": {
+    "defaultMessage": "Мы свяжемся с вами в течение рабочего дня."
+  },
   "Al8pFl": {
     "defaultMessage": "На этой странице"
+  },
+  "B1n5mE": {
+    "defaultMessage": "Уведомления в браузере"
+  },
+  "CPPYs/": {
+    "defaultMessage": "Закрыть"
+  },
+  "CT9NHN": {
+    "defaultMessage": "Не удалось разобрать цвет"
+  },
+  "CZSp5u": {
+    "defaultMessage": "Подписаться"
   },
   "DSS3GV": {
     "defaultMessage": "Добавить «{name}»"
@@ -77,20 +155,44 @@
   "G0WBwd": {
     "defaultMessage": "Всего кликов: {counter}"
   },
+  "GZ4unH": {
+    "defaultMessage": "Изменение имени"
+  },
   "HD4k5p": {
     "defaultMessage": "Создать"
   },
   "HxEkI9": {
     "defaultMessage": "Музыка"
   },
+  "I2nJZi": {
+    "defaultMessage": "Отправить заявку"
+  },
+  "IydZi0": {
+    "defaultMessage": "Откройте заказ в личном кабинете и нажмите «Вернуть товар». Курьер заберёт его в удобное время."
+  },
+  "JLjPpG": {
+    "defaultMessage": "Квадратный переключатель"
+  },
+  "JOyUD/": {
+    "defaultMessage": "Доставляем курьером за 1–2 дня или в пункт выдачи за 2–4 дня. Оплатить заказ можно картой на сайте или при получении."
+  },
   "JYk3jK": {
     "defaultMessage": "Документация"
+  },
+  "JabZb+": {
+    "defaultMessage": "1. Контактные данные"
   },
   "K4wZ5T": {
     "defaultMessage": "Телефон (Россия или Беларусь)"
   },
+  "KE6C/h": {
+    "defaultMessage": "Как оформить возврат?"
+  },
   "KTFgNH": {
     "defaultMessage": "Выручка выросла на 12%, количество заказов — на 8%."
+  },
+  "KVvOpP": {
+    "defaultMessage": "Город, улица, дом и квартира."
   },
   "LUCzCR": {
     "defaultMessage": "Выберите"
@@ -104,17 +206,29 @@
   "MuX+YK": {
     "defaultMessage": "Найти…"
   },
+  "NOcbgn": {
+    "defaultMessage": "Круглый чекбокс"
+  },
   "O145N1": {
     "defaultMessage": "Страна"
   },
   "O1w++r": {
     "defaultMessage": "Скидка 20%"
   },
+  "PZRrNc": {
+    "defaultMessage": "Хорошо"
+  },
   "PuZv4f": {
     "defaultMessage": "Пароль"
   },
+  "QKl4cz": {
+    "defaultMessage": "SMS (недоступно)"
+  },
   "QasLUC": {
     "defaultMessage": "Результат"
+  },
+  "Qk4m8d": {
+    "defaultMessage": "Оплатить"
   },
   "QmljCN": {
     "defaultMessage": "Выбрано: {selected}"
@@ -124,6 +238,9 @@
   },
   "R7ozCe": {
     "defaultMessage": "Опишите ваш вопрос"
+  },
+  "RNEfb6": {
+    "defaultMessage": "Файл «Отчёт.pdf» будет удалён без возможности восстановления."
   },
   "RSH+Mj": {
     "defaultMessage": "Телефон для связи"
@@ -143,23 +260,56 @@
   "T5P/66": {
     "defaultMessage": "Телефон из справочника"
   },
+  "T9uJ2Q": {
+    "defaultMessage": "Бейдж"
+  },
+  "TZSMZ5": {
+    "defaultMessage": "Учитывать регистр"
+  },
+  "TnvrKP": {
+    "defaultMessage": "Уведомления"
+  },
   "TqYfpb": {
     "defaultMessage": "Найти компонент…"
+  },
+  "UB+69U": {
+    "defaultMessage": "Все способы доставки"
+  },
+  "UFvdOR": {
+    "defaultMessage": "Да, пока заказ не передан в доставку. Напишите в поддержку или измените адрес в заказе."
   },
   "URJ2aL": {
     "defaultMessage": "Содержимое Popper"
   },
+  "UZBvmP": {
+    "defaultMessage": "Кофе молотый, 250 г"
+  },
+  "Us91UX": {
+    "defaultMessage": "Изменения будут потеряны."
+  },
+  "V7CinP": {
+    "defaultMessage": "Отменить"
+  },
   "V9PF0o": {
     "defaultMessage": "С иконкой"
   },
+  "VzTL/7": {
+    "defaultMessage": "Подписаться на новости"
+  },
   "WoHYhC": {
     "defaultMessage": "Текущая позиция: {placement}"
+  },
+  "XXeTV2": {
+    "defaultMessage": "Скидки и акции"
   },
   "Xgd484": {
     "defaultMessage": "Отчёт за месяц"
   },
   "XnLtsK": {
     "defaultMessage": "Главная"
+  },
+  "XzwW+b": {
+    "defaultMessage": "Все добавки"
   },
   "Y0B8+n": {
     "defaultMessage": "Выбрано: {name}"
@@ -182,14 +332,35 @@
   "ZQf5O2": {
     "defaultMessage": "Вернуть всех"
   },
+  "ZgzE4S": {
+    "defaultMessage": "Цвет: hex, rgb, hsl или название"
+  },
+  "aJ02T/": {
+    "defaultMessage": "Кофемолка ручная"
+  },
   "abKIRE": {
     "defaultMessage": "Начните вводить название"
+  },
+  "bJDmtY": {
+    "defaultMessage": "Версия 1.0"
   },
   "bPtegp": {
     "defaultMessage": "Телефон"
   },
+  "bWz1f/": {
+    "defaultMessage": "моск"
+  },
   "bi8PJO": {
     "defaultMessage": "Выберите значение"
+  },
+  "c4F0vq": {
+    "defaultMessage": "Удалить файл"
+  },
+  "cGv2Jm": {
+    "defaultMessage": "24°"
+  },
+  "cWOerR": {
+    "defaultMessage": "Сверху"
   },
   "cgAw8y": {
     "defaultMessage": "Введите номер полностью"
@@ -200,8 +371,14 @@
   "e3cA6P": {
     "defaultMessage": "На всю ширину"
   },
+  "e6d+rg": {
+    "defaultMessage": "Файл «Отчёт.pdf» удалён"
+  },
   "ek/fk0": {
     "defaultMessage": "Удалить «{name}»"
+  },
+  "evFSoB": {
+    "defaultMessage": "2. Адрес доставки"
   },
   "fGrmor": {
     "defaultMessage": "Начало"
@@ -221,6 +398,9 @@
   "gwIXyk": {
     "defaultMessage": "Ничего не выбрано"
   },
+  "gwuvli": {
+    "defaultMessage": "Деньги вернутся на карту в течение 10 дней после того, как мы получим товар."
+  },
   "h52LFb": {
     "defaultMessage": "Включить тёмную тему"
   },
@@ -230,17 +410,38 @@
   "hT3OZn": {
     "defaultMessage": "Иван Петров"
   },
+  "hh1CJF": {
+    "defaultMessage": "Удалить файл?"
+  },
   "i8KTyz": {
     "defaultMessage": "Комментарий"
+  },
+  "iMGGKG": {
+    "defaultMessage": "Имя: {name}"
   },
   "jX2Rp6": {
     "defaultMessage": "Новый"
   },
+  "kGHUoT": {
+    "defaultMessage": "Чай чёрный, 100 пакетиков"
+  },
+  "kOutEh": {
+    "defaultMessage": "Файл «Отчёт.pdf»"
+  },
+  "kPxx34": {
+    "defaultMessage": "Системные уведомления"
+  },
   "kSJhYU": {
     "defaultMessage": "Исходная строка"
   },
+  "keBG5i": {
+    "defaultMessage": "Кофе в зёрнах, 1 кг"
+  },
   "kktCY9": {
     "defaultMessage": "Выбрано действие: {label}"
+  },
+  "l4yWDd": {
+    "defaultMessage": "Без согласия продолжить нельзя"
   },
   "l775qE": {
     "defaultMessage": "Открыть Popper"
@@ -248,14 +449,32 @@
   "m0+ocO": {
     "defaultMessage": "Страна (загрузка с сервера)"
   },
+  "mWC6vf": {
+    "defaultMessage": "Доставка по Москве и Московской области"
+  },
+  "me8uDV": {
+    "defaultMessage": "Понятно"
+  },
+  "n4Y9Sg": {
+    "defaultMessage": "Открыть диалог"
+  },
   "n8HMS9": {
     "defaultMessage": "ваших интерфейсов"
+  },
+  "nRFGJY": {
+    "defaultMessage": "Вес 1,2 кг, размеры 30 × 20 × 5 см, гарантия 2 года."
   },
   "npyYek": {
     "defaultMessage": "Очистить"
   },
+  "o+7yVD": {
+    "defaultMessage": "Поиск по товарам"
+  },
   "oAO9Hr": {
     "defaultMessage": "Компоненты"
+  },
+  "oZXhhC": {
+    "defaultMessage": "Одновременно открыт только один шаг."
   },
   "oeKhPk": {
     "defaultMessage": "Игры"
@@ -266,8 +485,20 @@
   "otHP0I": {
     "defaultMessage": "Высокий"
   },
+  "p1RSsA": {
+    "defaultMessage": "3 товара на сумму 4 590 ₽. Доставка курьером, 2–3 дня."
+  },
+  "pFDZ2A": {
+    "defaultMessage": "Содержимое поверхности"
+  },
   "peF0Pd": {
     "defaultMessage": "Подсказка закроется по клику в любом месте страницы"
+  },
+  "pnF3BZ": {
+    "defaultMessage": "Заказ №1042"
+  },
+  "pqT57f": {
+    "defaultMessage": "исходный"
   },
   "qXh0mH": {
     "defaultMessage": "Имя"
@@ -275,20 +506,56 @@
   "qpyN6B": {
     "defaultMessage": "Недоступно"
   },
+  "qqqeuG": {
+    "defaultMessage": "Восстановить"
+  },
+  "rrkgFu": {
+    "defaultMessage": "Можно ли изменить адрес доставки?"
+  },
+  "sNP24O": {
+    "defaultMessage": "Нажато: {count}"
+  },
+  "shH3R6": {
+    "defaultMessage": "Оливки"
+  },
   "si4+jP": {
     "defaultMessage": "Книги"
+  },
+  "tK7VYa": {
+    "defaultMessage": "Получать рассылку"
+  },
+  "u5UzxJ": {
+    "defaultMessage": "Изменить имя"
   },
   "uE1mMh": {
     "defaultMessage": "text: «{text}», isValid: {isValid}"
   },
+  "utVR6E": {
+    "defaultMessage": "3. Способ оплаты"
+  },
+  "uwaBKv": {
+    "defaultMessage": "Условия использования"
+  },
   "vUOyV1": {
     "defaultMessage": "Показать пароль"
+  },
+  "vku+vY": {
+    "defaultMessage": "Доставка и оплата"
+  },
+  "w1YqQ4": {
+    "defaultMessage": "Новых уведомлений нет"
+  },
+  "wB4igM": {
+    "defaultMessage": "Запомнить меня"
   },
   "wBODsZ": {
     "defaultMessage": "Текущая дата в шаблоном {template} — {result}"
   },
   "x69X5L": {
     "defaultMessage": "Действие не выбрано"
+  },
+  "xIW73K": {
+    "defaultMessage": "Характеристики"
   },
   "xRna1X": {
     "defaultMessage": "Скрыть индикатор"
@@ -299,10 +566,31 @@
   "xmOQfn": {
     "defaultMessage": "Только чтение"
   },
+  "xqA62R": {
+    "defaultMessage": "Картой на сайте или при получении."
+  },
+  "yKY0jp": {
+    "defaultMessage": "Купить"
+  },
   "yeuMJs": {
     "defaultMessage": "Строка 22.02.2003 распарсенная с шаблоном {template} — {result}"
   },
+  "yvhyJs": {
+    "defaultMessage": "Основные cookie (обязательно)"
+  },
+  "z2dT/I": {
+    "defaultMessage": "Диалог закрывается кнопкой, клавишей Esc или кликом по затемнённому фону."
+  },
+  "z32Qwr": {
+    "defaultMessage": "Отмена"
+  },
   "z7B2cn": {
     "defaultMessage": "Обычный"
+  },
+  "zCTI8Y": {
+    "defaultMessage": "Действие"
+  },
+  "zier1/": {
+    "defaultMessage": "Удалить"
   }
 }

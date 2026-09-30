@@ -1,9 +1,9 @@
 import React from 'react';
 import styled from '@emotion/styled';
-import { useTheme } from '@emotion/react';
 
 import { SwitchProps } from './index';
 import Color from '../Color';
+import useSwitchColor from './useSwitchColor';
 
 export type SwitchTrackProps = React.HTMLAttributes<HTMLSpanElement> & {
   /**
@@ -16,7 +16,7 @@ export type SwitchTrackProps = React.HTMLAttributes<HTMLSpanElement> & {
 
 type StyleProps = {
   readonly $color?: Color;
-  readonly checked: boolean;
+  readonly $checked: boolean;
 };
 
 const Track = styled.span<StyleProps>`
@@ -26,9 +26,9 @@ const Track = styled.span<StyleProps>`
   transition:
     opacity 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,
     background-color 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
-  background-color: ${({ $color, checked, theme }) => {
+  background-color: ${({ $color, $checked, theme }) => {
     switch (true) {
-      case checked:
+      case $checked:
         return $color ? $color.toString() : theme.color.accentPrimary.toString();
       default:
         return theme.isDark
@@ -44,48 +44,10 @@ const SwitchTrack: React.ForwardRefRenderFunction<HTMLSpanElement, SwitchTrackPr
   ref,
 ) => {
   const { color, checked, children, ...nativeProps } = props;
-  const theme = useTheme();
-
-  const { $color } = React.useMemo(() => {
-    switch (true) {
-      case color === 'primary':
-        return {
-          $color: theme.color.accentPrimary,
-        };
-      case color === 'secondary':
-        return {
-          $color: theme.color.accentSecondary,
-        };
-      case typeof color === 'undefined':
-      case color === 'default':
-        return {
-          $color: theme.color.accentPrimary,
-        };
-
-      case typeof color === 'string': {
-        let $color = theme.color.surface;
-        try {
-          if (color) {
-            $color = Color.fromString(color);
-          }
-        } catch (err) {
-          console.error(`invalid color value «${color}»`);
-        }
-
-        return {
-          $color,
-        };
-      }
-
-      default:
-        return {
-          $color: theme.color.surface,
-        };
-    }
-  }, [color, theme.color]);
+  const $color = useSwitchColor(color);
 
   return (
-    <Track {...nativeProps} ref={ref} $color={$color} checked={checked}>
+    <Track {...nativeProps} ref={ref} $color={$color} $checked={checked}>
       {children}
     </Track>
   );

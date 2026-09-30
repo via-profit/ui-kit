@@ -8,6 +8,7 @@ import ExampleButtonVariants from '~/examples/button/ExampleButtonVariants';
 import ExampleButtonColors from '~/examples/button/ExampleButtonColors';
 import ExampleButtonOverrides from '~/examples/button/ExampleButtonOverrides';
 import ExampleButtonIcons from '~/examples/button/ExampleButtonIcons';
+import ExampleButtonStates from '~/examples/button/ExampleButtonStates';
 import content from '@via-profit/ui-kit/docs/button/README.md';
 
 const ButtonOverview: React.FC = () => (
@@ -20,6 +21,7 @@ const ButtonOverview: React.FC = () => (
           ExampleButtonColors,
           ExampleButtonOverrides,
           ExampleButtonIcons,
+          ExampleButtonStates,
         }}
       >
         {content}

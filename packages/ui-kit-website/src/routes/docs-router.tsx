@@ -10,6 +10,7 @@ const NotFound = loadable(() => import('~/pages/NotFound/index'));
 const Introduction = loadable(() => import('~/pages/Docs/Introduction'));
 const ButtonOverview = loadable(() => import('~/pages/Docs/Button/ButtonOverview'));
 const SwitchOverview = loadable(() => import('~/pages/Docs/Switch/SwitchOverview'));
+const CheckboxOverview = loadable(() => import('~/pages/Docs/Checkbox/CheckboxOverview'));
 const Tables = loadable(() => import('~/pages/Docs/Table'));
 const TextField = loadable(() => import('~/pages/Docs/TextField'));
 const TextArea = loadable(() => import('~/pages/Docs/TextArea'));
@@ -73,6 +74,15 @@ const docsRouter: RouteObject = {
       element: (
         <React.Suspense fallback={<LoadingOverlay />}>
           <SwitchOverview />
+        </React.Suspense>
+      ),
+    },
+    {
+      path: 'checkbox',
+      caseSensitive: true,
+      element: (
+        <React.Suspense fallback={<LoadingOverlay />}>
+          <CheckboxOverview />
         </React.Suspense>
       ),
     },

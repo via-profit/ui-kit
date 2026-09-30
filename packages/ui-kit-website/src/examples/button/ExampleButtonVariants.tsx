@@ -1,29 +1,19 @@
 import React from 'react';
-import Button from '@via-profit/ui-kit/src/Button';
 import styled from '@emotion/styled';
+import Button from '@via-profit/ui-kit/src/Button';
 
-const ButtonGroup = styled.div`
-  & button {
-    margin: 0 0.4em 0.4em 0%;
-  }
-
-  & button:last-of-type {
-    margin-right: 0;
-  }
+const Row = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5em;
 `;
 
 const ExampleButtonVariants: React.FC = () => (
-  <ButtonGroup>
-    <Button type="button" variant="standard">
-      Standard
-    </Button>
-    <Button type="button" variant="outlined">
-      Outlined
-    </Button>
-    <Button type="button" variant="plain">
-      plain
-    </Button>
-  </ButtonGroup>
+  <Row>
+    <Button variant="standard">standard</Button>
+    <Button variant="outlined">outlined</Button>
+    <Button variant="plain">plain</Button>
+  </Row>
 );
 
 export default ExampleButtonVariants;

@@ -7,6 +7,10 @@ import Header, { DrawerHeaderProps } from './DrawerHeader';
 import Content, { DrawerContentProps } from './DrawerContent';
 import Footer, { DrawerFooterProps } from './DrawerFooter';
 import Overlay, { ModalOverlayProps } from '../BaseModal/ModalOverlay';
+import type { ModalInnerProps } from '../BaseModal/ModalInner';
+import useDialogID from '../BaseModal/useDialogID';
+
+export type { AnchorVariant } from './DrawerInner';
 
 export interface DrawerProps extends Omit<BaseModalProps, 'overrides'> {
   /**
@@ -42,6 +46,13 @@ export interface DrawerProps extends Omit<BaseModalProps, 'overrides'> {
   readonly showCloseButton?: boolean;
 
   /**
+   * Accessible label of the close button (it contains only an icon)\
+   * \
+   * **Default**: `'Close'`
+   */
+  readonly closeButtonLabel?: string;
+
+  /**
    * Overridable components map
    */
   readonly overrides?: DrawerOverrides;
@@ -57,30 +68,22 @@ export interface DrawerOverrides {
   /**
    * Element ontent
    */
-  readonly Content?: React.ComponentType<
-    DrawerContentProps & React.RefAttributes<HTMLDivElement>
-  >;
+  readonly Content?: React.ComponentType<DrawerContentProps & React.RefAttributes<HTMLDivElement>>;
 
   /**
    * Element footer
    */
-  readonly Footer?: React.ComponentType<
-    DrawerFooterProps & React.RefAttributes<HTMLDivElement>
-  >;
+  readonly Footer?: React.ComponentType<DrawerFooterProps & React.RefAttributes<HTMLDivElement>>;
 
   /**
    * Element header
    */
-  readonly Header?: React.ComponentType<
-    DrawerHeaderProps & React.RefAttributes<HTMLDivElement>
-  >;
+  readonly Header?: React.ComponentType<DrawerHeaderProps & React.RefAttributes<HTMLDivElement>>;
 
   /**
    * Overlay element
    */
-  readonly Overlay?: React.ComponentType<
-    ModalOverlayProps & React.RefAttributes<HTMLDivElement>
-  >;
+  readonly Overlay?: React.ComponentType<ModalOverlayProps & React.RefAttributes<HTMLDivElement>>;
 }
 
 const Drawer: React.FC<DrawerProps> = props => {
@@ -89,6 +92,7 @@ const Drawer: React.FC<DrawerProps> = props => {
     onRequestClose,
     showCloseButton,
     header,
+    closeButtonLabel,
     anchor,
     toolbar,
     footer,
@@ -104,7 +108,26 @@ const Drawer: React.FC<DrawerProps> = props => {
     [showCloseButton, header, toolbar],
   );
 
-  const dialogID = React.useMemo(() => `drawer-${new Date().getTime()}`, []);
+  const dialogID = useDialogID('drawer');
+  const hasTitle = typeof header !== 'undefined' && header !== null;
+
+  // Created once: a component created during the render is a new type on every render,
+  // so React would remount the whole drawer content (inputs lose the focus and the state)
+  const Inner = React.useMemo(
+    () =>
+      React.forwardRef<HTMLDivElement, ModalInnerProps>(function Inner(innerProps, ref) {
+        return (
+          <DrawerInner
+            anchor={anchor}
+            dialogID={dialogID}
+            aria-labelledby={hasTitle ? `${dialogID}-title` : undefined}
+            ref={ref}
+            {...innerProps}
+          />
+        );
+      }),
+    [anchor, dialogID, hasTitle],
+  );
 
   const overridesMap = React.useMemo(
     () => ({
@@ -117,28 +140,20 @@ const Drawer: React.FC<DrawerProps> = props => {
     [overrides],
   );
 
+  const modalOverrides = React.useMemo(
+    () => ({ Overlay: overridesMap.Overlay, Inner }),
+    [overridesMap.Overlay, Inner],
+  );
+
   return (
     <>
-      <BaseModal
-        onRequestClose={onRequestClose}
-        {...otherProps}
-        overrides={{
-          Overlay: overridesMap.Overlay,
-          Inner: React.forwardRef(function Inner(props, ref) {
-            const { children } = props;
-
-            return (
-              <DrawerInner anchor={anchor} dialogID={dialogID} ref={ref} {...props}>
-                {children}
-              </DrawerInner>
-            );
-          }),
-        }}
-      >
+      <BaseModal onRequestClose={onRequestClose} {...otherProps} overrides={modalOverrides}>
         <overridesMap.Container anchor={anchor}>
           {hasHeader && (
             <overridesMap.Header
               showCloseButton={showCloseButton}
+              closeButtonLabel={closeButtonLabel}
+              dialogID={dialogID}
               header={header}
               onRequestClose={onRequestClose}
             >

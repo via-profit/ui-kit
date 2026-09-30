@@ -570,7 +570,7 @@ const Autocomplete = React.forwardRef(
       if (currentLoading) {
         return (
           <Button iconOnly type="button" variant="plain" disabled>
-            <Spinner />
+            <Spinner size="1.2em" />
           </Button>
         );
       }

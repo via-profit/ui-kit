@@ -1,22 +1,18 @@
 import React from 'react';
 import Accordion from '@via-profit/ui-kit/src/Accordion';
-import Flag from '@via-profit/ui-kit/src/CountryFlags/RU';
 import Button from '@via-profit/ui-kit/src/Button';
+import { FormattedMessage } from 'react-intl';
 
 const ExampleAccordionBasic: React.FC = () => (
   <Accordion
-    header={
-      <>
-        <Flag /> Russian Federation
-      </>
-    }
+    header={<FormattedMessage defaultMessage="Доставка и оплата" />}
     actions={
-      <Button type="button" variant="outlined" color="primary">
-        Action button
+      <Button variant="outlined" color="primary">
+        <FormattedMessage defaultMessage="Все способы доставки" />
       </Button>
     }
   >
-    Some content
+    <FormattedMessage defaultMessage="Доставляем курьером за 1–2 дня или в пункт выдачи за 2–4 дня. Оплатить заказ можно картой на сайте или при получении." />
   </Accordion>
 );
 

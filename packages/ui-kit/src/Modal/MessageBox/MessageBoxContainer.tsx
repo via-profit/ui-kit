@@ -22,7 +22,8 @@ const MessageBoxContainer: React.ForwardRefRenderFunction<
 
   return (
     <Container
-      role="modal-MessageBox"
+      role="dialog"
+      aria-modal="true"
       aria-labelledby={`${dialogID}-title`}
       aria-describedby={`${dialogID}-description`}
       {...nativeProps}

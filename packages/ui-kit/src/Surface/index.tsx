@@ -100,11 +100,15 @@ const Surface: React.ForwardRefRenderFunction<HTMLDivElement, SurfaceProps> = (p
     [overrides],
   );
 
-  if (!hasHeader && hasSubheader) {
-    console.warn(
-      '[@via-profit/ui-kit] Surface component. If you use a subheader, then you should add a header',
-    );
-  }
+  // Warn once when the combination appears, not on every render
+  const isSubheaderWithoutHeader = !hasHeader && hasSubheader;
+  React.useEffect(() => {
+    if (isSubheaderWithoutHeader) {
+      console.warn(
+        '[@via-profit/ui-kit] Surface component. If you use a subheader, then you should add a header',
+      );
+    }
+  }, [isSubheaderWithoutHeader]);
 
   return (
     <overridesMap.Container

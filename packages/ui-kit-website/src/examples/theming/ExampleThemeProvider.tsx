@@ -1,38 +1,52 @@
 import React from 'react';
-import createTheme from '@via-profit/ui-kit/src/ThemeProvider/createTheme';
-import ThemeProvider from '@via-profit/ui-kit/src/ThemeProvider';
-import Button from '@via-profit/ui-kit/src/Button';
 import styled from '@emotion/styled';
+import ThemeProvider, { createTheme } from '@via-profit/ui-kit/src/ThemeProvider';
+import Button from '@via-profit/ui-kit/src/Button';
+import Badge from '@via-profit/ui-kit/src/Badge';
+import Switch from '@via-profit/ui-kit/src/Switch';
+import { FormattedMessage } from 'react-intl';
 
-const Container = styled.div`
-  & > button:last-of-type {
-    margin-left: 1em;
-  }
+import useSiteThemeOverrides from './useSiteThemeOverrides';
+
+const Row = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5em;
 `;
 
 const ExampleThemeProvider: React.FC = () => {
+  const base = useSiteThemeOverrides();
+  const [checked, setChecked] = React.useState(true);
+
+  // Only the accent differs from the site theme
   const theme = React.useMemo(
     () =>
       createTheme({
-        isDark: false,
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        /* @ts-ignore */
+        ...base,
         color: {
+          ...base.color,
           accentPrimary: '#66b13d',
-          accentPrimaryContrast: '#FFFFFF',
+          accentPrimaryContrast: '#ffffff',
         },
       }),
-    [],
+    [base],
   );
 
   return (
     <ThemeProvider theme={theme}>
-      <Container>
-        <Button color="primary">The Button Standard</Button>
-        <Button color="primary" variant="outlined">
-          The Button Outlined
+      <Row>
+        <Button color="primary">
+          <FormattedMessage defaultMessage="Кнопка" />
         </Button>
-      </Container>
+        <Button color="primary" variant="outlined">
+          <FormattedMessage defaultMessage="Кнопка" />
+        </Button>
+        <Badge color="primary">
+          <FormattedMessage defaultMessage="Бейдж" />
+        </Badge>
+        <Switch checked={checked} onChange={() => setChecked(value => !value)} />
+      </Row>
     </ThemeProvider>
   );
 };

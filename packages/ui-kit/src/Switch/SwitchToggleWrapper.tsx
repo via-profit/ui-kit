@@ -14,7 +14,8 @@ const ToggleWrapper = styled.span`
   padding: 1.1rem;
   overflow: hidden;
   box-sizing: border-box;
-  &:hover span[class*='ToggleContainer'] > span[class*='Dot']:after {
+  /* Data attributes, not class names: emotion labels are absent in the published package */
+  &:hover [data-switch-dot]:after {
     transform: translate(-50%, -50%) scale(1.7);
   }
 `;
@@ -30,27 +31,21 @@ const StyledInput = styled.input`
   margin: 0px;
   padding: 0px;
   z-index: 1;
-  &:focus-visible ~ span[class*='ToggleContainer'] > span[class*='Dot']:before {
+  &:focus-visible ~ [data-switch-thumb] [data-switch-dot]:before {
     transform: translate(-50%, -50%) scale(1.7);
   }
 `;
 
 const SwitchToggleWrapper: React.ForwardRefRenderFunction<
-  HTMLSpanElement,
+  HTMLInputElement,
   SwitchToggleWrapperProps
 > = (props, ref) => {
   const { children, disabled, ...nativeProps } = props;
 
   return (
-    <ToggleWrapper ref={ref}>
-      <StyledInput
-        {...nativeProps}
-        disabled={disabled}
-        onChange={e => {
-          nativeProps?.onChange && nativeProps.onChange(e);
-        }}
-        type="checkbox"
-      />
+    <ToggleWrapper>
+      {/* The ref points to the input: it is the element that holds the value and the focus */}
+      <StyledInput role="switch" {...nativeProps} disabled={disabled} type="checkbox" ref={ref} />
       {children}
     </ToggleWrapper>
   );

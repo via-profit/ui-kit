@@ -90,10 +90,7 @@ export class ColorGenerator {
   /**
    * Генерирует цвет на основе UUID
    */
-  public static fromUuid(
-    uuid: string,
-    palette: keyof typeof ColorGenerator.palettes = 'pastel',
-  ): Color {
+  public static fromUuid(uuid: string, palette: PaletteName = 'pastel'): Color {
     const hash = this.stringToHashCode(uuid);
     const paletteColors = this.palettes[palette];
     const index = Math.abs(hash) % paletteColors.length;
@@ -155,5 +152,10 @@ export class ColorGenerator {
     return hash;
   }
 }
+
+/**
+ * Name of a palette of ColorGenerator: `pastel`, `vibrant`, `muted`, `autumn`, `ocean` or `forest`
+ */
+export type PaletteName = keyof ReturnType<typeof ColorGenerator.getPalettes>;
 
 export default ColorGenerator;

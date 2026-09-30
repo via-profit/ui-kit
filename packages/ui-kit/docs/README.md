@@ -12,6 +12,7 @@
 - [Аккордеон](./accordion/README.md)
 - [Кнопка](./button/README.md)
 - [Переключатель](./switch/README.md)
+- [Чекбокс](./checkbox/README.md)
 - [Текстовое поле](./text-field/README.md)
 - [Текстовое поле textarea](./text-area/README.md)
 - [Календарь](./calendar/README.md)

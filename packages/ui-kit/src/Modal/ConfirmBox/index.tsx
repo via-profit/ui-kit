@@ -6,6 +6,7 @@ import Content, { ConfirmBoxContentProps } from './ConfirmBoxContent';
 import Footer, { ConfirmBoxFooterProps } from './ConfirmBoxFooter';
 import Header, { ConfirmBoxHeaderProps } from './ConfirmBoxHeader';
 import Overlay, { ModalOverlayProps } from '../BaseModal/ModalOverlay';
+import useDialogID from '../BaseModal/useDialogID';
 
 export interface ConfirmBoxProps extends Omit<BaseModalProps, 'overrides'> {
   /**
@@ -72,9 +73,7 @@ export interface ConfirmBoxOverrides {
   /**
    * Overlay element
    */
-  readonly Overlay?: React.ComponentType<
-    ModalOverlayProps & React.RefAttributes<HTMLDivElement>
-  >;
+  readonly Overlay?: React.ComponentType<ModalOverlayProps & React.RefAttributes<HTMLDivElement>>;
 }
 
 const ConfirmBox: React.FC<ConfirmBoxProps> = props => {
@@ -89,7 +88,7 @@ const ConfirmBox: React.FC<ConfirmBoxProps> = props => {
     confirmButtonLabel,
     ...otherProps
   } = props;
-  const dialogID = React.useMemo(() => `dialog-confirm-${new Date().getTime()}`, []);
+  const dialogID = useDialogID('dialog-confirm');
 
   const overridesMap = React.useMemo(
     () => ({

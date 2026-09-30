@@ -24,19 +24,21 @@ export type AccordionProps = React.HTMLAttributes<HTMLDivElement> & {
   readonly overrides?: AccordionOverrides;
 
   /**
-   * This props ovveride default component open state
+   * The state of the controlled accordion. Pass it together with `onOpen`
    */
   readonly isOpen?: boolean;
 
   /**
-   * If `true` accordion will be opened by default
+   * The initial state of the uncontrolled accordion
+   * Default: false
    */
   readonly defaultOpened?: boolean;
 
   /**
-   * Callback function witch should open the accordion. You can forward your own function to make accordion controlled
+   * Called when the user clicks the header, both to open and to close the accordion.\
+   * Receives the next state: `true` - should be opened, `false` - should be closed
    */
-  readonly onOpen?: () => void;
+  readonly onOpen?: (isOpen: boolean) => void;
 
   /**
    * If `true` initial padding of accorion content would be disabled
@@ -54,9 +56,7 @@ export interface AccordionOverrides {
   /**
    * Accordion header component
    */
-  readonly Header?: React.ComponentType<
-    AccordionHeaderProps & React.RefAttributes<HTMLDivElement>
-  >;
+  readonly Header?: React.ComponentType<AccordionHeaderProps & React.RefAttributes<HTMLDivElement>>;
   /**
    * Accordion content component
    */
@@ -86,9 +86,12 @@ const Accordion: React.ForwardRefRenderFunction<HTMLDivElement, AccordionProps> 
 
   const hasActions = typeof actions !== 'undefined' && actions !== null;
   const hasHeader = typeof header !== 'undefined' && header !== null;
-  const [opened, setOpened] = React.useState(
-    typeof defaultOpened !== 'undefined' ? defaultOpened : false,
-  );
+  const [internalOpened, setInternalOpened] = React.useState(Boolean(defaultOpened));
+  const isControlled = typeof isOpen !== 'undefined';
+  const opened = isControlled ? Boolean(isOpen) : internalOpened;
+  const id = React.useId().replace(/:/g, '');
+  const headerID = `accordion-${id}-header`;
+  const contentID = `accordion-${id}-content`;
 
   const overridesMap = React.useMemo(
     () => ({
@@ -100,27 +103,41 @@ const Accordion: React.ForwardRefRenderFunction<HTMLDivElement, AccordionProps> 
     [overrides],
   );
 
-  if (!hasHeader) {
-    console.warn(
-      `[@via-profit/ui-kit] Accordion component. If you use a subheader, then you should add a header`,
-    );
-  }
+  // Warn once, not on every render
+  React.useEffect(() => {
+    if (!hasHeader) {
+      console.warn(
+        '[@via-profit/ui-kit] Accordion component. The accordion without the «header» can not be opened by the user',
+      );
+    }
+  }, [hasHeader]);
+
+  // In the uncontrolled mode the own state is updated even when onOpen is passed
+  const handleToggle = () => {
+    if (!isControlled) {
+      setInternalOpened(!opened);
+    }
+
+    onOpen?.(!opened);
+  };
 
   return (
     <overridesMap.Container {...nativeProps} ref={ref}>
       {hasHeader && (
         <overridesMap.Header
-          isOpen={typeof isOpen !== 'undefined' ? isOpen : opened}
-          onOpen={
-            onOpen ? onOpen : () => setOpened(typeof isOpen !== 'undefined' ? !isOpen : !opened)
-          }
+          isOpen={opened}
+          onOpen={handleToggle}
+          headerID={headerID}
+          contentID={contentID}
         >
           {header}
         </overridesMap.Header>
       )}
       <overridesMap.Content
+        id={contentID}
+        aria-labelledby={hasHeader ? headerID : undefined}
         noPadding={noPadding}
-        isOpen={typeof isOpen !== 'undefined' ? isOpen : opened}
+        isOpen={opened}
       >
         {children}
         {hasActions && <overridesMap.Actions noPadding={noPadding}>{actions}</overridesMap.Actions>}

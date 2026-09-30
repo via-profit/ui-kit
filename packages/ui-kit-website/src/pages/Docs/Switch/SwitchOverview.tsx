@@ -4,7 +4,7 @@ import TableOfContent from '~/components/TableOfContent';
 import DocsArticle from '~/components/DocsArticle';
 import RenderMarkdown from '~/components/RenderMarkdown';
 import ExampleSwitchBasic from '~/examples/switch/ExampleSwitchBasic';
-import ExampleSwitchLabel from '~/examples/switch/ExampleSwitchLabel';
+import ExampleSwitchValidation from '~/examples/switch/ExampleSwitchValidation';
 import ExampleSwitchColors from '~/examples/switch/ExampleSwitchColors';
 import ExampleSwitchOverrides from '~/examples/switch/ExampleSwitchOverrides';
 import ExampleSwitchLabelPlacement from '~/examples/switch/ExampleSwitchLabelPlacement';
@@ -17,7 +17,7 @@ const SwitchOverview: React.FC = () => (
       <RenderMarkdown
         overrides={{
           ExampleSwitchBasic,
-          ExampleSwitchLabel,
+          ExampleSwitchValidation,
           ExampleSwitchColors,
           ExampleSwitchOverrides,
           ExampleSwitchControlled,

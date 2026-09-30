@@ -17,21 +17,21 @@ export type SwitchContainerProps = React.LabelHTMLAttributes<HTMLLabelElement> &
 };
 
 type StyledProps = {
-  readonly disabled?: boolean;
-  readonly labelPosition?: 'start' | 'end' | 'top' | 'bottom';
+  readonly $disabled?: boolean;
+  readonly $labelPosition?: 'start' | 'end' | 'top' | 'bottom';
 };
 
 const StyledContainer = styled.label<StyledProps>`
-  cursor: ${({ disabled }) => (disabled ? 'default' : 'pointer')};
+  cursor: ${({ $disabled }) => ($disabled ? 'default' : 'pointer')};
   font-size: 1em;
   padding-right: 1em;
   display: inline-flex;
   align-items: center;
-  opacity: ${({ disabled }) => (disabled ? 0.6 : 1)};
-  ${({ labelPosition }) => {
+  opacity: ${({ $disabled }) => ($disabled ? 0.6 : 1)};
+  ${({ $labelPosition }) => {
     let direction = 'row';
 
-    switch (labelPosition) {
+    switch ($labelPosition) {
       case 'bottom':
         direction = 'column';
         break;
@@ -62,7 +62,7 @@ const SwitchContainer: React.ForwardRefRenderFunction<HTMLLabelElement, SwitchCo
   const { children, labelPosition, disabled, ...nativeProps } = props;
 
   return (
-    <StyledContainer {...nativeProps} labelPosition={labelPosition} disabled={disabled} ref={ref}>
+    <StyledContainer {...nativeProps} $labelPosition={labelPosition} $disabled={disabled} ref={ref}>
       {children}
     </StyledContainer>
   );

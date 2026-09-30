@@ -22,7 +22,9 @@ const ConfirmBoxContainer: React.ForwardRefRenderFunction<
 
   return (
     <StyledConfirmBoxContainer
-      role="modal-confirmbox"
+      // A confirmation requires the user's response
+      role="alertdialog"
+      aria-modal="true"
       aria-labelledby={`${dialogID}-title`}
       aria-describedby={`${dialogID}-description`}
       {...nativeProps}

@@ -3,17 +3,18 @@
 ## Содержание
 
 - [Описание](#описание)
-- [Текст](#текст)
-- [Положение](#положение)
+- [Положение текста](#положение-текста)
 - [Цвета](#цвета)
-- [Контролируемый](#контролируемый)
+- [Контролируемый переключатель](#контролируемый-переключатель)
+- [Обязательное поле и ошибка](#обязательное-поле-и-ошибка)
 - [Переопределение](#переопределение)
 - [Свойства](#свойства)
 
 ## Описание
 
-Компонент `<Switch>` создаёт кликабельный переключатель, который может быть
-использован в формах или в любом другом месте интерфейса
+Компонент `<Switch>` — переключатель «вкл/выкл». Внутри него скрытый `<input type="checkbox" role="switch">`, поэтому переключатель работает с клавиатуры (Tab, Space), участвует в отправке формы и озвучивается программами чтения с экрана как переключатель. Текст передаётся в `children`; клик по тексту тоже переключает.
+
+Без свойства `checked` переключатель неконтролируемый: он сам хранит состояние, а начальное значение задаёт `defaultChecked`.
 
 _Пример использования:_
 
@@ -21,98 +22,62 @@ _Пример использования:_
 import React from 'react';
 import Switch from '@via-profit/ui-kit/Switch';
 
-const ExampleSwitchBasic: React.FC = () => (
+const Example: React.FC = () => (
   <>
-    <Switch defaultChecked />
-    <Switch />
-    <Switch defaultChecked disabled />
-    <Switch disabled />
+    <Switch defaultChecked>Уведомления по email</Switch>
+    <Switch>Уведомления в браузере</Switch>
+    <Switch defaultChecked disabled>
+      Системные уведомления
+    </Switch>
   </>
 );
 
-export default ExampleSwitchBasic;
+export default Example;
 ```
 
 <ExampleSwitchBasic />
 
-## Текст
+## Положение текста
 
-Вы можете передать текст переключателя в качестве свойства `children`. Он может быть выполнен в виде строки или компонена JSX
+Свойство `labelPosition` задаёт положение текста относительно переключателя:
 
-_Пример использования:_
-
-```tsx
-import React from 'react';
-import Switch from '@via-profit/ui-kit/Switch';
-
-const ExampleSwitchLabel: React.FC = () => (
-  <>
-    <Switch defaultChecked>Label</Switch>
-    <Switch requiredAsterisk>Required</Switch>
-    <Switch>Disabled</Switch>
-  </>
-);
-
-export default ExampleSwitchLabel;
-```
-
-<ExampleSwitchLabel />
-
-## Положение
-
-Вы можете указать положение текста относительно переключателя. Это реализуется с помощью свойства `labelPosition`. Оно принимает одно из следующих значений
-
-- **start** — Текст расположен перед переключателем
-- **end** — Текст расположен за переключателем
-- **top** — Текст расположен над переключателем
-- **bottom** — Текст расположен под переключателем
-
-По умолчанию: `end`
-
-_Пример использования:_
+- **`start`** — слева
+- **`end`** — справа (по умолчанию)
+- **`top`** — сверху
+- **`bottom`** — снизу
 
 ```tsx
-import React from 'react';
-import Switch from '@via-profit/ui-kit/Switch';
-import styled from '@emotion/styled';
-
-const Wrapper = styled.div`
-  display: flex;
-`;
-
-const ExampleSwitchLabelPlacement: React.FC = () => (
-  <Wrapper>
-    <Switch defaultChecked labelPosition="start">
-      Start
-    </Switch>
-    <Switch defaultChecked labelPosition="end">
-      End
-    </Switch>
-    <Switch defaultChecked labelPosition="top">
-      Top
-    </Switch>
-    <Switch defaultChecked labelPosition="bottom">
-      Bottom
-    </Switch>
-  </Wrapper>
-);
-
-export default ExampleSwitchLabelPlacement;
+<Switch labelPosition="start">Слева</Switch>
+<Switch labelPosition="top">Сверху</Switch>
 ```
 
 <ExampleSwitchLabelPlacement />
 
 ## Цвета
 
-Вы можете указать одно из трёх зарезервированных значений `default` `primary` `secondary`, или **rgb(a)**/**hex** код произвольного цвета. По умолчанию, используется цвет стиля `default`.
+Свойство `color` задаёт цвет включённого переключателя. Выключенный переключатель всегда нейтрального цвета.
 
-**Важно:** Цвет будет применен только ко включенному переключателю
+- **`default`** — основной цвет акцента темы, как у `primary` (по умолчанию)
+- **`primary`** — основной цвет акцента темы
+- **`secondary`** — второстепенный цвет акцента темы
+- любой цвет CSS: **hex**, **rgb(a)** или название цвета, например `lightpink`
 
-В качестве цвета вы можете передать и псевдоним цвета, например, **lightpink** что будет соответствовать коду цвета `#ffb6c1`,
+```tsx
+<Switch defaultChecked color="secondary">
+  secondary
+</Switch>
+<Switch defaultChecked color="#308dfc">
+  #308dfc
+</Switch>
+```
 
-- **default** — Цвет переключателя совпадает с цветом `primary`
-- **primary** — Используется основной цвет акцента
-- **secondary** — Используется второстепенный цвет акцента
+<ExampleSwitchColors />
+
+## Контролируемый переключатель
+
+Чтобы управлять состоянием самостоятельно, передайте `checked` и `onChange`. Новое значение — в `event.currentTarget.checked`. Если передать `checked` без `onChange`, переключатель нельзя будет переключить, а в консоль выведется ошибка.
+
+`onChange` можно передать и неконтролируемому переключателю, чтобы узнавать об изменениях: состояние он продолжит хранить сам.
 
 _Пример использования:_
 
@@ -120,235 +85,167 @@ _Пример использования:_
 import React from 'react';
 import Switch from '@via-profit/ui-kit/Switch';
 
-const ExampleSwitchColors: React.FC = () => (
-  <>
-    <Switch defaultChecked color="default">
-      Standard default
-    </Switch>
-    <Switch defaultChecked color="primary">
-      Standard primary
-    </Switch>
-    <Switch defaultChecked color="secondary">
-      Standard secondary
-    </Switch>
-    <Switch defaultChecked color="#308dfc">
-      Standard #308dfc
-    </Switch>
-    <Switch defaultChecked color="lightpink">
-      Standard lightpink
-    </Switch>
-  </>
-);
-
-export default ExampleSwitchColors;
-```
-
-<ExampleSwitchColors />
-
-## Контролируемый
-
-Переключатель может быть контролируемый. Для чтобы сделать переключатель контролируемым необходимо передать 2 свойства: `checked` и `onChange`.
-
-- **checked** — булево состояние компонента. По умолчанию `undefined`
-- **onChange** — Функция, которая сработает при переключении. По умолчанию `undefined`
-
-```tsx
-import React from 'react';
-import Switch from '@via-profit/ui-kit/Switch';
-
-const ExampleButtonColors: React.FC = () => {
-  const [switchState, setSwitchState] = React.useState<number | null>(null);
+const Example: React.FC = () => {
+  const [enabled, setEnabled] = React.useState(true);
+  const [news, setNews] = React.useState(true);
 
   return (
     <>
-      <Switch checked={switchState === 1} onChange={() => setSwitchState(1)}>
-        One
+      <Switch
+        checked={enabled}
+        onChange={event => setEnabled(event.currentTarget.checked)}
+      >
+        Получать рассылку
       </Switch>
-      <Switch checked={switchState === 2} onChange={() => setSwitchState(2)}>
-        Two
-      </Switch>
-      <Switch checked={switchState === 3} onChange={() => setSwitchState(3)}>
-        Three
+      <Switch
+        checked={enabled && news}
+        disabled={!enabled}
+        onChange={event => setNews(event.currentTarget.checked)}
+      >
+        Новости
       </Switch>
     </>
   );
 };
 
-export default ExampleButtonColors;
+export default Example;
 ```
 
 <ExampleSwitchControlled />
 
+## Обязательное поле и ошибка
+
+- `requiredAsterisk` — показывает звёздочку после текста. Можно передать свой элемент вместо `*`. Звёздочка только визуальная: чтобы браузер проверял поле, добавьте атрибут `required`;
+- `error` и `errorText` — показывают текст ошибки под переключателем. При `error` у поля выставляется `aria-invalid`.
+
+```tsx
+<Switch
+  requiredAsterisk
+  checked={accepted}
+  onChange={event => setAccepted(event.currentTarget.checked)}
+  error={!accepted}
+  errorText="Без согласия продолжить нельзя"
+>
+  Я принимаю условия использования
+</Switch>
+```
+
+<ExampleSwitchValidation />
+
 ## Переопределение
 
-Компонент `<Button>` является составным и реализован при помощи следующих компонентов:
+Компонент `<Switch>` является составным и реализован при помощи следующих компонентов:
 
-- `<Wrapper>` — Компонент основная обертка для всего переключателя
-- `<Container>` — Обёртка переключателя и текста, нативный элемент `label`
-- `<TextWrapper>` — Обёртка для текста переключателя
-- `<ToggleWrapper>` — Обёртка переключателя
-- `<Asterisk>` — Компонент, показывающий что поле обязательно
-- `<Dot>` — Элемент переключателя: сдвигающаяся точка
-- `<Track>` — Элемент переключателя: путь по которой сдвигается переключатель
-- `<ErrorText>` — Обёртка для текста ошибки
+- `<Wrapper>` — корневой элемент: переключатель с текстом и текст ошибки
+- `<Container>` — элемент `<label>` с переключателем и текстом
+- `<ToggleWrapper>` — область переключателя с нативным `<input>`; получает атрибуты `<input>`, переданные в `<Switch>`
+- `<Track>` — дорожка, по которой движется ползунок
+- `<Dot>` — ползунок
+- `<TextWrapper>` — обёртка текста
+- `<Asterisk>` — звёздочка обязательного поля
+- `<ErrorText>` — текст ошибки
 
-Используйте свойство `overrides` чтобы переопределить один или несколько компонентов:
+Используйте свойство `overrides`, чтобы переопределить один или несколько компонентов. Проще всего расширить стандартный компонент с помощью `styled`. Создавайте переопределения один раз — вне компонента, а не при рендере.
 
 _Пример использования:_
 
 ```tsx
 import React from 'react';
+import styled from '@emotion/styled';
 import Switch from '@via-profit/ui-kit/Switch';
 import SwitchDot from '@via-profit/ui-kit/Switch/SwitchDot';
-import styled from '@emotion/styled';
+import SwitchTrack from '@via-profit/ui-kit/Switch/SwitchTrack';
 
-const TextWrapper = styled.span`
-  font-weight: 600;
-  color: ${({ theme }) => theme.color.success.toString()};
-`;
-
-const StyledDot = styled(SwitchDot)`
-  & span {
-    border-radius: 0;
+const Dot = styled(SwitchDot)`
+  & [data-switch-dot] {
+    border-radius: 0.2rem;
   }
 `;
 
-const ExampleButtonOverrides: React.FC = () => (
-  <>
-    <Switch
-      type="button"
-      color="primary"
-      overrides={{
-        TextWrapper: React.forwardRef(function Wrapper(props, ref) {
-          const { children } = props;
+const Track = styled(SwitchTrack)`
+  border-radius: 0.2rem;
+`;
 
-          return <TextWrapper ref={ref}>{children}</TextWrapper>;
-        }),
-        Dot: React.forwardRef(function NewDot(props, ref) {
-          const { children, ...otherProps } = props;
+// Created once, outside of the component
+const overrides = { Dot, Track };
 
-          return (
-            <StyledDot {...otherProps} ref={ref}>
-              {children}
-            </StyledDot>
-          );
-        }),
-      }}
-    >
-      Overrided
-    </Switch>
-  </>
+const Example: React.FC = () => (
+  <Switch defaultChecked color="secondary" overrides={overrides}>
+    Квадратный переключатель
+  </Switch>
 );
 
-export default ExampleButtonOverrides;
+export default Example;
 ```
 
 <ExampleSwitchOverrides />
 
----
-
 ## Свойства
 
+Помимо перечисленных ниже, `<Switch>` принимает [стандартные атрибуты](https://developer.mozilla.org/ru/docs/Web/HTML/Element/input/checkbox) элемента `<input type="checkbox">` (`name`, `value`, `required`, `onFocus` и другие) и передаёт их в этот элемент. `ref` указывает на этот же элемент.
+
+### `children`
+Текст переключателя.
+- Тип: `React.ReactNode`
+- По умолчанию: `undefined`
+- Обязательное: нет
+
 ### `checked`
-Управляющее состояние переключателя (вкл/выкл).
-- Тип: `boolean`
-- По умолчанию: `undefined`
-- Обязательное: нет
-
-### `onChange`
-Функция обратного вызова, вызываемая при изменении состояния переключателя.
-- Тип: `function`
-- По умолчанию: `undefined`
-- Обязательное: нет
-
-### `color`
-Цвет переключателя. Может быть предопределенным значением или пользовательским цветом в формате **hex** или **rgb(a)**.
-- Тип: `'default' | 'secondary' | 'primary' | string`
-- По умолчанию: `'default'`
-- Обязательное: нет
-
-### `disabled`
-Если `true`, переключатель становится неактивным.
+Состояние контролируемого переключателя. Передавайте вместе с `onChange`.
 - Тип: `boolean`
 - По умолчанию: `undefined`
 - Обязательное: нет
 
 ### `defaultChecked`
-Если `true`, переключатель будет включен по умолчанию (неконтролируемый режим).
+Начальное состояние неконтролируемого переключателя.
 - Тип: `boolean`
 - По умолчанию: `false`
 - Обязательное: нет
 
+### `onChange`
+Вызывается при переключении. Новое значение — в `event.currentTarget.checked`.
+- Тип: `React.ChangeEventHandler<HTMLInputElement>`
+- По умолчанию: `undefined`
+- Обязательное: нет
+
+### `disabled`
+Если `true`, переключатель недоступен.
+- Тип: `boolean`
+- По умолчанию: `false`
+- Обязательное: нет
+
+### `color`
+Цвет включённого переключателя. Подробнее в разделе [Цвета](#цвета).
+- Тип: `'default' | 'primary' | 'secondary' | string`
+- По умолчанию: `'default'`
+- Обязательное: нет
+
 ### `labelPosition`
-Позиция текста относительно переключателя.
+Положение текста относительно переключателя.
 - Тип: `'start' | 'end' | 'top' | 'bottom'`
 - По умолчанию: `'end'`
 - Обязательное: нет
 
+### `requiredAsterisk`
+Если `true`, после текста показывается `*`; если элемент — показывается он.
+- Тип: `boolean | React.ReactNode`
+- По умолчанию: `undefined`
+- Обязательное: нет
+
 ### `error`
-Если `true`, под переключателем будет показано содержимое свойства `errorText`.
+Если `true`, под переключателем показывается `errorText`.
 - Тип: `boolean`
 - По умолчанию: `false`
 - Обязательное: нет
 
 ### `errorText`
-Текст ошибки, отображаемый под компонентом переключателя при значении `error={true}`.
-- Тип: `string | React.Component`
-- По умолчанию: `undefined`
-- Обязательное: нет
-
-### `requiredAsterisk`
-Если передан, поле помечается как обязательное (отображается звездочка).
-- Тип: `boolean | React.Component`
+Текст ошибки.
+- Тип: `React.ReactNode`
 - По умолчанию: `undefined`
 - Обязательное: нет
 
 ### `overrides`
-Объект для переопределения составных компонентов переключателя.
-- Тип: `Object`
+Объект для переопределения составных компонентов. Подробнее в разделе [Переопределение](#переопределение).
+- Тип: `SwitchOverrides`
 - По умолчанию: `undefined`
 - Обязательное: нет
-
-#### `overrides.Wrapper`
-Основная обертка для всего переключателя.
-- Тип: `React.Component`
-- По умолчанию: `<ButtonIconWrapper>`
-
-#### `overrides.Container`
-Обертка переключателя и текста, нативный элемент `label`.
-- Тип: `React.Component`
-- По умолчанию: `<ButtonContainer>`
-
-#### `overrides.TextWrapper`
-Обертка для текста переключателя.
-- Тип: `React.Component`
-- По умолчанию: `<ButtonTextWrapper>`
-
-#### `overrides.ToggleWrapper`
-Обертка для самого переключателя.
-- Тип: `React.Component`
-- По умолчанию: `<ButtonTextWrapper>`
-
-#### `overrides.Asterisk`
-Компонент, отображающий обязательность поля (звездочка).
-- Тип: `React.Component`
-- По умолчанию: `<ButtonTextWrapper>`
-
-#### `overrides.Dot`
-Элемент переключателя: сдвигающаяся точка.
-- Тип: `React.Component`
-- По умолчанию: `<ButtonTextWrapper>`
-
-#### `overrides.Track`
-Элемент переключателя: путь (трек), по которому движется точка.
-- Тип: `React.Component`
-- По умолчанию: `<ButtonTextWrapper>`
-
-#### `overrides.ErrorText`
-Обертка для текста ошибки.
-- Тип: `React.Component`
-- По умолчанию: `<ButtonTextWrapper>`
-
----
-
-Помимо перечисленных свойств, компонент принимает [стандартные атрибуты](https://developer.mozilla.org/ru/docs/Web/HTML/Element/label) HTML элемента `<label>`

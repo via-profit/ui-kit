@@ -1,31 +1,30 @@
 import React from 'react';
-
+import styled from '@emotion/styled';
 import Highlighted from '@via-profit/ui-kit/src/Highlighted';
-import Surface from '@via-profit/ui-kit/src/Surface';
+import HighlightedMark from '@via-profit/ui-kit/src/Highlighted/HighlightedMark';
+import { useIntl } from 'react-intl';
 
-const ExampleHighlightedOverrides: React.FC = () => (
-  <Surface inline>
+// Defined once at module level, not during the render
+const Mark = styled(HighlightedMark)`
+  padding: 0 0.15em;
+  border-radius: 0.2em;
+  font-weight: inherit;
+  color: ${({ theme }) => theme.color.accentPrimaryContrast.toString()};
+  background-color: ${({ theme }) => theme.color.accentPrimary.toString()};
+`;
+
+const overrides = { Mark };
+
+const ExampleHighlightedOverrides: React.FC = () => {
+  const intl = useIntl();
+
+  return (
     <Highlighted
-      text="Gold Cobra"
-      highlight={['cob']}
-      overrides={{
-        Mark: React.forwardRef(function MyMark(props, ref) {
-          return (
-            <mark
-              style={{
-                backgroundColor: 'green',
-                color: 'white',
-                outline: '1px solid green',
-                borderRadius: '4px',
-              }}
-              {...props}
-              ref={ref}
-            />
-          );
-        }),
-      }}
+      text={intl.formatMessage({ defaultMessage: 'Доставка по Москве и Московской области' })}
+      highlight={intl.formatMessage({ defaultMessage: 'моск' })}
+      overrides={overrides}
     />
-  </Surface>
-);
+  );
+};
 
 export default ExampleHighlightedOverrides;

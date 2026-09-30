@@ -6,11 +6,14 @@ import RenderMarkdown from '~/components/RenderMarkdown';
 import content from '@via-profit/ui-kit/docs/theming/README.md';
 import ExampleThemeProvider from '~/examples/theming/ExampleThemeProvider';
 import ExampleMultiThemming from '~/examples/theming/ExampleMultiThemming';
+import ExampleThemePalette from '~/examples/theming/ExampleThemePalette';
 
 const ThemingOverview: React.FC = () => (
   <>
     <DocsArticle>
-      <RenderMarkdown overrides={{ ExampleThemeProvider, ExampleMultiThemming }}>
+      <RenderMarkdown
+        overrides={{ ExampleThemeProvider, ExampleMultiThemming, ExampleThemePalette }}
+      >
         {content}
       </RenderMarkdown>
     </DocsArticle>

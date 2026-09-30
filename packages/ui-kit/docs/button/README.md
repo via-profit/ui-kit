@@ -6,14 +6,15 @@
 - [Варианты](#варианты)
 - [Цвета](#цвета)
 - [Иконки](#иконки)
+- [Состояния](#состояния)
 - [Переопределение](#переопределение)
 - [Свойства](#свойства)
 
 ## Описание
 
-Компонент `<Button>` создаёт кликабельную кнопку, которая может быть
-использована в формах или в любом другом месте документа, который требует простой,
-стандартной кнопки.
+Компонент `<Button>` — кнопка на основе элемента `<button>`. Все атрибуты `<button>` (`onClick`, `disabled`, `name`, `form` и другие) передаются ему.
+
+В отличие от обычного `<button>`, у которого по умолчанию `type="submit"`, у кнопки `type="button"`: нажатие не отправляет форму. Для кнопки отправки формы укажите `type="submit"`.
 
 _Пример использования:_
 
@@ -22,7 +23,9 @@ import React from 'react';
 import Button from '@via-profit/ui-kit/Button';
 
 const Example: React.FC = () => {
-  return <Button type="button">Button</Button>;
+  const [count, setCount] = React.useState(0);
+
+  return <Button onClick={() => setCount(value => value + 1)}>Нажато: {count}</Button>;
 };
 
 export default Example;
@@ -32,135 +35,115 @@ export default Example;
 
 ## Варианты
 
-Кнопки выполнены в трёх вариациях: `standard`, `outlined` и `plain`. По умолчанию, используется стиль `standard`.
+Свойство `variant` задаёт вид кнопки:
 
-- **plain** — отображает кнопку без фона и окантовки
-- **standard** — отображает обычную кнопку в привычном для всех виде
-- **outlined** — отображает кнопку с окантовкой
-
-_Пример использования:_
+- **`standard`** — с заливкой (по умолчанию)
+- **`outlined`** — с рамкой, без заливки
+- **`plain`** — без заливки и рамки; фон появляется только при наведении
 
 ```tsx
-import React from 'react';
-import Button from '@via-profit/ui-kit/Button';
-
-const Example: React.FC = () => (
-  <>
-    <Button type="button" variant="standard">
-      Standard
-    </Button>
-    <Button type="button" variant="outlined">
-      Outlined
-    </Button>
-    <Button type="button" variant="plain">
-      Plain
-    </Button>
-  </>
-);
-
-export default Example;
+<Button variant="standard">standard</Button>
+<Button variant="outlined">outlined</Button>
+<Button variant="plain">plain</Button>
 ```
 
 <ExampleButtonVariants />
 
 ## Цвета
 
-Вы можете указать одно из трёх зарезервированных значений `default` `primary` `secondary`, или **rgb(a)**/**hex** код произвольного цвета. По умолчанию, используется цвет стиля `default`.
+Свойство `color` принимает одно из значений `default`, `primary`, `secondary` либо любой цвет CSS: **hex**, **rgb(a)** или название цвета, например `lightpink`.
 
-В качестве цвета вы можете передать и псевдоним цвета, например, **lightpink** что будет соответствовать коду цвета `#ffb6c1`,
+- **`default`** — нейтральная кнопка цвета поверхности (`theme.color.surface`) (по умолчанию)
+- **`primary`** — основной цвет акцента темы
+- **`secondary`** — второстепенный цвет акцента темы
 
-- **default** — Цвет кнопки совпадает с цветом заднего плана
-- **primary** — Используется основной цвет акцента
-- **secondary** — Используется второстепенный цвет акцента
-
-_Пример использования:_
+У варианта `standard` цвет — это заливка, а текст подбирается автоматически: для `primary` и `secondary` берётся контрастный цвет из темы. У вариантов `outlined` и `plain` цвет — это текст и рамка.
 
 ```tsx
-import React from 'react';
-import Button from '@via-profit/ui-kit/Button';
-
-const Example: React.FC = () => (
-  <>
-    <>
-      <Button type="button" variant="standard" color="default">
-        Standard default
-      </Button>
-      <Button type="button" variant="standard" color="primary">
-        Standard primary
-      </Button>
-      <Button type="button" variant="standard" color="secondary">
-        Standard secondary
-      </Button>
-      <Button type="button" variant="standard" color="#308dfc">
-        Standard #308dfc
-      </Button>
-      <Button type="button" variant="standard" color="lightpink">
-        Standard lightpink
-      </Button>
-    </>
-  </>
-);
-
-export default Example;
+<Button color="primary">primary</Button>
+<Button variant="outlined" color="#e0435f">
+  #e0435f
+</Button>
 ```
 
 <ExampleButtonColors />
 
 ## Иконки
 
-Кнопка может отображать иконку, переданную в свойстве `startIcon` или `endIcon`. Если передать аргумент `onlyIcon`, то кнопка примет вид кнопки-иконки. Данное свойство не следует использовать одновременно с `startIcon` и/или `endIcon`
-**Важно:** Передавать следует не React компонент, а JSX выражение:
+`startIcon` и `endIcon` добавляют иконку перед текстом и после него. Передавайте элемент (`<PlusIcon />`), а не компонент (`PlusIcon`).
+
+Со свойством `iconOnly` кнопка становится квадратной кнопкой-иконкой: иконку передайте в `children`, а не в `startIcon`/`endIcon`. У такой кнопки нет текста, поэтому обязательно укажите `aria-label` — подпись для программ чтения с экрана.
 
 ```tsx
-import Button from '@via-profit/ui-kit/Button';
-import MyIcon from './MyIcon';
+<Button color="primary" startIcon={<PlusIcon />}>
+  Создать
+</Button>
 
-const Example: React.FC = () => (
-  <>
-    <Button startIcon={<MyIcon />}>Button with icon</Button>
-    <Button iconOnly>
-      <MyIcon />
-    </Button>
-    <Button iconOnly>
-      <MyIcon />
-    </Button>
-  </>
-);
+<Button iconOnly aria-label="Копировать">
+  <CopyIcon />
+</Button>
 ```
 
 <ExampleButtonIcons />
+
+## Состояния
+
+- `disabled` — кнопка недоступна: приглушена и не реагирует на нажатия;
+- загрузка — отключите кнопку и покажите [спиннер](../loading-indicator/README.md) в `startIcon`;
+- переключатель — меняйте `variant` в зависимости от состояния и передайте `aria-pressed`, чтобы программы чтения с экрана сообщали, нажата ли кнопка. Кнопка при этом не теряет фокус.
+
+```tsx
+<Button
+  color="primary"
+  disabled={isSaving}
+  startIcon={isSaving ? <Spinner size="1.2em" fill={false} /> : undefined}
+  onClick={save}
+>
+  {isSaving ? 'Сохранение…' : 'Сохранить'}
+</Button>
+
+<Button
+  color="primary"
+  variant={isSubscribed ? 'standard' : 'outlined'}
+  aria-pressed={isSubscribed}
+  onClick={() => setIsSubscribed(value => !value)}
+>
+  {isSubscribed ? 'Вы подписаны' : 'Подписаться'}
+</Button>
+```
+
+<ExampleButtonStates />
 
 ## Переопределение
 
 Компонент `<Button>` является составным и реализован при помощи следующих компонентов:
 
-- `<Container>` — Компонент нативного элемента кнопки `<button>`
-- `<TextWrapper>` — Обёртка для текста кнопки
-- `<IconWrapper>` — Обёртка иконки кнопки в случае её отображения
+- `<Container>` — элемент `<button>`; получает все атрибуты, переданные в `<Button>`
+- `<IconWrapper>` — обёртка `startIcon` и `endIcon`
+- `<TextWrapper>` — обёртка текста
 
-Используйте свойство `overrides` чтобы переопределить один или несколько компонентов:
+Используйте свойство `overrides`, чтобы переопределить один или несколько компонентов. Проще всего расширить стандартный компонент с помощью `styled`. Создавайте переопределения один раз — вне компонента, а не при рендере.
 
 _Пример использования:_
 
 ```tsx
 import React from 'react';
+import styled from '@emotion/styled';
 import Button from '@via-profit/ui-kit/Button';
+import ButtonTextWrapper from '@via-profit/ui-kit/Button/ButtonTextWrapper';
+
+const TextWrapper = styled(ButtonTextWrapper)`
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+`;
+
+// Created once, outside of the component
+const overrides = { TextWrapper };
 
 const Example: React.FC = () => (
-  <Button
-    type="button"
-    overrides={{
-      // Перезаписываем TextWrapper.
-      // Обратите внимание, что здесь прокидывается ref, однако
-      // прокинуть ref можно и при объявлении компонента, главное не забыть
-      TextWrapper: React.forwardRef(function Wrapper(props, ref) {
-        const { children } = props;
-
-        return <span style={{...}} ref={ref}>{children}</span>;
-      }),
-    }}
-  >
-    Overrided
+  <Button color="primary" overrides={overrides}>
+    Купить
   </Button>
 );
 
@@ -169,62 +152,48 @@ export default Example;
 
 <ExampleButtonOverrides />
 
-
----
-
 ## Свойства
 
+Помимо перечисленных ниже, `<Button>` принимает [стандартные атрибуты](https://developer.mozilla.org/ru/docs/Web/HTML/Element/button#атрибуты) элемента `<button>`. `ref` указывает на этот же элемент.
+
 ### `variant`
-Вариант отображения кнопки.
-- Тип: `'standard' | 'outlined'`
+Вид кнопки. Подробнее в разделе [Варианты](#варианты).
+- Тип: `'standard' | 'outlined' | 'plain'`
 - По умолчанию: `'standard'`
-- Обязательное: **да**
+- Обязательное: нет
 
 ### `color`
-Цвет кнопки. Может быть предопределенным значением или пользовательским цветом в формате **hex** или **rgb(a)**.
-- Тип: `'default' | 'secondary' | 'primary' | string`
+Цвет кнопки. Подробнее в разделе [Цвета](#цвета).
+- Тип: `'default' | 'primary' | 'secondary' | string`
 - По умолчанию: `'default'`
 - Обязательное: нет
 
-### `iconOnly`
-Если `true`, кнопка отображается как кнопка-иконка без текста. Не следует использовать одновременно с `startIcon` и/или `endIcon`.
-- Тип: `boolean`
-- По умолчанию: `undefined`
+### `type`
+Тип кнопки.
+- Тип: `'button' | 'submit' | 'reset'`
+- По умолчанию: `'button'`
 - Обязательное: нет
 
 ### `startIcon`
-Элемент иконки, отображаемой слева от текста кнопки.
+Иконка перед текстом.
 - Тип: `JSX.Element`
 - По умолчанию: `undefined`
 - Обязательное: нет
 
 ### `endIcon`
-Элемент иконки, отображаемой справа от текста кнопки.
+Иконка после текста.
 - Тип: `JSX.Element`
 - По умолчанию: `undefined`
 - Обязательное: нет
 
-### `overrides`
-Объект для переопределения составных компонентов кнопки.
-- Тип: `Object`
-- По умолчанию: `undefined`
+### `iconOnly`
+Если `true`, кнопка отображается как квадратная кнопка-иконка. Не используйте вместе со `startIcon` и `endIcon` и не забудьте `aria-label`.
+- Тип: `boolean`
+- По умолчанию: `false`
 - Обязательное: нет
 
-#### `overrides.Container`
-Компонент нативной кнопки.
-- Тип: `React.Component`
-- По умолчанию: `<ButtonContainer>`
-
-#### `overrides.IconWrapper`
-Компонент-обертка для иконок, отображаемых слева и/или справа от текста кнопки.
-- Тип: `React.Component`
-- По умолчанию: `<ButtonIconWrapper>`
-
-#### `overrides.TextWrapper`
-Компонент-обертка для текста кнопки.
-- Тип: `React.Component`
-- По умолчанию: `<ButtonTextWrapper>`
-
----
-
-Помимо перечисленных свойств, компонент принимает [стандартные атрибуты](https://developer.mozilla.org/ru/docs/Web/HTML/Element/button#атрибуты) HTML элемента `<button>`
+### `overrides`
+Объект для переопределения составных компонентов. Подробнее в разделе [Переопределение](#переопределение).
+- Тип: `ButtonBaseOverrides`
+- По умолчанию: `undefined`
+- Обязательное: нет

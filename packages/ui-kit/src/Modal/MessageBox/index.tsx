@@ -6,6 +6,7 @@ import Content, { MessageBoxContentProps } from './MessageBoxContent';
 import Footer, { MessageBoxFooterProps } from './MessageBoxFooter';
 import Header, { MessageBoxHeaderProps } from './MessageBoxHeader';
 import Overlay, { ModalOverlayProps } from '../BaseModal/ModalOverlay';
+import useDialogID from '../BaseModal/useDialogID';
 
 export interface MessageBoxProps extends Omit<BaseModalProps, 'overrides'> {
   /**
@@ -61,15 +62,13 @@ export interface MessageBoxOverrides {
   /**
    * Overlay header
    */
-  readonly Overlay?: React.ComponentType<
-    ModalOverlayProps & React.RefAttributes<HTMLDivElement>
-  >;
+  readonly Overlay?: React.ComponentType<ModalOverlayProps & React.RefAttributes<HTMLDivElement>>;
 }
 
 const MessageBox: React.FC<MessageBoxProps> = props => {
   const { header, children, onRequestClose, overrides, okButtonLabel, isOpen, ...otherProps } =
     props;
-  const dialogID = React.useMemo(() => `dialog-Message-${new Date().getTime()}`, []);
+  const dialogID = useDialogID('dialog-message');
   const buttonRef = React.useRef<HTMLButtonElement | null>(null);
 
   React.useEffect(() => {

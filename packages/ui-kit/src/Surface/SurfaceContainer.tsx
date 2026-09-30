@@ -30,6 +30,13 @@ const StyledSurfaceContainer = styled.div<StyledProps>`
     css`
       border-radius: 100%;
     `}
+
+  ${({ $noPadding }) =>
+    $noPadding &&
+    css`
+      /* The content reaches the edges, so it must follow the rounded corners */
+      overflow: hidden;
+    `}
 `;
 
 const SurfaceContainer: React.ForwardRefRenderFunction<HTMLDivElement, SurfaceContainerProps> = (

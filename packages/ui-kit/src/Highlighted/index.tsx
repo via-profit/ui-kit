@@ -60,7 +60,7 @@ export interface HighlightedOverrides {
   readonly Mark?: React.ComponentType<HighlightedMarkProps & React.RefAttributes<HTMLElement>>;
 
   /**
-   * Text element (HTML <span>)regex
+   * Text element (HTML <span>)
    */
   readonly Text?: React.ComponentType<HighlightedTextProps & React.RefAttributes<HTMLSpanElement>>;
 }
@@ -87,6 +87,10 @@ const Highlighted: React.ForwardRefRenderFunction<HTMLSpanElement, HighlightedPr
     () =>
       (typeof highlight === 'string' ? [highlight] : highlight)
         .filter(h => h.trim() !== '')
+        // Longest first: the alternation takes the first matching pattern,
+        // so «star» must not win over «starfish»
+        .slice()
+        .sort((a, b) => b.length - a.length)
         .map(escapeRegex),
     [highlight],
   );
@@ -105,29 +109,28 @@ const Highlighted: React.ForwardRefRenderFunction<HTMLSpanElement, HighlightedPr
     [overrides],
   );
 
-  const renderParts = React.useCallback(() => {
+  const parts = React.useMemo(() => {
     if (disabledHighlighting || patterns.length === 0) {
-      return null;
+      return [text];
     }
 
-    return text.split(regex).map((part, i) => {
-      const isMatch = part.match(regex) !== null;
-
-      return isMatch ? (
-        <overridesMap.Mark key={i}>{part}</overridesMap.Mark>
-      ) : (
-        <overridesMap.Text key={i}>{part}</overridesMap.Text>
-      );
-    });
-  }, [disabledHighlighting, patterns.length, regex, text, overridesMap]);
+    // With the capturing group, split puts the matches at the odd indexes
+    return text.split(regex);
+  }, [disabledHighlighting, patterns.length, regex, text]);
 
   return (
     <overridesMap.Container {...nativeProps} ref={ref}>
-      {disabledHighlighting && <overridesMap.Text>{text}</overridesMap.Text>}
-      {!disabledHighlighting && patterns.length === 0 && (
-        <overridesMap.Text>{text}</overridesMap.Text>
-      )}
-      {renderParts()}
+      {parts.map((part, i) => {
+        if (part === '') {
+          return null;
+        }
+
+        return i % 2 === 1 ? (
+          <overridesMap.Mark key={i}>{part}</overridesMap.Mark>
+        ) : (
+          <overridesMap.Text key={i}>{part}</overridesMap.Text>
+        );
+      })}
     </overridesMap.Container>
   );
 };

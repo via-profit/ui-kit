@@ -18,6 +18,18 @@ export type DrawerHeaderProps = Omit<React.HTMLAttributes<HTMLDivElement>, 'titl
   readonly showCloseButton?: boolean;
 
   /**
+   * Accessible label of the close button\
+   * \
+   * **Default**: `'Close'`
+   */
+  readonly closeButtonLabel?: string;
+
+  /**
+   * Drawer unique ID, the title gets the `${dialogID}-title` id for `aria-labelledby`
+   */
+  readonly dialogID?: string;
+
+  /**
    * On close request
    */
   readonly onRequestClose?: (event: React.MouseEvent<HTMLButtonElement>) => void;
@@ -62,16 +74,28 @@ const DrawerHeader: React.ForwardRefRenderFunction<HTMLDivElement, DrawerHeaderP
   props,
   ref,
 ) => {
-  const { header, children, showCloseButton, onRequestClose, ...nativeProps } = props;
+  const {
+    header,
+    children,
+    showCloseButton,
+    closeButtonLabel = 'Close',
+    dialogID,
+    onRequestClose,
+    ...nativeProps
+  } = props;
 
   return (
     <StyledDrawerHeader {...nativeProps} ref={ref}>
-      {typeof header !== 'undefined' && <DrawerTitle>{header}</DrawerTitle>}
+      {typeof header !== 'undefined' && (
+        <DrawerTitle id={dialogID ? `${dialogID}-title` : undefined}>{header}</DrawerTitle>
+      )}
       {typeof children !== 'undefined' && <DrawerToolbar>{children}</DrawerToolbar>}
       {typeof onRequestClose === 'function' && showCloseButton && (
         <StyledDrawerCloseButton
           type="button"
-          $withToolbar={Boolean(toolbar)}
+          // `toolbar` was resolved to the global window.toolbar here, so the gap was always shown
+          $withToolbar={typeof children !== 'undefined' && children !== null}
+          aria-label={closeButtonLabel}
           onClick={onRequestClose}
         >
           <DrawerCloseIcon />

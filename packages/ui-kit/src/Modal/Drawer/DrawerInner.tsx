@@ -156,6 +156,8 @@ const DrawerInner: React.ForwardRefRenderFunction<HTMLDivElement, DrawerInnerPro
 
   return (
     <Element
+      role="dialog"
+      aria-modal="true"
       isOpen={isOpen}
       id={`${dialogID}-description`}
       onRequestClose={onRequestClose}

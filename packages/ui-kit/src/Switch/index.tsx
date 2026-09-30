@@ -71,14 +71,14 @@ export interface SwitchOverrides {
    * Element container
    */
   readonly Container?: React.ComponentType<
-    SwitchContainerProps & React.RefAttributes<HTMLSpanElement>
+    SwitchContainerProps & React.RefAttributes<HTMLLabelElement>
   >;
 
   /**
    * Element toggle
    */
   readonly ToggleWrapper?: React.ComponentType<
-    SwitchToggleWrapperProps & React.RefAttributes<HTMLSpanElement>
+    SwitchToggleWrapperProps & React.RefAttributes<HTMLInputElement>
   >;
 
   /**
@@ -91,16 +91,12 @@ export interface SwitchOverrides {
   /**
    * Dot wrapper
    */
-  readonly Dot?: React.ComponentType<
-    SwitchDotProps & React.RefAttributes<HTMLSpanElement>
-  >;
+  readonly Dot?: React.ComponentType<SwitchDotProps & React.RefAttributes<HTMLSpanElement>>;
 
   /**
    * Toggle track wrapper
    */
-  readonly Track?: React.ComponentType<
-    SwitchTrackProps & React.RefAttributes<HTMLSpanElement>
-  >;
+  readonly Track?: React.ComponentType<SwitchTrackProps & React.RefAttributes<HTMLSpanElement>>;
 
   /**
    * error text wrapper
@@ -119,9 +115,7 @@ export interface SwitchOverrides {
   /**
    * the main cwitch wrapper
    */
-  readonly Wrapper?: React.ComponentType<
-    SwitchWrapperProps & React.RefAttributes<HTMLSpanElement>
-  >;
+  readonly Wrapper?: React.ComponentType<SwitchWrapperProps & React.RefAttributes<HTMLSpanElement>>;
 }
 
 const Switch: React.ForwardRefRenderFunction<HTMLInputElement, SwitchProps> = (props, ref) => {
@@ -158,11 +152,28 @@ const Switch: React.ForwardRefRenderFunction<HTMLInputElement, SwitchProps> = (p
     [overrides],
   );
 
-  if (typeof checked !== 'undefined' && typeof onChange === 'undefined') {
-    console.error(
-      'The property «onChange» should be passed with prop «checked» to make component controlled',
-    );
-  }
+  const isControlled = typeof checked !== 'undefined';
+  const isChecked = isControlled ? Boolean(checked) : internalChecked;
+
+  // Warn once, not on every render
+  const isControlledWithoutOnChange = isControlled && typeof onChange === 'undefined';
+  React.useEffect(() => {
+    if (isControlledWithoutOnChange) {
+      console.error(
+        'The property «onChange» should be passed with prop «checked» to make component controlled',
+      );
+    }
+  }, [isControlledWithoutOnChange]);
+
+  // The input is always controlled by isChecked, so the input, the picture and the form value match.
+  // In the uncontrolled mode the own state is updated even when onChange is passed
+  const handleChange: React.ChangeEventHandler<HTMLInputElement> = event => {
+    if (!isControlled) {
+      setInternalChecked(event.currentTarget.checked);
+    }
+
+    onChange?.(event);
+  };
 
   return (
     <overridesMap.Wrapper>
@@ -170,29 +181,18 @@ const Switch: React.ForwardRefRenderFunction<HTMLInputElement, SwitchProps> = (p
         <overridesMap.ToggleWrapper
           {...nativeProps}
           disabled={disabled}
-          onChange={
-            typeof onChange !== 'undefined'
-              ? onChange
-              : () => {
-                  setInternalChecked(!internalChecked);
-                }
-          }
-          checked={typeof checked !== 'undefined' ? checked : defaultChecked ? true : undefined}
+          onChange={handleChange}
+          checked={isChecked}
+          aria-invalid={error || undefined}
           name={name}
           ref={ref}
         >
-          <overridesMap.Track
-            color={color}
-            checked={typeof checked !== 'undefined' ? checked : internalChecked}
-          />
-          <overridesMap.Dot
-            color={color}
-            checked={typeof checked !== 'undefined' ? checked : internalChecked}
-          />
+          <overridesMap.Track color={color} checked={isChecked} />
+          <overridesMap.Dot color={color} checked={isChecked} />
         </overridesMap.ToggleWrapper>
         <overridesMap.TextWrapper>
           {children}
-          {typeof requiredAsterisk !== 'undefined' && requiredAsterisk !== null && (
+          {requiredAsterisk != null && requiredAsterisk !== false && (
             <overridesMap.Asterisk>
               {typeof requiredAsterisk === 'boolean' ? '*' : requiredAsterisk}
             </overridesMap.Asterisk>

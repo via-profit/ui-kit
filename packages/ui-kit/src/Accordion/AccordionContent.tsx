@@ -10,12 +10,21 @@ type StyleProps = {
   readonly $isOpen: boolean;
 };
 
+/**
+ * Animates the height with grid rows 0fr -> 1fr: no fixed max-height, so the tall content is not cut.
+ * `visibility: hidden` of the collapsed content removes it from the tab order and the accessibility tree
+ */
 const StyledAccordionContent = styled.div<StyleProps>`
-  flex: 1;
-  overflow: auto;
-  transition: all 0.3s ease-out;
-  max-height: ${({ $isOpen }) => (!$isOpen ? '0px' : '90vh')};
-  box-sizing: content-box;
+  display: grid;
+  grid-template-rows: ${({ $isOpen }) => ($isOpen ? '1fr' : '0fr')};
+  visibility: ${({ $isOpen }) => ($isOpen ? 'visible' : 'hidden')};
+  transition:
+    grid-template-rows 0.3s ease-out,
+    visibility 0s linear ${({ $isOpen }) => ($isOpen ? '0s' : '0.3s')};
+`;
+
+const Clip = styled.div`
+  min-height: 0;
   overflow: hidden;
 `;
 
@@ -30,8 +39,10 @@ const AccordionContent: React.ForwardRefRenderFunction<HTMLDivElement, Accordion
   const { children, noPadding, isOpen, ...nativeProps } = props;
 
   return (
-    <StyledAccordionContent $isOpen={isOpen} {...nativeProps} ref={ref}>
-      <Wrapper $noPadding={Boolean(noPadding)}>{children}</Wrapper>
+    <StyledAccordionContent role="region" {...nativeProps} $isOpen={isOpen} ref={ref}>
+      <Clip>
+        <Wrapper $noPadding={Boolean(noPadding)}>{children}</Wrapper>
+      </Clip>
     </StyledAccordionContent>
   );
 };

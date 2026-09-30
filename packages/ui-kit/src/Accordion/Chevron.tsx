@@ -4,15 +4,16 @@ import styled from '@emotion/styled';
 export type ChevronProps = React.SVGAttributes<SVGSVGElement>;
 
 const Path = styled.path`
-  fill: ${({ theme }) => theme.color.accentSecondary.toString()};
+  fill: currentColor;
 `;
 
-const Spinner: React.ForwardRefRenderFunction<SVGSVGElement, ChevronProps> = (props, ref) => (
+const Chevron: React.ForwardRefRenderFunction<SVGSVGElement, ChevronProps> = (props, ref) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width="1em"
     height="1em"
     viewBox="0 0 24 24"
+    aria-hidden
     {...props}
     ref={ref}
   >
@@ -20,4 +21,4 @@ const Spinner: React.ForwardRefRenderFunction<SVGSVGElement, ChevronProps> = (pr
   </svg>
 );
 
-export default React.forwardRef(Spinner);
+export default React.forwardRef(Chevron);

@@ -52,7 +52,6 @@ export const createTheme: CreateTheme = overrides => {
     theme.color[colorName] = Color.fromString(colorValue);
   });
 
-  theme.color.test = Color.fromString('red');
 
   return theme as ReturnType<CreateTheme>;
 };

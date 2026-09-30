@@ -1,35 +1,22 @@
 import React from 'react';
-import Button from '@via-profit/ui-kit/src/Button';
 import styled from '@emotion/styled';
+import Button from '@via-profit/ui-kit/src/Button';
+import ButtonTextWrapper from '@via-profit/ui-kit/src/Button/ButtonTextWrapper';
+import { FormattedMessage } from 'react-intl';
 
-const TextWrapper = styled.span<{ iconOnly?: boolean }>`
-  padding: 0.2em;
+// Defined once at module level, not during the render
+const TextWrapper = styled(ButtonTextWrapper)`
   font-weight: 600;
-  border-radius: 0.4em;
-  background-color: ${({ theme }) => theme.color.surface.toString()};
-  color: ${({ theme }) => theme.color.accentPrimary.darken(50).toString()};
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
 `;
 
-const ExampleButtonOverrides: React.FC = () => (
-  <>
-    <Button
-      type="button"
-      color="primary"
-      overrides={{
-        TextWrapper: React.forwardRef(function Wrapper(props, ref) {
-          const { iconOnly, children } = props;
+const overrides = { TextWrapper };
 
-          return (
-            <TextWrapper iconOnly={iconOnly} ref={ref}>
-              {children}
-            </TextWrapper>
-          );
-        }),
-      }}
-    >
-      Overrided
-    </Button>
-  </>
+const ExampleButtonOverrides: React.FC = () => (
+  <Button color="primary" overrides={overrides}>
+    <FormattedMessage defaultMessage="Купить" />
+  </Button>
 );
 
 export default ExampleButtonOverrides;

@@ -1,37 +1,46 @@
 import React from 'react';
 import Modal from '@via-profit/ui-kit/src/Modal';
 import Button from '@via-profit/ui-kit/src/Button';
-import Typography from '@via-profit/ui-kit/src/Typography';
+import Paragraph from '@via-profit/ui-kit/src/Typography/Paragraph';
+import { FormattedMessage, useIntl } from 'react-intl';
 
 const ExampleConfirmBox: React.FC = () => {
-  const [isOpenFirst, setIsOpenFirst] = React.useState(false);
-  const [isOpenInner, setIsOpenInner] = React.useState(false);
+  const intl = useIntl();
+  const [isOpen, setIsOpen] = React.useState(false);
+  const [isDeleted, setIsDeleted] = React.useState(false);
 
   return (
     <>
-      <Button onClick={() => setIsOpenFirst(true)}>Open confirmation dialog</Button>
-
-      <Modal
-        variant="confirm-box"
-        isOpen={isOpenFirst}
-        onRequestClose={() => setIsOpenFirst(false)}
-        header="Title"
-        onRequestYes={() => setIsOpenFirst(false)}
-      >
-        <Typography noMargin>Dialog content</Typography>
-        <Button variant="outlined" onClick={() => setIsOpenInner(true)}>
-          Open inner dialog
+      <Paragraph>
+        {isDeleted ? (
+          <FormattedMessage defaultMessage="Файл «Отчёт.pdf» удалён" />
+        ) : (
+          <FormattedMessage defaultMessage="Файл «Отчёт.pdf»" />
+        )}
+      </Paragraph>
+      {isDeleted ? (
+        <Button onClick={() => setIsDeleted(false)}>
+          <FormattedMessage defaultMessage="Восстановить" />
         </Button>
-      </Modal>
+      ) : (
+        <Button onClick={() => setIsOpen(true)}>
+          <FormattedMessage defaultMessage="Удалить файл" />
+        </Button>
+      )}
 
       <Modal
         variant="confirm-box"
-        isOpen={isOpenInner}
-        onRequestClose={() => setIsOpenInner(false)}
-        header="Title"
-        onRequestYes={() => setIsOpenInner(false)}
+        isOpen={isOpen}
+        header={intl.formatMessage({ defaultMessage: 'Удалить файл?' })}
+        confirmButtonLabel={<FormattedMessage defaultMessage="Удалить" />}
+        dismissButtonLabel={<FormattedMessage defaultMessage="Отмена" />}
+        onRequestYes={() => {
+          setIsDeleted(true);
+          setIsOpen(false);
+        }}
+        onRequestClose={() => setIsOpen(false)}
       >
-        <Typography noMargin>Inner Dialog content</Typography>
+        <FormattedMessage defaultMessage="Файл «Отчёт.pdf» будет удалён без возможности восстановления." />
       </Modal>
     </>
   );

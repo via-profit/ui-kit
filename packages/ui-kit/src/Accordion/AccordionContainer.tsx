@@ -35,19 +35,19 @@ const StyledAccordionContainer = styled.div<StyledProps>`
           ? theme.color.backgroundSecondary.lighten(80).alpha(0.12).toString()
           : theme.color.backgroundSecondary.lighten(50).alpha(0.12).toString()}
       0px 1px 3px 0px;
-  margin-top: 1px;
 
-  &:has(+ div[class*='StyledAccordionContainer']) {
-    border-radius: ${({ theme }) => theme.shape.radiusFactor}em
-      ${({ theme }) => theme.shape.radiusFactor}em 0 0;
+  /*
+   * Adjacent accordions form a group: the inner corners are square.
+   * Data attributes, not class names: emotion labels are absent in the published package
+   */
+  &:has(+ [data-accordion]) {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
   }
 
-  & + div[class*='StyledAccordionContainer'] {
-    border-radius: 0 0 0 0;
-  }
-  &:not(:has(+ div[class*='StyledAccordionContainer'])) {
-    border-radius: 0 0 ${({ theme }) => theme.shape.radiusFactor}em
-      ${({ theme }) => theme.shape.radiusFactor}em;
+  [data-accordion] + & {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
   }
 `;
 
@@ -58,7 +58,7 @@ const AccordionContainer: React.ForwardRefRenderFunction<
   const { inline, children, ...nativeProps } = props;
 
   return (
-    <StyledAccordionContainer $inline={inline} {...nativeProps} ref={ref}>
+    <StyledAccordionContainer data-accordion="" $inline={inline} {...nativeProps} ref={ref}>
       {children}
     </StyledAccordionContainer>
   );

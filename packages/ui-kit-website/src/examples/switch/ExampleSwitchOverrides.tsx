@@ -1,44 +1,32 @@
 import React from 'react';
+import styled from '@emotion/styled';
 import Switch from '@via-profit/ui-kit/src/Switch';
 import SwitchDot from '@via-profit/ui-kit/src/Switch/SwitchDot';
-import styled from '@emotion/styled';
+import SwitchTrack from '@via-profit/ui-kit/src/Switch/SwitchTrack';
+import SwitchTextWrapper from '@via-profit/ui-kit/src/Switch/SwitchTextWrapper';
+import { FormattedMessage } from 'react-intl';
 
-const TextWrapper = styled.span`
-  font-weight: 600;
-  color: ${({ theme }) => theme.color.success.toString()};
-`;
-
-const StyledDot = styled(SwitchDot)`
-  & span {
-    border-radius: 0;
+// Defined once at module level, not during the render
+const Dot = styled(SwitchDot)`
+  & [data-switch-dot] {
+    border-radius: 0.2rem;
   }
 `;
 
-const ExampleButtonOverrides: React.FC = () => (
-  <>
-    <Switch
-      type="button"
-      color="primary"
-      overrides={{
-        TextWrapper: React.forwardRef(function Wrapper(props, ref) {
-          const { children } = props;
+const Track = styled(SwitchTrack)`
+  border-radius: 0.2rem;
+`;
 
-          return <TextWrapper ref={ref}>{children}</TextWrapper>;
-        }),
-        Dot: React.forwardRef(function NewDot(props, ref) {
-          const { children, ...otherProps } = props;
+const TextWrapper = styled(SwitchTextWrapper)`
+  font-weight: 600;
+`;
 
-          return (
-            <StyledDot {...otherProps} ref={ref}>
-              {children}
-            </StyledDot>
-          );
-        }),
-      }}
-    >
-      Overrided
-    </Switch>
-  </>
+const overrides = { Dot, Track, TextWrapper };
+
+const ExampleSwitchOverrides: React.FC = () => (
+  <Switch defaultChecked color="secondary" overrides={overrides}>
+    <FormattedMessage defaultMessage="Квадратный переключатель" />
+  </Switch>
 );
 
-export default ExampleButtonOverrides;
+export default ExampleSwitchOverrides;

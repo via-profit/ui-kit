@@ -1,22 +1,47 @@
 import React from 'react';
+import styled from '@emotion/styled';
 import Switch from '@via-profit/ui-kit/src/Switch';
+import { FormattedMessage } from 'react-intl';
 
-const ExampleButtonColors: React.FC = () => {
-  const [switchState, setSwitchState] = React.useState<number | null>(null);
+const Column = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5em;
+`;
+
+const Nested = styled(Column)`
+  padding-left: 2em;
+`;
+
+const ExampleSwitchControlled: React.FC = () => {
+  const [enabled, setEnabled] = React.useState(true);
+  const [news, setNews] = React.useState(true);
+  const [sales, setSales] = React.useState(false);
 
   return (
-    <>
-      <Switch checked={switchState === 1} onChange={() => setSwitchState(1)}>
-        One
+    <Column>
+      <Switch checked={enabled} onChange={event => setEnabled(event.currentTarget.checked)}>
+        <FormattedMessage defaultMessage="Получать рассылку" />
       </Switch>
-      <Switch checked={switchState === 2} onChange={() => setSwitchState(2)}>
-        Two
-      </Switch>
-      <Switch checked={switchState === 3} onChange={() => setSwitchState(3)}>
-        Three
-      </Switch>
-    </>
+      <Nested>
+        <Switch
+          checked={enabled && news}
+          disabled={!enabled}
+          onChange={event => setNews(event.currentTarget.checked)}
+        >
+          <FormattedMessage defaultMessage="Новости" />
+        </Switch>
+        <Switch
+          checked={enabled && sales}
+          disabled={!enabled}
+          onChange={event => setSales(event.currentTarget.checked)}
+        >
+          <FormattedMessage defaultMessage="Скидки и акции" />
+        </Switch>
+      </Nested>
+    </Column>
   );
 };
 
-export default ExampleButtonColors;
+export default ExampleSwitchControlled;

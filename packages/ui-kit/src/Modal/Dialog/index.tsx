@@ -1,7 +1,9 @@
 import * as React from 'react';
 
 import BaseModal, { BaseModalProps } from '../BaseModal';
+import type { ModalInnerProps } from '../BaseModal/ModalInner';
 import DialogInner from './DialogInner';
+import useDialogID from '../BaseModal/useDialogID';
 
 export interface DialogProps extends BaseModalProps {
   readonly children: React.ReactNode | React.ReactNode[];
@@ -9,30 +11,25 @@ export interface DialogProps extends BaseModalProps {
 
 const Dialog: React.FC<DialogProps> = props => {
   const { children, overrides, ...restProps } = props;
-  const dialogID = React.useMemo(() => `dialog-${new Date().getTime()}`, []);
+  const dialogID = useDialogID('dialog');
+
+  // Created once: a component created during the render is a new type on every render,
+  // so React would remount the whole dialog content (inputs lose the focus and the state)
+  const Inner = React.useMemo(
+    () =>
+      overrides?.Inner ??
+      React.forwardRef<HTMLDivElement, ModalInnerProps>(function Inner(innerProps, ref) {
+        return <DialogInner dialogID={dialogID} ref={ref} {...innerProps} />;
+      }),
+    [overrides?.Inner, dialogID],
+  );
+
+  const modalOverrides = React.useMemo(() => ({ ...overrides, Inner }), [overrides, Inner]);
 
   return (
-    <>
-      <BaseModal
-        {...restProps}
-        overrides={{
-          ...overrides,
-          Inner:
-            overrides?.Inner ??
-            React.forwardRef(function Inner(props, ref) {
-              const { children } = props;
-
-              return (
-                <DialogInner dialogID={dialogID} ref={ref} {...props}>
-                  {children}
-                </DialogInner>
-              );
-            }),
-        }}
-      >
-        {children}
-      </BaseModal>
-    </>
+    <BaseModal {...restProps} overrides={modalOverrides}>
+      {children}
+    </BaseModal>
   );
 };
 

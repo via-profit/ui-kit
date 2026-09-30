@@ -22,7 +22,13 @@ const DialogInner: React.ForwardRefRenderFunction<HTMLDivElement, DialogInnerPro
   const { children, dialogID, ...restProps } = props;
 
   return (
-    <StyledDialogInner id={`${dialogID}-description`} {...restProps} ref={ref}>
+    <StyledDialogInner
+      role="dialog"
+      aria-modal="true"
+      id={`${dialogID}-description`}
+      {...restProps}
+      ref={ref}
+    >
       {children}
     </StyledDialogInner>
   );

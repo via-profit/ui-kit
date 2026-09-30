@@ -7,7 +7,7 @@ import content from '@via-profit/ui-kit/docs/highlighted/README.md';
 import ExampleHighlightedOverview from '~/examples/highlighted/ExampleHighlightedOverview';
 import ExampleHighlightedOverrides from '~/examples/highlighted/ExampleHighlightedOverrides';
 
-const CountryFlagsOverview: React.FC = () => (
+const HighlightedOverview: React.FC = () => (
   <>
     <DocsArticle>
       <RenderMarkdown overrides={{ ExampleHighlightedOverview, ExampleHighlightedOverrides }}>
@@ -18,4 +18,4 @@ const CountryFlagsOverview: React.FC = () => (
   </>
 );
 
-export default CountryFlagsOverview;
+export default HighlightedOverview;

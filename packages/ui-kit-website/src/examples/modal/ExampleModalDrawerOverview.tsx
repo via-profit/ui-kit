@@ -1,158 +1,69 @@
 import React from 'react';
 import styled from '@emotion/styled';
-import { ClassNames } from '@emotion/react';
-import Modal from '@via-profit/ui-kit/src/Modal';
+import Modal, { AnchorVariant } from '@via-profit/ui-kit/src/Modal';
 import Button from '@via-profit/ui-kit/src/Button';
-import Surface from '@via-profit/ui-kit/src/Surface';
-import Typography from '@via-profit/ui-kit/src/Typography';
-import Strong from '@via-profit/ui-kit/src/Typography/Strong';
+import { MenuItem } from '@via-profit/ui-kit/src/Menu';
+import { FormattedMessage } from 'react-intl';
 
-const DummyWrapper = styled.div`
+const Buttons = styled.div`
   display: flex;
   flex-wrap: wrap;
+  gap: 0.5em;
 `;
 
-const Toolbar = styled.div`
-  display: flex;
-  align-items: center;
-  & > button {
-    margin-left: 0.5em;
-  }
+const Nav = styled.nav`
+  min-width: 16em;
+  padding: 0 0.5em;
 `;
 
-const ToolbarTitle = styled(Strong)`
-  margin-right: 0.5em;
-`;
-
-const Dummy = styled(Surface)`
-  width: 15em;
-  flex-basis: calc(25% - 1em);
-  margin: 0.5em;
-  border-style: solid;
-  border-width: 1px;
-  border-color: ${({ theme }) => theme.color.accentPrimary.toString()};
-`;
-
-const CardText = styled(Typography)`
-  color: ${({ theme }) => theme.color.textSecondary.toString()};
-  margin-top: 1em;
-`;
-
-const FooterText = styled(Typography)`
-  color: ${({ theme }) => theme.color.textSecondary.toString()};
-  font-size: 0.9em;
-`;
-
-const Title: React.FC = () => <>Title</>;
+const anchors: AnchorVariant[] = ['left', 'right', 'top', 'bottom'];
+const sections = ['Главная', 'Каталог', 'Корзина', 'Профиль', 'Настройки'];
 
 const ExampleModalDrawerOverview: React.FC = () => {
-  const [isOpenDrawer1, setOpenDrawer1] = React.useState(false);
-  const [isOpenDrawerLeft, setOpenDrawerLeft] = React.useState(false);
-  const [isOpenDrawerTop, setOpenDrawerTop] = React.useState(false);
-  const [isOpenDrawerBottom, setOpenDrawerBottom] = React.useState(false);
+  const [anchor, setAnchor] = React.useState<AnchorVariant>('left');
+  const [isOpen, setIsOpen] = React.useState(false);
+  const [section, setSection] = React.useState(sections[0]);
 
   return (
     <>
-      <Button onClick={() => setOpenDrawer1(true)}>Open large drawer </Button>
-      <Button onClick={() => setOpenDrawerBottom(true)}>Open drawer bottom</Button>
-      <Button onClick={() => setOpenDrawerLeft(true)}>Open drawer left</Button>
-      <Button onClick={() => setOpenDrawerTop(true)}>Open drawer top</Button>
+      <Buttons>
+        {anchors.map(value => (
+          <Button
+            key={value}
+            onClick={() => {
+              setAnchor(value);
+              setIsOpen(true);
+            }}
+          >
+            anchor=&quot;{value}&quot;
+          </Button>
+        ))}
+      </Buttons>
 
       <Modal
         variant="drawer"
-        anchor="bottom"
+        anchor={anchor}
+        isOpen={isOpen}
+        header={<FormattedMessage defaultMessage="Навигация" />}
         showCloseButton
-        isOpen={isOpenDrawer1}
-        header={<Title />}
-        toolbar={
-          <Toolbar>
-            <ToolbarTitle>Toolbar</ToolbarTitle>
-            <Button onClick={() => setOpenDrawerLeft(true)}>Open simple drawer</Button>
-          </Toolbar>
-        }
-        onRequestClose={() => setOpenDrawer1(false)}
-        footer={
-          <FooterText>
-            <Strong>Footer:</Strong> Voluptate magna culpa pariatur cillum incididunt cupidatat
-            ullamco minim.
-          </FooterText>
-        }
+        footer={<FormattedMessage defaultMessage="Версия 1.0" />}
+        onRequestClose={() => setIsOpen(false)}
       >
-        <DummyWrapper>
-          {[...new Array(80).keys()].map(key => (
-            <Dummy key={key}>
-              <Strong>Lorem ipsum</Strong>
-              <CardText noMargin>
-                Pariatur sint commodo commodo enim adipisicing irure proident cillum sint.
-              </CardText>
-            </Dummy>
+        <Nav>
+          {sections.map(item => (
+            <MenuItem
+              key={item}
+              selected={item === section}
+              hovered={false}
+              onClick={() => {
+                setSection(item);
+                setIsOpen(false);
+              }}
+            >
+              {item}
+            </MenuItem>
           ))}
-        </DummyWrapper>
-      </Modal>
-
-      <Modal
-        variant="drawer"
-        anchor="top"
-        isOpen={isOpenDrawerTop}
-        onRequestClose={() => setOpenDrawerTop(false)}
-      >
-        <ClassNames>
-          {({ css }) => (
-            <Dummy
-              className={css`
-                flex-basis: initial;
-              `}
-            >
-              <Strong>Lorem ipsum</Strong>
-              <CardText noMargin>
-                Pariatur sint commodo commodo enim adipisicing irure proident cillum sint.
-              </CardText>
-            </Dummy>
-          )}
-        </ClassNames>
-      </Modal>
-
-      <Modal
-        variant="drawer"
-        anchor="left"
-        isOpen={isOpenDrawerLeft}
-        onRequestClose={() => setOpenDrawerLeft(false)}
-      >
-        <ClassNames>
-          {({ css }) => (
-            <Dummy
-              className={css`
-                flex-basis: initial;
-              `}
-            >
-              <Strong>Lorem ipsum</Strong>
-              <CardText noMargin>
-                Pariatur sint commodo commodo enim adipisicing irure proident cillum sint.
-              </CardText>
-            </Dummy>
-          )}
-        </ClassNames>
-      </Modal>
-      <Modal
-        variant="drawer"
-        anchor="bottom"
-        isOpen={isOpenDrawerBottom}
-        onRequestClose={() => setOpenDrawerBottom(false)}
-      >
-        <ClassNames>
-          {({ css }) => (
-            <Dummy
-              className={css`
-                flex-basis: initial;
-              `}
-            >
-              <Strong>Lorem ipsum</Strong>
-              <CardText noMargin>
-                Pariatur sint commodo commodo enim adipisicing irure proident cillum sint.
-              </CardText>
-            </Dummy>
-          )}
-        </ClassNames>
+        </Nav>
       </Modal>
     </>
   );

@@ -1,123 +1,136 @@
-# Highlighted
+# Подсветка подстроки
 
 ## Содержание
 
 - [Описание](#описание)
-- [Свойства](#свойства)
 - [Переопределение](#переопределение)
+- [Свойства](#свойства)
 
 ## Описание
 
-Компонент `<Highlighted>` позволяет отобразить строку с подсвечиванием подстроки. Применяется в компоненте [Autocomplete](../autocomplete/README.md)
+Компонент `<Highlighted>` выводит текст и выделяет в нём найденные подстроки. Он удобен в результатах поиска и в вариантах [автокомплита](../autocomplete/README.md): пользователь видит, почему вариант попал в список.
+
+- `highlight` принимает строку или массив строк. Чтобы подсветить каждое слово запроса отдельно, разбейте запрос: `query.split(/\s+/)`;
+- по умолчанию регистр не учитывается: «кофе» найдёт «Кофе». Свойство `caseSensitive` включает учёт регистра;
+- спецсимволы регулярных выражений ищутся как обычный текст: «(руб.)» или «1+1» подсвечиваются как есть;
+- если подстроки пересекаются, выделяется самая длинная: при `['кофе', 'кофемолка']` слово «Кофемолка» подсветится целиком;
+- пустые строки и пробелы в `highlight` игнорируются.
+
+Найденные части оборачиваются в элемент `<mark>`, остальной текст — в `<span>`.
 
 _Пример использования:_
 
 ```tsx
 import React from 'react';
+import TextField from '@via-profit/ui-kit/TextField';
 import Highlighted from '@via-profit/ui-kit/Highlighted';
 
-const Example: React.FC = () => (
-  <Highlighted
-    text="Chocolate Starfish and the Hot Dog Flavored Water"
-    highlight={['hot', 'starfish']}
-  />
-);
+const products = ['Кофе в зёрнах, 1 кг', 'Кофе молотый, 250 г', 'Молоко 3,2%, 1 л'];
+
+const Example: React.FC = () => {
+  const [query, setQuery] = React.useState('кофе мол');
+
+  return (
+    <>
+      <TextField
+        label="Поиск по товарам"
+        value={query}
+        onChange={event => setQuery(event.currentTarget.value)}
+      />
+      <ul>
+        {products.map(product => (
+          <li key={product}>
+            <Highlighted text={product} highlight={query.split(/\s+/)} />
+          </li>
+        ))}
+      </ul>
+    </>
+  );
+};
 
 export default Example;
 ```
 
 <ExampleHighlightedOverview />
 
+Функция `escapeRegex`, которой компонент экранирует подстроки, тоже экспортируется. Она пригодится, если строить регулярное выражение из пользовательского ввода самостоятельно:
+
+```ts
+import { escapeRegex } from '@via-profit/ui-kit/Highlighted';
+
+const regex = new RegExp(escapeRegex('1+1'), 'i');
+```
+
 ## Переопределение
 
 Компонент `<Highlighted>` является составным и реализован при помощи следующих компонентов:
 
-- `<Container>` — Компонент контейнер `<span>`
-- `<Text>` — `<span>` компонент, отображающий простой текст (не подсвеченный)
-- `<Mark>` — `<span>` компонент, отображающий подсвеченную часть текста
+- `<Container>` — корневой `<span>`; получает все атрибуты, переданные в `<Highlighted>`
+- `<Mark>` — `<mark>` с найденной частью текста
+- `<Text>` — `<span>` с остальным текстом
 
-Используйте свойство `overrides` чтобы переопределить один или несколько компонентов:
+Используйте свойство `overrides`, чтобы переопределить один или несколько компонентов. Проще всего расширить стандартный компонент с помощью `styled`. Создавайте переопределения один раз — вне компонента, а не при рендере.
 
 _Пример использования:_
 
 ```tsx
 import React from 'react';
+import styled from '@emotion/styled';
 import Highlighted from '@via-profit/ui-kit/Highlighted';
+import HighlightedMark from '@via-profit/ui-kit/Highlighted/HighlightedMark';
+
+const Mark = styled(HighlightedMark)`
+  padding: 0 0.15em;
+  border-radius: 0.2em;
+  font-weight: inherit;
+  color: ${({ theme }) => theme.color.accentPrimaryContrast.toString()};
+  background-color: ${({ theme }) => theme.color.accentPrimary.toString()};
+`;
+
+// Created once, outside of the component
+const overrides = { Mark };
 
 const Example: React.FC = () => (
   <Highlighted
-    text="Gold Cobra"
-    highlight={['cob']}
-    overrides={{
-      Mark: React.forwardRef(function MyMark(props, ref) {
-        return (
-          <mark
-            {...props}
-            ref={ref}
-            style={{
-              backgroundColor: 'green',
-              color: 'white',
-              outline: '1px solid green',
-              borderRadius: '4px',
-            }}
-          />
-        );
-      }),
-    }}
+    text="Доставка по Москве и Московской области"
+    highlight="моск"
+    overrides={overrides}
   />
 );
+
+export default Example;
 ```
 
 <ExampleHighlightedOverrides />
-Вот обновленный раздел "Свойства" с заменой таблицы на описание в формате кода:
 
 ## Свойства
 
+Помимо перечисленных ниже, `<Highlighted>` принимает [стандартные атрибуты](https://developer.mozilla.org/ru/docs/Web/HTML/Element/span#атрибуты) элемента `<span>` и передаёт их в `<Container>`. `ref` указывает на этот же элемент.
+
 ### `text`
-Исходный текст, в котором будет производиться подсветка.
+Текст, в котором ищутся подстроки.
 - Тип: `string`
-- По умолчанию: (обязательный параметр)
 - Обязательное: **да**
 
 ### `highlight`
-Строка или массив строк, которые необходимо подсветить в исходном тексте.
-- Тип: `string | Array<string>`
-- По умолчанию: (обязательный параметр)
+Подстрока или массив подстрок, которые нужно выделить.
+- Тип: `string | readonly string[]`
 - Обязательное: **да**
 
 ### `caseSensitive`
-Определяет, будет ли поиск чувствителен к регистру.
+Если `true`, поиск учитывает регистр.
 - Тип: `boolean`
 - По умолчанию: `false`
 - Обязательное: нет
 
 ### `disabledHighlighting`
-Если `true`, отключает подсветку и отображает исходный текст без изменений.
+Если `true`, текст выводится без выделения.
 - Тип: `boolean`
 - По умолчанию: `false`
 - Обязательное: нет
 
 ### `overrides`
-Объект для переопределения составных компонентов подсветки текста.
-- Тип: `Object`
+Объект для переопределения составных компонентов. Подробнее в разделе [Переопределение](#переопределение).
+- Тип: `HighlightedOverrides`
 - По умолчанию: `undefined`
 - Обязательное: нет
-
-#### `overrides.Container`
-Компонент-контейнер `<span>`, объединяющий все части текста.
-- Тип: `React.Component`
-- По умолчанию: `<HighlightedContainer>`
-
-#### `overrides.Text`
-Компонент, отображающий обычный (неподсвеченный) текст.
-- Тип: `React.Component`
-- По умолчанию: `<HighlightedText>`
-
-#### `overrides.Mark`
-Компонент, отображающий подсвеченную часть текста.
-- Тип: `React.Component`
-- По умолчанию: `<HighlightedMark>`
-
----
-
-Помимо перечисленных свойств, компонент принимает [стандартные атрибуты](https://developer.mozilla.org/ru/docs/Web/HTML/Element/span#атрибуты) HTML элемента `<span>`

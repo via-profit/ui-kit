@@ -1,52 +1,23 @@
 import React from 'react';
-import Accordion from '@via-profit/ui-kit/src/Accordion';
-import AccordionContent from '@via-profit/ui-kit/src/Accordion/AccordionContent';
-import AccordionHeader from '@via-profit/ui-kit/src/Accordion/AccordionHeader';
 import styled from '@emotion/styled';
+import Accordion from '@via-profit/ui-kit/src/Accordion';
+import AccordionHeader from '@via-profit/ui-kit/src/Accordion/AccordionHeader';
+import { FormattedMessage } from 'react-intl';
 
-const StyledContent = styled(AccordionContent)`
-  font-weight: 600;
-  border-radius: 0.4em;
-  background-color: ${({ theme }) => theme.color.accentPrimary.toString()};
-  color: ${({ theme }) => theme.color.accentPrimaryContrast.toString()};
+// Defined once at module level, not during the render
+const Header = styled(AccordionHeader)`
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: ${({ theme }) => theme.color.accentPrimary.toString()};
 `;
 
-const StyledHeader = styled(AccordionHeader)`
-  font-weight: 600;
-  border-radius: 0.4em;
-  padding: 1em;
-  background-color: ${({ theme }) => theme.color.accentSecondary.toString()};
-  color: ${({ theme }) => theme.color.accentSecondaryContrast.toString()};
-`;
+const overrides = { Header };
 
 const ExampleAccordionOverrides: React.FC = () => (
-  <>
-    <Accordion
-      header={<>Overrided</>}
-      overrides={{
-        Content: React.forwardRef(function Content(props, ref) {
-          const { children } = props;
-
-          return (
-            <StyledContent ref={ref} {...props}>
-              {children}
-            </StyledContent>
-          );
-        }),
-        Header: React.forwardRef(function Header(props, ref) {
-          const { children } = props;
-
-          return (
-            <StyledHeader ref={ref} {...props}>
-              {children}
-            </StyledHeader>
-          );
-        }),
-      }}
-    >
-      Overrided
-    </Accordion>
-  </>
+  <Accordion header={<FormattedMessage defaultMessage="Характеристики" />} overrides={overrides}>
+    <FormattedMessage defaultMessage="Вес 1,2 кг, размеры 30 × 20 × 5 см, гарантия 2 года." />
+  </Accordion>
 );
 
 export default ExampleAccordionOverrides;

@@ -1,193 +1,102 @@
-# Поверхность
+# Аккордеон
 
 ## Содержание
 
 - [Описание](#описание)
 - [Группа](#группа)
-- [Контролируемый](#контролируемый)
+- [Контролируемый аккордеон](#контролируемый-аккордеон)
 - [Переопределение](#переопределение)
 - [Свойства](#свойства)
 
 ## Описание
 
-Компонент `<Accordion>` создаёт панель для размещения контента, которую можно свернуть и развернуть.
+Компонент `<Accordion>` — панель с заголовком, которая сворачивается и разворачивается по клику на заголовок. Весь заголовок — это кнопка: она работает с клавиатуры (Tab, Enter, пробел), а программы чтения с экрана сообщают, развёрнута панель или свёрнута. Свёрнутое содержимое недоступно для Tab.
+
+В `header` передайте текст заголовка. Не кладите туда кнопки и ссылки: заголовок сам является кнопкой. Для кнопок действий есть свойство `actions` — они показываются внизу развёрнутой панели.
+
+Без свойства `isOpen` аккордеон неконтролируемый: он сам хранит состояние, а начальное значение задаёт `defaultOpened`.
 
 _Пример использования:_
 
 ```tsx
 import React from 'react';
-import Accordion from '@via-profit/ui-kit/src/Accordion';
-import Flag from '@via-profit/ui-kit/src/CountryFlags/RU';
-import Button from '@via-profit/ui-kit/src/Button';
+import Accordion from '@via-profit/ui-kit/Accordion';
+import Button from '@via-profit/ui-kit/Button';
 
-const ExampleAccordionBasic: React.FC = () => (
+const Example: React.FC = () => (
   <Accordion
-    header={
-      <>
-        <Flag /> Russian Federation
-      </>
-    }
+    header="Доставка и оплата"
     actions={
-      <Button type="button" variant="outlined" color="primary">
-        Action button
+      <Button variant="outlined" color="primary">
+        Все способы доставки
       </Button>
     }
   >
-    Some content
+    Доставляем курьером за 1–2 дня или в пункт выдачи за 2–4 дня.
   </Accordion>
-);
-
-export default ExampleAccordionBasic;
-```
-
-<ExampleAccordionBasic />
-
-<br/>
-
-Компонент принимает свойства:
-
-- `header` — Принимает заголовок аккордеона
-- `actions` — Принимает компонент подвала, как правило используется для передачи кнопок дейсвтий
-- `children` — Контент аккордеона
-- `noPadding` — Если передан, то компонент отменяет отступы по умолчанию для контента
-- `isOpen` — Если передан `true`, то состояние аккордеона становится развернутым
-- `onOpen` — Функция, которая позволяет контролировать состояние компонента. Если функция передана, то она выполнится вместо функции разворачивания аккордеона по умолчанию
-
-## Группа
-
-Компоненты `<Accordion>`, следуюшие друг за другом, автоматически объединяются в группу
-
-_Пример использования:_
-
-```tsx
-import React from 'react';
-import Accordion from '@via-profit/ui-kit/src/Accordion';
-import Typography from '@via-profit/ui-kit/src/Typography';
-import Flag from '@via-profit/ui-kit/src/CountryFlags/RU';
-import BYFlag from '@via-profit/ui-kit/src/CountryFlags/BY';
-import UZFlag from '@via-profit/ui-kit/src/CountryFlags/UZ';
-import Button from '@via-profit/ui-kit/src/Button';
-
-const Example: React.FC = () => (
-  <>
-    <Accordion
-      header={
-        <>
-          <Flag /> Russian Federation
-        </>
-      }
-      actions={
-        <Button type="button" variant="outlined" color="primary">
-          Action button
-        </Button>
-      }
-    >
-      <Typography>The Russian Federation</Typography>
-    </Accordion>
-
-    <Accordion
-      header={
-        <>
-          <UZFlag /> Uzbekistan
-        </>
-      }
-      isOpen
-      actions={
-        <Button type="button" variant="outlined" color="primary">
-          Action button
-        </Button>
-      }
-    >
-      <Typography>The Uzbekistan</Typography>
-    </Accordion>
-
-    <Accordion
-      header={
-        <>
-          <BYFlag /> Belarus
-        </>
-      }
-    >
-      <Typography>The Belarus</Typography>
-    </Accordion>
-  </>
 );
 
 export default Example;
 ```
 
+<ExampleAccordionBasic />
+
+## Группа
+
+Аккордеоны, которые идут подряд в одном родителе, визуально объединяются в группу: скругляются только верхние углы первого и нижние углы последнего. Каждый аккордеон в группе открывается независимо.
+
+```tsx
+<div>
+  <Accordion defaultOpened header="Как оформить возврат?">
+    Откройте заказ в личном кабинете и нажмите «Вернуть товар».
+  </Accordion>
+  <Accordion header="Сколько идут деньги при возврате?">
+    Деньги вернутся на карту в течение 10 дней.
+  </Accordion>
+  <Accordion header="Можно ли изменить адрес доставки?">
+    Да, пока заказ не передан в доставку.
+  </Accordion>
+</div>
+```
+
 <ExampleAccordionMultiple />
 
-## Контролируемый
+## Контролируемый аккордеон
 
-Вы можете контролировать компоненты `<Accordion>`, с помощью состояния `isOpen` и функции `onOpen`
+Чтобы управлять состоянием самостоятельно, передайте `isOpen` и `onOpen`. `onOpen` вызывается при каждом клике по заголовку — и чтобы открыть, и чтобы закрыть — и получает новое состояние: `true` — открыть, `false` — закрыть.
+
+`onOpen` можно передать и неконтролируемому аккордеону, чтобы узнавать об изменениях: состояние он продолжит хранить сам.
+
+Так можно сделать группу, в которой одновременно открыт только один аккордеон:
 
 _Пример использования:_
 
 ```tsx
 import React from 'react';
-import Accordion from '@via-profit/ui-kit/src/Accordion';
-import Typography from '@via-profit/ui-kit/src/Typography';
-import Flag from '@via-profit/ui-kit/src/CountryFlags/RU';
-import BYFlag from '@via-profit/ui-kit/src/CountryFlags/BY';
-import UZFlag from '@via-profit/ui-kit/src/CountryFlags/UZ';
-import Button from '@via-profit/ui-kit/src/Button';
+import Accordion from '@via-profit/ui-kit/Accordion';
 
-const ExampleAccordionControlled: React.FC = () => {
-  const [open, setOpen] = React.useState<string | null>(null);
+const steps = ['Контактные данные', 'Адрес доставки', 'Способ оплаты'];
 
-  const items = ['one', 'two', 'three'];
+const Example: React.FC = () => {
+  const [openedStep, setOpenedStep] = React.useState<number | null>(0);
 
   return (
-    <>
-      <Button
-        variant="outlined"
-        onClick={() => {
-          setOpen(items[Math.floor(Math.random() * items.length)]);
-        }}
-      >
-        Open Random
-      </Button>
-      <Accordion
-        header={
-          <>
-            <Flag /> Russian Federation
-          </>
-        }
-        isOpen={open === 'one'}
-        onOpen={() => setOpen(open !== 'one' ? 'one' : null)}
-      >
-        <Typography>The Russian Federation</Typography>
-      </Accordion>
-
-      <Accordion
-        header={
-          <>
-            <UZFlag /> Uzbekistan
-          </>
-        }
-        isOpen={open === 'two'}
-        onOpen={() => setOpen(open !== 'two' ? 'two' : null)}
-      >
-        <Typography>The Uzbekistan</Typography>
-      </Accordion>
-
-      <Accordion
-        header={
-          <>
-            <BYFlag /> Belarus
-          </>
-        }
-        isOpen={open === 'three'}
-        onOpen={() => setOpen(open !== 'three' ? 'three' : null)}
-      >
-        <Typography>The Belarus</Typography>
-      </Accordion>
-    </>
+    <div>
+      {steps.map((step, index) => (
+        <Accordion
+          key={step}
+          header={step}
+          isOpen={openedStep === index}
+          onOpen={isOpen => setOpenedStep(isOpen ? index : null)}
+        >
+          …
+        </Accordion>
+      ))}
+    </div>
   );
 };
 
-export default ExampleAccordionControlled;
+export default Example;
 ```
 
 <ExampleAccordionControlled />
@@ -196,137 +105,89 @@ export default ExampleAccordionControlled;
 
 Компонент `<Accordion>` является составным и реализован при помощи следующих компонентов:
 
-- `<Container>` — Обёртка
-- `<Header>` — Обёртка заголовка в случае её отображения
-- `<Content>` — Обёртка контентной части
-- `<Actions>` — Обертка кнопок действия аккордеона
+- `<Container>` — корневой элемент; получает все атрибуты `<div>`, переданные в `<Accordion>`
+- `<Header>` — заголовок; внутри него кнопка, которая сворачивает и разворачивает панель
+- `<Content>` — содержимое, в том числе `actions`
+- `<Actions>` — обёртка кнопок действий
 
-Используйте свойство `overrides` чтобы переопределить один или несколько компонентов:
+Используйте свойство `overrides`, чтобы переопределить один или несколько компонентов. Проще всего расширить стандартный компонент с помощью `styled`. Создавайте переопределения один раз — вне компонента, а не при рендере.
 
 _Пример использования:_
 
 ```tsx
 import React from 'react';
-import Accordion from '@via-profit/ui-kit/src/Accordion';
-import AccordionContent from '@via-profit/ui-kit/src/Accordion/AccordionContent';
-import AccordionHeader from '@via-profit/ui-kit/src/Accordion/AccordionHeader';
 import styled from '@emotion/styled';
+import Accordion from '@via-profit/ui-kit/Accordion';
+import AccordionHeader from '@via-profit/ui-kit/Accordion/AccordionHeader';
 
-const StyledContent = styled(AccordionContent)`
-  font-weight: 600;
-  border-radius: 0.4em;
-  background-color: ${({ theme }) => theme.color.accentPrimary.toString()};
-  color: ${({ theme }) => theme.color.accentPrimaryContrast.toString()};
+const Header = styled(AccordionHeader)`
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: ${({ theme }) => theme.color.accentPrimary.toString()};
 `;
 
-const StyledHeader = styled(AccordionHeader)`
-  font-weight: 600;
-  border-radius: 0.4em;
-  padding: 1em;
-  background-color: ${({ theme }) => theme.color.accentSecondary.toString()};
-  color: ${({ theme }) => theme.color.accentSecondaryContrast.toString()};
-`;
+// Created once, outside of the component
+const overrides = { Header };
 
-const ExampleAccordionOverrides: React.FC = () => (
-  <>
-    <Accordion
-      header={<>Overrided</>}
-      overrides={{
-        Content: React.forwardRef(function Content(props, ref) {
-          const { children } = props;
-
-          return (
-            <StyledContent ref={ref} {...props}>
-              {children}
-            </StyledContent>
-          );
-        }),
-        Header: React.forwardRef(function Header(props, ref) {
-          const { children } = props;
-
-          return (
-            <StyledHeader ref={ref} {...props}>
-              {children}
-            </StyledHeader>
-          );
-        }),
-      }}
-    >
-      Overrided
-    </Accordion>
-  </>
+const Example: React.FC = () => (
+  <Accordion header="Характеристики" overrides={overrides}>
+    Вес 1,2 кг, размеры 30 × 20 × 5 см, гарантия 2 года.
+  </Accordion>
 );
 
-export default ExampleAccordionOverrides;
+export default Example;
 ```
 
 <ExampleAccordionOverrides />
 
-
----
-
 ## Свойства
 
-### `header`
-Элемент заголовка аккордеона. Может быть строкой или JSX-элементом.
-- Тип: `JSX.Element | string`
-- По умолчанию: `undefined`
-
-### `actions`
-Элемент с кнопками действий в заголовке аккордеона.
-- Тип: `JSX.Element | string`
-- По умолчанию: `undefined`
-
-### `noPadding`
-Отключает внутренние отступы контентной части аккордеона.
-- Тип: `boolean`
-- По умолчанию: `undefined`
-
-### `defaultOpened`
-Начальное состояние аккордеона (открыт/закрыт) для неконтролируемого режима.
-- Тип: `boolean`
-- По умолчанию: `undefined`
-
-### `isOpen`
-Управляющее состояние аккордеона (открыт/закрыт) для контролируемого режима.
-- Тип: `boolean`
-- По умолчанию: `undefined`
-
-### `onOpen`
-Функция обратного вызова, вызываемая при изменении состояния аккордеона.
-- Тип: `function`
-- По умолчанию: `undefined`
+Помимо перечисленных ниже, `<Accordion>` принимает [стандартные атрибуты](https://developer.mozilla.org/ru/docs/Web/HTML/Element/div#атрибуты) элемента `<div>` и передаёт их в `<Container>`. `ref` указывает на этот же элемент.
 
 ### `children`
-Содержимое аккордеона, отображаемое в развернутом состоянии.
+Содержимое, которое показывается в развёрнутом аккордеоне.
+- Тип: `React.ReactNode`
+- Обязательное: **да**
+
+### `header`
+Заголовок. Без него аккордеон нельзя открыть кликом, а в консоль выводится предупреждение.
 - Тип: `JSX.Element | string`
-- По умолчанию: (обязательный параметр)
+- По умолчанию: `undefined`
+- Обязательное: нет
+
+### `actions`
+Кнопки действий внизу развёрнутого аккордеона, прижаты вправо.
+- Тип: `JSX.Element | string`
+- По умолчанию: `undefined`
+- Обязательное: нет
+
+### `defaultOpened`
+Начальное состояние неконтролируемого аккордеона.
+- Тип: `boolean`
+- По умолчанию: `false`
+- Обязательное: нет
+
+### `isOpen`
+Состояние контролируемого аккордеона. Передавайте вместе с `onOpen`.
+- Тип: `boolean`
+- По умолчанию: `undefined`
+- Обязательное: нет
+
+### `onOpen`
+Вызывается при клике по заголовку и получает новое состояние.
+- Тип: `(isOpen: boolean) => void`
+- По умолчанию: `undefined`
+- Обязательное: нет
+
+### `noPadding`
+Если `true`, у содержимого и кнопок действий нет внутренних отступов.
+- Тип: `boolean`
+- По умолчанию: `false`
+- Обязательное: нет
 
 ### `overrides`
-Объект для переопределения составных компонентов аккордеона.
-- Тип: `Object`
+Объект для переопределения составных компонентов. Подробнее в разделе [Переопределение](#переопределение).
+- Тип: `AccordionOverrides`
 - По умолчанию: `undefined`
-
-#### `overrides.Container`
-Компонент-обертка для всего аккордеона.
-- Тип: `React.Component`
-- По умолчанию: `<AccordionContainer>`
-
-#### `overrides.Header`
-Компонент-обертка для заголовка аккордеона.
-- Тип: `React.Component`
-- По умолчанию: `<AccordionHeader>`
-
-#### `overrides.Content`
-Компонент-обертка для контентной части аккордеона.
-- Тип: `React.Component`
-- По умолчанию: `<AccordionContent>`
-
-#### `overrides.Actions`
-Компонент-обертка для блока с кнопками действий.
-- Тип: `React.Component`
-- По умолчанию: `<AccordionFooter>`
-
----
-
-Помимо перечисленных свойств, компонент принимает [стандартные атрибуты](https://developer.mozilla.org/ru/docs/Web/HTML/Element/div#атрибуты) HTML элемента `<div>`
+- Обязательное: нет

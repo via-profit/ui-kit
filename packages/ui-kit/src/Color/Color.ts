@@ -1,5 +1,5 @@
 import { ColorParser, ParsedColor } from './ColorParser';
-import { ColorGenerator } from './ColorGenerator';
+import { ColorGenerator, PaletteName } from './ColorGenerator';
 
 export type ColorFormat = 'rgb' | 'rgba' | 'hex' | 'hsl' | 'hsla';
 
@@ -65,7 +65,7 @@ export class Color {
   /**
    * Создает цвет из UUID (использует генератор)
    */
-  public static fromUuid(uuid: string, palette?: keyof typeof ColorGenerator.getPalettes): Color {
+  public static fromUuid(uuid: string, palette?: PaletteName): Color {
     return ColorGenerator.fromUuid(uuid, palette);
   }
 
@@ -172,17 +172,22 @@ export class Color {
   }
 
   /**
-   * Проверяет, достаточно ли контрастен цвет для белого текста
+   * Проверяет, светлый ли цвет: относительная яркость больше 0.5
    */
   public isLight(): boolean {
     return this.getLuminance() > 0.5;
   }
 
   /**
-   * Возвращает наиболее контрастный цвет (черный или белый)
+   * Возвращает цвет текста (черный или белый), наиболее контрастный с текущим цветом
    */
   public getContrastColor(): Color {
-    return this.isLight() ? Color.fromString('#000000') : Color.fromString('#FFFFFF');
+    const black = Color.fromString('#000000');
+    const white = Color.fromString('#FFFFFF');
+
+    // Compared by the contrast ratio: a luminance threshold picks white text
+    // for mid colors like orange, where black text is several times more readable
+    return this.getContrast(black) >= this.getContrast(white) ? black : white;
   }
 
   /**
@@ -390,11 +395,11 @@ export class Color {
     if (process.env.NODE_ENV !== 'production') {
       console.warn(
         '[Color] getHextByWebColor() is deprecated. ' +
-        'Use Color.fromString(value).toHslString() instead',
+        'Use Color.fromString(value).toHexString() instead',
       );
     }
 
-    return Color.fromString(value).toHslString();
+    return Color.fromString(value).toHexString();
 
   }
 
