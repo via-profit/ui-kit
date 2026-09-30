@@ -29,7 +29,7 @@ const Hero = styled.section`
     transform: translateX(-50%);
     background: radial-gradient(
       closest-side,
-      ${({ theme }) => theme.color.accentPrimary.alpha(theme.isDark ? 0.18 : 0.14).toString()},
+      ${({ theme }) => theme.color.accentPrimary.alpha(0.18).toString()},
       transparent
     );
     pointer-events: none;
