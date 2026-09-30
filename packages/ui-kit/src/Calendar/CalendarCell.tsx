@@ -39,12 +39,18 @@ const Btn = styled(Button)<{ $fill?: boolean; $isSelected?: boolean }>`
   padding: 1em;
   margin: 0;
   min-width: 0;
-  outline: none;
   position: relative;
-  color: ${({ theme, $isSelected }) =>
-    $isSelected
-      ? theme.color.accentPrimaryContrast.toString()
-      : theme.color.textPrimary.toString()};
+  color: ${({ theme, $isSelected, disabled }) => {
+    switch (true) {
+      case $isSelected:
+        return theme.color.accentPrimaryContrast.toString();
+      // The days out of minDate/maxDate are dimmed
+      case disabled:
+        return theme.color.textPrimary.alpha(0.3).toString();
+      default:
+        return theme.color.textPrimary.toString();
+    }
+  }};
   border-radius: ${({ theme }) => theme.shape.radiusFactor * 3}em;
   ${({ $fill, theme, $isSelected }) =>
     $fill &&

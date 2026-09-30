@@ -2,7 +2,9 @@ import React from 'react';
 import styled from '@emotion/styled';
 
 const CalendarWeekDayLabel = styled.div`
-  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-weight: 200;
   font-size: 0.8em;
   user-select: none;

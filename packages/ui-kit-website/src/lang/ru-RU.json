@@ -299,6 +299,9 @@
   "JabZb+": {
     "defaultMessage": "1. Контактные данные"
   },
+  "K32LdV": {
+    "defaultMessage": "Когда привезти заказ?"
+  },
   "K4wZ5T": {
     "defaultMessage": "Телефон (Россия или Беларусь)"
   },
@@ -314,11 +317,17 @@
   "Kfcl3A": {
     "defaultMessage": "H5. Подгруппа"
   },
+  "LHBvxW": {
+    "defaultMessage": "Дата в формате ISO"
+  },
   "LUCzCR": {
     "defaultMessage": "Выберите"
   },
   "M0haJ+": {
     "defaultMessage": "Курсив"
+  },
+  "MBqLWh": {
+    "defaultMessage": "Выбрать дату доставки"
   },
   "MRvQ11": {
     "defaultMessage": "Черновик"
@@ -461,6 +470,9 @@
   "VU6F/B": {
     "defaultMessage": "Шаг 2. Оформите заказ"
   },
+  "VuH2j7": {
+    "defaultMessage": "дд.мм.гггг"
+  },
   "VzTL/7": {
     "defaultMessage": "Подписаться на новости"
   },
@@ -524,6 +536,9 @@
   "Z7GO3i": {
     "defaultMessage": "По счёту"
   },
+  "ZM18U4": {
+    "defaultMessage": "Дата доставки"
+  },
   "ZQf5O2": {
     "defaultMessage": "Вернуть всех"
   },
@@ -553,6 +568,9 @@
   },
   "blFJCR": {
     "defaultMessage": "Френч-пресс"
+  },
+  "bt+D2E": {
+    "defaultMessage": "Текущая дата по шаблону {template} — {result}"
   },
   "c0vETx": {
     "defaultMessage": "Жирный"
@@ -734,6 +752,9 @@
   "me8uDV": {
     "defaultMessage": "Понятно"
   },
+  "moXncf": {
+    "defaultMessage": "Строка 22.02.2003, разобранная по шаблону {template} — {result}"
+  },
   "n4Y9Sg": {
     "defaultMessage": "Открыть диалог"
   },
@@ -848,9 +869,6 @@
   "wB4igM": {
     "defaultMessage": "Запомнить меня"
   },
-  "wBODsZ": {
-    "defaultMessage": "Текущая дата в шаблоном {template} — {result}"
-  },
   "x5G3yc": {
     "defaultMessage": "Итого"
   },
@@ -877,9 +895,6 @@
   },
   "yKY0jp": {
     "defaultMessage": "Купить"
-  },
-  "yeuMJs": {
-    "defaultMessage": "Строка 22.02.2003 распарсенная с шаблоном {template} — {result}"
   },
   "ynMVPX": {
     "defaultMessage": "Пользователи"

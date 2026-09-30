@@ -1129,6 +1129,7 @@ const CalendarComponent = React.forwardRef(
                 key={monthIndex}
                 accentColor={accentColor}
                 isSelected={isSelected}
+                aria-pressed={isSelected}
                 onClick={handleMonthSelected(monthIndex)}
               >
                 {getMonthLabel(new Date(calendarDate.getFullYear(), monthIndex, 1, 0, 0, 0, 0))}

@@ -1,15 +1,22 @@
-# Date Picker
+# Дейтпикер
 
 ## Содержание
 
 - [Описание](#описание)
-- [Хуки](#хуки)
-- [Переопределение-компонентов](#переопределение-компонентов)
+- [Выбор только из календаря](#выбор-только-из-календаря)
+- [Шаблон даты](#шаблон-даты)
+- [Клавиатура и доступность](#клавиатура-и-доступность)
+- [Хук useDatePickerFormat](#хук-usedatepickerformat)
+- [Переопределение](#переопределение)
 - [Свойства](#свойства)
 
 ## Описание
 
-Компонент `<DatePicker>` создаёт текстовое поле для ввода даты с кнопкой, по нажатии на которую будет показан интерактивный календарь с возможностью выбора даты, переключения месяцев и прочее.
+Компонент `<DatePicker>` — поле для ввода даты с кнопкой, которая открывает [календарь](../calendar/README.md). Дату можно напечатать по маске или выбрать в календаре.
+
+- `onChange` вызывается, когда в поле введена полная корректная дата или выбран день в календаре. Несуществующие даты (например, 31.02) не принимаются;
+- дата раньше `minDate` или позже `maxDate`, введённая вручную, заменяется на ближайшую границу;
+- поле принимает свойства [текстового поля](../text-field/README.md): `label`, `placeholder`, `error`, `errorText`, `requiredAsterisk`, `fullWidth` и другие.
 
 _Пример использования:_
 
@@ -17,165 +24,145 @@ _Пример использования:_
 import React from 'react';
 import DatePicker from '@via-profit/ui-kit/DatePicker';
 
-const ExampleDatePickerOverview: React.FC = () => {
-  const [value, setValue] = React.useState<null | Date>(new Date());
+const Example: React.FC = () => {
+  const [value, setValue] = React.useState<Date | null>(null);
 
   return (
     <DatePicker
+      label="Дата рождения"
+      placeholder="дд.мм.гггг"
       template="dd.mm.yyyy"
-      calendarButtonTooltip="Открыть календарь"
       value={value}
       onChange={setValue}
+      calendarButtonTooltip="Открыть календарь"
+      prevButtonLabel="Назад"
+      nextButtonLabel="Вперёд"
     />
-  );
-};
-
-export default ExampleDatePickerOverview;
-```
-
-<ExampleDatePickerOverview />
-<br/>
-
-
-## Хуки
-
-Компонент реализован по средствам набора свойств и методов, доступных в хуке `useDatePickerFormat`.
-
-_Использование хука:_
-
-```tsx
-const paylaod = useDatePickerFormat();
-```
-
-Хук `useCalendar` возвращает следующий набор данных:
-
-- `isValidTemplate` — Функция, принимающая шаблон форматирования даты и возвращающая `true`,если шаблон валиден и `false` ,если содержит недопустимые символы.
-- `validateTemplate` — Функция, принимающая шаблон форматирования даты и вызывающая исключение, если шаблон содержит недопустимые символы.
-- `getMaskByTemplate` — Функция, принимающая шаблон форматирования даты и возвращающая маску для [MaskedField](../masked-field/README.md).
-- `parseInputByTemplate` — Функция, принимающая шаблон форматирования даты, шаблон форматирования даты и возвращающая дату в случае успешного парсинга или `null` в востальных случаях.
-- `formatInputByTemplate` — Функция, принимающая дату, шаблон форматирования даты и возвращающая отформатированную строку.
-- `templateValidChars` — Массив допустимых символов для шаблона форматирования даты.
-
-_Пример использования:_
-
-```tsx
-import React from 'react';
-import { useDatePickerFormat } from '@via-profit/ui-kit/DatePicker';
-
-const Example: React.FC = () => {
-  const { formatInputByTemplate, parseInputByTemplate } = useDatePickerFormat();
-
-  return (
-    <>
-      <Paragraph>{formatInputByTemplate(new Date(), 'd.m.Y')}</Paragraph>
-      <Paragraph>{formatInputByTemplate(new Date(), 'yyyy/mm/dd')}</Paragraph>
-      <Paragraph>
-        {parseInputByTemplate('22.02.2003', 'dd.mm.yyyy')?.toLocaleString('ru-RU')}
-      </Paragraph>
-    </>
   );
 };
 
 export default Example;
 ```
 
+<ExampleDatePickerOverview />
+
+## Выбор только из календаря
+
+Со свойством `readOnly` дату нельзя напечатать: клик по полю открывает и закрывает календарь. Это удобно, когда доступны только некоторые даты. Например, доставка возможна со следующего дня на две недели вперёд.
+
+Календарь принимает те же свойства, что и компонент [Calendar](../calendar/README.md): `minDate`, `maxDate`, `badges`, `heading`, `todayButtonLabel` и другие.
+
+```tsx
+const today = new Date();
+const minDate = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
+const maxDate = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 14);
+
+<DatePicker
+  readOnly
+  label="Дата доставки"
+  template="dd.mm.yyyy"
+  value={value}
+  onChange={setValue}
+  minDate={minDate}
+  maxDate={maxDate}
+  heading="Когда привезти заказ?"
+/>;
+```
+
+<ExampleDatePickerReadOnly />
+
+## Шаблон даты
+
+Свойство `template` задаёт формат даты в поле и маску ввода. Каждый символ шаблона — один символ в поле, поэтому используйте части фиксированной длины:
+
+- `dd` — день, `01`–`31`;
+- `mm` — месяц, `01`–`12`;
+- `yyyy` — год, `yy` — две последние цифры года (год считается текущим веком: `26` → 2026);
+- любые другие символы — разделители, например `.`, `/`, `-`.
+
+```tsx
+<DatePicker template="yyyy-mm-dd" value={value} onChange={setValue} todayButtonLabel="Сегодня" />
+```
+
+<ExampleDatePickerTemplate />
+
+## Клавиатура и доступность
+
+- кнопка календаря подписана `calendarButtonTooltip` (по умолчанию `Choose date`) и сообщает, открыт ли календарь;
+- при открытии фокус переходит на выбранный день календаря, а если его нет — на сегодняшний или первый доступный. По дням можно перемещаться стрелками, подробнее — в разделе [Клавиатура](../calendar/README.md#клавиатура-и-доступность) календаря;
+- Enter или пробел выбирают день. Календарь закрывается, фокус возвращается в поле;
+- Escape закрывает календарь и возвращает фокус на кнопку;
+- календарь — диалог с подписью `calendarButtonTooltip`.
+
+## Хук useDatePickerFormat
+
+Хук `useDatePickerFormat` форматирует и разбирает даты по тем же шаблонам. В хуке шаблоны могут быть и короче: `d`, `m` — без ведущего нуля, `Y` — год полностью.
+
+```tsx
+import { useDatePickerFormat } from '@via-profit/ui-kit/DatePicker';
+
+const { formatInputByTemplate, parseInputByTemplate } = useDatePickerFormat();
+
+formatInputByTemplate(new Date(2026, 8, 5), 'd.m.Y'); // «5.9.2026»
+formatInputByTemplate(new Date(2026, 8, 5), 'yyyy/mm/dd'); // «2026/09/05»
+parseInputByTemplate('22.02.2003', 'dd.mm.yyyy'); // Date: 22 февраля 2003
+parseInputByTemplate('31.02.2003', 'dd.mm.yyyy'); // null — такой даты нет
+```
+
+Хук возвращает:
+
+- `formatInputByTemplate(date, template)` — дата в виде строки по шаблону;
+- `parseInputByTemplate(input, template)` — дата из строки или `null`, если строка не подходит к шаблону или такой даты нет;
+- `getMaskByTemplate(template)` — маска для [маскированного поля](../masked-field/README.md);
+- `isValidTemplate(template)` — `true`, если шаблон состоит из допустимых символов;
+- `validateTemplate(template)` — то же, но с исключением для недопустимого шаблона;
+- `templateValidChars` — допустимые части шаблона.
+
 <ExampleDatePickerHooks />
 
-## переопределение компонентов
+## Переопределение
 
-Компонент `<DatePicker>` является составным и реализован при помощи следующих компонентов [Calendar](../calendar/README.md) и [TextField](../text-field/README.md).
-
-- Для переопределения текстового поля используются все свойства `overrides`, доступные из компонента [TextField](../text-field/README.md#переопределение-компонентов).
-- Для переопределения компонентов календаря используются все свойства `overrides`, доступные из компонента [Calendar](../calendar/README.md#переопределение-компонентов)
+`<DatePicker>` состоит из [текстового поля](../text-field/README.md#переопределение) и [календаря](../calendar/README.md#переопределение). Свойство `overrides` принимает переопределения обоих компонентов: `Input`, `Label`, `InputWrapper`, `IconWrapper`, `ErrorText`, `Asterisk`, `Container` — для поля, остальные — для календаря.
 
 ## Свойства
 
-### `onChange`
-Коллбэк функция, вызываемая при выборе даты.
+Помимо перечисленных ниже, `<DatePicker>` принимает свойства [текстового поля](../text-field/README.md#свойства) (кроме `value`, `onChange` и `overrides`) и свойства [календаря](../calendar/README.md#свойства): `minDate`, `maxDate`, `locale`, `weekStartDay`, `weekDayLabelFormat`, `displayLeadingZero`, `markToday`, `badges`, `heading`, `subheading`, `todayButtonLabel`, `resetButtonLabel`, `view`, `views`, `footer`.
 
 ### `value`
-Текущее значение даты
+Выбранная дата.
+- Тип: `Date | null`
+- Обязательное: **да**
 
-### `defaultValue`
-Текущее значение даты для случая, когда календарь является неконтроллируемым компонентом
+### `onChange`
+Вызывается с новой датой.
+- Тип: `(date: Date) => void`
+- Обязательное: **да**
 
-### `locale`
-Текущая локаль
+### `template`
+Шаблон даты. Подробнее в разделе [Шаблон даты](#шаблон-даты).
+- Тип: `string`
+- Обязательное: **да**
 
-### `badges`
-Массив бэйджей календаря
+### `readOnly`
+Если `true`, дату можно выбрать только в календаре.
+- Тип: `boolean`
+- По умолчанию: `false`
+- Обязательное: нет
 
-### `minDate`
-Минимально возможная дата, доступная для выбора в календаре
+### `calendarButtonTooltip`
+Подпись кнопки календаря и диалога с календарём.
+- Тип: `string`
+- По умолчанию: `'Choose date'`
+- Обязательное: нет
 
-### `maxDate`
-Максимально возможная дата, доступная для выбора в календаре
+### `prevButtonLabel`, `nextButtonLabel`
+Подписи стрелок календаря.
+- Тип: `string`
+- По умолчанию: `'Previous'`, `'Next'`
+- Обязательное: нет
 
-### `weekStartDay`
-День с которого начинается неделя
-
-### `weekDayLabelFormat`
-Формат отображения названия недели
-
-### `displayLeadingZero`
-Флаг определяющий необходимость отображения дня недели с ведущим нулём
-
-### `markToday`
-Флаг определяющий необходимость подсвечивания текущего (сегодняшнего) дня в календаре
-
-### `accentColor`
-Цвет подсветки активной ячейки дня
-
-### `prevMonthButtonTooltip`
-Текст всплывающей подсказки кнопки переключения на предыдущий месяц
-
-### `nextMonthButtonTooltip`
-Текст всплывающей подсказки кнопки переключения на следующий месяц
-
-### `changeMonthButtonTooltip`
-Текст всплывающей подсказки кнопки выбора месяца
-
-### `changeYearButtonTooltip`
-Текст всплывающей подсказки кнопки выбора года
-
-### `resetButtonLabel`
-Текст кнопки сброса. Если текст не предоставлен, то кнопка отображаться не будет
-
-### `toodayButtonLabel`
-Текст кнопки перехода к текущему дню. Если текст не предоставлен, то кнопка отображаться не будет
-
-### `heading`
-Заголовок календаря
-
-### `subheading`
-Подзаголовок календаря
-
-### `initialView`
-Начальное представление календаря (дни, выбор месяца, выбор года)
-
-### `footer`
-Кастомные элементы, которые будут добавлены в футер календаря
-
-### `error`
-Является ли введённое значение ошибочным или нет. В случае, если установлено значение `true`, будет отображён текст ошибки переданный в свойстве `errorText`
-
-### `requiredAsterisk`
-Отображение звездочки над Label, которая указывает на то что поле является обязательным для ввода
-
-### `label`
-Label текстового поля
-
-### `inputRef`
-Ref ссылка для нативного текстового поля
-
-### `fullWidth`
-Следует ли компоненту занять всю предоставленную ширину
-
-### `errorText`
-Сообщение об ошибке
-
-### `startIcon`
-Элемент иконки, отображаемой слева от поля ввода
-
-### `endIcon`
-Элемент иконки, отображаемой справа от поля ввода
+### `overrides`
+Переопределения поля и календаря. Подробнее в разделе [Переопределение](#переопределение).
+- Тип: `CalendarOverrides & TextFieldOverrides`
+- По умолчанию: `undefined`
+- Обязательное: нет

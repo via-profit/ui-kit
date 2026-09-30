@@ -18,7 +18,6 @@ const Btn = styled(Button)`
   font-size: 0.9em;
   margin: 0;
   min-width: 0;
-  outline: none;
   flex-basis: 33%;
 `;
 

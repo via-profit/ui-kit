@@ -31,16 +31,30 @@ export type DatePickerProps = Omit<TextFieldProps, 'value' | 'onChange' | 'overr
    */
   readonly onChange: (date: Date) => void;
   /**
-   * Date template like one of format: \
-   * `dd.mm.yyyy` or `yyyy/mm/dd`, etc.\
-   * Posibility chars: `y`, `Y`, `yy`, `yyyy`, `d`, `dd`, `D`, `m`, `mm`, `M`
+   * Date template, e.g. `dd.mm.yyyy` or `yyyy-mm-dd`.\
+   * Every char of the template is one char of the field, so use the fixed width parts:
+   * `dd` — day, `mm` — month, `yyyy` — year (`yy` — two digits of the year)
    */
   readonly template: string;
 
   /**
-   * Tooltip text for a calendar button
+   * The label of the calendar button for screen readers and the tooltip.
+   * Also the label of the calendar popup\
+   * **Default:** `Choose date`
    */
   readonly calendarButtonTooltip?: string;
+
+  /**
+   * The label of the «previous» button of the calendar\
+   * **Default:** `Previous`
+   */
+  readonly prevButtonLabel?: string;
+
+  /**
+   * The label of the «next» button of the calendar\
+   * **Default:** `Next`
+   */
+  readonly nextButtonLabel?: string;
 
   /**
    * Minimum date limit
@@ -147,8 +161,8 @@ const DatePicker: React.FC<DatePickerProps> = props => {
     calendarButtonTooltip,
     readOnly,
     disabled,
-    minDate = new Date(new Date().getFullYear() - 100, 0, 1, 0, 0, 0),
-    maxDate = new Date(new Date().getFullYear() + 100, 0, 1, 0, 0, 0),
+    minDate: inputMinDate,
+    maxDate: inputMaxDate,
     weekStartDay = 'monday',
     locale = 'ru-RU',
     badges = [],
@@ -164,8 +178,39 @@ const DatePicker: React.FC<DatePickerProps> = props => {
     views,
     footer,
     overrides,
+    prevButtonLabel,
+    nextButtonLabel,
+    inputRef: userInputRef,
     ...restInputProps
   } = props;
+
+  const calendarLabel = calendarButtonTooltip ?? 'Choose date';
+
+  // The default limits are created once, otherwise every render invalidates the memoized values
+  const minDate = React.useMemo(
+    () => inputMinDate ?? new Date(new Date().getFullYear() - 100, 0, 1, 0, 0, 0),
+    [inputMinDate],
+  );
+  const maxDate = React.useMemo(
+    () => inputMaxDate ?? new Date(new Date().getFullYear() + 100, 0, 1, 0, 0, 0),
+    [inputMaxDate],
+  );
+
+  const inputRef = React.useRef<HTMLInputElement | null>(null);
+  const buttonRef = React.useRef<HTMLButtonElement | null>(null);
+  const popperRef = React.useRef<HTMLDivElement | null>(null);
+
+  const setInputRef = React.useCallback(
+    (el: HTMLInputElement | null) => {
+      inputRef.current = el;
+      if (typeof userInputRef === 'function') {
+        userInputRef(el);
+      } else if (userInputRef) {
+        userInputRef.current = el;
+      }
+    },
+    [userInputRef],
+  );
 
   const todayButtonLabel = todayButtonLabelProp ?? toodayButtonLabel;
 
@@ -245,24 +290,55 @@ const DatePicker: React.FC<DatePickerProps> = props => {
 
   const handleClick: MouseEventHandler<HTMLInputElement> = React.useCallback(() => {
     if (readOnly) {
-      setOpenSate(!isOpen);
+      setOpenSate(open => !open);
     }
-  }, [isOpen, readOnly]);
+  }, [readOnly]);
+
+  // The keyboard focus goes to the calendar when it is opened: the selected day, today or the first one
+  React.useEffect(() => {
+    if (!isOpen) return undefined;
+
+    const frame = requestAnimationFrame(() => {
+      popperRef.current?.querySelector<HTMLElement>('[data-date][tabindex="0"]')?.focus();
+    });
+
+    return () => cancelAnimationFrame(frame);
+  }, [isOpen]);
+
+  const close = React.useCallback(() => {
+    setOpenSate(false);
+    // Back to the field, so the keyboard user continues from the same place
+    (readOnly ? inputRef.current : (buttonRef.current ?? inputRef.current))?.focus();
+  }, [readOnly]);
+
+  const handlePopperKeyDown = React.useCallback(
+    (event: React.KeyboardEvent<HTMLDivElement>) => {
+      if (event.key === 'Escape') {
+        event.stopPropagation();
+        close();
+      }
+    },
+    [close],
+  );
 
   const endIcon = React.useMemo(
     () => (
       <Button
+        ref={buttonRef}
         disabled={disabled}
         iconOnly
         variant="plain"
         type="button"
-        onClick={() => setOpenSate(true)}
-        title={calendarButtonTooltip}
+        onClick={() => setOpenSate(open => !open)}
+        title={calendarLabel}
+        aria-label={calendarLabel}
+        aria-haspopup="dialog"
+        aria-expanded={isOpen}
       >
         <DatePickerIcon />
       </Button>
     ),
-    [calendarButtonTooltip, disabled],
+    [calendarLabel, disabled, isOpen],
   );
 
   const handleChange: MaskedFieldProps['onChange'] = React.useCallback(
@@ -308,6 +384,7 @@ const DatePicker: React.FC<DatePickerProps> = props => {
         onChange(date);
       }
       setOpenSate(false);
+      inputRef.current?.focus();
     },
     [onChange],
   );
@@ -322,13 +399,26 @@ const DatePicker: React.FC<DatePickerProps> = props => {
         readOnly={readOnly}
         endIcon={endIcon}
         {...restInputProps}
+        inputRef={setInputRef}
         value={currentValue ? formatInputByTemplate(currentValue, template) : ''}
         onChange={handleChange}
         overrides={textFieldOverrides}
       />
 
-      <ClickOutside onOutsideClick={() => setOpenSate(false)} mouseEvent="onMouseDown">
-        <Popper isOpen={isOpen} anchorElement={textFieldRef}>
+      {/* The field opens/closes the calendar itself, so the clicks on it are not the outside clicks */}
+      <ClickOutside
+        onOutsideClick={() => setOpenSate(false)}
+        mouseEvent="onMouseDown"
+        ignoreElements={[textFieldRef]}
+      >
+        <Popper
+          ref={popperRef}
+          isOpen={isOpen}
+          anchorElement={textFieldRef}
+          role="dialog"
+          aria-label={calendarLabel}
+          onKeyDown={handlePopperKeyDown}
+        >
           <Calendar
             minDate={minDate}
             maxDate={maxDate}
@@ -345,6 +435,8 @@ const DatePicker: React.FC<DatePickerProps> = props => {
             view={view}
             views={views}
             footer={footer}
+            prevButtonLabel={prevButtonLabel}
+            nextButtonLabel={nextButtonLabel}
             value={currentValue}
             onChange={calendarChange}
             overrides={calendarOverrides}
