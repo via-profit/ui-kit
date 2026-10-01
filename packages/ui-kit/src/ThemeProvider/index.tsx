@@ -8,13 +8,14 @@ export { useTheme };
 export * from './createTheme';
 
 export type UITheme = Required<
-  Omit<UIThemeOverrides, 'isDark' | 'fontSize' | 'zIndex' | 'shape' | 'color'>
+  Omit<UIThemeOverrides, 'isDark' | 'fontSize' | 'zIndex' | 'shape' | 'color' | 'spacing'>
 > & {
   readonly isDark: boolean;
   readonly fontSize: Record<keyof UIThemeOverrideFontSize, number>;
   readonly zIndex: Required<UIThemeOverrideZIndex>;
   readonly color: Record<keyof UIThemeOverrideColor, Color>;
   readonly shape: Required<UIThemeOverrideShape>;
+  readonly spacing: Required<UIThemeOverrideSpacing>;
 };
 
 export interface UIThemeOverrideColor {
@@ -44,6 +45,20 @@ export interface UIThemeOverrideShape {
   readonly radiusFactor?: 0 | 0.1 | 0.2 | 0.3 | 0.4 | 0.5 | 0.6 | 0.7 | 0.8 | 0.9 | 1;
 }
 
+/**
+ * The spacing scale: the gaps between the elements (`<Stack>`, `<Grid>`) and the paddings.
+ * Any CSS length, `em` is recommended: the spacing grows together with the font size
+ */
+export interface UIThemeOverrideSpacing {
+  readonly xs?: string;
+  readonly sm?: string;
+  readonly md?: string;
+  readonly lg?: string;
+  readonly xl?: string;
+}
+
+export type ThemeSpacing = keyof UIThemeOverrideSpacing;
+
 export interface UIThemeOverrideFontSize {
   readonly small?: number;
   readonly normal?: number;
@@ -52,10 +67,14 @@ export interface UIThemeOverrideFontSize {
 }
 
 export interface UIThemeOverrides {
-  readonly isDark: boolean;
+  /**
+   * **Default:** `false`
+   */
+  readonly isDark?: boolean;
   readonly fontSize?: UIThemeOverrideFontSize;
   readonly zIndex?: UIThemeOverrideZIndex;
   readonly shape?: UIThemeOverrideShape;
+  readonly spacing?: UIThemeOverrideSpacing;
   readonly color?: UIThemeOverrideColor;
 }
 

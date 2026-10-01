@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from '@emotion/styled';
 
-import UnknownFlag from './UnknownFlag';
+import UnknownFlag from '../CountryFlags/Unknown';
 
 export interface CountryFlagComponentProps extends React.HTMLAttributes<HTMLSpanElement> {
   readonly flag: JSX.Element | null;

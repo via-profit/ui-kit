@@ -4,7 +4,7 @@ import { css, Theme } from '@emotion/react';
 import { Link } from 'react-router-dom';
 import { useIntl } from 'react-intl';
 
-import docsNavigation from '~/utils/docsNavigation';
+import { docsNavigationGroups } from '~/utils/docsNavigation';
 import { GITHUB_URL } from '~/components/Header';
 import GithubIcon from '~/components/Icons/GithubIcon';
 import Logo from '~/components/Logo';
@@ -146,6 +146,31 @@ const SectionTitle = styled.h2`
   letter-spacing: -0.01em;
 `;
 
+const GroupTitle = styled.h3`
+  margin: 2rem 0 0.75rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: ${({ theme }) => theme.color.textSecondary.toString()};
+
+  &:first-of-type {
+    margin-top: 0;
+  }
+`;
+
+const CardText = styled.span`
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+`;
+
+const CardDescription = styled.span`
+  font-size: 0.8rem;
+  font-weight: 400;
+  color: ${({ theme }) => theme.color.textSecondary.toString()};
+`;
+
 const Grid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
@@ -223,13 +248,21 @@ const Home: React.FC = () => {
 
       <Section>
         <SectionTitle>{intl.formatMessage({ defaultMessage: 'Компоненты' })}</SectionTitle>
-        <Grid>
-          {docsNavigation.map(({ link, label }) => (
-            <Card key={link} to={link}>
-              {label}
-            </Card>
-          ))}
-        </Grid>
+        {docsNavigationGroups.map(group => (
+          <React.Fragment key={group.title}>
+            {group.title && <GroupTitle>{group.title}</GroupTitle>}
+            <Grid>
+              {group.items.map(({ link, label, description }) => (
+                <Card key={link} to={link}>
+                  <CardText>
+                    {label}
+                    {description && <CardDescription>{description}</CardDescription>}
+                  </CardText>
+                </Card>
+              ))}
+            </Grid>
+          </React.Fragment>
+        ))}
       </Section>
     </>
   );

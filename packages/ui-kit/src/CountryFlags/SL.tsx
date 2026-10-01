@@ -1,5 +1,7 @@
 import * as React from 'react';
 
+import isLabelled from './isLabelled';
+
 const SL: React.ForwardRefRenderFunction<SVGSVGElement, React.SVGProps<SVGSVGElement>> = (
   props,
   ref,
@@ -9,6 +11,8 @@ const SL: React.ForwardRefRenderFunction<SVGSVGElement, React.SVGProps<SVGSVGEle
     viewBox="0 85.333 512 341.333"
     width="1.5em"
     height="1em"
+    aria-hidden={isLabelled(props) ? undefined : true}
+    role={isLabelled(props) ? 'img' : undefined}
     {...props}
     ref={ref}
   >

@@ -1,17 +1,34 @@
-## Установка.
+# @via-profit/ui-kit
 
-Для работы требуются следующие модули:
+Набор React-компонентов для интерфейсов: поля ввода, кнопки, календарь, меню, модальные окна и другие. Компоненты оформлены по теме, которую вы задаёте один раз для всего приложения.
 
-- react
-- react-dom
-- @emotion/styled - CSS In JS
-- @emotion/react - CSS In JS React
-- react-popper - Выпадающие меню
-
+## Установка
 
 ```bash
-$ npm install @emotion/react @emotion/styled react react-dom react-popper
-
+npm install @via-profit/ui-kit @emotion/react @emotion/styled react react-dom
 ```
 
-## Документация [здесь](./docs/README.md)
+Пакету нужны `react` и `react-dom` версии 18.2 и новее, `@emotion/react` и `@emotion/styled` версии 11.10.6 и новее.
+
+## Быстрый старт
+
+```tsx
+import React from 'react';
+import { createRoot } from 'react-dom/client';
+import ThemeProvider, { createTheme } from '@via-profit/ui-kit/ThemeProvider';
+import Button from '@via-profit/ui-kit/Button';
+
+const theme = createTheme();
+
+createRoot(document.getElementById('app')!).render(
+  <ThemeProvider theme={theme}>
+    <Button color="primary">Привет</Button>
+  </ThemeProvider>,
+);
+```
+
+## Документация
+
+[Документация](https://github.com/via-profit/ui-kit/blob/master/packages/ui-kit/docs/README.md) — установка, тема оформления, общие принципы и описание всех компонентов.
+
+[Список изменений](./CHANGELOG.md)

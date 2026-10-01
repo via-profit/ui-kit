@@ -27,9 +27,10 @@ export type DatePickerProps = Omit<TextFieldProps, 'value' | 'onChange' | 'overr
   readonly value: Date | null;
 
   /**
-   * Will be invoked when date would be changed
+   * Will be invoked when date would be changed.\
+   * Receives `null` when the field was cleared
    */
-  readonly onChange: (date: Date) => void;
+  readonly onChange: (date: Date | null) => void;
   /**
    * Date template, e.g. `dd.mm.yyyy` or `yyyy-mm-dd`.\
    * Every char of the template is one char of the field, so use the fixed width parts:
@@ -343,6 +344,15 @@ const DatePicker: React.FC<DatePickerProps> = props => {
 
   const handleChange: MaskedFieldProps['onChange'] = React.useCallback(
     ({ isValid, text }) => {
+      // The field was cleared: the date is reset
+      if (text.trim() === '') {
+        if (currentValue !== null) {
+          onChange(null);
+        }
+
+        return;
+      }
+
       if (isValid) {
         const parsedDate = parseInputByTemplate(text, template);
 
@@ -368,6 +378,7 @@ const DatePicker: React.FC<DatePickerProps> = props => {
       }
     },
     [
+      currentValue,
       isGreatherThenMinDate,
       isLessThenMaxDate,
       maxDate,
@@ -380,9 +391,8 @@ const DatePicker: React.FC<DatePickerProps> = props => {
 
   const calendarChange: CalendarProps['onChange'] = React.useCallback(
     date => {
-      if (date) {
-        onChange(date);
-      }
+      // null comes from the «Reset» button of the calendar
+      onChange(date ?? null);
       setOpenSate(false);
       inputRef.current?.focus();
     },

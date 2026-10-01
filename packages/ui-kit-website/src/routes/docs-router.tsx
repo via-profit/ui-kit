@@ -8,16 +8,20 @@ import { LoadingOverlay } from '@via-profit/ui-kit/src/LoadingIndicator';
 const TemplateDocs = loadable(() => import('~/templates/TemplateDocs/index'));
 const NotFound = loadable(() => import('~/pages/NotFound/index'));
 const Introduction = loadable(() => import('~/pages/Docs/Introduction'));
+const Showcase = loadable(() => import('~/pages/Docs/Showcase'));
 const ButtonOverview = loadable(() => import('~/pages/Docs/Button/ButtonOverview'));
 const ButtonGroupOverview = loadable(() => import('~/pages/Docs/ButtonGroup/ButtonGroupOverview'));
 const SwitchOverview = loadable(() => import('~/pages/Docs/Switch/SwitchOverview'));
 const CheckboxOverview = loadable(() => import('~/pages/Docs/Checkbox/CheckboxOverview'));
+const RadioOverview = loadable(() => import('~/pages/Docs/Radio/RadioOverview'));
 const Tables = loadable(() => import('~/pages/Docs/Table'));
 const TextField = loadable(() => import('~/pages/Docs/TextField'));
 const TextArea = loadable(() => import('~/pages/Docs/TextArea'));
 const ThemingOverview = loadable(() => import('~/pages/Docs/Theming/ThemingOverview'));
 const ThemingColor = loadable(() => import('~/pages/Docs/Theming/ThemingColor'));
 const SurfaceOverview = loadable(() => import('~/pages/Docs/Surface/SurfaceOverview'));
+const StackOverview = loadable(() => import('~/pages/Docs/Stack/StackOverview'));
+const GridOverview = loadable(() => import('~/pages/Docs/Grid/GridOverview'));
 const MaskedFieldOverview = loadable(() => import('~/pages/Docs/MaskedField/MaskedFieldOverview'));
 const TypographyOverview = loadable(() => import('~/pages/Docs/Typography/TypographyOverview'));
 const PhoneFieldOverview = loadable(() => import('~/pages/Docs/PhoneField/PhoneFieldOverview'));
@@ -61,6 +65,15 @@ const docsRouter: RouteObject = {
       ),
     },
     {
+      path: 'showcase',
+      caseSensitive: true,
+      element: (
+        <React.Suspense fallback={<LoadingOverlay />}>
+          <Showcase />
+        </React.Suspense>
+      ),
+    },
+    {
       path: 'button',
       caseSensitive: true,
       element: (
@@ -84,6 +97,15 @@ const docsRouter: RouteObject = {
       element: (
         <React.Suspense fallback={<LoadingOverlay />}>
           <SwitchOverview />
+        </React.Suspense>
+      ),
+    },
+    {
+      path: 'radio',
+      caseSensitive: true,
+      element: (
+        <React.Suspense fallback={<LoadingOverlay />}>
+          <RadioOverview />
         </React.Suspense>
       ),
     },
@@ -138,6 +160,24 @@ const docsRouter: RouteObject = {
       element: (
         <React.Suspense fallback={<LoadingOverlay />}>
           <ThemingColor />
+        </React.Suspense>
+      ),
+    },
+    {
+      path: 'stack',
+      caseSensitive: true,
+      element: (
+        <React.Suspense fallback={<LoadingOverlay />}>
+          <StackOverview />
+        </React.Suspense>
+      ),
+    },
+    {
+      path: 'grid',
+      caseSensitive: true,
+      element: (
+        <React.Suspense fallback={<LoadingOverlay />}>
+          <GridOverview />
         </React.Suspense>
       ),
     },

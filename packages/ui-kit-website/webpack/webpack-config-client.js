@@ -40,6 +40,8 @@ const webpackProdConfig = {
       {
         test: /\.[jt]sx?$/,
         exclude: /node_modules/,
+        // `?raw` imports are the source text (the showcase code), not the compiled module
+        resourceQuery: { not: [/raw/] },
         use: [
           {
             loader: 'babel-loader',
@@ -53,6 +55,10 @@ const webpackProdConfig = {
       {
         test: /\.md$/,
         use: 'raw-loader',
+      },
+      {
+        resourceQuery: /raw/,
+        type: 'asset/source',
       },
     ],
   },

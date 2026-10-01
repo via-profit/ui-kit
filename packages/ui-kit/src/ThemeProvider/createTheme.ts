@@ -2,7 +2,7 @@ import Color from '../Color';
 import { CreateTheme, UIThemeOverrides } from './index';
 
 export const createTheme: CreateTheme = overrides => {
-  const { isDark, fontSize, zIndex, color, shape, ...rest } = overrides || {};
+  const { isDark, fontSize, zIndex, color, shape, spacing, ...rest } = overrides || {};
 
   const theme: Omit<ReturnType<CreateTheme>, 'color'> & {
     color: Record<string, Color>;
@@ -25,6 +25,14 @@ export const createTheme: CreateTheme = overrides => {
     shape: {
       radiusFactor: 0.3,
       ...shape,
+    },
+    spacing: {
+      xs: '0.25em',
+      sm: '0.5em',
+      md: '1em',
+      lg: '1.5em',
+      xl: '2em',
+      ...spacing,
     },
   };
 
@@ -51,7 +59,6 @@ export const createTheme: CreateTheme = overrides => {
   Object.entries({ ...defaultColors, ...color }).forEach(([colorName, colorValue]) => {
     theme.color[colorName] = Color.fromString(colorValue);
   });
-
 
   return theme as ReturnType<CreateTheme>;
 };

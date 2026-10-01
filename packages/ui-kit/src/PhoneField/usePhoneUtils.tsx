@@ -1,7 +1,7 @@
 import React from 'react';
 
 import type { CountryCode, PhoneTemplate, CountryFlag } from './templates';
-import UnknownFlag from './UnknownFlag';
+import UnknownFlag from '../CountryFlags/Unknown';
 import { Mask, useMasked } from '../MaskedField/useMasked';
 
 export interface Formatted {

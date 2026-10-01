@@ -8,21 +8,27 @@ const transform = (sourceContent, componentName) => {
   const template = `
 import * as React from 'react';
 
+import isLabelled from './isLabelled';
+
 const ${componentName}: React.ForwardRefRenderFunction<SVGSVGElement, React.SVGProps<SVGSVGElement>> = (
   props,
   ref,
 ) => (
   ${sourceContent
-    // inject ref and the props
-    .replace(/\<svg(.*?)\>/gm, '<svg$1 width="1.5em" height="1em" {...props} ref={ref}>')
-    // camelcase
+    // camelcase (before the injection: the aria-* attributes must stay kebab-case)
     .replace(/(?<=\s{0,})([a-z-A-Z]+)(?==)/gim, matches =>
       matches.replace(/-./g, x => x[1].toUpperCase()),
     )
     // class -> className
     .replace(/(class)=\"(.*?)\"/gim, 'className="$2"')
     // styles
-    .replace(/\<style\>(.*?)\<\/style\>/, '<style>{"$1"}</style>')}
+    .replace(/\<style\>(.*?)\<\/style\>/, '<style>{"$1"}</style>')
+    // inject the size, ref and the props.
+    // Decorative by default: hidden from screen readers unless the flag is labelled
+    .replace(
+      /\<svg(.*?)\>/gm,
+      '<svg$1 width="1.5em" height="1em" aria-hidden={isLabelled(props) ? undefined : true} role={isLabelled(props) ? \'img\' : undefined} {...props} ref={ref}>',
+    )}
 );
 
 export default React.forwardRef(${componentName});
@@ -59,7 +65,7 @@ const lint = async files => {
 const bootstrap = async () => {
   const svgPath = path.resolve('./assets/country-flags-3x2');
   const outPath = path.resolve('./src/CountryFlags');
-  const indexFile = path.resolve('./src/CountryFlags/SwiperOverview.tsx');
+  const indexFile = path.resolve('./src/CountryFlags/index.tsx');
   const files = fs.readdirSync(svgPath);
   const indexList = [];
 
@@ -80,16 +86,17 @@ const bootstrap = async () => {
 
   const indexExportContent = `export {\n${indexList.join(',\n')}\n}`;
 
-  // write index file (SwiperOverview.tsx)
+  // write the index file: all the flags and the placeholder for an unknown country
 
   fs.writeFileSync(
     indexFile,
     [
       '/* eslint-disable import/max-dependencies */',
       indexImportContent,
+      "import Unknown from './Unknown';",
       '',
       '',
-      indexExportContent,
+      indexExportContent.replace(/\n}$/, ',\nUnknown\n}'),
     ].join('\n'),
     { encoding: 'utf8' },
   );

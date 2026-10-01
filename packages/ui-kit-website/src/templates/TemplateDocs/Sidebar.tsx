@@ -4,7 +4,7 @@ import { css } from '@emotion/react';
 import { Link, useLocation } from 'react-router-dom';
 import { useIntl } from 'react-intl';
 
-import docsNavigation from '~/utils/docsNavigation';
+import { docsNavigationGroups } from '~/utils/docsNavigation';
 
 const Container = styled.aside`
   display: flex;
@@ -45,6 +45,13 @@ const Group = styled.div`
   flex: 0 0 auto;
   display: flex;
   flex-direction: column;
+`;
+
+const ComponentGroups = styled.div`
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
 `;
 
 const GroupTitle = styled.div`
@@ -135,12 +142,25 @@ const Sidebar: React.ForwardRefRenderFunction<HTMLElement, React.HTMLAttributes<
     [pathname],
   );
 
-  const items = React.useMemo(() => {
+  // Search by the name and by the description: «дат» finds the calendar, the date picker and the masked field.
+  // The groups without the found items are hidden
+  const groups = React.useMemo(() => {
     const query = filter.trim().toLowerCase();
 
-    return query === ''
-      ? docsNavigation
-      : docsNavigation.filter(item => item.label.toLowerCase().includes(query));
+    if (query === '') {
+      return docsNavigationGroups;
+    }
+
+    return docsNavigationGroups
+      .map(group => ({
+        ...group,
+        items: group.items.filter(
+          item =>
+            item.label.toLowerCase().includes(query) ||
+            item.description.toLowerCase().includes(query),
+        ),
+      }))
+      .filter(group => group.items.length > 0);
   }, [filter]);
 
   // Scroll the active item into view once (e.g. after opening a page by the direct link)
@@ -180,6 +200,13 @@ const Sidebar: React.ForwardRefRenderFunction<HTMLElement, React.HTMLAttributes<
           {intl.formatMessage({ defaultMessage: 'Введение' })}
         </Item>
         <Item
+          to="/docs/showcase"
+          $isActive={isActive('/docs/showcase')}
+          aria-current={isActive('/docs/showcase') ? 'page' : undefined}
+        >
+          {intl.formatMessage({ defaultMessage: 'Примеры использования' })}
+        </Item>
+        <Item
           to="/docs/changelog"
           $isActive={isActive('/docs/changelog')}
           aria-current={isActive('/docs/changelog') ? 'page' : undefined}
@@ -188,23 +215,28 @@ const Sidebar: React.ForwardRefRenderFunction<HTMLElement, React.HTMLAttributes<
         </Item>
       </Group>
 
-      <Group ref={listRef}>
-        <GroupTitle>{intl.formatMessage({ defaultMessage: 'Компоненты' })}</GroupTitle>
-        {items.map(({ link, label, isDraft }) => (
-          <Item
-            key={link}
-            to={link}
-            $isActive={isActive(link)}
-            aria-current={isActive(link) ? 'page' : undefined}
-          >
-            {label}
-            {isDraft && <Draft>draft</Draft>}
-          </Item>
+      <ComponentGroups ref={listRef}>
+        {groups.map(group => (
+          <Group key={group.title} role="group" aria-label={group.title || undefined}>
+            {group.title && <GroupTitle aria-hidden>{group.title}</GroupTitle>}
+            {group.items.map(({ link, label, description, isDraft }) => (
+              <Item
+                key={link}
+                to={link}
+                title={description || undefined}
+                $isActive={isActive(link)}
+                aria-current={isActive(link) ? 'page' : undefined}
+              >
+                {label}
+                {isDraft && <Draft>draft</Draft>}
+              </Item>
+            ))}
+          </Group>
         ))}
-        {items.length === 0 && (
+        {groups.length === 0 && (
           <Empty>{intl.formatMessage({ defaultMessage: 'Ничего не найдено' })}</Empty>
         )}
-      </Group>
+      </ComponentGroups>
     </Container>
   );
 };

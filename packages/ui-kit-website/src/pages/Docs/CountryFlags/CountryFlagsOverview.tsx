@@ -3,15 +3,27 @@ import React from 'react';
 import TableOfContent from '~/components/TableOfContent';
 import DocsArticle from '~/components/DocsArticle';
 import RenderMarkdown from '~/components/RenderMarkdown';
+import ExampleCountryFlagsBasic from '~/examples/country-flags/ExampleCountryFlagsBasic';
+import ExampleCountryFlagsSize from '~/examples/country-flags/ExampleCountryFlagsSize';
+import ExampleCountryFlagsByCode from '~/examples/country-flags/ExampleCountryFlagsByCode';
+import ExampleCountryFlagsGallery from '~/examples/country-flags/ExampleCountryFlagsGallery';
 import content from '@via-profit/ui-kit/docs/country-flags/README.md';
-import ExampleCountryFlagsOverview from '~/examples/country-flags/ExampleCountryFlagsOverview';
 
 const CountryFlagsOverview: React.FC = () => (
   <>
     <DocsArticle>
-      <RenderMarkdown overrides={{ ExampleCountryFlagsOverview }}>{content}</RenderMarkdown>
+      <RenderMarkdown
+        overrides={{
+          ExampleCountryFlagsBasic,
+          ExampleCountryFlagsSize,
+          ExampleCountryFlagsByCode,
+          ExampleCountryFlagsGallery,
+        }}
+      >
+        {content}
+      </RenderMarkdown>
     </DocsArticle>
-    <TableOfContent content={content} />{' '}
+    <TableOfContent content={content} />
   </>
 );
 

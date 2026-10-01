@@ -34,6 +34,8 @@ const StyledDrawerBottomInner = styled(ModalInner)`
   flex-direction: column;
   z-index: ${({ theme }) => theme.zIndex.modal};
   background-color: ${({ theme }) => theme.color.surface.toString()};
+  /* Only the corners facing the page are rounded: the others touch the edge of the window */
+  border-radius: 0;
   border-top-left-radius: ${({ theme }) => theme.shape.radiusFactor * 2}em;
   border-top-right-radius: ${({ theme }) => theme.shape.radiusFactor * 2}em;
   transition:
@@ -62,6 +64,8 @@ const StyledDrawerTopInner = styled(ModalInner)`
   flex-direction: column;
   z-index: ${({ theme }) => theme.zIndex.modal};
   background-color: ${({ theme }) => theme.color.surface.toString()};
+  /* Only the corners facing the page are rounded: the others touch the edge of the window */
+  border-radius: 0;
   border-bottom-left-radius: ${({ theme }) => theme.shape.radiusFactor * 2}em;
   border-bottom-right-radius: ${({ theme }) => theme.shape.radiusFactor * 2}em;
   transition:
@@ -90,6 +94,8 @@ const StyledDrawerRightInner = styled(ModalInner)`
   flex-direction: column;
   z-index: ${({ theme }) => theme.zIndex.modal};
   background-color: ${({ theme }) => theme.color.surface.toString()};
+  /* Only the corners facing the page are rounded: the others touch the edge of the window */
+  border-radius: 0;
   border-top-left-radius: ${({ theme }) => theme.shape.radiusFactor * 2}em;
   border-bottom-left-radius: ${({ theme }) => theme.shape.radiusFactor * 2}em;
   transition:
@@ -118,6 +124,8 @@ const StyledDrawerLeftInner = styled(ModalInner)`
   flex-direction: column;
   z-index: ${({ theme }) => theme.zIndex.modal};
   background-color: ${({ theme }) => theme.color.surface.toString()};
+  /* Only the corners facing the page are rounded: the others touch the edge of the window */
+  border-radius: 0;
   border-top-right-radius: ${({ theme }) => theme.shape.radiusFactor * 2}em;
   border-bottom-right-radius: ${({ theme }) => theme.shape.radiusFactor * 2}em;
   transition:
