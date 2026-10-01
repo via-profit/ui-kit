@@ -15,6 +15,8 @@ const SwitchOverview = loadable(() => import('~/pages/Docs/Switch/SwitchOverview
 const CheckboxOverview = loadable(() => import('~/pages/Docs/Checkbox/CheckboxOverview'));
 const RadioOverview = loadable(() => import('~/pages/Docs/Radio/RadioOverview'));
 const SliderOverview = loadable(() => import('~/pages/Docs/Slider/SliderOverview'));
+const TabsOverview = loadable(() => import('~/pages/Docs/Tabs/TabsOverview'));
+const TooltipOverview = loadable(() => import('~/pages/Docs/Tooltip/TooltipOverview'));
 const Tables = loadable(() => import('~/pages/Docs/Table'));
 const TextField = loadable(() => import('~/pages/Docs/TextField'));
 const TextArea = loadable(() => import('~/pages/Docs/TextArea'));
@@ -116,6 +118,24 @@ const docsRouter: RouteObject = {
       element: (
         <React.Suspense fallback={<LoadingOverlay />}>
           <SliderOverview />
+        </React.Suspense>
+      ),
+    },
+    {
+      path: 'tabs',
+      caseSensitive: true,
+      element: (
+        <React.Suspense fallback={<LoadingOverlay />}>
+          <TabsOverview />
+        </React.Suspense>
+      ),
+    },
+    {
+      path: 'tooltip',
+      caseSensitive: true,
+      element: (
+        <React.Suspense fallback={<LoadingOverlay />}>
+          <TooltipOverview />
         </React.Suspense>
       ),
     },

@@ -5,6 +5,9 @@
   "+CDJ2t": {
     "defaultMessage": "Город"
   },
+  "+MU6cb": {
+    "defaultMessage": "Три открытые сделки на 1 250 000 ₽."
+  },
   "+YLRv8": {
     "defaultMessage": "Уведомления по email"
   },
@@ -73,6 +76,9 @@
   },
   "1CQvhk": {
     "defaultMessage": "H4. Группа"
+  },
+  "1JtZq+": {
+    "defaultMessage": "Месяц отчёта"
   },
   "1SdHYt": {
     "defaultMessage": "Действия"
@@ -149,6 +155,9 @@
   "4o09IS": {
     "defaultMessage": "Продолжить редактирование"
   },
+  "4pWZK3": {
+    "defaultMessage": "Карточка клиента"
+  },
   "4yYP4+": {
     "defaultMessage": "Закрыть без сохранения?"
   },
@@ -164,8 +173,14 @@
   "5FoEiD": {
     "defaultMessage": "Из поиска"
   },
+  "5KXssq": {
+    "defaultMessage": "Выставить счёт"
+  },
   "5UhzNy": {
     "defaultMessage": "Что это?"
+  },
+  "5X72QJ": {
+    "defaultMessage": "Далее"
   },
   "5YiEBf": {
     "defaultMessage": "Скрыть пароль"
@@ -184,6 +199,9 @@
   },
   "7LQJei": {
     "defaultMessage": "Имя, телефон и email получателя."
+  },
+  "7QFZuc": {
+    "defaultMessage": "ООО «Ромашка», ИНН 7700000000, менеджер — Анна Смирнова."
   },
   "7TwBQ2": {
     "defaultMessage": "Дата рождения"
@@ -314,11 +332,17 @@
   "FolXqx": {
     "defaultMessage": "Без согласия оформить заказ нельзя"
   },
+  "Fqk/4/": {
+    "defaultMessage": "Подсказка"
+  },
   "G/HPAt": {
     "defaultMessage": "Удаление аккаунта"
   },
   "G0WBwd": {
     "defaultMessage": "Всего кликов: {counter}"
+  },
+  "G3vn9O": {
+    "defaultMessage": "Последний звонок — вчера в 15:40."
   },
   "G5+JDH": {
     "defaultMessage": "Поиск по номеру или покупателю"
@@ -440,6 +464,9 @@
   "KVvOpP": {
     "defaultMessage": "Город, улица, дом и квартира."
   },
+  "KWI+QQ": {
+    "defaultMessage": "1. Контакты"
+  },
   "Kfcl3A": {
     "defaultMessage": "H5. Подгруппа"
   },
@@ -460,6 +487,9 @@
   },
   "Lj9QtT": {
     "defaultMessage": "Показать код"
+  },
+  "M+Kf3k": {
+    "defaultMessage": "2. Доставка"
   },
   "M0haJ+": {
     "defaultMessage": "Курсив"
@@ -533,6 +563,9 @@
   "PbmPe8": {
     "defaultMessage": "Отменить заказ №{id}?"
   },
+  "Pke3j5": {
+    "defaultMessage": "Почта, push-уведомления и рассылки."
+  },
   "PuZv4f": {
     "defaultMessage": "Пароль"
   },
@@ -559,6 +592,12 @@
   },
   "Qrj27f": {
     "defaultMessage": "Поиск по коду или названию"
+  },
+  "Qsxk3Q": {
+    "defaultMessage": "Продажи за неделю: 312 000 ₽"
+  },
+  "Qv0lFi": {
+    "defaultMessage": "Имя, фото и должность."
   },
   "QwcCkF": {
     "defaultMessage": "Найти компонент"
@@ -598,6 +637,12 @@
   },
   "Sswvg8": {
     "defaultMessage": "Фотографии"
+  },
+  "SuM1h9": {
+    "defaultMessage": "Отчёт за {month}"
+  },
+  "T24pln": {
+    "defaultMessage": "Информация"
   },
   "T40ZzU": {
     "defaultMessage": "Спасибо за ответ!"
@@ -647,6 +692,9 @@
   "Um+JQ8": {
     "defaultMessage": "H1. Заголовок страницы"
   },
+  "UpD+nK": {
+    "defaultMessage": "Удалить клиента"
+  },
   "UryPEl": {
     "defaultMessage": "Менеджер"
   },
@@ -677,17 +725,26 @@
   "VU6F/B": {
     "defaultMessage": "Шаг 2. Оформите заказ"
   },
+  "VVQplT": {
+    "defaultMessage": "Подсказка может быть длинной: текст переносится, ширина не больше 20em"
+  },
   "VuH2j7": {
     "defaultMessage": "дд.мм.гггг"
   },
   "VzTL/7": {
     "defaultMessage": "Подписаться на новости"
   },
+  "WE3spL": {
+    "defaultMessage": "История"
+  },
   "WG8Gsj": {
     "defaultMessage": "Хранилище"
   },
   "WHlW7L": {
     "defaultMessage": "Картой онлайн"
+  },
+  "WY3lMZ": {
+    "defaultMessage": "Имя, телефон и почта покупателя."
   },
   "Wih+s+": {
     "defaultMessage": "Стандарт"
@@ -698,8 +755,14 @@
   "WtODCh": {
     "defaultMessage": "Добавьте его в корзину"
   },
+  "X3Snsx": {
+    "defaultMessage": "Сделки"
+  },
   "X3aLTk": {
     "defaultMessage": "При получении"
+  },
+  "XM5GAV": {
+    "defaultMessage": "Пароль и двухфакторная аутентификация."
   },
   "XRIItI": {
     "defaultMessage": "Выберите день"
@@ -730,6 +793,9 @@
   },
   "YDoGnv": {
     "defaultMessage": "Показатели по месяцам"
+  },
+  "YFksh7": {
+    "defaultMessage": "Адрес и время доставки."
   },
   "YHFvoS": {
     "defaultMessage": "Открыть календарь"
@@ -770,11 +836,17 @@
   "ZreO2w": {
     "defaultMessage": "Тестировщик"
   },
+  "a9doGu": {
+    "defaultMessage": "НДС"
+  },
   "aBkAwz": {
     "defaultMessage": "Колонка в два раза шире боковой."
   },
   "aJ02T/": {
     "defaultMessage": "Кофемолка ручная"
+  },
+  "aQZBKQ": {
+    "defaultMessage": "Способ оплаты."
   },
   "aVMJXF": {
     "defaultMessage": "Доверенность"
@@ -784,6 +856,9 @@
   },
   "abKIRE": {
     "defaultMessage": "Начните вводить название"
+  },
+  "akZOYj": {
+    "defaultMessage": "Сумма указана с учётом {nds}."
   },
   "b686fK": {
     "defaultMessage": "1 пользователь, 5 ГБ — бесплатно"
@@ -917,6 +992,9 @@
   "gBa6To": {
     "defaultMessage": "Заказы за неделю"
   },
+  "gJBNGo": {
+    "defaultMessage": "Продажи за месяц: 1 340 000 ₽"
+  },
   "gOWq7q": {
     "defaultMessage": "Заказ оформлен. <strong>Курьер привезёт его завтра</strong> с 10:00 до 14:00 — <em>за час до приезда</em> он позвонит."
   },
@@ -1040,6 +1118,9 @@
   "lnCJFM": {
     "defaultMessage": "Сбросить"
   },
+  "ls8M7Z": {
+    "defaultMessage": "Продажи за день: 48 000 ₽"
+  },
   "m0+ocO": {
     "defaultMessage": "Страна (загрузка с сервера)"
   },
@@ -1055,6 +1136,9 @@
   "mHkBg8": {
     "defaultMessage": "Похожие товары"
   },
+  "mQOFOz": {
+    "defaultMessage": "3. Оплата"
+  },
   "mWC6vf": {
     "defaultMessage": "Доставка по Москве и Московской области"
   },
@@ -1069,6 +1153,9 @@
   },
   "n8HMS9": {
     "defaultMessage": "ваших интерфейсов"
+  },
+  "n9dkXY": {
+    "defaultMessage": "Налог на добавленную стоимость, 20%"
   },
   "nHs460": {
     "defaultMessage": "Покупатель получит уведомление об отмене."
@@ -1193,6 +1280,9 @@
   "tK7VYa": {
     "defaultMessage": "Получать рассылку"
   },
+  "tfgg0q": {
+    "defaultMessage": "Открыть в новой вкладке"
+  },
   "tpgLab": {
     "defaultMessage": "Скачать"
   },
@@ -1213,6 +1303,9 @@
   },
   "uwf0ai": {
     "defaultMessage": "Команда"
+  },
+  "v5DznE": {
+    "defaultMessage": "Сначала заполните реквизиты"
   },
   "vIHPnK": {
     "defaultMessage": "Фамилия"
@@ -1303,6 +1396,9 @@
   },
   "z32Qwr": {
     "defaultMessage": "Отмена"
+  },
+  "z6VJ5r": {
+    "defaultMessage": "Клиент и его сделки будут удалены без возможности восстановления"
   },
   "z7B2cn": {
     "defaultMessage": "Обычный"
