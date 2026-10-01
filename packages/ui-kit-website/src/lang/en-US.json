@@ -158,6 +158,9 @@
   "55guja": {
     "defaultMessage": "Способ получения"
   },
+  "5EaD9n": {
+    "defaultMessage": "Количество мест"
+  },
   "5FoEiD": {
     "defaultMessage": "Из поиска"
   },
@@ -169,6 +172,9 @@
   },
   "5zuHOl": {
     "defaultMessage": "Оплата картой или при получении"
+  },
+  "7/NDGO": {
+    "defaultMessage": "Максимальная цена"
   },
   "73HUzt": {
     "defaultMessage": "Наличными"
@@ -446,6 +452,9 @@
   "LUCzCR": {
     "defaultMessage": "Выберите"
   },
+  "LVeQEM": {
+    "defaultMessage": "Цена: от {from} до {to}"
+  },
   "LZbAEP": {
     "defaultMessage": "Не отменять"
   },
@@ -500,8 +509,14 @@
   "OWKoN6": {
     "defaultMessage": "Выбран"
   },
+  "Oo2Kwk": {
+    "defaultMessage": "Минимальная цена"
+  },
   "OpGLKv": {
     "defaultMessage": "Более 10 000 покупателей каждый месяц доверяют нам свои заказы."
+  },
+  "P+mcbm": {
+    "defaultMessage": "Запрос к серверу: от {from} до {to}"
   },
   "PH2JcS": {
     "defaultMessage": "Аккаунт удалён"
@@ -550,6 +565,9 @@
   },
   "R7ozCe": {
     "defaultMessage": "Опишите ваш вопрос"
+  },
+  "R9tU9n": {
+    "defaultMessage": "Громкость"
   },
   "RNEfb6": {
     "defaultMessage": "Файл «Отчёт.pdf» будет удалён без возможности восстановления."
@@ -905,6 +923,9 @@
   "gOhkZ/": {
     "defaultMessage": "Шаг 3. Получите посылку"
   },
+  "gXcQyF": {
+    "defaultMessage": "Скидка"
+  },
   "geLux1": {
     "defaultMessage": "Выручка, тыс. ₽"
   },
@@ -1232,6 +1253,9 @@
   "xIW73K": {
     "defaultMessage": "Характеристики"
   },
+  "xKt1IP": {
+    "defaultMessage": "Уровень"
+  },
   "xO3U5e": {
     "defaultMessage": "Пётр Соколов"
   },
@@ -1264,6 +1288,9 @@
   },
   "yKY0jp": {
     "defaultMessage": "Купить"
+  },
+  "ydiOIZ": {
+    "defaultMessage": "Оттенок"
   },
   "ynMVPX": {
     "defaultMessage": "Пользователи"

@@ -14,6 +14,7 @@ const ButtonGroupOverview = loadable(() => import('~/pages/Docs/ButtonGroup/Butt
 const SwitchOverview = loadable(() => import('~/pages/Docs/Switch/SwitchOverview'));
 const CheckboxOverview = loadable(() => import('~/pages/Docs/Checkbox/CheckboxOverview'));
 const RadioOverview = loadable(() => import('~/pages/Docs/Radio/RadioOverview'));
+const SliderOverview = loadable(() => import('~/pages/Docs/Slider/SliderOverview'));
 const Tables = loadable(() => import('~/pages/Docs/Table'));
 const TextField = loadable(() => import('~/pages/Docs/TextField'));
 const TextArea = loadable(() => import('~/pages/Docs/TextArea'));
@@ -106,6 +107,15 @@ const docsRouter: RouteObject = {
       element: (
         <React.Suspense fallback={<LoadingOverlay />}>
           <RadioOverview />
+        </React.Suspense>
+      ),
+    },
+    {
+      path: 'slider',
+      caseSensitive: true,
+      element: (
+        <React.Suspense fallback={<LoadingOverlay />}>
+          <SliderOverview />
         </React.Suspense>
       ),
     },
