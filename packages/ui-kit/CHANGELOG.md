@@ -4,6 +4,23 @@
 
 ## Не выпущено
 
+## 0.4.0 — 2026-10-01
+
+Новые компоненты: `Checkbox`, `Radio` и `RadioGroup`, `ButtonGroup`, `Stack` и `Grid`, шкала отступов темы. Доступность с клавиатуры и для программ чтения с экрана во многих компонентах, исправления ошибок по всей библиотеке.
+
+Версия содержит несовместимые изменения. Как обновиться с 0.3:
+
+- `LoadingIndicator`: экспорт по умолчанию — строчный `Spinner`. Если вы использовали слой загрузки поверх блока, импортируйте `LoadingOverlay`: `import { LoadingOverlay } from '@via-profit/ui-kit/LoadingIndicator'`;
+- `DatePicker`: `onChange` получает `Date | null` — обработчик, принимающий только `Date`, нужно доработать;
+- `Switch`: `ref` указывает на `<input>`; переопределения `ToggleWrapper` и `Container` получают ref на `<input>` и `<label>`;
+- `Accordion`: `onOpen` получает новое состояние и больше не отключает внутреннее переключение неконтролируемого аккордеона; внутренний отступ заголовка перенесён на кнопку внутри него;
+- `Autocomplete`: удалены `Autocomplete2` и `Autocomplete/OverrideMenuList`; мультивыбор переработан;
+- `Table`: таблица больше не перестраивается в блоки на узких экранах — оберните широкие таблицы в контейнер с `overflow-x: auto`;
+- `Swiper`: контейнер не ограничен шириной `1200px`;
+- `Menu`: клик по анкору больше не вызывает `onRequestClose`.
+
+Подробности — в разделах ниже.
+
 ### Добавлено
 
 - **Stack**, **Grid**: компоненты раскладки `@via-profit/ui-kit/Stack` и `@via-profit/ui-kit/Grid` — элементы в столбец или строку с одинаковым отступом и сетка колонок, которая с `minColumnWidth` сама перестраивается по ширине; оба без обёрток вокруг элементов. **ThemeProvider**: шкала отступов `theme.spacing` (`xs`, `sm`, `md`, `lg`, `xl`), её принимает `gap` у `Stack` и `Grid`.
@@ -46,7 +63,6 @@
 - **Color**: `getContrastColor()` выбирает чёрный или белый по коэффициенту контраста, а не по порогу яркости 0.5. Раньше для средних по яркости цветов (оранжевый, `#22c7d6`) возвращался белый с контрастом около 2:1 вместо чёрного с контрастом около 10:1.
 - **LoadingIndicator**: **несовместимое изменение** — экспорт по умолчанию модуля `LoadingIndicator` и файла `LoadingIndicator/Spinner` теперь `Spinner` (строчный спиннер), а не слой поверх блока. Импорт `import LoadingIndicator from '@via-profit/ui-kit/LoadingIndicator'` без ошибок начнёт показывать строчный спиннер — замените его на `import { LoadingOverlay } from '@via-profit/ui-kit/LoadingIndicator'`. Подробнее в документации, раздел «Переход с прежних имён».
 - **Autocomplete**: мультивыбор переработан по образцу MUI. Выбранные элементы отображаются метками внутри поля, поле служит только для поиска, после выбора поиск очищается, Backspace в пустом поле удаляет последнюю метку. **Несовместимое изменение**: при `multiple` функция `selectedItemToString` получает один элемент (подпись метки), а не массив.
-- **Autocomplete**: удалены неиспользуемые `Autocomplete2` и `Autocomplete/OverrideMenuList`.
 - **PhoneField**: построен на `MaskedField` и использует общий с ним механизм форматирования. Публичный API `PhoneField` и `usePhoneUtils` не изменился. `+` в середине номера теперь пропускается, а не обрезает номер.
 - **Menu**: клавиша Tab закрывает меню. Раньше фокус уходил из меню, а оно оставалось открытым.
 - **PhoneField**: номера США форматируются как `+1 (987) 654-3210` вместо `+1 987 654-32-10`.
@@ -57,6 +73,10 @@
 
 - **CountryFlags**: `Uknown` (опечатка в названии) — используйте `Unknown`. **PhoneField**: `PhoneField/UnknownFlag` — используйте `CountryFlags/Unknown`.
 - **LoadingIndicator**: именованные `LoadingIndicator` и `StaticLoadingIndicator` и их типы `LoadingIndicatorProps` и `StaticLoadingIndicatorProps` — используйте `LoadingOverlay` и `Spinner`. Будут удалены в одной из следующих версий.
+
+### Удалено
+
+- **Autocomplete**: удалены неиспользуемые `Autocomplete2` и `Autocomplete/OverrideMenuList`.
 
 ### Исправлено
 
