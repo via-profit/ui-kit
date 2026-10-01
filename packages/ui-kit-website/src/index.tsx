@@ -11,6 +11,7 @@ import LocaleProvider from './providers/LocaleProvider';
 import routes from '~/routes';
 import reduxDefaultState from '~/redux/defaultState';
 import { readUiCookies } from '~/utils/uiCookies';
+import { ROUTER_BASENAME } from '~/utils/basePath';
 
 const bootstrap = () => {
   const rootElement = document.getElementById('app');
@@ -20,7 +21,7 @@ const bootstrap = () => {
 
   const cssCache = createCache({ key: 'app' });
   const preloadedStates = readPreloadedState();
-  const router = createBrowserRouter(routes);
+  const router = createBrowserRouter(routes, { basename: ROUTER_BASENAME });
   reduxDefaultState.setInitialState(state => ({
     ui: {
       ...state.ui,

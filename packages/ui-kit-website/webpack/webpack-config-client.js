@@ -15,6 +15,13 @@ const { parsed } = dotenv.config({
 const isDev = process.env.NODE_ENV === 'development';
 
 /**
+ * The path the site is served from: `/` locally and on a custom domain,
+ * `/<repository>/` on GitHub Pages without a custom domain (https://<owner>.github.io/<repository>/)
+ */
+const basePathTrimmed = (process.env.SITE_BASE_PATH || '').replace(/^\/+|\/+$/g, '');
+const basePath = basePathTrimmed ? `/${basePathTrimmed}/` : '/';
+
+/**
  * Version of the documented ui-kit. Only the version is injected,
  * importing the whole package.json would put the dependencies list into the bundle
  */
@@ -29,7 +36,7 @@ const webpackProdConfig = {
     index: path.resolve(__dirname, '../src/index.tsx'),
   },
   output: {
-    publicPath: '/',
+    publicPath: basePath,
     path: isDev ? path.join(__dirname, '../build') : path.join(__dirname, '../dist'),
     filename: 'public/js/[name]-[contenthash].js',
     chunkFilename: 'public/js/[name]-[chunkhash].js',
@@ -82,6 +89,7 @@ const webpackProdConfig = {
   plugins: [
     new webpack.DefinePlugin({
       'process.env.UI_KIT_VERSION': JSON.stringify(uiKitVersion),
+      'process.env.SITE_BASE_PATH': JSON.stringify(basePath),
     }),
     ...(isDev
       ? [

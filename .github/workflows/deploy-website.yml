@@ -1,0 +1,60 @@
+# Builds the documentation site and publishes it to GitHub Pages on every push to master.
+# One-time setup: Settings → Pages → Build and deployment → Source: «GitHub Actions».
+name: Deploy documentation site
+
+on:
+  push:
+    branches: [master]
+  # Allows to run the deploy manually from the Actions tab
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# One deploy at a time; a newer push does not cancel the deploy that is already running
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build the site
+        run: npm run build:website
+        env:
+          # The site is served from https://<owner>.github.io/<repository>/.
+          # With a custom domain set the repository variable SITE_BASE_PATH to «/»
+          SITE_BASE_PATH: ${{ vars.SITE_BASE_PATH || format('/{0}/', github.event.repository.name) }}
+
+      # GitHub Pages knows nothing about the routes of the single page application:
+      # an unknown address (e.g. a refresh on /docs/button) gets 404.html, which starts the app
+      - name: Add the fallback page for the routes
+        run: cp packages/ui-kit-website/dist/index.html packages/ui-kit-website/dist/404.html
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: packages/ui-kit-website/dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

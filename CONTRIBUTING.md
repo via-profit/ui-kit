@@ -6,6 +6,7 @@
 - [Разработка](#разработка)
 - [Список изменений](#список-изменений)
 - [Публикация в npm](#публикация-в-npm)
+- [Сайт документации](#сайт-документации)
 
 ## Структура репозитория
 
@@ -80,3 +81,28 @@ npm run i18n       # извлечь и скомпилировать перево
    git tag v0.4.0
    git push && git push --tags
    ```
+
+## Сайт документации
+
+Сайт публикуется в GitHub Pages автоматически: при каждом push в `master` workflow `.github/workflows/deploy-website.yml` собирает его и выкладывает. Запустить публикацию вручную можно на вкладке Actions → «Deploy documentation site» → Run workflow.
+
+Сайт доступен по адресу `https://<владелец>.github.io/<репозиторий>/`, например `https://via-profit.github.io/ui-kit/`.
+
+### Первоначальная настройка
+
+Один раз в настройках репозитория на GitHub: Settings → Pages → Build and deployment → Source — выберите «GitHub Actions». После этого первый push в `master` опубликует сайт.
+
+### Свой домен
+
+1. В Settings → Pages укажите домен в поле Custom domain и настройте DNS по [инструкции GitHub](https://docs.github.com/ru/pages/configuring-a-custom-domain-for-your-github-pages-site).
+2. В Settings → Secrets and variables → Actions → Variables добавьте переменную `SITE_BASE_PATH` со значением `/`: сайт будет открываться из корня домена, а не из `/<репозиторий>/`.
+
+### Базовый путь
+
+Сборка сайта читает переменную окружения `SITE_BASE_PATH` — путь, по которому сайт открывается. Без неё сайт собирается для корня (`/`), как при `npm start`. Проверить сборку для GitHub Pages локально:
+
+```bash
+SITE_BASE_PATH=/ui-kit/ npm run build:website
+```
+
+GitHub Pages не знает о маршрутах сайта и на адрес вроде `/docs/button` отвечает страницей `404.html`. Поэтому workflow кладёт рядом с `index.html` его копию `404.html`: она запускает сайт, и он сам открывает нужную страницу.
