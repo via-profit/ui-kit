@@ -383,9 +383,6 @@
   "Gizjoc": {
     "defaultMessage": "Турка"
   },
-  "GwC0+Z": {
-    "defaultMessage": "Код страны"
-  },
   "H1Y3Sf": {
     "defaultMessage": "Распродажа"
   },
@@ -617,9 +614,6 @@
   "QmljCN": {
     "defaultMessage": "Выбрано: {selected}"
   },
-  "Qrj27f": {
-    "defaultMessage": "Поиск по коду или названию"
-  },
   "Qsxk3Q": {
     "defaultMessage": "Продажи за неделю: 312 000 ₽"
   },
@@ -643,9 +637,6 @@
   },
   "Rv4/dP": {
     "defaultMessage": "Анкор"
-  },
-  "S3thTF": {
-    "defaultMessage": "Беларусь"
   },
   "SMzCPW": {
     "defaultMessage": "Сохранить"
@@ -967,9 +958,6 @@
   },
   "dHfTls": {
     "defaultMessage": "{price} за ночь"
-  },
-  "dKNYFF": {
-    "defaultMessage": "Россия"
   },
   "dNtpfd": {
     "defaultMessage": "Номер"
@@ -1297,9 +1285,6 @@
   },
   "sHKr7O": {
     "defaultMessage": "Укажите адрес и способ оплаты"
-  },
-  "sLJC4c": {
-    "defaultMessage": "Казахстан"
   },
   "sNP24O": {
     "defaultMessage": "Нажато: {count}"

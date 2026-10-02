@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { FormattedMessage } from 'react-intl';
 import styled from '@emotion/styled';
 
 import createTheme from '../ThemeProvider/createTheme';
@@ -24,10 +23,16 @@ const StyledHeading = styled(Heading1)`
 
 type RenderErrorProps = {
   readonly error?: Error | unknown;
+  readonly title?: React.ReactNode;
+  readonly description?: React.ReactNode;
 };
 
 const RenderError: React.FC<RenderErrorProps> = props => {
-  const { error } = props;
+  const {
+    error,
+    title = 'Something went wrong',
+    description = 'Please let the developers know',
+  } = props;
   const isDev = process.env.NODE_ENV === 'development';
 
   const { name, message, stack } = React.useMemo(() => {
@@ -64,12 +69,8 @@ const RenderError: React.FC<RenderErrorProps> = props => {
             </>
           ) : (
             <>
-              <StyledHeading>
-                <FormattedMessage defaultMessage="Произошла ошибка" />
-              </StyledHeading>
-              <Paragraph>
-                <FormattedMessage defaultMessage="Пожалуйста, сообщие разработчикам" />
-              </Paragraph>
+              <StyledHeading>{title}</StyledHeading>
+              <Paragraph>{description}</Paragraph>
             </>
           )}
         </StyledSurface>

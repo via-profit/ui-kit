@@ -13,8 +13,20 @@
 - **Tabs**: новый компонент `@via-profit/ui-kit/Tabs` — вкладки `Tabs`, `TabList`, `Tab`, `TabPanel`: контролируемый и неконтролируемый режимы, вертикальное расположение, `fullWidth`, цвет, прокрутка ряда с выбранной вкладкой в видимой части, `keepMounted` у панели; роли `tablist`/`tab`/`tabpanel` связываются автоматически, стрелки, Home/End, автоматический и ручной (`activation="manual"`) выбор.
 - **Slider**: новый компонент `@via-profit/ui-kit/Slider` — выбор числа или диапазона ползунком: контролируемый и неконтролируемый режимы, шаг, метки с подписями, вертикальное расположение, цвет, `onChangeCommitted` по окончании перетаскивания, значение в форме через `name` и `overrides`; ползунки — элементы с ролью `slider`, управляются стрелками, PageUp/PageDown и Home/End.
 
+### Изменено
+
+- **Пакет**: кроме CommonJS, собираются ES-модули (`esm/`); в `package.json` добавлены `module`, `sideEffects: false` и карта `exports` со всеми модулями. Сборщики (webpack, Vite) берут ES-модули и выбрасывают неиспользуемый код: импорт одного `H1` из `@via-profit/ui-kit/Typography` занимает около 1 КБ вместо 15. Пути импорта не изменились (`@via-profit/ui-kit/Button`, `@via-profit/ui-kit/Button/ButtonContainer`), но пути, которых нет в `exports`, больше не работают: например, с расширением `.js` или с `dist` в пути — уберите их.
+
+### Удалено
+
+- **CountryFlags**: модуль `@via-profit/ui-kit/CountryFlags` удалён — флаги стран не относятся к UI-киту. `PhoneField` по-прежнему показывает флаги стран из набора шаблонов по умолчанию; в своих шаблонах передайте как флаг любой элемент — свою иконку или флаг из шаблонов по умолчанию: `defaultTemplates.find(([code]) => code === 'RU')?.[1]`. Если вы импортировали флаги из `CountryFlags`, перенесите нужные SVG в свой проект.
+- **Menu**: неиспользуемые файлы виртуализированного списка — `Menu/VirtualizedList`, `Menu/VirtualizedListComponent`, `Menu/VirtualizedItem`, `Menu/MeasuredItem`, `Menu/AutoHeightWrapper`. Меню их не использовало.
+- **ErrorBoundary**: неиспользуемый `ErrorBoundary/Fallback`.
+
 ### Исправлено
 
+- **Calendar**, **DatePicker**: больше не требуют `react-intl`. Календарь оборачивает себя в `ErrorBoundary`, а тот импортировал `react-intl`, которого нет в зависимостях пакета: без него календарь не собирался.
+- **ErrorBoundary**: свойство `fallback` теперь работает; тексты сообщения об ошибке задаются свойствами `title` и `description` (по умолчанию `Something went wrong` и `Please let the developers know`) вместо русских строк через `react-intl`.
 - **Selectbox**: значение выводится шрифтом поля ввода — селектбокс той же высоты, что `TextField`, `Autocomplete` и `DatePicker` (раньше был ниже на 2px, а текст значения мельче).
 
 ## 0.4.0 — 2026-10-01

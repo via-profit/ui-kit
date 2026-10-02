@@ -7,6 +7,8 @@
     "start": "npm run start --workspace packages/ui-kit-website",
     "build:website": "npm run build --workspace packages/ui-kit-website",
     "build": "npm run build --workspace packages/ui-kit",
+    "lint": "npm run lint:check --workspaces",
+    "typecheck": "npm run typecheck --workspaces",
     "i18n": "npm run i18n --workspace packages/ui-kit-website",
     "postinstall": "node ./scripts/postinstall.js"
   },

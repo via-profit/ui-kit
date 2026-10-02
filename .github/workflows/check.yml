@@ -1,0 +1,50 @@
+# Checks the library and the documentation site on every pull request and every push to master:
+# the lint, the types, the build of the package and the build of the site.
+# A failed step makes the pull request red, so a broken package does not get into master
+name: Check
+
+on:
+  pull_request:
+  push:
+    branches: [master]
+
+permissions:
+  contents: read
+
+# A newer push to the same branch cancels the check that is still running
+concurrency:
+  group: check-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Check the types
+        run: npm run typecheck
+
+      # Builds CommonJS and ES modules into packages/ui-kit/dist and generates the exports map
+      - name: Build the package
+        run: npm run build
+
+      # The package that would be published: the list of the files and the size
+      - name: Pack the package
+        run: npm pack --dry-run
+        working-directory: packages/ui-kit/dist
+
+      # The examples of the site import the components: the site does not build if their API breaks
+      - name: Build the site
+        run: npm run build:website

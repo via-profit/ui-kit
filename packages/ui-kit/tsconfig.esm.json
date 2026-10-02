@@ -1,0 +1,11 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    /* The ES modules for the bundlers: they can tree-shake the unused code */
+    "module": "es2020",
+    "moduleResolution": "node",
+    "outDir": "./dist/esm",
+    /* The types are the same as in the CommonJS build */
+    "declaration": false
+  }
+}

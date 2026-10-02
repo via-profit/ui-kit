@@ -221,7 +221,6 @@ const ProfilePage: React.FC = () => (
   - [Бейдж](./badge/README.md) — метки, теги и фильтры
   - [Индикатор загрузки](./loading-indicator/README.md) — спиннер и слой загрузки
   - [Таблица](./table/README.md) — таблицы с оформлением темы
-  - [Флаги стран](./country-flags/README.md) — иконки флагов
 - Компоновка
   - [Аккордеон](./accordion/README.md) — сворачиваемые панели
   - [Вкладки](./tabs/README.md) — разделы содержимого, из которых виден один

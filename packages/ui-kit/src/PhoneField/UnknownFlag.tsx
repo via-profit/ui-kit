@@ -1,7 +1,7 @@
-import Unknown from '../CountryFlags/Unknown';
+import Unknown from './flags/Unknown';
 
 /**
- * @deprecated Use `Unknown` from `@via-profit/ui-kit/CountryFlags/Unknown`
+ * The placeholder that PhoneField shows instead of the flag when the country is not detected
  */
 const UnknownFlag = Unknown;
 

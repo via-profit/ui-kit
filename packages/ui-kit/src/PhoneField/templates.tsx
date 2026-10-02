@@ -1,14 +1,14 @@
 import React from 'react';
 
 // import UnknownFlag from './UnknownFlag';
-import RU from '../CountryFlags/RU';
-import BY from '../CountryFlags/BY';
-import KZ from '../CountryFlags/KZ';
-import UA from '../CountryFlags/UA';
-import JP from '../CountryFlags/JP';
-import US from '../CountryFlags/US';
-import IL from '../CountryFlags/IL';
-import CN from '../CountryFlags/CN';
+import RU from './flags/RU';
+import BY from './flags/BY';
+import KZ from './flags/KZ';
+import UA from './flags/UA';
+import JP from './flags/JP';
+import US from './flags/US';
+import IL from './flags/IL';
+import CN from './flags/CN';
 
 export const templates: PhoneTemplate[] = [
   // Russian template

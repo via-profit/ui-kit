@@ -36,9 +36,6 @@ const AutocompleteOverview = loadable(
   () => import('~/pages/Docs/Autocomplete/AutocompleteOverview'),
 );
 const SelectboxOverview = loadable(() => import('~/pages/Docs/Selectbox/SelectboxOverview'));
-const CountryFlagsOverview = loadable(
-  () => import('~/pages/Docs/CountryFlags/CountryFlagsOverview'),
-);
 const HighlightedOverview = loadable(() => import('~/pages/Docs/Highlighted/HighlightedOverview'));
 const LoadingIndicatorOverview = loadable(
   () => import('~/pages/Docs/LoadingIndicator/LoadingIndicatorOverview'),
@@ -290,15 +287,6 @@ const docsRouter: RouteObject = {
       element: (
         <React.Suspense fallback={<LoadingOverlay />}>
           <SelectboxOverview />
-        </React.Suspense>
-      ),
-    },
-    {
-      path: 'country-flags',
-      caseSensitive: true,
-      element: (
-        <React.Suspense fallback={<LoadingOverlay />}>
-          <CountryFlagsOverview />
         </React.Suspense>
       ),
     },

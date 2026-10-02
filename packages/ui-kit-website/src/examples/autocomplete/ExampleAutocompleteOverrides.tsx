@@ -3,7 +3,6 @@ import Autocomplete, { AutocompleteItem, FilterItems } from '@via-profit/ui-kit/
 import type { TextFieldProps } from '@via-profit/ui-kit/src/TextField';
 import PhoneField, { templates, usePhoneUtils } from '@via-profit/ui-kit/src/PhoneField';
 import Highlighted from '@via-profit/ui-kit/src/Highlighted';
-import * as flags from '@via-profit/ui-kit/src/CountryFlags';
 import { FormattedMessage } from 'react-intl';
 
 const phones = [
@@ -42,6 +41,10 @@ const PhoneTextField = React.forwardRef(PhoneTextFieldWithRef);
 
 type Item = (typeof phones)[0];
 
+// The flag of the country is taken from the templates of PhoneField
+const flagOf = (country: string) =>
+  templates.find(([countryCode]) => countryCode === country)?.[1] ?? null;
+
 const ExampleAutocompleteOverrides: React.FC = () => {
   const [value, setValue] = React.useState<Item | null>(null);
   const [isOpen, setIsOpen] = React.useState(false);
@@ -76,7 +79,7 @@ const ExampleAutocompleteOverrides: React.FC = () => {
     >
       {({ item, inputValue }, itemProps) => (
         <AutocompleteItem {...itemProps} key={item.number}>
-          {React.createElement(flags[item.country as keyof typeof flags])}{' '}
+          {flagOf(item.country)}{' '}
           <Highlighted text={item.value} highlight={inputValue} />
         </AutocompleteItem>
       )}
