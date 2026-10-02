@@ -4,6 +4,7 @@ import { css } from '@emotion/react';
 
 import Color from '../Color';
 import useRadioColor from './useRadioColor';
+import { themeFocusRing } from '../ThemeProvider/tokens';
 
 export type RadioBoxProps = Omit<React.InputHTMLAttributes<HTMLInputElement>, 'type'> & {
   /**
@@ -55,6 +56,7 @@ const StyledInput = styled.input<{ $color: Color; $error: boolean }>`
     outline: 0.14em solid ${({ theme }) => theme.color.accentPrimary.toString()};
     outline-offset: 0.14em;
   }
+  ${({ theme }) => themeFocusRing(theme, '&:focus-visible + [data-radio-circle]')}
 `;
 
 const Circle = styled.span<CircleProps>`

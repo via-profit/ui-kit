@@ -7,6 +7,7 @@ import InputWrapper, { TextFieldInputWrapperProps } from './TextFieldInputWrappe
 import Input, { TextFieldInputProps } from './TextFieldInput';
 import ErrorText, { TextFieldErrorTextProps } from './TextFieldErrorText';
 import IconWrapper, { TextFieldIconWrapperProps } from './TextFieldIconWrapper';
+import useThemeProps from '../ThemeProvider/useThemeProps';
 
 export * from './TextFieldContainer';
 export * from './TextFieldLabel';
@@ -143,7 +144,7 @@ const TextField = React.forwardRef(
       onFocus,
       onBlur,
       ...nativeInputProps
-    } = props;
+    } = useThemeProps('TextField', props);
 
     const [focused, setFocused] = React.useState(false);
     // useId is stable between server and client renders

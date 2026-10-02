@@ -48,8 +48,10 @@ const StyledSelectboxButton = styled(Button)<StyleProps>`
   
 `;
 
+// The value has the size of the text in the fields, so the selectbox has the height of the TextField
 const StyledButtonTextWrapper = styled(ButtonTextWrapper)`
   flex: 1;
+  font-size: 1em;
 `;
 
 const SelectboxButton: React.ForwardRefRenderFunction<HTMLButtonElement, SelectboxButtonProps> = (

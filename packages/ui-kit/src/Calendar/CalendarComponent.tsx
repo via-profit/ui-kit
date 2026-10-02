@@ -25,6 +25,7 @@ import WeekDaysBar, { CalendarWeekDaysBarProps, WeekNameLabelFormat } from './Ca
 import { CalendarValue, useCalendar, Week, WeekDayName } from './use-calendar';
 import styled from '@emotion/styled';
 import { keyframes } from '@emotion/react';
+import useThemeProps from '../ThemeProvider/useThemeProps';
 
 export * from './use-calendar';
 export * from './CalendarWeekDaysBar';
@@ -466,7 +467,7 @@ const CalendarComponent = React.forwardRef(
       range = false,
       prevButtonLabel = 'Previous',
       nextButtonLabel = 'Next',
-    } = props;
+    } = useThemeProps('Calendar', props);
 
     /**
      * Validations

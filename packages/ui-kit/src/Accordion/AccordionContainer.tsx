@@ -35,6 +35,7 @@ const StyledAccordionContainer = styled.div<StyledProps>`
           ? theme.color.backgroundSecondary.lighten(80).alpha(0.12).toString()
           : theme.color.backgroundSecondary.lighten(50).alpha(0.12).toString()}
       0px 1px 3px 0px;
+  ${({ theme }) => theme.elevation.surface && `box-shadow: ${theme.elevation.surface};`}
 
   /*
    * Adjacent accordions form a group: the inner corners are square.

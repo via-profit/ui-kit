@@ -7,6 +7,7 @@ import Footer, { ConfirmBoxFooterProps } from './ConfirmBoxFooter';
 import Header, { ConfirmBoxHeaderProps } from './ConfirmBoxHeader';
 import Overlay, { ModalOverlayProps } from '../BaseModal/ModalOverlay';
 import useDialogID from '../BaseModal/useDialogID';
+import useThemeProps from '../../ThemeProvider/useThemeProps';
 
 export interface ConfirmBoxProps extends Omit<BaseModalProps, 'overrides'> {
   /**
@@ -87,7 +88,7 @@ const ConfirmBox: React.FC<ConfirmBoxProps> = props => {
     dismissButtonLabel,
     confirmButtonLabel,
     ...otherProps
-  } = props;
+  } = useThemeProps('ConfirmBox', props);
   const dialogID = useDialogID('dialog-confirm');
 
   const overridesMap = React.useMemo(

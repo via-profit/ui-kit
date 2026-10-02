@@ -2,14 +2,34 @@ import React from 'react';
 import { ThemeProvider as EmotionProvider, useTheme } from '@emotion/react';
 
 import type Color from '../Color';
+import type { UIThemeComponents } from './components';
 
 export { useTheme };
 
 export * from './createTheme';
+export * from './components';
+export { default as useThemeProps } from './useThemeProps';
+export * from './tokens';
 
 export type UITheme = Required<
-  Omit<UIThemeOverrides, 'isDark' | 'fontSize' | 'zIndex' | 'shape' | 'color' | 'spacing'>
+  Omit<
+    UIThemeOverrides,
+    | 'isDark'
+    | 'fontSize'
+    | 'zIndex'
+    | 'shape'
+    | 'color'
+    | 'spacing'
+    | 'components'
+    | 'typography'
+    | 'focusRing'
+    | 'elevation'
+  >
 > & {
+  readonly typography: UIThemeOverrideTypography;
+  readonly focusRing: UIThemeOverrideFocusRing;
+  readonly elevation: UIThemeOverrideElevation;
+  readonly components: UIThemeComponents;
   readonly isDark: boolean;
   readonly fontSize: Record<keyof UIThemeOverrideFontSize, number>;
   readonly zIndex: Required<UIThemeOverrideZIndex>;
@@ -34,6 +54,49 @@ export interface UIThemeOverrideColor {
   readonly warningContrast?: string;
   readonly success?: string;
   readonly successContrast?: string;
+}
+
+/**
+ * The font of the theme. The components inherit the font of the page:
+ * apply `theme.typography.fontFamily` to the `body` of your application
+ */
+export interface UIThemeOverrideTypography {
+  readonly fontFamily?: string;
+}
+
+/**
+ * The outline of the focused element. Without these values every component draws its own focus
+ */
+export interface UIThemeOverrideFocusRing {
+  /**
+   * e.g. `2px`
+   */
+  readonly width?: string;
+
+  /**
+   * The gap between the element and the outline, e.g. `1px`
+   */
+  readonly offset?: string;
+
+  /**
+   * Any CSS color. Without it the outline has the color of the component
+   */
+  readonly color?: string;
+}
+
+/**
+ * The shadows. Without these values every component has its own shadow
+ */
+export interface UIThemeOverrideElevation {
+  /**
+   * The elements over the page: the menus, the calendar of the date picker, the toasts
+   */
+  readonly popup?: string;
+
+  /**
+   * The cards and the panels on the page: Surface, Accordion, Table
+   */
+  readonly surface?: string;
 }
 
 export interface UIThemeOverrideZIndex {
@@ -71,7 +134,16 @@ export interface UIThemeOverrides {
    * **Default:** `false`
    */
   readonly isDark?: boolean;
+
+  /**
+   * The look of the components: `defaultProps`, the `styles` added to the parts
+   * and the `overrides` that replace the parts. The props of the component instance win over the theme
+   */
+  readonly components?: UIThemeComponents;
   readonly fontSize?: UIThemeOverrideFontSize;
+  readonly typography?: UIThemeOverrideTypography;
+  readonly focusRing?: UIThemeOverrideFocusRing;
+  readonly elevation?: UIThemeOverrideElevation;
   readonly zIndex?: UIThemeOverrideZIndex;
   readonly shape?: UIThemeOverrideShape;
   readonly spacing?: UIThemeOverrideSpacing;

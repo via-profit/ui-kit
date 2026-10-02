@@ -4,6 +4,7 @@ import { useTheme, css, Theme } from '@emotion/react';
 
 import Color from '../Color';
 import BadgeBase, { BadgeBaseProps } from './BadgeBase';
+import { themeFocusRing } from '../ThemeProvider/tokens';
 
 export type BadgeStyledProps = BadgeBaseProps;
 
@@ -120,6 +121,7 @@ const StyledBadge = styled(BadgeBase)<StyledProps>`
             `}
       }
     `}
+  ${({ theme }) => themeFocusRing(theme)}
 `;
 
 const BadgeStyled: React.ForwardRefRenderFunction<HTMLSpanElement, BadgeStyledProps> = (

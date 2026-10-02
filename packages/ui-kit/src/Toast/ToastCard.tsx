@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 import { css, keyframes } from '@emotion/react';
 
 import type { ToastPosition, ToastType } from './store';
+import { themeFocusRing, elevation } from '../ThemeProvider/tokens';
 
 export type ToastCardProps = React.HTMLAttributes<HTMLDivElement> & {
   readonly type: ToastType;
@@ -44,7 +45,8 @@ const StyledCard = styled.div<{ $position: ToastPosition; $isClosing: boolean }>
   border: 1px solid ${({ theme }) => theme.color.textPrimary.alpha(0.08).toString()};
   background-color: ${({ theme }) => theme.color.surface.toString()};
   color: ${({ theme }) => theme.color.textPrimary.toString()};
-  box-shadow: 0 0.5em 1.5em rgba(0, 0, 0, ${({ theme }) => (theme.isDark ? 0.5 : 0.14)});
+  box-shadow: ${({ theme }) =>
+    elevation(theme, 'popup', `0 0.5em 1.5em rgba(0, 0, 0, ${theme.isDark ? 0.5 : 0.14})`)};
   font-size: 0.875em;
   line-height: 1.4;
   pointer-events: auto;
@@ -76,6 +78,7 @@ const StyledCard = styled.div<{ $position: ToastPosition; $isClosing: boolean }>
     animation-name: none;
     opacity: ${({ $isClosing }) => ($isClosing ? 0 : 1)};
   }
+  ${({ theme }) => themeFocusRing(theme)}
 `;
 
 const ToastCard: React.ForwardRefRenderFunction<HTMLDivElement, ToastCardProps> = (props, ref) => {

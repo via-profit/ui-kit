@@ -24,7 +24,7 @@ const light: UIThemeOverrides = {
     accentPrimary: '#1f6fd6',
     accentPrimaryContrast: '#ffffff',
     accentSecondary: '#07aeae',
-    accentSecondaryContrast: '#ffffff',
+    accentSecondaryContrast: '#062a30',
     error: '#e0435f',
     errorContrast: '#ffffff',
     warning: '#d9951a',

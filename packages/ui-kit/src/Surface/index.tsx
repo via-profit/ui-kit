@@ -5,6 +5,7 @@ import Header, { SurfaceHeaderProps } from './SurfaceHeader';
 import Subheader, { SurfaceSubheaderProps } from './SurfaceSubheader';
 import Content, { SurfaceContentProps } from './SurfaceContent';
 import Footer, { SurfaceFooterProps } from './SurfaceFooter';
+import useThemeProps from '../ThemeProvider/useThemeProps';
 
 export type SurfaceProps = React.HTMLAttributes<HTMLDivElement> & {
   readonly children: React.ReactNode | React.ReactNode[];
@@ -83,7 +84,7 @@ const Surface: React.ForwardRefRenderFunction<HTMLDivElement, SurfaceProps> = (p
     rounded,
     overrides,
     ...nativeProps
-  } = props;
+  } = useThemeProps('Surface', props);
 
   const hasFooter = typeof footer !== 'undefined' && footer !== null;
   const hasHeader = typeof header !== 'undefined' && header !== null;

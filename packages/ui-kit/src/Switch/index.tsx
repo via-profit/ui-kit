@@ -8,6 +8,7 @@ import Track, { SwitchTrackProps } from './SwitchTrack';
 import Wrapper, { SwitchWrapperProps } from './SwitchWrapper';
 import ErrorText, { SwitchErrorTextProps } from './SwitchErrorText';
 import Asterisk, { SwitchAsteriskProps } from './SwitchAsterisk';
+import useThemeProps from '../ThemeProvider/useThemeProps';
 
 export type SwitchProps = Omit<SwitchToggleWrapperProps, 'checked' | 'onChange' | 'disabled'> & {
   /**
@@ -133,7 +134,7 @@ const Switch: React.ForwardRefRenderFunction<HTMLInputElement, SwitchProps> = (p
     errorText,
     requiredAsterisk,
     ...nativeProps
-  } = props;
+  } = useThemeProps('Switch', props);
 
   const [internalChecked, setInternalChecked] = React.useState<boolean>(
     typeof defaultChecked !== 'undefined' ? defaultChecked : false,

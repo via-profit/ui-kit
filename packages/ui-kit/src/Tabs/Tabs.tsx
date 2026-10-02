@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 
 import { TabsContext, TabsContextValue, TabsOrientation } from './context';
 import useTabsColor from './useTabsColor';
+import useThemeProps from '../ThemeProvider/useThemeProps';
 
 export type TabsProps = Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange' | 'defaultValue'> & {
   /**
@@ -71,7 +72,7 @@ const Tabs: React.ForwardRefRenderFunction<HTMLDivElement, TabsProps> = (props, 
     color,
     children,
     ...nativeProps
-  } = props;
+  } = useThemeProps('Tabs', props);
 
   const isControlled = typeof value !== 'undefined';
   const [internalValue, setInternalValue] = React.useState<string | null>(defaultValue ?? null);

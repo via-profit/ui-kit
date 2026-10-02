@@ -2,6 +2,7 @@ import React from 'react';
 import styled from '@emotion/styled';
 
 import Chevron from './Chevron';
+import { themeFocusRing } from '../ThemeProvider/tokens';
 
 export type AccordionHeaderProps = React.HTMLAttributes<HTMLDivElement> & {
   readonly isOpen: boolean;
@@ -53,6 +54,7 @@ const HeaderButton = styled.button`
     outline: 0.1em solid ${({ theme }) => theme.color.accentPrimary.toString()};
     outline-offset: -0.1em;
   }
+  ${({ theme }) => themeFocusRing(theme)}
 `;
 
 const HeaderCell = styled.span`

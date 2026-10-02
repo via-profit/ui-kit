@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 
 import { AnchorPos } from '../Popper';
 import { css } from '@emotion/react';
+import { elevation } from '../ThemeProvider/tokens';
 
 export interface MenuListProps extends React.HTMLAttributes<HTMLDivElement> {
   readonly isOpen: boolean;
@@ -21,7 +22,12 @@ const StyledMenuList = styled.div<{
   opacity: ${props => (props.$isOpen ? 1 : 0)};
   background-color: ${({ theme }) => theme.color.surface.toString()};
   border-radius: ${({ theme }) => theme.shape.radiusFactor * 2}em;
-  box-shadow: 0 0.5em 1.5em ${({ theme }) => theme.color.surface.darken(50).alpha(0.6).toString()};
+  box-shadow: ${({ theme }) =>
+    elevation(
+      theme,
+      'popup',
+      `0 0.5em 1.5em ${theme.color.surface.darken(50).alpha(0.6).toString()}`,
+    )};
 
   ${({ $maxWidth }) => {
     if (typeof $maxWidth === 'number') {

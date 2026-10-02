@@ -7,6 +7,7 @@ import Thumb, { SliderThumbProps } from './SliderThumb';
 import Mark, { SliderMarkProps } from './SliderMark';
 import MarkLabel, { SliderMarkLabelProps } from './SliderMarkLabel';
 import { clamp, snapToStep, valueToPercent } from './utils';
+import useThemeProps from '../ThemeProvider/useThemeProps';
 
 export type { SliderOrientation };
 
@@ -195,7 +196,7 @@ const Slider: React.ForwardRefRenderFunction<HTMLSpanElement, SliderProps<Slider
     onPointerCancel,
     onLostPointerCapture,
     ...nativeProps
-  } = props;
+  } = useThemeProps('Slider', props);
 
   const overridesMap = React.useMemo(
     () => ({

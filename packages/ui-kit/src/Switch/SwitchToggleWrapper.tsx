@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from '@emotion/styled';
+import { themeFocusRing } from '../ThemeProvider/tokens';
 
 export type SwitchToggleWrapperProps = React.InputHTMLAttributes<HTMLInputElement>;
 
@@ -34,6 +35,7 @@ const StyledInput = styled.input`
   &:focus-visible ~ [data-switch-thumb] [data-switch-dot]:before {
     transform: translate(-50%, -50%) scale(1.7);
   }
+  ${({ theme }) => themeFocusRing(theme, '&:focus-visible + *')}
 `;
 
 const SwitchToggleWrapper: React.ForwardRefRenderFunction<

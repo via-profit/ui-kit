@@ -4,6 +4,7 @@ import { css } from '@emotion/react';
 
 import Color from '../Color';
 import { TabsOrientation, useTabsContext } from './context';
+import { themeFocusRing } from '../ThemeProvider/tokens';
 
 export type TabProps = Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'value'> & {
   /**
@@ -97,6 +98,7 @@ const StyledTab = styled.button<StyledProps>`
       transition: none;
     }
   }
+  ${({ theme }) => themeFocusRing(theme)}
 `;
 
 const Tab: React.ForwardRefRenderFunction<HTMLButtonElement, TabProps> = (props, ref) => {

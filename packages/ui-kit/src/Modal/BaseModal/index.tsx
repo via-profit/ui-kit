@@ -8,6 +8,7 @@ import InnerContainer, { ModalInnerContainerProps } from './ModalInnerContainer'
 import ModalWrapper from './ModalWrapper';
 import RenderModal from './RenderModal';
 import NoSSR from '../../NoSSR';
+import useThemeProps from '../../ThemeProvider/useThemeProps';
 
 export interface BaseModalProps {
   /**
@@ -60,9 +61,7 @@ export interface BaseModalProps {
 
 export interface BaseModalOverrides {
   readonly Overlay?: React.ComponentType<ModalOverlayProps & React.RefAttributes<HTMLDivElement>>;
-  readonly Inner?: React.ComponentType<
-    ModalInnerProps & React.RefAttributes<HTMLDivElement>
-  >;
+  readonly Inner?: React.ComponentType<ModalInnerProps & React.RefAttributes<HTMLDivElement>>;
   readonly InnerContainer?: React.ComponentType<
     ModalInnerContainerProps & React.RefAttributes<HTMLDivElement>
   >;
@@ -78,7 +77,7 @@ const BaseModal: React.FC<BaseModalProps> = props => {
     closeOnEscape = defaultState.closeOnEscape,
     destroyTimeout = defaultState.destroyTimeout,
     onRequestClose,
-  } = props;
+  } = useThemeProps('Modal', props);
   const [domLoaded, setDomLoaded] = React.useState(false);
 
   const overridesMap = React.useMemo(

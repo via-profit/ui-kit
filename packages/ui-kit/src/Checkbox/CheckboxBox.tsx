@@ -4,6 +4,7 @@ import { css } from '@emotion/react';
 
 import Color from '../Color';
 import useCheckboxColor from './useCheckboxColor';
+import { themeFocusRing } from '../ThemeProvider/tokens';
 
 export type CheckboxBoxProps = Omit<React.InputHTMLAttributes<HTMLInputElement>, 'type'> & {
   /**
@@ -48,6 +49,7 @@ const StyledInput = styled.input`
     outline: 0.14em solid ${({ theme }) => theme.color.accentPrimary.toString()};
     outline-offset: 0.14em;
   }
+  ${({ theme }) => themeFocusRing(theme, '&:focus-visible + [data-checkbox-square]')}
 `;
 
 const Square = styled.span<SquareProps>`

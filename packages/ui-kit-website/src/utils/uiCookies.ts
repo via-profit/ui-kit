@@ -13,6 +13,7 @@ const cookieOptions: CookieAttributes = {
  */
 const allowedValues: { readonly [K in keyof UIState]: readonly UIState[K][] } = {
   theme: ['light', 'dark'],
+  themeStyle: ['default', 'windows11', 'macos', 'material'],
   fontSize: ['small', 'normal', 'medium', 'large'],
   locale: ['ru-RU'],
   device: ['desktop', 'tablet', 'mobile'],

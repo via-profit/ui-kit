@@ -4,6 +4,7 @@ import Wrapper, { SwiperWrapperProps } from './SwiperWrapper';
 import Track, { SwiperTrackProps } from './SwiperTrack';
 import SwiperSlide, { SwiperSlideBaseProps, SwiperSlideProps } from './SwiperSlide';
 import SwiperSlidesRenderer from './SwiperSlidesRenderer';
+import useThemeProps from '../ThemeProvider/useThemeProps';
 
 export * from './SwiperSlide';
 
@@ -82,7 +83,7 @@ export const Swiper = React.forwardRef((props: SwiperProps, ref: React.Forwarded
     keyboardControl = true,
     slideLabel = defaultSlideLabel,
     ...restProps
-  } = props;
+  } = useThemeProps('Swiper', props);
 
   // #region Slides
   const slides = React.useMemo(() => {

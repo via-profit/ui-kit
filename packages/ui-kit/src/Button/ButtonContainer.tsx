@@ -1,6 +1,9 @@
 import React from 'react';
 import styled from '@emotion/styled';
 import { css } from '@emotion/react';
+import { themeFocusRing } from '../ThemeProvider/tokens';
+import { buttonVariantStyles, ButtonVariant } from './buttonVariants';
+import type { ButtonGroupOrientation } from '../ButtonGroup/ButtonGroupContext';
 
 export type ButtonContainerProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
   /**
@@ -19,11 +22,23 @@ export type ButtonContainerProps = React.ButtonHTMLAttributes<HTMLButtonElement>
    `
    */
   readonly iconOnly?: boolean;
+
+  /**
+   * The variant of the `<Button>`. Without it the button has no variant styles (the bare `ButtonBase`)
+   */
+  readonly variant?: ButtonVariant;
+
+  /**
+   * The orientation of the ButtonGroup the button is in
+   */
+  readonly groupOrientation?: ButtonGroupOrientation;
 };
 
 type StyledProps = {
   readonly color?: ButtonContainerProps['color'];
   readonly iconOnly?: ButtonContainerProps['iconOnly'];
+  readonly $variant?: ButtonVariant;
+  readonly $group?: ButtonGroupOrientation;
 };
 
 const StyledButton = styled.button<StyledProps>`
@@ -59,16 +74,25 @@ const StyledButton = styled.button<StyledProps>`
       height: 2.6em;
       border-radius: ${theme.shape.radiusFactor * 3}em;
     `}
+  ${({ $variant, $group, color, disabled, theme }) =>
+    $variant && buttonVariantStyles({ variant: $variant, color, disabled, group: $group, theme })}
+  ${({ theme }) => themeFocusRing(theme)}
 `;
 
 const ButtonContainer: React.ForwardRefRenderFunction<HTMLButtonElement, ButtonContainerProps> = (
   props,
   ref,
 ) => {
-  const { children, iconOnly, ...nativeProps } = props;
+  const { children, iconOnly, variant, groupOrientation, ...nativeProps } = props;
 
   return (
-    <StyledButton iconOnly={iconOnly} {...nativeProps} ref={ref}>
+    <StyledButton
+      iconOnly={iconOnly}
+      $variant={variant}
+      $group={groupOrientation}
+      {...nativeProps}
+      ref={ref}
+    >
       {children}
     </StyledButton>
   );

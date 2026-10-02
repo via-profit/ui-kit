@@ -7,6 +7,7 @@ import Icon, { CheckboxIconProps } from './CheckboxIcon';
 import TextWrapper, { CheckboxTextWrapperProps } from './CheckboxTextWrapper';
 import Asterisk, { CheckboxAsteriskProps } from './CheckboxAsterisk';
 import ErrorText, { CheckboxErrorTextProps } from './CheckboxErrorText';
+import useThemeProps from '../ThemeProvider/useThemeProps';
 
 export type { CheckboxLabelPosition };
 
@@ -140,7 +141,7 @@ const Checkbox: React.ForwardRefRenderFunction<HTMLInputElement, CheckboxProps> 
     className,
     style,
     ...nativeProps
-  } = props;
+  } = useThemeProps('Checkbox', props);
 
   const inputRef = React.useRef<HTMLInputElement | null>(null);
   const [internalChecked, setInternalChecked] = React.useState(Boolean(defaultChecked));

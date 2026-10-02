@@ -9,6 +9,7 @@ import { UI_KIT_VERSION } from '~/utils/version';
 import GithubIcon from '~/components/Icons/GithubIcon';
 import MenuIcon from '~/components/Icons/MenuOutline';
 import ThemeSwitcher from './ThemeSwitcher';
+import ThemeStylePicker from './ThemeStylePicker';
 import IconButton, { IconLink } from './IconButton';
 
 export const GITHUB_URL = 'https://github.com/via-profit/ui-kit';
@@ -161,6 +162,7 @@ const Header: React.FC<HeaderProps> = props => {
         >
           <GithubIcon />
         </IconLink>
+        <ThemeStylePicker />
         <ThemeSwitcher />
       </Actions>
     </Container>

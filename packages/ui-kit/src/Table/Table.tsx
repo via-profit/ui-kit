@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from '@emotion/styled';
 import { css } from '@emotion/react';
+import { elevation } from '../ThemeProvider/tokens';
 
 export type TableProps = React.TableHTMLAttributes<HTMLTableElement> & {
   /**
@@ -27,7 +28,11 @@ const StyledTable = styled.table<StyleProps>`
   background: ${({ theme }) => theme.color.surface.toString()};
   color: ${({ theme }) => theme.color.textPrimary.toString()};
   box-shadow: ${({ theme }) =>
-    `0 0.5em 2em -0.8em ${theme.color.surface.darken(100).alpha(0.4).toString()}`};
+    elevation(
+      theme,
+      'surface',
+      `0 0.5em 2em -0.8em ${theme.color.surface.darken(100).alpha(0.4).toString()}`,
+    )};
   border-radius: ${({ theme }) => theme.shape.radiusFactor}em;
   font-size: 1em;
   ${({ $fullWidth }) =>

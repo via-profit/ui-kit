@@ -1,6 +1,7 @@
 import * as React from 'react';
 import styled from '@emotion/styled';
 import { css } from '@emotion/react';
+import { themeFocusRing } from '../ThemeProvider/tokens';
 
 export type SwiperWrapperProps = React.HTMLAttributes<HTMLDivElement> & {
   readonly draggable: boolean;
@@ -24,6 +25,7 @@ export const StyledWrapper = styled.div<{ $draggable: boolean }>`
     outline: 0.14em solid ${({ theme }) => theme.color.accentPrimary.toString()};
     outline-offset: -0.14em;
   }
+  ${({ theme }) => themeFocusRing(theme)}
 `;
 
 const SwiperWrapper = React.forwardRef(

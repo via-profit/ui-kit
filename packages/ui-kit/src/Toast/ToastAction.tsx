@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from '@emotion/styled';
+import { themeFocusRing } from '../ThemeProvider/tokens';
 
 export type ToastActionProps = React.ButtonHTMLAttributes<HTMLButtonElement>;
 
@@ -23,6 +24,7 @@ const StyledButton = styled.button`
     outline: 2px solid ${({ theme }) => theme.color.accentPrimary.toString()};
     outline-offset: 1px;
   }
+  ${({ theme }) => themeFocusRing(theme)}
 `;
 
 const ToastAction: React.ForwardRefRenderFunction<HTMLButtonElement, ToastActionProps> = (

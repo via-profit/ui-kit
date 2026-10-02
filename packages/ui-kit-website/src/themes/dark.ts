@@ -18,7 +18,7 @@ const dark: UIThemeOverrides = {
     accentPrimary: '#22c7d6',
     accentPrimaryContrast: '#062a30',
     accentSecondary: '#2f7fe6',
-    accentSecondaryContrast: '#ffffff',
+    accentSecondaryContrast: '#0b1220',
     error: '#f0506e',
     errorContrast: '#ffffff',
     warning: '#f5b83d',

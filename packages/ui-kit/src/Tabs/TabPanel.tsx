@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 import { css } from '@emotion/react';
 
 import { TabsOrientation, useTabsContext } from './context';
+import { themeFocusRing } from '../ThemeProvider/tokens';
 
 export type TabPanelProps = React.HTMLAttributes<HTMLDivElement> & {
   /**
@@ -35,6 +36,7 @@ const StyledPanel = styled.div<{ $orientation: TabsOrientation }>`
     outline: 2px solid ${({ theme }) => theme.color.accentPrimary.alpha(0.5).toString()};
     outline-offset: 2px;
   }
+  ${({ theme }) => themeFocusRing(theme)}
 `;
 
 const TabPanel: React.ForwardRefRenderFunction<HTMLDivElement, TabPanelProps> = (props, ref) => {

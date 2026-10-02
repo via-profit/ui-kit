@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from '@emotion/styled';
+import { themeFocusRing } from '../ThemeProvider/tokens';
 
 export type ToastCloseButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement>;
 
@@ -37,6 +38,7 @@ const StyledButton = styled.button`
     width: 0.85em;
     height: 0.85em;
   }
+  ${({ theme }) => themeFocusRing(theme)}
 `;
 
 const ToastCloseButton: React.ForwardRefRenderFunction<HTMLButtonElement, ToastCloseButtonProps> = (

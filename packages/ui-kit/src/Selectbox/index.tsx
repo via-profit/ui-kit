@@ -14,6 +14,7 @@ import ErrorText, { TextFieldErrorTextProps } from '../TextField/TextFieldErrorT
 import ButtonWrapper, { SelectboxButtonWrapperProps } from './SelectboxButtonWrapper';
 import Container, { SelectboxContainerProps } from './SelectboxContainer';
 import SelectboxMenu from './SelectboxMenu';
+import useThemeProps from '../ThemeProvider/useThemeProps';
 
 export { SelectboxItem };
 export interface SelectboxProps<T, Multiple extends boolean | undefined = undefined>
@@ -281,7 +282,7 @@ const Selectbox = React.forwardRef(
       autoFlip = true,
       positionStrategy,
       ...nativeButtonProps
-    } = props;
+    } = useThemeProps('Selectbox', props);
 
     const menuRef = React.useRef<MenuRef | null>(null);
     const [anchorElement, setAnchorElement] = React.useState<HTMLElement | null>(null);

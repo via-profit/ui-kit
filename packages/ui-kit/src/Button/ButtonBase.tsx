@@ -42,6 +42,16 @@ export interface ButtonBaseProps extends Omit<ButtonNativeProps, 'color'> {
   readonly iconOnly?: ButtonContainerProps['iconOnly'];
 
   /**
+   * The variant styles, set by `<Button variant>`. The bare `ButtonBase` has no variant
+   */
+  readonly variant?: ButtonContainerProps['variant'];
+
+  /**
+   * The orientation of the ButtonGroup the button is in
+   */
+  readonly groupOrientation?: ButtonContainerProps['groupOrientation'];
+
+  /**
    * You can pass the primary, default, secondary name of the colors or your specified color value
    */
   readonly color?: ButtonContainerProps['color'];
@@ -78,7 +88,18 @@ const ButtonBase: React.ForwardRefRenderFunction<HTMLButtonElement, ButtonBasePr
   props,
   ref,
 ) => {
-  const { children, startIcon, endIcon, color, overrides, iconOnly, type, ...nativeProps } = props;
+  const {
+    children,
+    startIcon,
+    endIcon,
+    color,
+    overrides,
+    iconOnly,
+    type,
+    variant,
+    groupOrientation,
+    ...nativeProps
+  } = props;
   const overridesMap = React.useMemo(
     () => ({
       TextWrapper: overrides?.TextWrapper || TextWrapper,
@@ -108,6 +129,8 @@ const ButtonBase: React.ForwardRefRenderFunction<HTMLButtonElement, ButtonBasePr
       {...nativeProps}
       color={color}
       iconOnly={iconOnly}
+      variant={variant}
+      groupOrientation={groupOrientation}
       ref={ref}
     >
       {typeof startIcon !== 'undefined' && startIcon !== null && (

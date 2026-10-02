@@ -2,13 +2,30 @@ import Color from '../Color';
 import { CreateTheme, UIThemeOverrides } from './index';
 
 export const createTheme: CreateTheme = overrides => {
-  const { isDark, fontSize, zIndex, color, shape, spacing, ...rest } = overrides || {};
+  const {
+    isDark,
+    fontSize,
+    zIndex,
+    color,
+    shape,
+    spacing,
+    components,
+    typography,
+    focusRing,
+    elevation,
+    ...rest
+  } = overrides || {};
 
   const theme: Omit<ReturnType<CreateTheme>, 'color'> & {
     color: Record<string, Color>;
   } = {
     ...rest,
     isDark: typeof isDark === 'boolean' ? isDark : false,
+    components: components || {},
+    // Empty by default: the components keep their own fonts, focus and shadows
+    typography: { ...typography },
+    focusRing: { ...focusRing },
+    elevation: { ...elevation },
     fontSize: {
       small: 14,
       normal: 16,

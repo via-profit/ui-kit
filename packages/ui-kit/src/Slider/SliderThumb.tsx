@@ -5,6 +5,7 @@ import { css, useTheme } from '@emotion/react';
 import Color from '../Color';
 import useSliderColor from './useSliderColor';
 import type { SliderOrientation } from './SliderContainer';
+import { themeFocusRing } from '../ThemeProvider/tokens';
 
 export type SliderThumbProps = React.HTMLAttributes<HTMLSpanElement> & {
   readonly color?: 'default' | 'primary' | 'secondary' | string;
@@ -77,6 +78,7 @@ const Thumb = styled.span<StyledProps>`
         }
       `}
     `}
+  ${({ theme }) => themeFocusRing(theme)}
 `;
 
 const SliderThumb: React.ForwardRefRenderFunction<HTMLSpanElement, SliderThumbProps> = (

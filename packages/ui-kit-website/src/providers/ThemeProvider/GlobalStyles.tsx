@@ -1,6 +1,9 @@
 import React from 'react';
 import { Global, css, useTheme } from '@emotion/react';
 
+// The font of the website when the theme has no own font
+const DEFAULT_FONT = 'Inter, system-ui, -apple-system, Segoe UI, sans-serif';
+
 const GloalStyles: React.FC = () => {
   const theme = useTheme();
 
@@ -23,12 +26,7 @@ const GloalStyles: React.FC = () => {
           margin: 0;
           padding: 0;
           min-height: 100%;
-          font-family:
-            Inter,
-            system-ui,
-            -apple-system,
-            'Segoe UI',
-            sans-serif;
+          font-family: ${theme.typography.fontFamily ?? DEFAULT_FONT};
           font-size: 15px;
           line-height: 1.6;
           -webkit-font-smoothing: antialiased;
