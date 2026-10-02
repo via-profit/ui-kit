@@ -305,11 +305,20 @@
   "CyILzS": {
     "defaultMessage": "до 10 пользователей, 100 ГБ — 990 ₽ в месяц"
   },
+  "DB+ZK0": {
+    "defaultMessage": "Позиция {position}"
+  },
   "DSS3GV": {
     "defaultMessage": "Добавить «{name}»"
   },
+  "Dkktdz": {
+    "defaultMessage": "Новая заявка"
+  },
   "E1j2xY": {
     "defaultMessage": "Сохранение…"
+  },
+  "E9GNMP": {
+    "defaultMessage": "Услуга «{service}» удалена"
   },
   "ELrvsD": {
     "defaultMessage": "Открыть меню"
@@ -322,6 +331,9 @@
   },
   "ErCGHh": {
     "defaultMessage": "Укажите адрес электронной почты"
+  },
+  "F1Zven": {
+    "defaultMessage": "Скопировать ссылку"
   },
   "FIFI8K": {
     "defaultMessage": "Загрузка"
@@ -386,6 +398,9 @@
   "HULN/i": {
     "defaultMessage": "Кофе в зёрнах"
   },
+  "HdxiTO": {
+    "defaultMessage": "Закрыть все"
+  },
   "HgmSLE": {
     "defaultMessage": "Основная часть"
   },
@@ -403,6 +418,9 @@
   },
   "I2nJZi": {
     "defaultMessage": "Отправить заявку"
+  },
+  "IDlKAa": {
+    "defaultMessage": "Сохранено"
   },
   "Iv/a3e": {
     "defaultMessage": "Сотрудник"
@@ -442,6 +460,9 @@
   },
   "K+NMak": {
     "defaultMessage": "Даты поездки"
+  },
+  "K0ebJA": {
+    "defaultMessage": "Смена заканчивается через 15 минут"
   },
   "K32LdV": {
     "defaultMessage": "Когда привезти заказ?"
@@ -532,6 +553,9 @@
   },
   "O1w++r": {
     "defaultMessage": "Скидка 20%"
+  },
+  "O55zCs": {
+    "defaultMessage": "Водитель назначен на заказ"
   },
   "OELgcW": {
     "defaultMessage": "Повторить заказ"
@@ -640,6 +664,9 @@
   },
   "SuM1h9": {
     "defaultMessage": "Отчёт за {month}"
+  },
+  "Swseho": {
+    "defaultMessage": "Не удалось сохранить заказ"
   },
   "T24pln": {
     "defaultMessage": "Информация"
@@ -764,11 +791,17 @@
   "XM5GAV": {
     "defaultMessage": "Пароль и двухфакторная аутентификация."
   },
+  "XPp0lF": {
+    "defaultMessage": "Заказ создан"
+  },
   "XRIItI": {
     "defaultMessage": "Выберите день"
   },
   "XXeTV2": {
     "defaultMessage": "Скидки и акции"
+  },
+  "XbW40b": {
+    "defaultMessage": "Сохранение..."
   },
   "Xgd484": {
     "defaultMessage": "Отчёт за месяц"
@@ -778,6 +811,9 @@
   },
   "Xl1XyP": {
     "defaultMessage": "Год"
+  },
+  "Xl5QBh": {
+    "defaultMessage": "Взять в работу"
   },
   "XnLtsK": {
     "defaultMessage": "Главная"
@@ -1064,6 +1100,9 @@
   "jC3N8X": {
     "defaultMessage": "Укажите адрес доставки"
   },
+  "jJ7voZ": {
+    "defaultMessage": "Ссылка скопирована"
+  },
   "jMR5iQ": {
     "defaultMessage": "Почему выбирают нас"
   },
@@ -1075,6 +1114,9 @@
   },
   "kGHUoT": {
     "defaultMessage": "Чай чёрный, 100 пакетиков"
+  },
+  "kHYnKs": {
+    "defaultMessage": "Нет связи с сервером. Попробуйте ещё раз."
   },
   "kOutEh": {
     "defaultMessage": "Файл «Отчёт.pdf»"
@@ -1181,6 +1223,9 @@
   "oJv7x1": {
     "defaultMessage": "Аксессуары"
   },
+  "oNCL4x": {
+    "defaultMessage": "Все услуги удалены"
+  },
   "oQTOzK": {
     "defaultMessage": "Картой"
   },
@@ -1259,6 +1304,9 @@
   "sVZZJU": {
     "defaultMessage": "От друзей"
   },
+  "sd+PsD": {
+    "defaultMessage": "Черновик сохранён"
+  },
   "sekdMG": {
     "defaultMessage": "Курьером — {price}"
   },
@@ -1330,6 +1378,9 @@
   },
   "wB4igM": {
     "defaultMessage": "Запомнить меня"
+  },
+  "wNZHSH": {
+    "defaultMessage": "Перевозка дивана, Москва → Тверь"
   },
   "x1MUPc": {
     "defaultMessage": "Адрес"
