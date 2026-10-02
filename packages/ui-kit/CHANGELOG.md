@@ -4,6 +4,19 @@
 
 ## Не выпущено
 
+## 0.5.0 — 2026-10-02
+
+Новые компоненты: `Slider`, `Tabs`, `Tooltip` и `Toast` (замена react-toastify с тем же API). Оформление компонентов в теме — `defaultProps` и `overrides` для всего приложения, токены рамки фокуса, теней и шрифта. Пакет собирается и в ES-модули: сборщики выбрасывают неиспользуемый код. Календарь и дейтпикер больше не требуют `react-intl`.
+
+Версия содержит несовместимые изменения. Как обновиться с 0.4:
+
+- `CountryFlags`: модуль удалён. Если вы импортировали флаги из `@via-profit/ui-kit/CountryFlags`, перенесите нужные SVG в свой проект. `PhoneField` по-прежнему показывает флаги стран из набора шаблонов по умолчанию;
+- `Menu`: удалены неиспользуемые `Menu/VirtualizedList`, `Menu/VirtualizedListComponent`, `Menu/VirtualizedItem`, `Menu/MeasuredItem` и `Menu/AutoHeightWrapper` — уберите их импорты;
+- импорт: работают только пути модулей из карты `exports` — `@via-profit/ui-kit/Button`, `@via-profit/ui-kit/Button/ButtonContainer` и т. п. Пути с расширением `.js` или с `dist` уберите;
+- `ErrorBoundary`: в production сообщение об ошибке по умолчанию на английском; свои тексты передайте в `title` и `description`.
+
+Подробности — в разделах ниже.
+
 ### Добавлено
 
 - **ThemeProvider**: оформление компонентов в теме — `components` с `defaultProps` и `overrides` по имени компонента. Свойства и `overrides`, переданные компоненту в коде, важнее темы. Токены темы: `typography.fontFamily`, `focusRing` (одинаковая рамка фокуса во всех компонентах) и `elevation` (тени всплывающих элементов и карточек); без них компоненты выглядят как раньше.

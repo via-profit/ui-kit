@@ -10,6 +10,7 @@ import themeLight from '~/themes/light';
 import createWindows11Theme from '~/themes/windows11';
 import createMacosTheme from '~/themes/macos';
 import createMaterialTheme from '~/themes/material';
+import TEST_THEMES_ENABLED from '~/themes/testThemes';
 
 export interface ThemeProviderProps {
   readonly children: React.ReactNode | readonly React.ReactNode[];
@@ -30,7 +31,8 @@ const ThemeProvider: React.FC<ThemeProviderProps> = props => {
       macos: createMacosTheme,
       material: createMaterialTheme,
     };
-    if (themeStyle !== 'default') {
+    // A saved test theme is ignored on the published site, where the test themes are hidden
+    if (TEST_THEMES_ENABLED && themeStyle !== 'default') {
       return createTheme(testThemes[themeStyle](themeName === 'dark'));
     }
 
