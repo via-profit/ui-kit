@@ -7,6 +7,7 @@ import ButtonGroupContext, {
   ButtonGroupContextValue,
   ButtonGroupOrientation,
 } from './ButtonGroupContext';
+import { CONTROL_BORDER } from '../ThemeProvider/tokens';
 
 export type { ButtonGroupOrientation };
 
@@ -105,7 +106,7 @@ type StyledProps = {
 };
 
 /**
- * The buttons are glued: the inner corners are square and the borders overlap.
+ * The buttons are glued: the inner corners are square and the borders overlap by the width of the border.
  * `:not(...)` raises the specificity above the own styles of the button.
  * `-of-type`, not `-child`: with SSR emotion inserts <style> elements between the children
  */
@@ -131,7 +132,7 @@ const StyledGroup = styled.div<StyledProps>`
     $orientation === 'vertical'
       ? css`
           & > *:not(:first-of-type) {
-            margin-top: -0.14em;
+            margin-top: calc(-1 * ${CONTROL_BORDER});
             border-top-left-radius: 0;
             border-top-right-radius: 0;
           }
@@ -142,7 +143,7 @@ const StyledGroup = styled.div<StyledProps>`
         `
       : css`
           & > *:not(:first-of-type) {
-            margin-left: -0.14em;
+            margin-left: calc(-1 * ${CONTROL_BORDER});
             border-top-left-radius: 0;
             border-bottom-left-radius: 0;
           }
