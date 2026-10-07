@@ -9,6 +9,7 @@ import ButtonGroup from '@via-profit/ui-kit/src/ButtonGroup';
 import DatePicker from '@via-profit/ui-kit/src/DatePicker';
 import MenuItem from '@via-profit/ui-kit/src/Menu/MenuItem';
 import Modal from '@via-profit/ui-kit/src/Modal';
+import Pagination from '@via-profit/ui-kit/src/Pagination';
 import Selectbox, { SelectboxItem } from '@via-profit/ui-kit/src/Selectbox';
 import Stack from '@via-profit/ui-kit/src/Stack';
 import Surface from '@via-profit/ui-kit/src/Surface';
@@ -154,6 +155,12 @@ const Controls: React.FC = () => {
           </Button>
         </ButtonGroup>
       </Stack>
+
+      <Pagination
+        count={20}
+        defaultPage={10}
+        aria-label={intl.formatMessage({ defaultMessage: 'Страницы заказов' })}
+      />
 
       <Stack direction="row" wrap gap="md" align="flex-start">
         <Grow>

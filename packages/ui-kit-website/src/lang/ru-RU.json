@@ -146,6 +146,9 @@
   "3qtFxi": {
     "defaultMessage": "Доставка"
   },
+  "3u27+6": {
+    "defaultMessage": "Текущая страница: {page}"
+  },
   "42ZwvD": {
     "defaultMessage": "Потяните за правый нижний угол"
   },
@@ -266,6 +269,9 @@
   "8xa/OX": {
     "defaultMessage": "Кликни вне этого элемента"
   },
+  "92Pf+a": {
+    "defaultMessage": "Следующий слайд"
+  },
   "9ZHc7h": {
     "defaultMessage": "Карточка"
   },
@@ -314,6 +320,9 @@
   "Bjw7bz": {
     "defaultMessage": "Заголовок, содержимое и подвал панели."
   },
+  "CAO8y4": {
+    "defaultMessage": "Предыдущая страница"
+  },
   "CKT+7+": {
     "defaultMessage": "Кофемолка"
   },
@@ -323,11 +332,20 @@
   "CT9NHN": {
     "defaultMessage": "Не удалось разобрать цвет"
   },
+  "CU04j+": {
+    "defaultMessage": "Предыдущий слайд"
+  },
   "CZSp5u": {
     "defaultMessage": "Подписаться"
   },
+  "Cn+QvC": {
+    "defaultMessage": "Страница {page}"
+  },
   "CyILzS": {
     "defaultMessage": "до 10 пользователей, 100 ГБ — 990 ₽ в месяц"
+  },
+  "D1C2LG": {
+    "defaultMessage": "Слайды"
   },
   "DB+ZK0": {
     "defaultMessage": "Позиция {position}"
@@ -431,6 +449,9 @@
   "HgmSLE": {
     "defaultMessage": "Основная часть"
   },
+  "HjgpI3": {
+    "defaultMessage": "На первой странице кнопки «назад» и «в начало» недоступны, на последней — «вперёд» и «в конец»."
+  },
   "HtlFES": {
     "defaultMessage": "Слайд {number}"
   },
@@ -521,6 +542,9 @@
   "Kfcl3A": {
     "defaultMessage": "H5. Подгруппа"
   },
+  "KnJeu8": {
+    "defaultMessage": "Заказ"
+  },
   "Kr9Ly8": {
     "defaultMessage": "Тема оформления"
   },
@@ -532,6 +556,9 @@
   },
   "LVeQEM": {
     "defaultMessage": "Цена: от {from} до {to}"
+  },
+  "LZ/oF8": {
+    "defaultMessage": "Первая страница"
   },
   "LZbAEP": {
     "defaultMessage": "Не отменять"
@@ -550,6 +577,9 @@
   },
   "MRvQ11": {
     "defaultMessage": "Черновик"
+  },
+  "MWyQV4": {
+    "defaultMessage": "Последняя страница"
   },
   "Ma2KAH": {
     "defaultMessage": "Как сделать заказ"
@@ -577,6 +607,9 @@
   },
   "NOcbgn": {
     "defaultMessage": "Круглый чекбокс"
+  },
+  "Nqw1Ko": {
+    "defaultMessage": "Страницы заказов"
   },
   "O145N1": {
     "defaultMessage": "Страна"
@@ -1055,6 +1088,9 @@
   "fGrmor": {
     "defaultMessage": "Начало"
   },
+  "fM177r": {
+    "defaultMessage": "{from}–{to} из {total}"
+  },
   "fRVwyN": {
     "defaultMessage": "Переименовать"
   },
@@ -1094,6 +1130,9 @@
   "gpveUV": {
     "defaultMessage": "Накладная"
   },
+  "gqrMoQ": {
+    "defaultMessage": "Слайд {page}"
+  },
   "grmDdc": {
     "defaultMessage": "Такой страницы нет"
   },
@@ -1105,6 +1144,9 @@
   },
   "gzNsKe": {
     "defaultMessage": "Доставляем курьером за 1–2 дня или в пункт выдачи за 2–4 дня."
+  },
+  "h0kfzy": {
+    "defaultMessage": "Следующая страница"
   },
   "h52LFb": {
     "defaultMessage": "Включить тёмную тему"
@@ -1286,6 +1328,9 @@
   "oAO9Hr": {
     "defaultMessage": "Компоненты"
   },
+  "oGOrsK": {
+    "defaultMessage": "Перейти на страницу {page}"
+  },
   "oJv7x1": {
     "defaultMessage": "Аксессуары"
   },
@@ -1321,6 +1366,9 @@
   },
   "p1u+sn": {
     "defaultMessage": "Сумма заказа: {amount}"
+  },
+  "p4Qe/u": {
+    "defaultMessage": "{page} / {count}"
   },
   "pFDZ2A": {
     "defaultMessage": "Содержимое поверхности"
@@ -1360,6 +1408,9 @@
   },
   "rMD0+o": {
     "defaultMessage": "Статус"
+  },
+  "rOQV2n": {
+    "defaultMessage": "Страницы каталога"
   },
   "rrkgFu": {
     "defaultMessage": "Можно ли изменить адрес доставки?"
@@ -1522,6 +1573,9 @@
   },
   "yKY0jp": {
     "defaultMessage": "Купить"
+  },
+  "yKem/d": {
+    "defaultMessage": "Страницы статей"
   },
   "ydiOIZ": {
     "defaultMessage": "Оттенок"
