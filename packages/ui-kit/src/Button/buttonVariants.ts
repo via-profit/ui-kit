@@ -2,6 +2,7 @@ import { css, Theme } from '@emotion/react';
 
 import Color from '../Color';
 import type { ButtonGroupOrientation } from '../ButtonGroup/ButtonGroupContext';
+import { CONTROL_BORDER } from '../ThemeProvider/tokens';
 
 export type ButtonVariant = 'standard' | 'outlined' | 'plain';
 
@@ -104,7 +105,7 @@ const outlinedStyles = ({ $color, disabled, theme }: StyledProps & ThemeProps) =
     : $color.toString()};
   background-color: transparent;
   border-style: solid;
-  border-width: 0.14em;
+  border-width: ${CONTROL_BORDER};
 
   ${!disabled &&
   css`
@@ -153,7 +154,7 @@ const groupStyles = ({ $group, $variant, $color }: StyledProps) =>
   $group &&
   css`
     border-style: solid;
-    border-width: 0.14em;
+    border-width: ${CONTROL_BORDER};
     ${$variant !== 'outlined' &&
     css`
       border-color: transparent;

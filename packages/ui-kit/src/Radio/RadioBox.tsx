@@ -4,7 +4,7 @@ import { css } from '@emotion/react';
 
 import Color from '../Color';
 import useRadioColor from './useRadioColor';
-import { themeFocusRing } from '../ThemeProvider/tokens';
+import { themeFocusRing, BORDER_WIDTH } from '../ThemeProvider/tokens';
 
 export type RadioBoxProps = Omit<React.InputHTMLAttributes<HTMLInputElement>, 'type'> & {
   /**
@@ -67,7 +67,7 @@ const Circle = styled.span<CircleProps>`
   width: 100%;
   height: 100%;
   border-radius: 50%;
-  border-width: 0.1em;
+  border-width: ${BORDER_WIDTH};
   border-style: solid;
   background-color: ${({ theme }) => theme.color.surface.toString()};
   transition: border-color 150ms ease-out;

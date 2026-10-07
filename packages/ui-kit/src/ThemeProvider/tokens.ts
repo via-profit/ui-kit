@@ -56,10 +56,16 @@ export const elevation = (theme: Theme, level: ThemeElevation, own?: string) =>
 export const CONTROL_LINE_HEIGHT = '1.2em';
 
 /**
+ * The width of the borders of the components: `1px` at the font size of `16px`.
+ * In `em`: the border grows together with the font, and at the usual sizes the browser draws `1px`
+ */
+export const BORDER_WIDTH = '0.0625em';
+
+/**
  * The border of the buttons. The standard and the plain buttons have no border:
  * their padding is larger by this width, so all the variants have the same size
  */
-export const CONTROL_BORDER = '0.14em';
+export const CONTROL_BORDER = BORDER_WIDTH;
 
 /**
  * The size of the text in the fields (TextField, TextArea, Selectbox) relative to the control
@@ -73,17 +79,16 @@ export const controlHeight = (theme: Theme) =>
   `calc(${CONTROL_LINE_HEIGHT} + 2 * ${theme.padding.control.y} + 2 * ${CONTROL_BORDER})`;
 
 /**
- * The padding of the field with the `1px` border, so the field has the height of the button.
+ * The border of the field: the border of the buttons in the `em` of the field with the font size `fontScale`
+ */
+export const fieldBorder = (fontScale = 1) => `calc(${CONTROL_BORDER} / ${fontScale})`;
+
+/**
+ * The padding of the field with the `fieldBorder`, so the field has the height of the button.
  * `fontScale` is the font size of the element relative to the control: the `em` of the padding are its own
  */
-export const fieldPadding = (theme: Theme, fontScale = 1) => {
-  const { y } = theme.padding.control;
-
-  return {
-    y: `calc((${y} + ${CONTROL_BORDER}) / ${fontScale} - 1px)`,
-    x: themePadding(theme, 'control', fontScale).x,
-  };
-};
+export const fieldPadding = (theme: Theme, fontScale = 1) =>
+  themePadding(theme, 'control', fontScale);
 
 /**
  * The padding of the class for the element with its own font size.

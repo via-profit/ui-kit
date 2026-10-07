@@ -4,7 +4,7 @@ import { useTheme, css, Theme } from '@emotion/react';
 
 import Color from '../Color';
 import BadgeBase, { BadgeBaseProps } from './BadgeBase';
-import { themeFocusRing } from '../ThemeProvider/tokens';
+import { themeFocusRing, BORDER_WIDTH } from '../ThemeProvider/tokens';
 
 export type BadgeStyledProps = BadgeBaseProps;
 
@@ -79,7 +79,7 @@ const getOutlinedColors = (color: BadgeBaseProps['color'], theme: Theme) => {
  */
 const StyledBadge = styled(BadgeBase)<StyledProps>`
   border-style: solid;
-  border-width: 0.14em;
+  border-width: ${BORDER_WIDTH};
   border-color: ${({ $background }) => $background.toString()};
 
   ${({ $variant, $color, $background, theme }) =>

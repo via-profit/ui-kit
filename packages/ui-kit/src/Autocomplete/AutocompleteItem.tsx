@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 import { css } from '@emotion/react';
 
 import MenuItem, { MenuItemProps } from '../Menu/MenuItem';
+import { BORDER_WIDTH } from '../ThemeProvider/tokens';
 
 export interface AutocompleteItemProps extends MenuItemProps {
   readonly variant?: 'standard' | 'virtual';
@@ -22,7 +23,7 @@ const StyeldMenuItem = styled(MenuItem, {
       border-color: ${theme.color.accentPrimary.toString()};
       color: ${theme.color.textPrimary.toString()};
       border-style: dashed;
-      border-width: 0.02em;
+      border-width: ${BORDER_WIDTH};
 
       :hover {
         background-color: ${theme.color.accentPrimary.toString()};

@@ -5,7 +5,12 @@ import Button, { ButtonProps } from '../Button';
 import ButtonTextWrapper from '../Button/ButtonTextWrapper';
 import { css } from '@emotion/react';
 import { AnchorPos } from '../Menu';
-import { fieldPadding, CONTROL_LINE_HEIGHT, FIELD_TEXT_SCALE } from '../ThemeProvider/tokens';
+import {
+  fieldPadding,
+  CONTROL_LINE_HEIGHT,
+  FIELD_TEXT_SCALE,
+  fieldBorder,
+} from '../ThemeProvider/tokens';
 
 export type SelectboxButtonProps = Omit<ButtonProps, 'type'> & {
   readonly fullWidth?: boolean;
@@ -32,7 +37,7 @@ const StyledSelectboxButton = styled(Button)<StyleProps>`
   line-height: calc(${CONTROL_LINE_HEIGHT} / ${FIELD_TEXT_SCALE});
   background: none;
   width: 100%;
-  border-width: 1px;
+  border-width: ${fieldBorder(FIELD_TEXT_SCALE)};
   border-style: solid;
   box-shadow: none;
   &:hover {

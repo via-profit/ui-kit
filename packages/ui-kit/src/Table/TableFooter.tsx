@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from '@emotion/styled';
+import { BORDER_WIDTH } from '../ThemeProvider/tokens';
 
 export type TableFooterProps = React.HTMLAttributes<HTMLTableSectionElement>;
 
@@ -14,7 +15,7 @@ const StyledTableFooter = styled.tfoot`
 
   & > tr:first-of-type > th,
   & > tr:first-of-type > td {
-    border-top: 0.1em solid ${({ theme }) => theme.color.surface.darken(30).toString()};
+    border-top: ${BORDER_WIDTH} solid ${({ theme }) => theme.color.surface.darken(30).toString()};
   }
 `;
 

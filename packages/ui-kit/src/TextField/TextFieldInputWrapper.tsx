@@ -2,7 +2,7 @@ import * as React from 'react';
 import styled from '@emotion/styled';
 import { css } from '@emotion/react';
 
-import { CONTROL_LINE_HEIGHT, FIELD_TEXT_SCALE } from '../ThemeProvider/tokens';
+import { CONTROL_LINE_HEIGHT, FIELD_TEXT_SCALE, fieldBorder } from '../ThemeProvider/tokens';
 
 export type TextFieldInputWrapperProps = React.HTMLAttributes<HTMLDivElement> & {
   readonly error?: boolean;
@@ -22,7 +22,7 @@ const Wrapper = styled.div<{
   display: flex;
   align-items: stretch;
   border-radius: ${({ theme }) => theme.shape.radiusFactor * 2}em;
-  border: 1px solid;
+  border: ${fieldBorder(FIELD_TEXT_SCALE)} solid;
   outline: 1px solid transparent;
   border-color: ${({ theme }) =>
     theme.isDark

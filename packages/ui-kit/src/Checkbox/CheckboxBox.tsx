@@ -4,7 +4,7 @@ import { css } from '@emotion/react';
 
 import Color from '../Color';
 import useCheckboxColor from './useCheckboxColor';
-import { themeFocusRing } from '../ThemeProvider/tokens';
+import { themeFocusRing, BORDER_WIDTH } from '../ThemeProvider/tokens';
 
 export type CheckboxBoxProps = Omit<React.InputHTMLAttributes<HTMLInputElement>, 'type'> & {
   /**
@@ -57,7 +57,7 @@ const Square = styled.span<SquareProps>`
   display: flex;
   width: 100%;
   height: 100%;
-  border-width: 0.1em;
+  border-width: ${BORDER_WIDTH};
   border-style: solid;
   /* Scaled down: the square is small, the full radius would turn it into a circle */
   border-radius: ${({ theme }) => theme.shape.radiusFactor * 0.6}em;

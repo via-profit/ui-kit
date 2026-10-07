@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from '@emotion/styled';
-import { themePadding } from '../ThemeProvider/tokens';
+import { themePadding, BORDER_WIDTH } from '../ThemeProvider/tokens';
 
 export type TableHeaderCellProps = React.ThHTMLAttributes<HTMLTableCellElement>;
 
@@ -17,7 +17,7 @@ const StyledTableHeaderCell = styled.th`
   }};
   text-align: start;
   font-weight: 600;
-  border-bottom: 0.1em solid ${({ theme }) => theme.color.surface.darken(20).toString()};
+  border-bottom: ${BORDER_WIDTH} solid ${({ theme }) => theme.color.surface.darken(20).toString()};
 `;
 
 const TableHeaderCell: React.ForwardRefRenderFunction<
