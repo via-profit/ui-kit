@@ -29,12 +29,9 @@ const Layout = styled(Grid)`
   }
 `;
 
-// The spacing scale of the theme is available in styled too
-const RoomSlide = styled(SwiperSlide)`
-  flex-direction: column;
-  align-items: stretch;
-  justify-content: flex-start;
-  gap: ${({ theme }) => theme.spacing.sm};
+// The slide centers its content: the stack of the room takes the whole width
+const RoomCard = styled(Stack)`
+  flex: 1;
 `;
 
 const RoomCover = styled.div`
@@ -50,13 +47,8 @@ const RoomCover = styled.div`
   text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
 `;
 
-const Summary = styled.dl`
-  display: grid;
-  grid-template-columns: auto auto;
-  justify-content: space-between;
-  gap: 0.5em 2em;
-  margin: 0;
-
+// The grid of the terms and the values: <Grid as="dl">, the decoration only in styled
+const Summary = styled(Grid)`
   & dt {
     color: ${({ theme }) => theme.color.textSecondary.toString()};
   }
@@ -152,29 +144,35 @@ const ShowcaseBooking: React.FC = () => {
               }
             >
               {rooms.map(item => (
-                <RoomSlide key={item.id}>
-                  <RoomCover style={{ background: item.color }}>{item.name}</RoomCover>
-                  <Stack direction="row" justify="space-between" gap="md">
-                    <Stack gap="xs">
-                      <span>{item.description}</span>
-                      <strong>
-                        <FormattedMessage
-                          defaultMessage="{price} за ночь"
-                          values={{ price: money(item.price) }}
-                        />
-                      </strong>
+                <SwiperSlide key={item.id}>
+                  <RoomCard gap="sm">
+                    <RoomCover style={{ background: item.color }}>{item.name}</RoomCover>
+                    <Stack direction="row" justify="space-between" gap="md">
+                      <Stack gap="xs">
+                        <span>{item.description}</span>
+                        <strong>
+                          <FormattedMessage
+                            defaultMessage="{price} за ночь"
+                            values={{ price: money(item.price) }}
+                          />
+                        </strong>
+                      </Stack>
+                      {item.id === roomId ? (
+                        <Badge color="primary">
+                          <FormattedMessage defaultMessage="Выбран" />
+                        </Badge>
+                      ) : (
+                        <Button
+                          variant="outlined"
+                          color="primary"
+                          onClick={() => setRoomId(item.id)}
+                        >
+                          <FormattedMessage defaultMessage="Выбрать" />
+                        </Button>
+                      )}
                     </Stack>
-                    {item.id === roomId ? (
-                      <Badge color="primary">
-                        <FormattedMessage defaultMessage="Выбран" />
-                      </Badge>
-                    ) : (
-                      <Button variant="outlined" color="primary" onClick={() => setRoomId(item.id)}>
-                        <FormattedMessage defaultMessage="Выбрать" />
-                      </Button>
-                    )}
-                  </Stack>
-                </RoomSlide>
+                  </RoomCard>
+                </SwiperSlide>
               ))}
             </Swiper>
             <Stack direction="row" justify="space-between">
@@ -216,7 +214,7 @@ const ShowcaseBooking: React.FC = () => {
                 ))}
               </ButtonGroup>
             </Stack>
-            <Summary>
+            <Summary as="dl" columns="1fr auto" gap="xl" rowGap="sm">
               <dt>
                 <FormattedMessage defaultMessage="Номер" />
               </dt>

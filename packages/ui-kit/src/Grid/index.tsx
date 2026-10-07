@@ -36,6 +36,13 @@ export type GridProps = React.HTMLAttributes<HTMLDivElement> & {
    * **Default:** `stretch`
    */
   readonly align?: React.CSSProperties['alignItems'];
+
+  /**
+   * The element of the grid: `ul`, `ol`, `dl`, `nav`, `section` and others.
+   * The lists lose the default margins and markers\
+   * **Default:** `div`
+   */
+  readonly as?: React.ElementType;
 };
 
 type StyledProps = {
@@ -43,7 +50,13 @@ type StyledProps = {
   readonly $gap: Spacing;
   readonly $rowGap?: Spacing;
   readonly $align?: React.CSSProperties['alignItems'];
+  readonly $isList: boolean;
 };
+
+/**
+ * The lists are the rows of the elements here: no default margins and markers
+ */
+const LIST_TAGS: readonly React.ElementType[] = ['ul', 'ol', 'dl'];
 
 const StyledGrid = styled.div<StyledProps>`
   display: grid;
@@ -53,6 +66,7 @@ const StyledGrid = styled.div<StyledProps>`
     typeof $rowGap !== 'undefined' ? `row-gap: ${resolveSpacing(theme, $rowGap)};` : ''}
   align-items: ${({ $align }) => $align ?? 'stretch'};
   min-width: 0;
+  ${({ $isList }) => ($isList ? 'margin: 0; padding: 0; list-style: none;' : '')}
 `;
 
 const getTemplate = (minColumnWidth: string | undefined, columns: number | string) => {
@@ -76,6 +90,7 @@ const Grid: React.ForwardRefRenderFunction<HTMLDivElement, GridProps> = (props, 
     gap = 'md',
     rowGap,
     align,
+    as,
     ...nativeProps
   } = props;
 
@@ -86,6 +101,8 @@ const Grid: React.ForwardRefRenderFunction<HTMLDivElement, GridProps> = (props, 
       $gap={gap}
       $rowGap={rowGap}
       $align={align}
+      $isList={Boolean(as && LIST_TAGS.includes(as))}
+      as={as}
       ref={ref}
     >
       {children}

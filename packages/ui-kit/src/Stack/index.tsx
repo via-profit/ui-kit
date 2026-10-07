@@ -38,6 +38,13 @@ export type StackProps = React.HTMLAttributes<HTMLDivElement> & {
    * The stack takes the width of its content (`inline-flex`) instead of the full width
    */
   readonly inline?: boolean;
+
+  /**
+   * The element of the stack: `ul`, `ol`, `dl`, `nav`, `section` and others.
+   * The lists lose the default margins and markers\
+   * **Default:** `div`
+   */
+  readonly as?: React.ElementType;
 };
 
 type StyledProps = {
@@ -47,7 +54,13 @@ type StyledProps = {
   readonly $justify?: React.CSSProperties['justifyContent'];
   readonly $wrap: boolean;
   readonly $inline: boolean;
+  readonly $isList: boolean;
 };
+
+/**
+ * The lists are the rows of the elements here: no default margins and markers
+ */
+const LIST_TAGS: readonly React.ElementType[] = ['ul', 'ol', 'dl'];
 
 const StyledStack = styled.div<StyledProps>`
   display: ${({ $inline }) => ($inline ? 'inline-flex' : 'flex')};
@@ -59,6 +72,7 @@ const StyledStack = styled.div<StyledProps>`
   gap: ${({ theme, $gap }) => resolveSpacing(theme, $gap)};
   /* A flex child shrinks below its content only with min-width: 0 */
   min-width: 0;
+  ${({ $isList }) => ($isList ? 'margin: 0; padding: 0; list-style: none;' : '')}
 `;
 
 /**
@@ -74,6 +88,7 @@ const Stack: React.ForwardRefRenderFunction<HTMLDivElement, StackProps> = (props
     justify,
     wrap = false,
     inline = false,
+    as,
     ...nativeProps
   } = props;
 
@@ -86,6 +101,8 @@ const Stack: React.ForwardRefRenderFunction<HTMLDivElement, StackProps> = (props
       $justify={justify}
       $wrap={wrap}
       $inline={inline}
+      $isList={Boolean(as && LIST_TAGS.includes(as))}
+      as={as}
       ref={ref}
     >
       {children}
