@@ -24,18 +24,26 @@ const Filter = styled.input`
   padding: 0 0.75rem;
   font: inherit;
   font-size: 0.85rem;
-  color: ${({ theme }) => theme.color.textPrimary.toString()};
-  background-color: ${({ theme }) => theme.color.surface.toString()};
-  border: 1px solid ${({ theme }) => theme.color.border.toString()};
+  /* The colors of the sidebar, not of the page: the field fits a sidebar of any color */
+  color: ${({ theme }) => theme.color.mainSidebarContrast.toString()};
+  background-color: ${({ theme }) => theme.color.mainSidebarContrast.alpha(0.06).toString()};
+  border: 1px solid ${({ theme }) => theme.color.mainSidebarContrast.alpha(0.14).toString()};
   border-radius: 0.5rem;
   outline: none;
-  transition: border-color 120ms ease-out;
+  transition:
+    border-color 120ms ease-out,
+    background-color 120ms ease-out;
 
   &::placeholder {
-    color: ${({ theme }) => theme.color.textSecondary.toString()};
+    color: ${({ theme }) => theme.color.mainSidebarContrast.alpha(0.5).toString()};
+  }
+
+  &:hover {
+    border-color: ${({ theme }) => theme.color.mainSidebarContrast.alpha(0.24).toString()};
   }
 
   &:focus {
+    background-color: ${({ theme }) => theme.color.mainSidebarContrast.alpha(0.1).toString()};
     border-color: ${({ theme }) => theme.color.accentPrimary.toString()};
     box-shadow: 0 0 0 3px ${({ theme }) => theme.color.accentPrimary.alpha(0.15).toString()};
   }
@@ -81,9 +89,10 @@ const Item = styled(Link, { shouldForwardProp: p => p.match(/^\$/) === null })<I
     color 120ms ease-out,
     background-color 120ms ease-out;
 
+  /* The colors of the sidebar, not of the page: the items fit a sidebar of any color */
   &:hover {
-    color: ${({ theme }) => theme.color.textPrimary.toString()};
-    background-color: ${({ theme }) => theme.color.backgroundSecondary.alpha(0.6).toString()};
+    color: ${({ theme }) => theme.color.mainSidebarContrast.toString()};
+    background-color: ${({ theme }) => theme.color.mainSidebarContrast.alpha(0.08).toString()};
   }
 
   ${({ $isActive, theme }) =>
