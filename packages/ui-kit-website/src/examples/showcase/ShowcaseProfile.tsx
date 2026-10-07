@@ -82,14 +82,14 @@ const ShowcaseProfile: React.FC = () => {
       <Surface
         header={intl.formatMessage({ defaultMessage: 'Профиль' })}
         footer={
-          <>
+          <Stack direction="row" gap="sm">
             <Button disabled={!isDirty} onClick={() => setSettings(saved)}>
               <FormattedMessage defaultMessage="Отменить" />
             </Button>
             <Button color="primary" disabled={!isDirty} onClick={() => setSaved(settings)}>
               <FormattedMessage defaultMessage="Сохранить" />
             </Button>
-          </>
+          </Stack>
         }
       >
         <Stack gap="lg">
