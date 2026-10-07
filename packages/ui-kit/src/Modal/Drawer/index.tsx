@@ -9,7 +9,6 @@ import Footer, { DrawerFooterProps } from './DrawerFooter';
 import Overlay, { ModalOverlayProps } from '../BaseModal/ModalOverlay';
 import type { ModalInnerProps } from '../BaseModal/ModalInner';
 import useDialogID from '../BaseModal/useDialogID';
-import useThemeProps from '../../ThemeProvider/useThemeProps';
 
 export type { AnchorVariant } from './DrawerInner';
 
@@ -99,7 +98,7 @@ const Drawer: React.FC<DrawerProps> = props => {
     footer,
     overrides,
     ...otherProps
-  } = useThemeProps('Drawer', props);
+  } = props;
   const hasFooter = React.useMemo(() => typeof footer !== 'undefined' && footer !== null, [footer]);
   const hasHeader = React.useMemo(
     () =>

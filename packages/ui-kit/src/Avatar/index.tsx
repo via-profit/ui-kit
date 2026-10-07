@@ -4,7 +4,6 @@ import { useTheme, css } from '@emotion/react';
 
 import Color from '../Color';
 import AvatarBase, { AvatarBaseProps } from './AvatarBase';
-import useThemeProps from '../ThemeProvider/useThemeProps';
 
 export type AvatarProps = AvatarBaseProps;
 
@@ -67,7 +66,7 @@ const Avatar: React.ForwardRefRenderFunction<HTMLSpanElement, AvatarProps> = (pr
     alt,
     overrides,
     ...restProps
-  } = useThemeProps('Avatar', props);
+  } = props;
   const theme = useTheme();
   const clickable = React.useMemo(() => typeof onClick === 'function', [onClick]);
 

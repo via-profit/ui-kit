@@ -4,7 +4,6 @@ import React from 'react';
 import Container, { HighlightedContainerProps } from './HighlightedContainer';
 import Mark, { HighlightedMarkProps } from './HighlightedMark';
 import Text, { HighlightedTextProps } from './HighlightedText';
-import useThemeProps from '../ThemeProvider/useThemeProps';
 
 export interface HighlightedProps extends React.HTMLAttributes<HTMLSpanElement> {
   /**
@@ -82,7 +81,7 @@ const Highlighted: React.ForwardRefRenderFunction<HTMLSpanElement, HighlightedPr
     disabledHighlighting = false,
     caseSensitive = false,
     ...nativeProps
-  } = useThemeProps('Highlighted', props);
+  } = props;
 
   const patterns = React.useMemo(
     () =>

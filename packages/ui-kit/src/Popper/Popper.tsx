@@ -2,7 +2,6 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import Container, { PopperContainerProps, PositionStrategy } from './PopperContainer';
 import { AnchorPos, usePopper } from './usePopper';
-import useThemeProps from '../ThemeProvider/useThemeProps';
 
 export * from './usePopper';
 // export type AnchorPos = Di | `${Di}-${Mod}` | Au | `${Au}-${Di}`;
@@ -200,7 +199,7 @@ const Popper: React.ForwardRefRenderFunction<HTMLDivElement, PopperProps> = (pro
     offset = 0,
     onAnchorPosChanged,
     ...nativeProps
-  } = useThemeProps('Popper', props);
+  } = props;
 
   const [domLoaded, setDomLoaded] = React.useState(false);
 

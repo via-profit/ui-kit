@@ -8,7 +8,6 @@ import InnerContainer, { ModalInnerContainerProps } from './ModalInnerContainer'
 import ModalWrapper from './ModalWrapper';
 import RenderModal from './RenderModal';
 import NoSSR from '../../NoSSR';
-import useThemeProps from '../../ThemeProvider/useThemeProps';
 
 export interface BaseModalProps {
   /**
@@ -77,7 +76,7 @@ const BaseModal: React.FC<BaseModalProps> = props => {
     closeOnEscape = defaultState.closeOnEscape,
     destroyTimeout = defaultState.destroyTimeout,
     onRequestClose,
-  } = useThemeProps('Modal', props);
+  } = props;
   const [domLoaded, setDomLoaded] = React.useState(false);
 
   const overridesMap = React.useMemo(

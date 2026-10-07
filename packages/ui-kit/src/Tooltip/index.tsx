@@ -4,7 +4,6 @@ import { useTheme } from '@emotion/react';
 import Popper, { AnchorPos } from '../Popper';
 import Container, { TooltipContainerProps } from './TooltipContainer';
 import Arrow, { TooltipArrowProps } from './TooltipArrow';
-import useThemeProps from '../ThemeProvider/useThemeProps';
 
 export type TooltipProps = {
   /**
@@ -154,7 +153,7 @@ const Tooltip: React.FC<TooltipProps> = props => {
     zIndex,
     id,
     overrides,
-  } = useThemeProps('Tooltip', props);
+  } = props;
 
   const theme = useTheme();
   const generatedId = `tooltip-${React.useId().replace(/:/g, '')}`;

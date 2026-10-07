@@ -7,7 +7,6 @@ import Footer, { MessageBoxFooterProps } from './MessageBoxFooter';
 import Header, { MessageBoxHeaderProps } from './MessageBoxHeader';
 import Overlay, { ModalOverlayProps } from '../BaseModal/ModalOverlay';
 import useDialogID from '../BaseModal/useDialogID';
-import useThemeProps from '../../ThemeProvider/useThemeProps';
 
 export interface MessageBoxProps extends Omit<BaseModalProps, 'overrides'> {
   /**
@@ -68,7 +67,7 @@ export interface MessageBoxOverrides {
 
 const MessageBox: React.FC<MessageBoxProps> = props => {
   const { header, children, onRequestClose, overrides, okButtonLabel, isOpen, ...otherProps } =
-    useThemeProps('MessageBox', props);
+    props;
   const dialogID = useDialogID('dialog-message');
   const buttonRef = React.useRef<HTMLButtonElement | null>(null);
 

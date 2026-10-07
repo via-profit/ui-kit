@@ -4,7 +4,6 @@ import Container, { AccordionContainerProps } from './AccordionContainer';
 import Header, { AccordionHeaderProps } from './AccordionHeader';
 import Content, { AccordionContentProps } from './AccordionContent';
 import Actions, { AccordionActionsProps } from './AccordionActions';
-import useThemeProps from '../ThemeProvider/useThemeProps';
 
 export type AccordionProps = React.HTMLAttributes<HTMLDivElement> & {
   readonly children: React.ReactNode | React.ReactNode[];
@@ -83,7 +82,7 @@ const Accordion: React.ForwardRefRenderFunction<HTMLDivElement, AccordionProps> 
     noPadding,
     defaultOpened,
     ...nativeProps
-  } = useThemeProps('Accordion', props);
+  } = props;
 
   const hasActions = typeof actions !== 'undefined' && actions !== null;
   const hasHeader = typeof header !== 'undefined' && header !== null;

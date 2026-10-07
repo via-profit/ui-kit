@@ -14,9 +14,6 @@ const ui = createSlice({
     theme: (state, action: PayloadAction<State['theme']>) => {
       state.theme = action.payload;
     },
-    themeStyle: (state, action: PayloadAction<State['themeStyle']>) => {
-      state.themeStyle = action.payload;
-    },
     fontSize: (state, action: PayloadAction<State['fontSize']>) => {
       state.fontSize = action.payload;
     },

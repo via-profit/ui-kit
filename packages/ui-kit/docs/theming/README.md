@@ -15,7 +15,7 @@
 
 ## Описание
 
-Компоненты берут из темы оформления цвета, скругления, `z-index`, рамку фокуса, тени и оформление отдельных компонентов. Тема создаётся функцией `createTheme` и передаётся компонентом `<ThemeProvider>`, который оборачивает провайдер [@emotion/react](https://emotion.sh/docs/theming). Все вложенные компоненты получают эту тему.
+Компоненты берут из темы оформления цвета, скругления, `z-index`, рамку фокуса и тени. Тема создаётся функцией `createTheme` и передаётся компонентом `<ThemeProvider>`, который оборачивает провайдер [@emotion/react](https://emotion.sh/docs/theming). Все вложенные компоненты получают эту тему.
 
 _Пример использования:_
 
@@ -124,11 +124,6 @@ const theme = createTheme({
 - Тип: `{ popup?: string; surface?: string }`
 - По умолчанию: `{}`
 
-### `components`
-Оформление компонентов: `defaultProps` и `overrides` по имени компонента. Подробнее в разделе [Оформление компонентов](#оформление-компонентов).
-- Тип: `UIThemeComponents`
-- По умолчанию: `{}`
-
 ### `fontSize`
 Размеры шрифта в пикселях для приложения: `small` (`14`), `normal` (`16`), `medium` (`18`), `large` (`20`). Компоненты сами их не используют — подробнее в разделе [Размер шрифта](#размер-шрифта).
 
@@ -166,50 +161,7 @@ const Card = styled.div`
 
 ## Оформление компонентов
 
-Цвета и токены меняют палитру, но не форму элементов. Чтобы изменить вид компонентов во всём приложении, задайте их оформление в `components`. Для каждого компонента можно передать:
-
-- `defaultProps` — свойства, которые компонент получает, если их не передали явно. Например, уведомления в правом нижнем углу: `Toast: { defaultProps: { position: 'bottom-right' } }`;
-- `overrides` — части, которые заменяют стандартные, как `overrides` у самого компонента. Обычно это стандартная часть, расширенная через `styled`.
-
-Создавайте части один раз — на уровне модуля, а не внутри функции, которая строит тему. Если светлая и тёмная темы используют одни и те же части, а цвета части берёт из `theme`, переключение темы не пересоздаёт компоненты, и поля ввода не теряют фокус и введённое значение.
-
-```tsx
-import styled from '@emotion/styled';
-import { css } from '@emotion/react';
-import createTheme from '@via-profit/ui-kit/ThemeProvider/createTheme';
-import SwitchTrack from '@via-profit/ui-kit/Switch/SwitchTrack';
-
-// Created once, at the module level
-const Track = styled(SwitchTrack)(
-  ({ theme, checked }) => css`
-    border-radius: 0.625rem;
-    background-color: ${checked ? theme.color.accentPrimary.toString() : 'transparent'};
-  `,
-);
-
-const theme = createTheme({
-  focusRing: { width: '2px', offset: '1px', color: '#1b1b1b' },
-  elevation: { popup: '0 8px 16px rgba(0, 0, 0, 0.14)' },
-  components: {
-    Switch: { overrides: { Track } },
-    Toast: { defaultProps: { position: 'bottom-right' } },
-  },
-});
-```
-
-Имена компонентов — как у импорта: `Button`, `TextField`, `Switch`, `Checkbox`, `Radio`, `Slider`, `Menu`, `Toast`, `Tooltip`, `Calendar` и другие. Части у каждого компонента — те же, что в его `overrides`. Что нужно учесть:
-
-- `TextArea` и `Selectbox` используют части `TextField` (поле, подпись, текст ошибки), но получают их из своих `overrides`: задайте их в теме и для этих компонентов;
-- `Dialog`, `Drawer`, `ConfirmBox` и `MessageBox` передают базовому окну свои части. `Modal.overrides.Inner` в теме их не заменяет, а замена `Dialog.overrides.Inner` теряет разметку диалога для программ чтения с экрана. Окно диалога удобнее оформить через `Modal.overrides.InnerContainer` — контейнер вокруг окна;
-- у вкладок части выводите вы сами, поэтому у `Tabs` в теме есть только `defaultProps`. То же у пунктов меню: тема оформляет список `Menu`, но не `MenuItem`;
-- `overrides.Container` у `Button` получает `variant`: у голого `ButtonBase`, например у кнопки удаления в бейдже, его нет.
-
-### Приоритет
-
-То, что передано компоненту в коде, всегда важнее темы:
-
-- свойство, переданное явно, важнее `defaultProps` темы. Внутри `ButtonGroup` порядок такой: свойство кнопки, затем свойство группы, затем тема;
-- часть из `overrides` компонента заменяет часть из `overrides` темы целиком: стили темы к этому экземпляру не применяются. Чтобы сохранить вид темы и изменить его частично, расширьте часть темы, а не стандартную: экспортируйте части из модуля темы и используйте `styled(ThemeTrack)`.
+Тема задаёт только токены: цвета, скругления, отступы, рамку фокуса, тени. Заменить части отдельного компонента можно через его свойство `overrides` — подробнее на странице компонента.
 
 ## Тёмная тема
 
@@ -328,7 +280,6 @@ declare module '@via-profit/ui-kit' {
 - `UIThemeOverrideShape` — параметры форм (`shape`);
 - `UIThemeOverrideFontSize` — размеры шрифта (`fontSize`);
 - `UIThemeOverrideTypography`, `UIThemeOverrideFocusRing`, `UIThemeOverrideElevation` — шрифт, рамка фокуса и тени;
-- `UIThemeComponents` — оформление компонентов (`components`): так добавляется оформление своих компонентов;
 - `UIThemeOverrides` — параметры `createTheme` целиком; `UITheme` — готовая тема.
 
 ## Размер шрифта

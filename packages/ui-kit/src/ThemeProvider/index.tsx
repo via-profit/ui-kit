@@ -2,13 +2,10 @@ import React from 'react';
 import { ThemeProvider as EmotionProvider, useTheme } from '@emotion/react';
 
 import type Color from '../Color';
-import type { UIThemeComponents } from './components';
 
 export { useTheme };
 
 export * from './createTheme';
-export * from './components';
-export { default as useThemeProps } from './useThemeProps';
 export * from './tokens';
 
 export type UITheme = Required<
@@ -20,7 +17,6 @@ export type UITheme = Required<
     | 'shape'
     | 'color'
     | 'spacing'
-    | 'components'
     | 'typography'
     | 'focusRing'
     | 'elevation'
@@ -29,7 +25,6 @@ export type UITheme = Required<
   readonly typography: UIThemeOverrideTypography;
   readonly focusRing: UIThemeOverrideFocusRing;
   readonly elevation: UIThemeOverrideElevation;
-  readonly components: UIThemeComponents;
   readonly isDark: boolean;
   readonly fontSize: Record<keyof UIThemeOverrideFontSize, number>;
   readonly zIndex: Required<UIThemeOverrideZIndex>;
@@ -135,11 +130,6 @@ export interface UIThemeOverrides {
    */
   readonly isDark?: boolean;
 
-  /**
-   * The look of the components: `defaultProps`, the `styles` added to the parts
-   * and the `overrides` that replace the parts. The props of the component instance win over the theme
-   */
-  readonly components?: UIThemeComponents;
   readonly fontSize?: UIThemeOverrideFontSize;
   readonly typography?: UIThemeOverrideTypography;
   readonly focusRing?: UIThemeOverrideFocusRing;

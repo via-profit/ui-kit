@@ -9,7 +9,6 @@ export const createTheme: CreateTheme = overrides => {
     color,
     shape,
     spacing,
-    components,
     typography,
     focusRing,
     elevation,
@@ -21,7 +20,6 @@ export const createTheme: CreateTheme = overrides => {
   } = {
     ...rest,
     isDark: typeof isDark === 'boolean' ? isDark : false,
-    components: components || {},
     // Empty by default: the components keep their own fonts, focus and shadows
     typography: { ...typography },
     focusRing: { ...focusRing },

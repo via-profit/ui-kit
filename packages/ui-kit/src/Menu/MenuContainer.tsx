@@ -5,7 +5,6 @@ import List, { MenuListProps } from './MenuList';
 import Popper, { AnchorPos, PopperProps, PositionStrategy } from '../Popper';
 import type { MenuItemProps } from './MenuItem';
 import ClickOutside from '../ClickOutside';
-import useThemeProps from '../ThemeProvider/useThemeProps';
 
 export type AnchorElement<E extends HTMLElement = HTMLElement> = E;
 
@@ -363,7 +362,7 @@ const MenuContainer = React.forwardRef(
       onSelectItem,
       getOptionSelected,
       maxWidth,
-    } = useThemeProps<MenuProps<T, Multiple>>('Menu', props);
+    } = props;
 
     const overridesMap = React.useMemo(
       () => ({

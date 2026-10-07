@@ -7,7 +7,6 @@ import InputWrapper, { TextFieldInputWrapperProps } from '../TextField/TextField
 import Input, { TextAreaInputProps } from '../TextArea/TextAreaInput';
 import ErrorText, { TextFieldErrorTextProps } from '../TextField/TextFieldErrorText';
 import IconWrapper, { TextAreaIconWrapperProps } from './TextAreaIconWrapper';
-import useThemeProps from '../ThemeProvider/useThemeProps';
 
 export interface TextAreaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
   /**
@@ -127,7 +126,7 @@ const TextArea: React.ForwardRefRenderFunction<HTMLDivElement, TextAreaProps> = 
     onFocus,
     onBlur,
     ...nativeInputProps
-  } = useThemeProps('TextArea', props);
+  } = props;
 
   const [focused, setFocused] = React.useState(false);
   // useId is stable between server and client renders

@@ -6,7 +6,6 @@ import Items, { RadioGroupItemsProps, RadioGroupOrientation } from './RadioGroup
 import Asterisk, { RadioGroupAsteriskProps } from './RadioGroupAsterisk';
 import ErrorText, { RadioGroupErrorTextProps } from './RadioGroupErrorText';
 import RadioGroupContext, { RadioGroupContextValue } from './RadioGroupContext';
-import useThemeProps from '../ThemeProvider/useThemeProps';
 
 export type { RadioGroupOrientation };
 
@@ -133,7 +132,7 @@ const RadioGroup: React.ForwardRefRenderFunction<HTMLFieldSetElement, RadioGroup
     errorText,
     overrides,
     ...nativeProps
-  } = useThemeProps('RadioGroup', props);
+  } = props;
 
   const id = React.useId().replace(/:/g, '');
   const name = inputName ?? `radio-group-${id}`;

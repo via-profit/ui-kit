@@ -101,9 +101,6 @@
   "2ASsuR": {
     "defaultMessage": "Навигация"
   },
-  "2QhmfL": {
-    "defaultMessage": "Стандартная"
-  },
   "2Sh6hx": {
     "defaultMessage": "Я принимаю условия использования"
   },
@@ -1453,9 +1450,6 @@
   },
   "zSOBRR": {
     "defaultMessage": "Количество гостей"
-  },
-  "zXI9z4": {
-    "defaultMessage": "Стиль темы: {name}"
   },
   "zXkVd5": {
     "defaultMessage": "Добавить"

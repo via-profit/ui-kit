@@ -4,7 +4,6 @@ import Container, { RadioContainerProps, RadioLabelPosition } from './RadioConta
 import Box, { RadioBoxProps } from './RadioBox';
 import TextWrapper, { RadioTextWrapperProps } from './RadioTextWrapper';
 import RadioGroupContext from '../RadioGroup/RadioGroupContext';
-import useThemeProps from '../ThemeProvider/useThemeProps';
 
 export type { RadioLabelPosition };
 
@@ -74,7 +73,7 @@ const Radio: React.ForwardRefRenderFunction<HTMLInputElement, RadioProps> = (pro
     className,
     style,
     ...nativeProps
-  } = useThemeProps('Radio', props);
+  } = props;
 
   const overridesMap = React.useMemo(
     () => ({

@@ -9,7 +9,6 @@ import CloseButton, { ToastCloseButtonProps } from './ToastCloseButton';
 import Action, { ToastActionProps } from './ToastAction';
 import ToastItem, { ToastDefaults } from './ToastItem';
 import { toastStore, ToastPosition, ToastState } from './store';
-import useThemeProps from '../ThemeProvider/useThemeProps';
 
 export interface ToastContainerProps {
   /**
@@ -212,7 +211,7 @@ const ToastContainer: React.FC<ToastContainerProps> = props => {
     label = 'Notifications',
     zIndex,
     overrides,
-  } = useThemeProps('Toast', props);
+  } = props;
 
   const theme = useTheme();
   const allToasts = React.useSyncExternalStore(
