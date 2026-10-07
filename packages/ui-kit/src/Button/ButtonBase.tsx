@@ -16,7 +16,7 @@ export interface ButtonBaseProps extends Omit<ButtonNativeProps, 'color'> {
    * </Button>
    * ```
    */
-  readonly startIcon?: JSX.Element;
+  readonly startIcon?: React.JSX.Element;
 
   /**
    * Icon or another JSX element placed after button label
@@ -27,7 +27,7 @@ export interface ButtonBaseProps extends Omit<ButtonNativeProps, 'color'> {
    * </Button>
    * ```
    */
-  readonly endIcon?: JSX.Element;
+  readonly endIcon?: React.JSX.Element;
 
   /**
    * If true, then expect SVG icon as children. The button will be rendered as icon button

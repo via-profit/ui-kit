@@ -1,5 +1,7 @@
 import React from 'react';
 
+import getElementRef from '../utils/getElementRef';
+
 export interface ClickOutsideProps {
   /**
    * React Element\
@@ -78,7 +80,7 @@ const ClickOutside: React.FC<ClickOutsideProps> = props => {
   }, [onOutsideClick, mouseEvent]);
 
   // Keep the child's own ref working alongside ours
-  const childRef = (children as React.ReactElement & { ref?: React.Ref<HTMLElement> }).ref;
+  const childRef = getElementRef<HTMLElement>(children);
   const setRef = React.useCallback(
     (el: HTMLElement | null) => {
       ref.current = el;
@@ -92,7 +94,13 @@ const ClickOutside: React.FC<ClickOutsideProps> = props => {
     [childRef],
   );
 
-  return <>{React.cloneElement(children, { ref: setRef })}</>;
+  return (
+    <>
+      {React.cloneElement(children as React.ReactElement<React.RefAttributes<HTMLElement>>, {
+        ref: setRef,
+      })}
+    </>
+  );
 };
 
 export default ClickOutside;

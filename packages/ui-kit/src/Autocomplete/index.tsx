@@ -57,4 +57,4 @@ Autocomplete.displayName = 'Autocomplete';
 
 export default Autocomplete as <T, Multiple extends boolean | undefined = undefined>(
   props: AutocompleteProps<T, Multiple> & { ref?: React.Ref<AutocompleteRef> },
-) => JSX.Element;
+) => React.JSX.Element;

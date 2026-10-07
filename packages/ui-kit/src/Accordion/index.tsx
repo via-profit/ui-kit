@@ -11,12 +11,12 @@ export type AccordionProps = React.HTMLAttributes<HTMLDivElement> & {
   /**
    * Header content
    */
-  readonly header?: JSX.Element | string;
+  readonly header?: React.JSX.Element | string;
 
   /**
    * Actions content
    */
-  readonly actions?: JSX.Element | string;
+  readonly actions?: React.JSX.Element | string;
 
   /**
    * Overridable components map

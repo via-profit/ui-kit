@@ -112,7 +112,7 @@ export type RegExpDetect = RegExp;
 /**
  * JSX Element for display Country Flag
  */
-export type CountryFlag = JSX.Element;
+export type CountryFlag = React.JSX.Element;
 
 /**
  * Country ISO-2 code

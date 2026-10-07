@@ -458,4 +458,4 @@ Selectbox.displayName = 'Selectbox';
 
 export default Selectbox as <T, Multiple extends boolean | undefined = undefined>(
   props: SelectboxProps<T, Multiple> & { ref?: React.ForwardedRef<HTMLButtonElement> },
-) => JSX.Element;
+) => React.JSX.Element;

@@ -135,7 +135,7 @@ export type DatePickerProps = Omit<TextFieldProps, 'value' | 'onChange' | 'overr
   /**
    * Custom footer elements
    */
-  readonly footer?: JSX.Element;
+  readonly footer?: React.JSX.Element;
 
   /**
    * Overridable components map

@@ -28,6 +28,7 @@ const ExampleTooltipOverrides: React.FC = () => (
       values={{
         nds: (
           <Tooltip
+            key="nds"
             describeChild
             arrow
             overrides={overrides}

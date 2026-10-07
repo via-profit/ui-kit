@@ -17,7 +17,7 @@ export interface BadgeBaseProps extends Omit<BadgeNativeProps, 'color'> {
    * </Badge>
    * ```
    */
-  readonly startIcon?: JSX.Element;
+  readonly startIcon?: React.JSX.Element;
 
   /**
    * Badge style variant\

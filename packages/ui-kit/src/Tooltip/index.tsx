@@ -4,6 +4,7 @@ import { useTheme } from '@emotion/react';
 import Popper, { AnchorPos } from '../Popper';
 import Container, { TooltipContainerProps } from './TooltipContainer';
 import Arrow, { TooltipArrowProps } from './TooltipArrow';
+import getElementRef from '../utils/getElementRef';
 
 export type TooltipProps = {
   /**
@@ -270,8 +271,7 @@ const Tooltip: React.FC<TooltipProps> = props => {
 
   const child = children as React.ReactElement<ChildProps>;
   const childProps = child.props;
-  // React 18 keeps the ref of the element outside of props
-  childRefRef.current = (child as unknown as { ref?: React.Ref<HTMLElement> }).ref;
+  childRefRef.current = getElementRef<HTMLElement>(child);
 
   if (isEmpty) {
     return child;

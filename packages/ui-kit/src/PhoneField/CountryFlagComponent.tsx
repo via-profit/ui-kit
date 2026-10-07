@@ -4,7 +4,7 @@ import styled from '@emotion/styled';
 import UnknownFlag from './flags/Unknown';
 
 export interface CountryFlagComponentProps extends React.HTMLAttributes<HTMLSpanElement> {
-  readonly flag: JSX.Element | null;
+  readonly flag: React.JSX.Element | null;
 }
 
 const CountryFlagContainer = styled.span`

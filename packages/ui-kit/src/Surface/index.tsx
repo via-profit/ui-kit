@@ -12,17 +12,17 @@ export type SurfaceProps = React.HTMLAttributes<HTMLDivElement> & {
   /**
    * Header content
    */
-  readonly header?: JSX.Element | string;
+  readonly header?: React.JSX.Element | string;
 
   /**
    * Footer content
    */
-  readonly footer?: JSX.Element | string;
+  readonly footer?: React.JSX.Element | string;
 
   /**
    * Subheader content
    */
-  readonly subheader?: JSX.Element | string;
+  readonly subheader?: React.JSX.Element | string;
 
   /**
    * If true then surface will be inline-flex element, and the flex otherwise

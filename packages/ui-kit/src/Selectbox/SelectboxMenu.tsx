@@ -72,4 +72,4 @@ SelectboxMenu.displayName = 'SelectboxMenu';
 
 export default React.memo(SelectboxMenu) as <T, Multiple extends boolean | undefined = undefined>(
   props: SelectbosMenuProps<T, Multiple> & { ref?: React.Ref<MenuRef> },
-) => JSX.Element;
+) => React.JSX.Element;

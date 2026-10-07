@@ -376,7 +376,7 @@ const MenuContainer = React.forwardRef(
     const menuPopperRef = React.useRef<HTMLDivElement | null>(null);
     // Starts as `false` so that a menu mounted in the open state is focused and scrolled too
     const isOpenRef = React.useRef(false);
-    const focusTimeoutRef = React.useRef<NodeJS.Timeout>();
+    const focusTimeoutRef = React.useRef<NodeJS.Timeout | undefined>(undefined);
     // Whether the focus is inside the list: then it is returned to the anchor on close
     const hasFocusRef = React.useRef(false);
     // The parent often resets the anchor together with isOpen, so the last one is kept
@@ -849,4 +849,4 @@ MenuContainer.displayName = 'MenuContainer';
 
 export default MenuContainer as <T, Multiple extends boolean | undefined = undefined>(
   props: MenuProps<T, Multiple> & { ref?: React.Ref<MenuRef> },
-) => JSX.Element;
+) => React.JSX.Element;
