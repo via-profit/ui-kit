@@ -29,6 +29,9 @@
   "/HWodq": {
     "defaultMessage": "Вперёд"
   },
+  "/NzY2d": {
+    "defaultMessage": "Уведомление"
+  },
   "/QEdrE": {
     "defaultMessage": "Новый интерес"
   },
@@ -122,6 +125,9 @@
   "2hGz++": {
     "defaultMessage": "Категории"
   },
+  "2kU8Td": {
+    "defaultMessage": "Радио"
+  },
   "2lYwXC": {
     "defaultMessage": "Дом"
   },
@@ -136,6 +142,9 @@
   },
   "3j6hgF": {
     "defaultMessage": "Новости"
+  },
+  "3j71gx": {
+    "defaultMessage": "Песочница теней"
   },
   "3lJwgX": {
     "defaultMessage": "Кофе"
@@ -173,6 +182,9 @@
   "4pWZK3": {
     "defaultMessage": "Карточка клиента"
   },
+  "4qoG/f": {
+    "defaultMessage": "Наведите"
+  },
   "4yYP4+": {
     "defaultMessage": "Закрыть без сохранения?"
   },
@@ -199,6 +211,9 @@
   },
   "5YiEBf": {
     "defaultMessage": "Скрыть пароль"
+  },
+  "5rbXOS": {
+    "defaultMessage": "Доставляем курьером за 1–2 дня."
   },
   "5zuHOl": {
     "defaultMessage": "Оплата картой или при получении"
@@ -266,6 +281,9 @@
   "8iCGx4": {
     "defaultMessage": "Своя тема внутри блока"
   },
+  "8lab4v": {
+    "defaultMessage": "Диалог"
+  },
   "8xa/OX": {
     "defaultMessage": "Кликни вне этого элемента"
   },
@@ -274,6 +292,9 @@
   },
   "9ZHc7h": {
     "defaultMessage": "Карточка"
+  },
+  "9d1UNt": {
+    "defaultMessage": "Дейтпикер"
   },
   "9q5KsU": {
     "defaultMessage": "Оформлен 30 сентября"
@@ -385,6 +406,9 @@
   },
   "FolXqx": {
     "defaultMessage": "Без согласия оформить заказ нельзя"
+  },
+  "FpItbk": {
+    "defaultMessage": "Ещё вкладка"
   },
   "Fqk/4/": {
     "defaultMessage": "Подсказка"
@@ -524,6 +548,9 @@
   "K8W7JO": {
     "defaultMessage": "Предыдущий"
   },
+  "KCwz6C": {
+    "defaultMessage": "Чекбокс"
+  },
   "KE6C/h": {
     "defaultMessage": "Как оформить возврат?"
   },
@@ -565,6 +592,9 @@
   },
   "Lj9QtT": {
     "defaultMessage": "Показать код"
+  },
+  "Lv9l4a": {
+    "defaultMessage": "Настройки теней"
   },
   "M+Kf3k": {
     "defaultMessage": "2. Доставка"
@@ -623,6 +653,9 @@
   "OELgcW": {
     "defaultMessage": "Повторить заказ"
   },
+  "OUp/N0": {
+    "defaultMessage": "Тестовые"
+  },
   "OWKoN6": {
     "defaultMessage": "Выбран"
   },
@@ -643,6 +676,9 @@
   },
   "PKK8py": {
     "defaultMessage": "Месяц"
+  },
+  "PLEqqz": {
+    "defaultMessage": "Остальные компоненты"
   },
   "PSZlkA": {
     "defaultMessage": "Номера"
@@ -679,6 +715,9 @@
   },
   "QmljCN": {
     "defaultMessage": "Выбрано: {selected}"
+  },
+  "QrUkm1": {
+    "defaultMessage": "3 товара на сумму 4 590 ₽."
   },
   "Qsxk3Q": {
     "defaultMessage": "Продажи за неделю: 312 000 ₽"
@@ -896,6 +935,9 @@
   "Y0B8+n": {
     "defaultMessage": "Выбрано: {name}"
   },
+  "Y6r6Xc": {
+    "defaultMessage": "Найдено: {count}. Это тени, которые не совпадают с тенями темы: свои тени компонентов, ореолы и рамки фокуса."
+  },
   "YDoGnv": {
     "defaultMessage": "Показатели по месяцам"
   },
@@ -919,6 +961,9 @@
   },
   "YefhFq": {
     "defaultMessage": "Балкон и вид на море"
+  },
+  "YjOw9m": {
+    "defaultMessage": "Меню: селектбокс"
   },
   "Yspb5g": {
     "defaultMessage": "Закрыть Popper"
@@ -953,6 +998,9 @@
   "aJ02T/": {
     "defaultMessage": "Кофемолка ручная"
   },
+  "aJd69k": {
+    "defaultMessage": "Всплывающие элементы"
+  },
   "aQZBKQ": {
     "defaultMessage": "Способ оплаты."
   },
@@ -970,6 +1018,9 @@
   },
   "b686fK": {
     "defaultMessage": "1 пользователь, 5 ГБ — бесплатно"
+  },
+  "bDgWYf": {
+    "defaultMessage": "Без теней"
   },
   "bJDmtY": {
     "defaultMessage": "Версия 1.0"
@@ -1045,6 +1096,12 @@
   },
   "dbO5Pa": {
     "defaultMessage": "Кофемашины"
+  },
+  "dbU/du": {
+    "defaultMessage": "Подтверждение"
+  },
+  "dgssxb": {
+    "defaultMessage": "Готово"
   },
   "e1FUEz": {
     "defaultMessage": "Сладости"
@@ -1214,6 +1271,9 @@
   "jZ61+N": {
     "defaultMessage": "Отступы окна берутся из padding.container."
   },
+  "kGBNI6": {
+    "defaultMessage": "Вкладка"
+  },
   "kGHUoT": {
     "defaultMessage": "Чай чёрный, 100 пакетиков"
   },
@@ -1256,6 +1316,12 @@
   "l7R7or": {
     "defaultMessage": "Капельная кофеварка"
   },
+  "lJJnbO": {
+    "defaultMessage": "Выключено"
+  },
+  "lTRdDt": {
+    "defaultMessage": "Подсветить инородные тени"
+  },
   "leJ3w2": {
     "defaultMessage": "Выберите город"
   },
@@ -1292,6 +1358,9 @@
   "me8uDV": {
     "defaultMessage": "Понятно"
   },
+  "mi1Wz2": {
+    "defaultMessage": "Пустое значение — у компонентов остаются свои тени. Любое значение CSS box-shadow."
+  },
   "moXncf": {
     "defaultMessage": "Строка 22.02.2003, разобранная по шаблону {template} — {result}"
   },
@@ -1303,6 +1372,9 @@
   },
   "n9dkXY": {
     "defaultMessage": "Налог на добавленную стоимость, 20%"
+  },
+  "nF7U9G": {
+    "defaultMessage": "Готовые наборы теней"
   },
   "nHs460": {
     "defaultMessage": "Покупатель получит уведомление об отмене."
@@ -1412,6 +1484,9 @@
   "rOQV2n": {
     "defaultMessage": "Страницы каталога"
   },
+  "rkB8ra": {
+    "defaultMessage": "Сообщение"
+  },
   "rrkgFu": {
     "defaultMessage": "Можно ли изменить адрес доставки?"
   },
@@ -1429,6 +1504,9 @@
   },
   "sekdMG": {
     "defaultMessage": "Курьером — {price}"
+  },
+  "sfDpMH": {
+    "defaultMessage": "Текстовое поле"
   },
   "shH3R6": {
     "defaultMessage": "Оливки"
@@ -1490,6 +1568,9 @@
   "v5DznE": {
     "defaultMessage": "Сначала заполните реквизиты"
   },
+  "vHp/j1": {
+    "defaultMessage": "Боковая панель"
+  },
   "vIHPnK": {
     "defaultMessage": "Фамилия"
   },
@@ -1540,6 +1621,9 @@
   },
   "xIW73K": {
     "defaultMessage": "Характеристики"
+  },
+  "xKGpvf": {
+    "defaultMessage": "Включено"
   },
   "xKt1IP": {
     "defaultMessage": "Уровень"
@@ -1616,14 +1700,23 @@
   "zXkVd5": {
     "defaultMessage": "Добавить"
   },
+  "zcNJ4t": {
+    "defaultMessage": "Свои"
+  },
   "zier1/": {
     "defaultMessage": "Удалить"
+  },
+  "zkhJMs": {
+    "defaultMessage": "Панель"
   },
   "zouUZN": {
     "defaultMessage": "H2. Раздел"
   },
   "zpqOid": {
     "defaultMessage": "Плотно"
+  },
+  "zs2aIX": {
+    "defaultMessage": "Поверхности"
   },
   "GwC0+Z": {
     "defaultMessage": "Код страны"
@@ -1735,9 +1828,6 @@
   },
   "n48pl/": {
     "defaultMessage": "Маскированное поле"
-  },
-  "sfDpMH": {
-    "defaultMessage": "Текстовое поле"
   },
   "tfwWYu": {
     "defaultMessage": "Click outside"

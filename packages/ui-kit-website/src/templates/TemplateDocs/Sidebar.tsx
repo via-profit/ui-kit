@@ -214,6 +214,13 @@ const Sidebar: React.ForwardRefRenderFunction<HTMLElement, React.HTMLAttributes<
           {intl.formatMessage({ defaultMessage: 'Песочница отступов' })}
         </Item>
         <Item
+          to="/docs/elevation-playground"
+          $isActive={isActive('/docs/elevation-playground')}
+          aria-current={isActive('/docs/elevation-playground') ? 'page' : undefined}
+        >
+          {intl.formatMessage({ defaultMessage: 'Песочница теней' })}
+        </Item>
+        <Item
           to="/docs/changelog"
           $isActive={isActive('/docs/changelog')}
           aria-current={isActive('/docs/changelog') ? 'page' : undefined}

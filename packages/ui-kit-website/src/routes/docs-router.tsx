@@ -10,6 +10,7 @@ const NotFound = loadable(() => import('~/pages/NotFound/index'));
 const Introduction = loadable(() => import('~/pages/Docs/Introduction'));
 const Showcase = loadable(() => import('~/pages/Docs/Showcase'));
 const Playground = loadable(() => import('~/pages/Docs/Playground'));
+const ElevationPlayground = loadable(() => import('~/pages/Docs/ElevationPlayground'));
 const ButtonOverview = loadable(() => import('~/pages/Docs/Button/ButtonOverview'));
 const ButtonGroupOverview = loadable(() => import('~/pages/Docs/ButtonGroup/ButtonGroupOverview'));
 const SwitchOverview = loadable(() => import('~/pages/Docs/Switch/SwitchOverview'));
@@ -82,6 +83,15 @@ const docsRouter: RouteObject = {
       element: (
         <React.Suspense fallback={<LoadingOverlay />}>
           <Playground />
+        </React.Suspense>
+      ),
+    },
+    {
+      path: 'elevation-playground',
+      caseSensitive: true,
+      element: (
+        <React.Suspense fallback={<LoadingOverlay />}>
+          <ElevationPlayground />
         </React.Suspense>
       ),
     },

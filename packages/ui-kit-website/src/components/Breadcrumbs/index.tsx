@@ -41,6 +41,7 @@ const Breadcrumbs: React.FC = () => {
     '/docs/changelog': intl.formatMessage({ defaultMessage: 'Список изменений' }),
     '/docs/showcase': intl.formatMessage({ defaultMessage: 'Примеры использования' }),
     '/docs/playground': intl.formatMessage({ defaultMessage: 'Песочница отступов' }),
+    '/docs/elevation-playground': intl.formatMessage({ defaultMessage: 'Песочница теней' }),
   };
   const current = staticPages[pathname]
     ? { label: staticPages[pathname] }
