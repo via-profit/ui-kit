@@ -1,6 +1,6 @@
 import { css, Theme } from '@emotion/react';
 
-import type { ThemePadding } from './index';
+import type { ThemePadding, ThemeElevation } from './index';
 
 /**
  * True if the theme sets the focus ring
@@ -33,10 +33,21 @@ export const themeFocusRing = (theme: Theme, selector = '&:focus-visible') => {
 };
 
 /**
- * The shadow of the level: the `elevation` of the theme, or the own shadow of the component
+ * The default shadows of the levels: the components of one level have the same shadow.
+ * In `px`, not in `em`: the tooltip and the toast have a smaller font, but the same shadow as the menu
  */
-export const elevation = (theme: Theme, level: 'popup' | 'surface', own: string) =>
-  theme.elevation[level] ?? own;
+export const defaultElevation = (theme: Theme): Record<ThemeElevation, string> => ({
+  popup: `0 8px 24px ${theme.color.surface.darken(50).alpha(0.6).toString()}`,
+  surface: `0 8px 32px -13px ${theme.color.surface.darken(100).alpha(0.4).toString()}`,
+  control: `0 1px 3px ${theme.color.surface.darken(100).alpha(0.35).toString()}`,
+});
+
+/**
+ * The shadow of the level: the `elevation` of the theme or the default shadow of the level.
+ * `own` replaces the default shadow, the shadow of the theme wins over both
+ */
+export const elevation = (theme: Theme, level: ThemeElevation, own?: string) =>
+  theme.elevation[level] ?? own ?? defaultElevation(theme)[level];
 
 /**
  * The height of the text line in the controls, in the `em` of the control. Set as a length,

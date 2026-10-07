@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from '@emotion/styled';
+import { elevation } from '../ThemeProvider/tokens';
 
 export type AccordionContainerProps = React.HTMLAttributes<HTMLDivElement> & {
   readonly inline?: boolean;
@@ -19,23 +20,7 @@ const StyledAccordionContainer = styled.div<StyledProps>`
   font-size: 1em;
   position: relative;
   margin-top: 1px;
-  box-shadow:
-    ${({ theme }) =>
-        theme.isDark
-          ? theme.color.backgroundSecondary.lighten(80).alpha(0.2).toString()
-          : theme.color.backgroundSecondary.lighten(50).alpha(0.2).toString()}
-      0px 2px 1px -1px,
-    ${({ theme }) =>
-        theme.isDark
-          ? theme.color.backgroundSecondary.lighten(80).alpha(0.14).toString()
-          : theme.color.backgroundSecondary.lighten(50).alpha(0.14).toString()}
-      0px 1px 1px 0px,
-    ${({ theme }) =>
-        theme.isDark
-          ? theme.color.backgroundSecondary.lighten(80).alpha(0.12).toString()
-          : theme.color.backgroundSecondary.lighten(50).alpha(0.12).toString()}
-      0px 1px 3px 0px;
-  ${({ theme }) => theme.elevation.surface && `box-shadow: ${theme.elevation.surface};`}
+  box-shadow: ${({ theme }) => elevation(theme, 'surface')};
 
   /*
    * Adjacent accordions form a group: the inner corners are square.

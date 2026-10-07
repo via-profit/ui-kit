@@ -82,11 +82,12 @@ export interface UIThemeOverrideFocusRing {
 }
 
 /**
- * The shadows. Without these values every component has its own shadow
+ * The shadows by the level of the elements. Without a value the components of the level
+ * get the default shadow of the kit: all of them have the same shadow
  */
 export interface UIThemeOverrideElevation {
   /**
-   * The elements over the page: the menus, the calendar of the date picker, the toasts
+   * The elements over the page: Menu, Calendar, Toast, Tooltip, the modal windows
    */
   readonly popup?: string;
 
@@ -94,7 +95,14 @@ export interface UIThemeOverrideElevation {
    * The cards and the panels on the page: Surface, Accordion, Table
    */
   readonly surface?: string;
+
+  /**
+   * The raised parts of the controls: the knob of the Switch
+   */
+  readonly control?: string;
 }
+
+export type ThemeElevation = keyof UIThemeOverrideElevation;
 
 export interface UIThemeOverrideZIndex {
   readonly header?: number;

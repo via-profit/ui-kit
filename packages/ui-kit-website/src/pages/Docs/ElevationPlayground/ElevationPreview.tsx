@@ -195,7 +195,8 @@ const ElevationPreview: React.FC = () => {
 
       <Section>
         <SectionTitle>
-          <FormattedMessage defaultMessage="Остальные компоненты" />
+          <FormattedMessage defaultMessage="Контролы и остальные компоненты" />{' '}
+          <code>elevation.control</code>
         </SectionTitle>
         <Stack direction="row" wrap gap="md" align="center">
           <Button color="primary">standard</Button>

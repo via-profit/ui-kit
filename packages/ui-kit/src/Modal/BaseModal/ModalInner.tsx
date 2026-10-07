@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from '@emotion/styled';
 import { css } from '@emotion/react';
+import { elevation } from '../../ThemeProvider/tokens';
 
 export interface ModalInnerProps extends React.HTMLAttributes<HTMLDivElement> {
   /**
@@ -25,6 +26,7 @@ const StyledModalInner = styled.div<StyledProps>`
   pointer-events: all;
   position: relative;
   background-color: ${({ theme }) => theme.color.surface.toString()};
+  box-shadow: ${({ theme }) => elevation(theme, 'popup')};
   border-radius: ${({ theme }) => theme.shape.radiusFactor * 2}em;
   margin-top: 2em;
   transition:

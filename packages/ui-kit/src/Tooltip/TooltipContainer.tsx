@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from '@emotion/styled';
 import { keyframes } from '@emotion/react';
+import { elevation } from '../ThemeProvider/tokens';
 
 export type TooltipContainerProps = React.HTMLAttributes<HTMLDivElement>;
 
@@ -26,6 +27,7 @@ const StyledContainer = styled.div`
   overflow-wrap: break-word;
   /* Inverted colors: dark on the light theme, light on the dark one */
   background-color: ${({ theme }) => theme.color.textPrimary.toString()};
+  box-shadow: ${({ theme }) => elevation(theme, 'popup')};
   color: ${({ theme }) => theme.color.surface.toString()};
   animation: ${appear} 120ms ease-out;
 

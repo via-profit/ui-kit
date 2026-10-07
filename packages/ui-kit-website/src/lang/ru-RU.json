@@ -101,6 +101,9 @@
   "1YJ48R": {
     "defaultMessage": "Открыть подтверждение"
   },
+  "1kIBlz": {
+    "defaultMessage": "Найдено: {count}. Это тени, которые не совпадают с тенями уровней: свои тени компонентов, ореолы и рамки фокуса."
+  },
   "1q4ylj": {
     "defaultMessage": "Справа"
   },
@@ -449,6 +452,9 @@
   "Gizjoc": {
     "defaultMessage": "Турка"
   },
+  "GqjTV9": {
+    "defaultMessage": "Контролы и остальные компоненты"
+  },
   "H1Y3Sf": {
     "defaultMessage": "Распродажа"
   },
@@ -676,9 +682,6 @@
   },
   "PKK8py": {
     "defaultMessage": "Месяц"
-  },
-  "PLEqqz": {
-    "defaultMessage": "Остальные компоненты"
   },
   "PSZlkA": {
     "defaultMessage": "Номера"
@@ -935,9 +938,6 @@
   "Y0B8+n": {
     "defaultMessage": "Выбрано: {name}"
   },
-  "Y6r6Xc": {
-    "defaultMessage": "Найдено: {count}. Это тени, которые не совпадают с тенями темы: свои тени компонентов, ореолы и рамки фокуса."
-  },
   "YDoGnv": {
     "defaultMessage": "Показатели по месяцам"
   },
@@ -1075,6 +1075,9 @@
   },
   "cgAw8y": {
     "defaultMessage": "Введите номер полностью"
+  },
+  "ckccZa": {
+    "defaultMessage": "Пустое значение — тень уровня по умолчанию. Любое значение CSS box-shadow."
   },
   "cnYtq/": {
     "defaultMessage": "Заказ пришёл на следующий день, всё аккуратно упаковано. Буду заказывать ещё."
@@ -1357,9 +1360,6 @@
   },
   "me8uDV": {
     "defaultMessage": "Понятно"
-  },
-  "mi1Wz2": {
-    "defaultMessage": "Пустое значение — у компонентов остаются свои тени. Любое значение CSS box-shadow."
   },
   "moXncf": {
     "defaultMessage": "Строка 22.02.2003, разобранная по шаблону {template} — {result}"

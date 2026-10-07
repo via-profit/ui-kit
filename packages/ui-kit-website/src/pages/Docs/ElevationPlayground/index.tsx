@@ -7,6 +7,7 @@ import ButtonGroup from '@via-profit/ui-kit/src/ButtonGroup';
 import Switch from '@via-profit/ui-kit/src/Switch';
 import TextField from '@via-profit/ui-kit/src/TextField';
 import ThemeProvider from '@via-profit/ui-kit/src/ThemeProvider';
+import { defaultElevation } from '@via-profit/ui-kit/src/ThemeProvider/tokens';
 
 import DocsArticle from '~/components/DocsArticle';
 import RenderMarkdown from '~/components/RenderMarkdown';
@@ -16,7 +17,10 @@ import content from './README.md';
 type Elevation = {
   readonly popup: string;
   readonly surface: string;
+  readonly control: string;
 };
+
+const LEVELS = ['popup', 'surface', 'control'] as const;
 
 type PresetName = 'own' | 'test' | 'none';
 
@@ -27,12 +31,13 @@ type Finding = {
 
 // Bright and unusual: any other shadow on the screen is not from the theme
 const PRESETS: Record<PresetName, Elevation> = {
-  own: { popup: '', surface: '' },
+  own: { popup: '', surface: '', control: '' },
   test: {
     popup: '0 0 0 3px rgb(255, 0, 170), 0 12px 32px rgba(255, 0, 170, 0.45)',
     surface: '0 0 0 3px rgb(0, 200, 120), 0 8px 20px rgba(0, 200, 120, 0.4)',
+    control: '0 0 0 3px rgb(255, 170, 0)',
   },
-  none: { popup: 'none', surface: 'none' },
+  none: { popup: 'none', surface: 'none', control: 'none' },
 };
 
 const FOREIGN_ATTRIBUTE = 'data-foreign-shadow';
@@ -146,9 +151,8 @@ const ElevationPlayground: React.FC = () => {
   const [findings, setFindings] = React.useState<readonly Finding[]>([]);
 
   const preset =
-    (Object.keys(PRESETS) as PresetName[]).find(
-      name =>
-        PRESETS[name].popup === elevation.popup && PRESETS[name].surface === elevation.surface,
+    (Object.keys(PRESETS) as PresetName[]).find(name =>
+      LEVELS.every(level => PRESETS[name][level] === elevation[level]),
     ) || null;
 
   const previewTheme = React.useMemo(
@@ -157,6 +161,7 @@ const ElevationPlayground: React.FC = () => {
       elevation: {
         popup: elevation.popup || undefined,
         surface: elevation.surface || undefined,
+        control: elevation.control || undefined,
       },
     }),
     [theme, elevation],
@@ -178,10 +183,11 @@ const ElevationPlayground: React.FC = () => {
       return;
     }
 
-    const allowed = [
-      computeShadow(elevation.popup, root),
-      computeShadow(elevation.surface, root),
-    ].filter(value => value && value !== 'none');
+    // Without a value the level has the default shadow of the kit
+    const defaults = defaultElevation(previewTheme);
+    const allowed = LEVELS.map(level =>
+      computeShadow(elevation[level] || defaults[level], root),
+    ).filter(value => value && value !== 'none');
     const app = document.getElementById('app');
     const portals = [...document.body.children].filter(element => element !== app);
     const elements = [root, ...portals].flatMap(container => [...container.querySelectorAll('*')]);
@@ -195,7 +201,7 @@ const ElevationPlayground: React.FC = () => {
       }
     });
     setFindings(found);
-  }, [highlight, elevation]);
+  }, [highlight, elevation, previewTheme]);
 
   // The popups open and close at any time: scan regularly
   React.useEffect(() => {
@@ -239,21 +245,20 @@ const ElevationPlayground: React.FC = () => {
             <Hint>
               {intl.formatMessage({
                 defaultMessage:
-                  'Пустое значение — у компонентов остаются свои тени. Любое значение CSS box-shadow.',
+                  'Пустое значение — тень уровня по умолчанию. Любое значение CSS box-shadow.',
               })}
             </Hint>
-            <TextField
-              fullWidth
-              label="elevation.popup"
-              value={elevation.popup}
-              onChange={event => setElevation({ ...elevation, popup: event.currentTarget.value })}
-            />
-            <TextField
-              fullWidth
-              label="elevation.surface"
-              value={elevation.surface}
-              onChange={event => setElevation({ ...elevation, surface: event.currentTarget.value })}
-            />
+            {LEVELS.map(level => (
+              <TextField
+                key={level}
+                fullWidth
+                label={`elevation.${level}`}
+                value={elevation[level]}
+                onChange={event =>
+                  setElevation({ ...elevation, [level]: event.currentTarget.value })
+                }
+              />
+            ))}
             <Switch checked={highlight} onChange={() => setHighlight(!highlight)}>
               {intl.formatMessage({ defaultMessage: 'Подсветить инородные тени' })}
             </Switch>
@@ -263,7 +268,7 @@ const ElevationPlayground: React.FC = () => {
                   {intl.formatMessage(
                     {
                       defaultMessage:
-                        'Найдено: {count}. Это тени, которые не совпадают с тенями темы: свои тени компонентов, ореолы и рамки фокуса.',
+                        'Найдено: {count}. Это тени, которые не совпадают с тенями уровней: свои тени компонентов, ореолы и рамки фокуса.',
                     },
                     { count: findings.length },
                   )}

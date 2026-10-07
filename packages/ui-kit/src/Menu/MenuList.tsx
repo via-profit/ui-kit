@@ -22,12 +22,7 @@ const StyledMenuList = styled.div<{
   opacity: ${props => (props.$isOpen ? 1 : 0)};
   background-color: ${({ theme }) => theme.color.surface.toString()};
   border-radius: ${({ theme }) => theme.shape.radiusFactor * 2}em;
-  box-shadow: ${({ theme }) =>
-    elevation(
-      theme,
-      'popup',
-      `0 0.5em 1.5em ${theme.color.surface.darken(50).alpha(0.6).toString()}`,
-    )};
+  box-shadow: ${({ theme }) => elevation(theme, 'popup')};
 
   ${({ $maxWidth }) => {
     if (typeof $maxWidth === 'number') {

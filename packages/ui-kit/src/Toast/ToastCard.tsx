@@ -49,8 +49,7 @@ const StyledCard = styled.div<{ $position: ToastPosition; $isClosing: boolean }>
   border: 1px solid ${({ theme }) => theme.color.textPrimary.alpha(0.08).toString()};
   background-color: ${({ theme }) => theme.color.surface.toString()};
   color: ${({ theme }) => theme.color.textPrimary.toString()};
-  box-shadow: ${({ theme }) =>
-    elevation(theme, 'popup', `0 0.5em 1.5em rgba(0, 0, 0, ${theme.isDark ? 0.5 : 0.14})`)};
+  box-shadow: ${({ theme }) => elevation(theme, 'popup')};
   font-size: 0.875em;
   line-height: 1.4;
   pointer-events: auto;

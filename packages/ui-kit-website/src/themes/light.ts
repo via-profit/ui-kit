@@ -57,8 +57,9 @@ const light: UIThemeOverrides = {
   // Empty: every component keeps its own focus. With `width` or `color` all of them get the same outline,
   // e.g. `{ width: '2px', offset: '1px', color: '#1f6fd6' }`
   focusRing: {},
-  // Empty: every component keeps its own shadow,
-  // e.g. `{ popup: '0 8px 24px rgba(0, 0, 0, 0.14)', surface: '0 1px 3px rgba(0, 0, 0, 0.08)' }`
+  // Empty: the components get the default shadows of the kit, the same for every level,
+  // e.g. `{ popup: '0 8px 24px rgba(0, 0, 0, 0.14)', surface: '0 1px 3px rgba(0, 0, 0, 0.08)',
+  // control: '0 1px 2px rgba(0, 0, 0, 0.2)' }`
   elevation: {},
 };
 

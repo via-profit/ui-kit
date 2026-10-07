@@ -12,12 +12,7 @@ const StyledCalendarPaper = styled.div`
   justify-content: stretch;
   background-color: ${({ theme }) => theme.color.surface.toString()};
   border-radius: ${({ theme }) => theme.shape.radiusFactor}em;
-  box-shadow: ${({ theme }) =>
-    elevation(
-      theme,
-      'popup',
-      `0 4px 24px ${theme.color.surface.darken(50).alpha(0.6).toString()}`,
-    )};
+  box-shadow: ${({ theme }) => elevation(theme, 'popup')};
 `;
 
 const CalendarPaper: React.ForwardRefRenderFunction<HTMLDivElement, CalendarPaperProps> = (

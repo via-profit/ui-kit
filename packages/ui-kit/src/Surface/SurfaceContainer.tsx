@@ -21,12 +21,7 @@ const StyledSurfaceContainer = styled.div<StyledProps>`
   flex-direction: column;
   background: ${({ theme }) => theme.color.surface.toString()};
   color: ${({ theme }) => theme.color.textPrimary.toString()};
-  box-shadow: ${({ theme }) =>
-    elevation(
-      theme,
-      'surface',
-      `0 0.5em 2em -0.8em ${theme.color.surface.darken(100).alpha(0.4).toString()}`,
-    )};
+  box-shadow: ${({ theme }) => elevation(theme, 'surface')};
   border-radius: ${({ theme }) => theme.shape.radiusFactor}em;
   font-size: 1em;
 
