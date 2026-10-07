@@ -7,6 +7,7 @@ import ExamplePhoneFieldOverview from '~/examples/phone-field/ExamplePhoneFieldO
 import ExamplePhoneFieldValidation from '~/examples/phone-field/ExamplePhoneFieldValidation';
 import ExamplePhoneFieldTemplates from '~/examples/phone-field/ExamplePhoneFieldTemplates';
 import ExamplePhoneFieldFormat from '~/examples/phone-field/ExamplePhoneFieldFormat';
+import ExamplePhoneFieldOverrides from '~/examples/phone-field/ExamplePhoneFieldOverrides';
 import content from '@via-profit/ui-kit/docs/phone-field/README.md';
 
 const PhoneFieldOverview: React.FC = () => (
@@ -18,6 +19,7 @@ const PhoneFieldOverview: React.FC = () => (
           ExamplePhoneFieldValidation,
           ExamplePhoneFieldTemplates,
           ExamplePhoneFieldFormat,
+          ExamplePhoneFieldOverrides,
         }}
       >
         {content}

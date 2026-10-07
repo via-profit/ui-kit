@@ -9,6 +9,7 @@
 - [Сообщение](#сообщение)
 - [Боковая панель](#боковая-панель)
 - [Поведение](#поведение)
+- [Переопределение](#переопределение)
 - [Свойства](#свойства)
 
 ## Описание
@@ -218,6 +219,56 @@ _Пример использования:_
 - Для программ чтения с экрана окна имеют роль `dialog` (подтверждение — `alertdialog`) и атрибут `aria-modal`, а заголовок окна связан с ним через `aria-labelledby`.
 - Окно открывается и закрывается с анимацией. После закрытия содержимое остаётся в DOM ещё `destroyTimeout` миллисекунд, чтобы анимация успела закончиться.
 
+## Переопределение
+
+Каждый вид окна является составным и реализован при помощи следующих компонентов:
+
+- `dialog`:
+  - `<Overlay>` — затемнённый фон;
+  - `<InnerContainer>` — слой поверх фона, который центрирует окно;
+  - `<Inner>` — окно с содержимым;
+- `confirm-box`, `message-box`, `drawer`:
+  - `<Overlay>` — затемнённый фон;
+  - `<Container>` — окно или панель;
+  - `<Header>` — заголовок;
+  - `<Content>` — содержимое;
+  - `<Footer>` — кнопки или подвал.
+
+Используйте свойство `overrides`, чтобы переопределить один или несколько компонентов. Проще всего расширить стандартный компонент с помощью `styled`. Создавайте переопределения один раз — вне компонента, а не при рендере.
+
+Окно диалога удобнее оформлять через `InnerContainer`: замена `Inner` убирает разметку диалога для программ чтения с экрана (`role="dialog"`, `aria-modal`, связь с заголовком).
+
+_Пример использования:_ размытый фон вместо затемнённого.
+
+```tsx
+import React from 'react';
+import styled from '@emotion/styled';
+import Modal from '@via-profit/ui-kit/Modal';
+import ModalOverlay from '@via-profit/ui-kit/Modal/BaseModal/ModalOverlay';
+
+const Overlay = styled(ModalOverlay)`
+  background-color: rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(6px);
+`;
+
+// Created once, outside of the component
+const overrides = { Overlay };
+
+const Example: React.FC = () => {
+  const [isOpen, setIsOpen] = React.useState(false);
+
+  return (
+    <Modal variant="dialog" isOpen={isOpen} overrides={overrides} onRequestClose={() => setIsOpen(false)}>
+      Фон за окном размыт, а не затемнён.
+    </Modal>
+  );
+};
+
+export default Example;
+```
+
+<ExampleModalOverrides />
+
 ## Свойства
 
 ### Общие свойства
@@ -343,7 +394,7 @@ _Пример использования:_
 
 ### `overrides`
 
-Каждый вид окна является составным, и его части можно переопределить свойством `overrides`. Создавайте переопределения один раз — вне компонента, а не при рендере.
+Части окна, которые заменяют стандартные. Подробнее в разделе [Переопределение](#переопределение).
 
-- `dialog`: `Overlay` (фон), `InnerContainer` (слой, центрирующий окно), `Inner` (окно);
+- `dialog`: `Overlay`, `InnerContainer`, `Inner`;
 - `confirm-box`, `message-box`, `drawer`: `Overlay`, `Container`, `Header`, `Content`, `Footer`.

@@ -9,6 +9,7 @@ import ExampleMaskedFieldValidation from '~/examples/masked-field/ExampleMaskedF
 import ExampleMaskedFieldValue from '~/examples/masked-field/ExampleMaskedFieldValue';
 import ExampleMaskedFieldDynamic from '~/examples/masked-field/ExampleMaskedFieldDynamic';
 import ExampleMaskedFieldTransform from '~/examples/masked-field/ExampleMaskedFieldTransform';
+import ExampleMaskedFieldOverrides from '~/examples/masked-field/ExampleMaskedFieldOverrides';
 
 const MaskedFieldOverview: React.FC = () => (
   <>
@@ -20,6 +21,7 @@ const MaskedFieldOverview: React.FC = () => (
           ExampleMaskedFieldValue,
           ExampleMaskedFieldDynamic,
           ExampleMaskedFieldTransform,
+          ExampleMaskedFieldOverrides,
         }}
       >
         {content}

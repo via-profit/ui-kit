@@ -11,6 +11,7 @@
 - [Готовые маски](#готовые-маски)
 - [Собственный разбор ввода](#собственный-разбор-ввода)
 - [Хук useMasked](#хук-usemasked)
+- [Переопределение](#переопределение)
 - [Свойства](#свойства)
 
 ## Описание
@@ -280,6 +281,59 @@ const Phone: React.FC<{ readonly value: string }> = ({ value }) => {
 - `parseInput(value, mask, caret?)` — первый шаг: оставляет символы, подходящие под маску. Возвращает `{ text, caret }`;
 - `formatParsedInput(parsedValue, mask, caret)` — второй шаг: расставляет постоянные символы. Возвращает `{ text, caret, isValid }`;
 - `parseAndFormat(value, mask, caret?)` — оба шага сразу. Возвращает `{ text, caret, isValid }`.
+
+## Переопределение
+
+`<MaskedField>` построен на [`<TextField>`](../text-field/README.md#переопределение) и состоит из тех же компонентов:
+
+- `<Container>` — корневой элемент; получает `className` и `style`
+- `<Label>` — подпись `<label>`
+- `<Asterisk>` — звёздочка обязательного поля
+- `<InputWrapper>` — рамка вокруг поля и иконок
+- `<IconWrapper>` — обёртка `startIcon` и `endIcon`
+- `<Input>` — элемент `<input>`
+- `<ErrorText>` — текст ошибки
+
+Используйте свойство `overrides`, чтобы переопределить один или несколько компонентов. Проще всего расширить стандартный компонент с помощью `styled`. Создавайте переопределения один раз — вне компонента: компонент, созданный прямо при рендере, React считает новым на каждом рендере, и поле теряет фокус при вводе.
+
+_Пример использования:_ моноширинные цифры, чтобы группы номера карты стояли ровно.
+
+```tsx
+import React from 'react';
+import styled from '@emotion/styled';
+import MaskedField, { FormatParsedPayload, Mask } from '@via-profit/ui-kit/MaskedField';
+import TextFieldInput from '@via-profit/ui-kit/TextField/TextFieldInput';
+
+const digits = [/\d/, /\d/, /\d/, /\d/];
+const cardMask: Mask = [...digits, ' ', ...digits, ' ', ...digits, ' ', ...digits];
+
+const Input = styled(TextFieldInput)`
+  font-family: ui-monospace, 'SFMono-Regular', Menlo, monospace;
+  letter-spacing: 0.08em;
+`;
+
+// Created once, outside of the component
+const overrides = { Input };
+
+const Example: React.FC = () => {
+  const [payload, setPayload] = React.useState<FormatParsedPayload | null>(null);
+
+  return (
+    <MaskedField
+      label="Номер карты"
+      placeholder="0000 0000 0000 0000"
+      mask={cardMask}
+      value={payload?.text ?? ''}
+      overrides={overrides}
+      onChange={setPayload}
+    />
+  );
+};
+
+export default Example;
+```
+
+<ExampleMaskedFieldOverrides />
 
 ## Свойства
 

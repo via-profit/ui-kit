@@ -8,6 +8,7 @@
 - [Проверка заполненности](#проверка-заполненности)
 - [Свои шаблоны](#свои-шаблоны)
 - [Хук usePhoneUtils](#хук-usephoneutils)
+- [Переопределение](#переопределение)
 - [Свойства](#свойства)
 
 ## Описание
@@ -208,6 +209,60 @@ const Phone: React.FC<{ readonly value: string }> = ({ value }) => {
 - `parseInput(value, caret?)` — оставляет в строке только цифры и `+`. Возвращает `{ text, caret }`;
 - `formatParsedInput(parsedValue, caret, defaultCountry?)` — форматирует результат `parseInput`. Возвращает то же, что `parseAndFormat`. Для пустой строки возвращает данные шаблона страны `defaultCountry` (или запасного шаблона);
 - `validateParsedInput(value, template)` — сравнивает количество цифр в строке и в шаблоне.
+
+## Переопределение
+
+`<PhoneField>` построен на [`<TextField>`](../text-field/README.md#переопределение) и состоит из тех же компонентов:
+
+- `<Container>` — корневой элемент; получает `className` и `style`
+- `<Label>` — подпись `<label>`
+- `<Asterisk>` — звёздочка обязательного поля
+- `<InputWrapper>` — рамка вокруг поля и иконок
+- `<IconWrapper>` — обёртка `startIcon` и `endIcon`; в начале поля в ней стоит флаг страны
+- `<Input>` — элемент `<input>`
+- `<ErrorText>` — текст ошибки
+
+Используйте свойство `overrides`, чтобы переопределить один или несколько компонентов. Проще всего расширить стандартный компонент с помощью `styled`. Создавайте переопределения один раз — вне компонента: компонент, созданный прямо при рендере, React считает новым на каждом рендере, и поле теряет фокус при вводе.
+
+_Пример использования:_ скруглённое поле.
+
+```tsx
+import React from 'react';
+import styled from '@emotion/styled';
+import PhoneField, { PhonePayload } from '@via-profit/ui-kit/PhoneField';
+import templates from '@via-profit/ui-kit/PhoneField/templates';
+import TextFieldInputWrapper from '@via-profit/ui-kit/TextField/TextFieldInputWrapper';
+import TextFieldLabel from '@via-profit/ui-kit/TextField/TextFieldLabel';
+
+const InputWrapper = styled(TextFieldInputWrapper)`
+  border-radius: 2em;
+`;
+
+const Label = styled(TextFieldLabel)`
+  padding-left: 1.2em;
+`;
+
+// Created once, outside of the component
+const overrides = { InputWrapper, Label };
+
+const Example: React.FC = () => {
+  const [payload, setPayload] = React.useState<PhonePayload | null>(null);
+
+  return (
+    <PhoneField
+      label="Телефон для связи"
+      templates={templates}
+      value={payload?.value ?? ''}
+      overrides={overrides}
+      onChange={(_event, newPayload) => setPayload(newPayload)}
+    />
+  );
+};
+
+export default Example;
+```
+
+<ExamplePhoneFieldOverrides />
 
 ## Свойства
 

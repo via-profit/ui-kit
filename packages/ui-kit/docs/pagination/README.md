@@ -8,7 +8,7 @@
 - [Кнопки навигации и размер](#кнопки-навигации-и-размер)
 - [Оформление](#оформление)
 - [Пагинация таблицы](#пагинация-таблицы)
-- [Ссылки вместо кнопок](#ссылки-вместо-кнопок)
+- [Переопределение](#переопределение)
 - [Своя пагинация](#своя-пагинация)
 - [Доступность](#доступность)
 - [Свойства](#свойства)
@@ -108,13 +108,37 @@ const visible = orders.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
 <ExamplePaginationTable />
 
-## Ссылки вместо кнопок
+## Переопределение
 
-Пагинация состоит из частей: `Container` — элемент `<nav>`, `Item` — кнопка страницы или навигации, `Gap` — пропуск `…`. Свойство `overrides` заменяет любые из них.
+Компонент `<Pagination>` является составным и реализован при помощи следующих компонентов:
+
+- `<Container>` — элемент `<nav>`; получает все атрибуты, переданные в `<Pagination>`
+- `<Item>` — кнопка страницы или навигации
+- `<Gap>` — пропуск `…`
+
+Используйте свойство `overrides`, чтобы переопределить один или несколько компонентов. Проще всего расширить стандартный компонент с помощью `styled`. Создавайте переопределения один раз — вне компонента, а не при рендере.
+
+_Пример использования:_ круглые кнопки.
+
+```tsx
+import styled from '@emotion/styled';
+import Pagination, { PaginationItem } from '@via-profit/ui-kit/Pagination';
+
+const RoundItem = styled(PaginationItem)`
+  && {
+    border-radius: 50%;
+  }
+`;
+
+// Created once, outside of the component
+const overrides = { Item: RoundItem };
+
+<Pagination count={10} defaultPage={4} overrides={overrides} />;
+```
+
+### Ссылки вместо кнопок
 
 `Item` получает `kind` — что делает кнопка (`page`, `first`, `previous`, `next`, `last`), и `page` — какую страницу она открывает. Так кнопку можно заменить ссылкой: страницу можно открыть в новой вкладке, а поисковые системы проходят по ссылкам. Для роутера отрисуйте его компонент ссылки, например `Link` из react-router.
-
-Создавайте объект `overrides` один раз — вне компонента, а не при рендере.
 
 ```tsx
 import Pagination, { PaginationItemProps, PaginationOverrides } from '@via-profit/ui-kit/Pagination';
@@ -148,19 +172,6 @@ const overrides: PaginationOverrides = { Item: LinkItem };
 ```
 
 <ExamplePaginationLinks />
-
-Чтобы изменить вид стандартной кнопки, расширьте её через `styled`:
-
-```tsx
-import styled from '@emotion/styled';
-import { PaginationItem } from '@via-profit/ui-kit/Pagination';
-
-const RoundItem = styled(PaginationItem)`
-  && {
-    border-radius: 50%;
-  }
-`;
-```
 
 ## Своя пагинация
 
@@ -319,7 +330,7 @@ const { page, count, items, setPage } = usePagination({
 
 ### `overrides`
 Части пагинации, которые заменяют стандартные.
-- Тип: `{ Container?, Item?, Gap? }`
+- Тип: `{ Container?, Item?, Gap? }`, подробнее в разделе [Переопределение](#переопределение)
 - По умолчанию: `undefined`
 - Обязательное: нет
 
