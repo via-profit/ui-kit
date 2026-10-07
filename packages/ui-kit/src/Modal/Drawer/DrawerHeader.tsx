@@ -4,6 +4,7 @@ import styled from '@emotion/styled';
 import Span from '../../Typography/Span';
 import DrawerCloseIcon from './DrawerCloseIcon';
 import Button from '../../Button';
+import { themePadding } from '../../ThemeProvider/tokens';
 
 export type DrawerHeaderProps = Omit<React.HTMLAttributes<HTMLDivElement>, 'title'> & {
   /**
@@ -36,7 +37,11 @@ export type DrawerHeaderProps = Omit<React.HTMLAttributes<HTMLDivElement>, 'titl
 };
 
 const StyledDrawerHeader = styled.div`
-  padding: 1em;
+  padding: ${({ theme }) => {
+    const { y, x } = themePadding(theme, 'container');
+
+    return `${y} ${x}`;
+  }};
   display: flex;
   align-items: center;
   justify-content: space-between;

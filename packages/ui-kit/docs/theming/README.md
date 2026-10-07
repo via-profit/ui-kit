@@ -6,6 +6,7 @@
 - [Создание темы](#создание-темы)
 - [Параметры темы](#параметры-темы)
 - [Шкала отступов](#шкала-отступов)
+- [Внутренние отступы](#внутренние-отступы)
 - [Оформление компонентов](#оформление-компонентов)
 - [Тёмная тема](#тёмная-тема)
 - [Использование темы](#использование-темы)
@@ -104,6 +105,11 @@ const theme = createTheme({
 - Тип: `{ xs?: string; sm?: string; md?: string; lg?: string; xl?: string }`
 - По умолчанию: `0.25em`, `0.5em`, `1em`, `1.5em`, `2em`
 
+### `padding`
+Внутренние отступы компонентов по классам элементов: `control`, `item`, `container`. Подробнее в разделе [Внутренние отступы](#внутренние-отступы).
+- Тип: `{ control?: { y?: string; x?: string }; item?: …; container?: … }`
+- По умолчанию: `control` — `0.75em` / `1em`, `item` — `0.6em` / `0.8em`, `container` — `1em` / `1em`
+
 ### `zIndex`
 Значения `z-index`.
 - `header` — шапка приложения. По умолчанию `8`
@@ -158,6 +164,33 @@ const Card = styled.div`
   padding: ${({ theme }) => theme.spacing.md};
 `;
 ```
+
+## Внутренние отступы
+
+Все размеры компонентов заданы в `em`, поэтому от размера шрифта интерфейс растёт равномерно. `theme.padding` меняет другое — плотность: сколько воздуха внутри элементов при том же тексте. Например, для небольших экранов ноутбуков отступы можно уменьшить, не уменьшая шрифт.
+
+Отступы разделены на три класса, у каждого `y` — сверху и снизу, `x` — слева и справа:
+
+- `control` — контролы: `Button`, `TextField`, `TextArea`, `Selectbox`, `DatePicker`, `Autocomplete`. `y` задаёт их высоту: все контролы одной высоты при любом значении, поэтому кнопка и поле в одной строке совпадают;
+- `item` — строки списков: пункты меню, ячейки таблицы, вкладки;
+- `container` — содержимое панелей: `Surface`, `Accordion`, модальные окна, `Drawer`, уведомления.
+
+Значения — любые длины CSS. Лучше задавать их в `em`, тогда отступы по-прежнему растут вместе со шрифтом. Можно переопределить один класс или одну ось:
+
+```tsx
+import { createTheme } from '@via-profit/ui-kit/ThemeProvider';
+
+// A dense interface for small laptops: the font size is the same
+const theme = createTheme({
+  padding: {
+    control: { y: '0.5em', x: '0.8em' },
+    item: { y: '0.4em' },
+    container: { y: '0.75em', x: '0.75em' },
+  },
+});
+```
+
+Как отступы влияют на компоненты, можно посмотреть в [песочнице](../playground/README.md).
 
 ## Оформление компонентов
 
@@ -279,6 +312,7 @@ declare module '@via-profit/ui-kit' {
 - `UIThemeOverrideZIndex` — значения `z-index` (`zIndex`);
 - `UIThemeOverrideShape` — параметры форм (`shape`);
 - `UIThemeOverrideFontSize` — размеры шрифта (`fontSize`);
+- `UIThemeOverridePadding` — внутренние отступы (`padding`);
 - `UIThemeOverrideTypography`, `UIThemeOverrideFocusRing`, `UIThemeOverrideElevation` — шрифт, рамка фокуса и тени;
 - `UIThemeOverrides` — параметры `createTheme` целиком; `UITheme` — готовая тема.
 

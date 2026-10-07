@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from '@emotion/styled';
+import { themePadding } from '../ThemeProvider/tokens';
 
 export type SurfaceSubheaderProps = React.HTMLAttributes<HTMLDivElement> & {
   readonly noPadding?: boolean;
@@ -11,8 +12,12 @@ type StyleProps = {
 };
 
 const StyledHeader = styled.div<StyleProps>`
-  padding: ${({ $noPadding }) => ($noPadding ? '0' : '0.5em 1rem 0 1rem')};
-  font-size: 0.9rem;
+  padding: ${({ $noPadding, theme }) => {
+    const { y, x } = themePadding(theme, 'container', 0.9);
+
+    return $noPadding ? '0' : `calc(${y} / 2) ${x} 0 ${x}`;
+  }};
+  font-size: 0.9em;
   font-weight: 200;
   color: ${({ theme }) => theme.color.textSecondary.toString()};
 `;

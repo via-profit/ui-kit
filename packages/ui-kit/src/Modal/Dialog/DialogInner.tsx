@@ -2,6 +2,7 @@ import React from 'react';
 import styled from '@emotion/styled';
 
 import BaseModalInner, { ModalInnerProps } from '../BaseModal/ModalInner';
+import { themePadding } from '../../ThemeProvider/tokens';
 
 export type DialogInnerProps = ModalInnerProps &
   React.RefAttributes<HTMLDivElement> & {
@@ -12,7 +13,11 @@ export type DialogInnerProps = ModalInnerProps &
   };
 
 const StyledDialogInner = styled(BaseModalInner)`
-  padding: 1em 1em;
+  padding: ${({ theme }) => {
+    const { y, x } = themePadding(theme, 'container');
+
+    return `${y} ${x}`;
+  }};
 `;
 
 const DialogInner: React.ForwardRefRenderFunction<HTMLDivElement, DialogInnerProps> = (

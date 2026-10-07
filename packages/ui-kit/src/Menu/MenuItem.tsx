@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from '@emotion/styled';
 import { css } from '@emotion/react';
+import { themePadding } from '../ThemeProvider/tokens';
 
 export type MenuItemProps = React.HTMLAttributes<HTMLDivElement> & {
   /**
@@ -34,7 +35,11 @@ const StyledMenuItem = styled.div<{ selected?: boolean; hovered?: boolean }>`
   user-select: none;
   display: flex;
   align-items: center;
-  padding: 0.4em 0.8em;
+  padding: ${({ theme }) => {
+    const { y, x } = themePadding(theme, 'item');
+
+    return `${y} ${x}`;
+  }};
   transition: all 240ms ease-out;
   border-radius: ${({ theme }) => theme.shape.radiusFactor}em;
   background-color: ${({ theme, selected, hovered }) => {

@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from '@emotion/styled';
+import { themePadding } from '../ThemeProvider/tokens';
 
 export type AccordionActionsProps = React.HTMLAttributes<HTMLDivElement> & {
   readonly noPadding?: boolean;
@@ -13,7 +14,8 @@ const StyledActions = styled.div<StyleProps>`
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  padding: ${({ $noPadding }) => ($noPadding ? '0' : '1rem 0')};
+  padding: ${({ $noPadding, theme }) =>
+    $noPadding ? '0' : `${themePadding(theme, 'container').y} 0`};
   border-bottom-left-radius: inherit;
   border-bottom-right-radius: inherit;
 `;

@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from '@emotion/styled';
+import { themePadding } from '../../ThemeProvider/tokens';
 
 export type ConfirmBoxHeaderProps = React.HTMLAttributes<HTMLDivElement> & {
   /**
@@ -9,7 +10,11 @@ export type ConfirmBoxHeaderProps = React.HTMLAttributes<HTMLDivElement> & {
 };
 
 const StyedConfirmBoxHeader = styled.div`
-  padding: 1em 1em 0 1em;
+  padding: ${({ theme }) => {
+    const { y, x } = themePadding(theme, 'container');
+
+    return `${y} ${x} 0 ${x}`;
+  }};
 `;
 
 const ConfirmBoxTitle = styled.div`

@@ -39,6 +39,27 @@ const light: UIThemeOverrides = {
   shape: {
     radiusFactor: 0.5,
   },
+  spacing: {
+    xs: '0.25em',
+    sm: '0.5em',
+    md: '1em',
+    lg: '1.5em',
+    xl: '2em',
+  },
+  padding: {
+    control: { y: '0.75em', x: '1em' },
+    item: { y: '0.6em', x: '0.8em' },
+    container: { y: '1em', x: '1em' },
+  },
+  typography: {
+    fontFamily: 'Inter, system-ui, -apple-system, Segoe UI, sans-serif',
+  },
+  // Empty: every component keeps its own focus. With `width` or `color` all of them get the same outline,
+  // e.g. `{ width: '2px', offset: '1px', color: '#1f6fd6' }`
+  focusRing: {},
+  // Empty: every component keeps its own shadow,
+  // e.g. `{ popup: '0 8px 24px rgba(0, 0, 0, 0.14)', surface: '0 1px 3px rgba(0, 0, 0, 0.08)' }`
+  elevation: {},
 };
 
 export default light;

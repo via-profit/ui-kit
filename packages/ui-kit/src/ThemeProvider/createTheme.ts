@@ -9,6 +9,7 @@ export const createTheme: CreateTheme = overrides => {
     color,
     shape,
     spacing,
+    padding,
     typography,
     focusRing,
     elevation,
@@ -48,6 +49,11 @@ export const createTheme: CreateTheme = overrides => {
       lg: '1.5em',
       xl: '2em',
       ...spacing,
+    },
+    padding: {
+      control: { y: '0.75em', x: '1em', ...padding?.control },
+      item: { y: '0.6em', x: '0.8em', ...padding?.item },
+      container: { y: '1em', x: '1em', ...padding?.container },
     },
   };
 

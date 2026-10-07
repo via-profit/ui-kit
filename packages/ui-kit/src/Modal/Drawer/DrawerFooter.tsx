@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from '@emotion/styled';
 import { AnchorVariant } from './DrawerInner';
+import { themePadding } from '../../ThemeProvider/tokens';
 
 export type DrawerFooterProps = React.HTMLAttributes<HTMLDivElement> & {
   /**
@@ -13,7 +14,11 @@ export type DrawerFooterProps = React.HTMLAttributes<HTMLDivElement> & {
 };
 
 const StyledDrawerFooter = styled.div`
-  padding: 0.5em 1em;
+  padding: ${({ theme }) => {
+    const { y, x } = themePadding(theme, 'container');
+
+    return `calc(${y} / 2) ${x}`;
+  }};
 `;
 
 const DrawerFooter: React.ForwardRefRenderFunction<HTMLDivElement, DrawerFooterProps> = (

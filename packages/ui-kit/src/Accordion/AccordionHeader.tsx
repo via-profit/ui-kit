@@ -2,7 +2,7 @@ import React from 'react';
 import styled from '@emotion/styled';
 
 import Chevron from './Chevron';
-import { themeFocusRing } from '../ThemeProvider/tokens';
+import { themeFocusRing, themePadding } from '../ThemeProvider/tokens';
 
 export type AccordionHeaderProps = React.HTMLAttributes<HTMLDivElement> & {
   readonly isOpen: boolean;
@@ -38,10 +38,15 @@ const HeaderButton = styled.button`
   flex-direction: row;
   flex-wrap: nowrap;
   align-items: center;
-  gap: 1rem;
+  gap: 1em;
   width: 100%;
   margin: 0;
-  padding: 1rem;
+  /* The text of the header is aligned with the content */
+  padding: ${({ theme }) => {
+    const { y, x } = themePadding(theme, 'container');
+
+    return `${y} ${x}`;
+  }};
   border: 0;
   border-radius: inherit;
   background: none;

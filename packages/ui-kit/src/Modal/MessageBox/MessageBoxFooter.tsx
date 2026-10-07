@@ -2,6 +2,7 @@ import React from 'react';
 import styled from '@emotion/styled';
 
 import Button from '../../Button';
+import { themePadding } from '../../ThemeProvider/tokens';
 
 export type MessageBoxFooterProps = Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> & {
   /**
@@ -25,7 +26,11 @@ const Footer = styled.div`
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  padding: 1em 1em 1em 1em;
+  padding: ${({ theme }) => {
+    const { y, x } = themePadding(theme, 'container');
+
+    return `${y} ${x}`;
+  }};
 
   & > button {
     border-radius: 0;

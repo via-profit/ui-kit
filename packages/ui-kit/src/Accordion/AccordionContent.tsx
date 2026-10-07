@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from '@emotion/styled';
+import { themePadding } from '../ThemeProvider/tokens';
 
 export type AccordionContentProps = React.HTMLAttributes<HTMLDivElement> & {
   readonly noPadding?: boolean;
@@ -29,7 +30,11 @@ const Clip = styled.div`
 `;
 
 const Wrapper = styled.div<{ $noPadding: boolean }>`
-  padding: ${({ $noPadding }) => ($noPadding ? '0' : '1rem')};
+  padding: ${({ $noPadding, theme }) => {
+    const { y, x } = themePadding(theme, 'container');
+
+    return $noPadding ? '0' : `${y} ${x}`;
+  }};
 `;
 
 const AccordionContent: React.ForwardRefRenderFunction<HTMLDivElement, AccordionContentProps> = (

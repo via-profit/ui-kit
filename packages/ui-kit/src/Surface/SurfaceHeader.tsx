@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from '@emotion/styled';
+import { themePadding } from '../ThemeProvider/tokens';
 
 export type SurfaceHeaderProps = React.HTMLAttributes<HTMLDivElement> & {
   readonly noPadding?: boolean;
@@ -11,8 +12,12 @@ type StyledProps = {
 };
 
 const StyledHeader = styled.div<StyledProps>`
-  padding: ${({ $noPadding }) => ($noPadding ? '0' : '1rem 1rem 0 1rem')};
-  font-size: 1.3rem;
+  padding: ${({ $noPadding, theme }) => {
+    const { y, x } = themePadding(theme, 'container', 1.3);
+
+    return $noPadding ? '0' : `${y} ${x} 0 ${x}`;
+  }};
+  font-size: 1.3em;
   font-weight: 600;
   border-top-left-radius: inherit;
   border-top-right-radius: inherit;

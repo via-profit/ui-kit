@@ -14,8 +14,14 @@
   "+f+HRJ": {
     "defaultMessage": "Скрыть код"
   },
+  "+fh0vR": {
+    "defaultMessage": "Масштаб: отступы в em растут вместе со шрифтом"
+  },
   "+glFq7": {
     "defaultMessage": "Сегодня"
+  },
+  "+lepyI": {
+    "defaultMessage": "Просторно"
   },
   "+v01ok": {
     "defaultMessage": "Поиск"
@@ -83,8 +89,14 @@
   "1SdHYt": {
     "defaultMessage": "Действия"
   },
+  "1Tfuz3": {
+    "defaultMessage": "Страна доставки"
+  },
   "1V+YWA": {
     "defaultMessage": "Чай"
+  },
+  "1YJ48R": {
+    "defaultMessage": "Открыть подтверждение"
   },
   "1q4ylj": {
     "defaultMessage": "Справа"
@@ -188,6 +200,9 @@
   "5zuHOl": {
     "defaultMessage": "Оплата картой или при получении"
   },
+  "6nko1P": {
+    "defaultMessage": "Открыть панель"
+  },
   "7/NDGO": {
     "defaultMessage": "Максимальная цена"
   },
@@ -263,8 +278,14 @@
   "9rYy7B": {
     "defaultMessage": "Грибы"
   },
+  "A27Pew": {
+    "defaultMessage": "Обычная"
+  },
   "AIyaKV": {
     "defaultMessage": "Кнопки, поля ввода, календари, меню и модальные окна с темами оформления и переопределяемыми частями."
+  },
+  "AVmknp": {
+    "defaultMessage": "Заказ №1042 оплачен"
   },
   "AWARl9": {
     "defaultMessage": "Курьер привезёт её за 1–2 дня"
@@ -289,6 +310,9 @@
   },
   "BjL5gA": {
     "defaultMessage": "Должность"
+  },
+  "Bjw7bz": {
+    "defaultMessage": "Заголовок, содержимое и подвал панели."
   },
   "CKT+7+": {
     "defaultMessage": "Кофемолка"
@@ -377,6 +401,9 @@
   "GZ4unH": {
     "defaultMessage": "Изменение имени"
   },
+  "GdzfDn": {
+    "defaultMessage": "Экран целиком"
+  },
   "Gizjoc": {
     "defaultMessage": "Турка"
   },
@@ -388,6 +415,9 @@
   },
   "HD4k5p": {
     "defaultMessage": "Создать"
+  },
+  "HFaRJw": {
+    "defaultMessage": "Удалить заказ?"
   },
   "HGGP7j": {
     "defaultMessage": "День"
@@ -418,6 +448,9 @@
   },
   "IDlKAa": {
     "defaultMessage": "Сохранено"
+  },
+  "IeRpQR": {
+    "defaultMessage": "Простая"
   },
   "Iv/a3e": {
     "defaultMessage": "Сотрудник"
@@ -560,6 +593,9 @@
   "OWKoN6": {
     "defaultMessage": "Выбран"
   },
+  "OiTNCE": {
+    "defaultMessage": "Контролы: кнопки и поля"
+  },
   "Oo2Kwk": {
     "defaultMessage": "Минимальная цена"
   },
@@ -632,6 +668,9 @@
   "RSH+Mj": {
     "defaultMessage": "Телефон для связи"
   },
+  "Ru43fs": {
+    "defaultMessage": "Дублировать"
+  },
   "Rv4/dP": {
     "defaultMessage": "Анкор"
   },
@@ -680,6 +719,9 @@
   "THaf0F": {
     "defaultMessage": "Настройки"
   },
+  "TUq/gR": {
+    "defaultMessage": "Обычно"
+  },
   "TZSMZ5": {
     "defaultMessage": "Учитывать регистр"
   },
@@ -694,6 +736,9 @@
   },
   "UFvdOR": {
     "defaultMessage": "Да, пока заказ не передан в доставку. Напишите в поддержку или измените адрес в заказе."
+  },
+  "UKJ1fz": {
+    "defaultMessage": "Песочница отступов"
   },
   "URJ2aL": {
     "defaultMessage": "Содержимое Popper"
@@ -829,6 +874,9 @@
   },
   "YJVtiA": {
     "defaultMessage": "Введение"
+  },
+  "YX2gDR": {
+    "defaultMessage": "Найдено 12 заказов"
   },
   "YdE/Da": {
     "defaultMessage": "Возврат в течение 14 дней"
@@ -983,6 +1031,9 @@
   "eEYFQg": {
     "defaultMessage": "Спасибо, {name}! Мы позвоним по номеру {phone}, чтобы подтвердить заказ."
   },
+  "eT97ny": {
+    "defaultMessage": "Панели"
+  },
   "ek/fk0": {
     "defaultMessage": "Удалить «{name}»"
   },
@@ -1004,11 +1055,17 @@
   "fGrmor": {
     "defaultMessage": "Начало"
   },
+  "fRVwyN": {
+    "defaultMessage": "Переименовать"
+  },
   "fU31LB": {
     "defaultMessage": "Набор компонентов для"
   },
   "fWs/e5": {
     "defaultMessage": "Сохранить как…"
+  },
+  "ffGhZu": {
+    "defaultMessage": "Размер шрифта"
   },
   "ftHGHa": {
     "defaultMessage": "Номер карты"
@@ -1046,6 +1103,9 @@
   "gwuvli": {
     "defaultMessage": "Деньги вернутся на карту в течение 10 дней после того, как мы получим товар."
   },
+  "gzNsKe": {
+    "defaultMessage": "Доставляем курьером за 1–2 дня или в пункт выдачи за 2–4 дня."
+  },
   "h52LFb": {
     "defaultMessage": "Включить тёмную тему"
   },
@@ -1067,6 +1127,12 @@
   "hh1CJF": {
     "defaultMessage": "Удалить файл?"
   },
+  "hsrVpg": {
+    "defaultMessage": "Панели: карточки, окна, уведомления"
+  },
+  "hzdcKI": {
+    "defaultMessage": "Позвонить за час до доставки"
+  },
   "i8KTyz": {
     "defaultMessage": "Комментарий"
   },
@@ -1078,6 +1144,9 @@
   },
   "iOLa9a": {
     "defaultMessage": "Забронировать"
+  },
+  "iVYmNL": {
+    "defaultMessage": "Фильтры"
   },
   "irrmL5": {
     "defaultMessage": "Добавьте товары в корзину"
@@ -1099,6 +1168,9 @@
   },
   "jX2Rp6": {
     "defaultMessage": "Новый"
+  },
+  "jZ61+N": {
+    "defaultMessage": "Отступы окна берутся из padding.container."
   },
   "kGHUoT": {
     "defaultMessage": "Чай чёрный, 100 пакетиков"
@@ -1126,6 +1198,9 @@
   },
   "kktCY9": {
     "defaultMessage": "Выбрано действие: {label}"
+  },
+  "kwFxTh": {
+    "defaultMessage": "ООО «Ромашка», менеджер — Анна Смирнова."
   },
   "l3Oyo2": {
     "defaultMessage": "Улица"
@@ -1198,6 +1273,9 @@
   },
   "nRFGJY": {
     "defaultMessage": "Вес 1,2 кг, размеры 30 × 20 × 5 см, гарантия 2 года."
+  },
+  "ne01F3": {
+    "defaultMessage": "Строки"
   },
   "npyYek": {
     "defaultMessage": "Очистить"
@@ -1274,6 +1352,12 @@
   "r7Q3uT": {
     "defaultMessage": "Выберите заезд и выезд"
   },
+  "rBQ8lJ": {
+    "defaultMessage": "Строки: меню, таблицы, вкладки"
+  },
+  "rFeGiW": {
+    "defaultMessage": "слева и справа"
+  },
   "rMD0+o": {
     "defaultMessage": "Статус"
   },
@@ -1307,6 +1391,9 @@
   "szQs8o": {
     "defaultMessage": "Бесплатно"
   },
+  "tCDAWi": {
+    "defaultMessage": "Контролы"
+  },
   "tJzL4t": {
     "defaultMessage": "Возможность"
   },
@@ -1315,6 +1402,9 @@
   },
   "tfgg0q": {
     "defaultMessage": "Открыть в новой вкладке"
+  },
+  "toSKRp": {
+    "defaultMessage": "Контурная"
   },
   "tpgLab": {
     "defaultMessage": "Скачать"
@@ -1328,6 +1418,12 @@
   "uE1mMh": {
     "defaultMessage": "text: «{text}», isValid: {isValid}"
   },
+  "uGm/IV": {
+    "defaultMessage": "Три открытые сделки."
+  },
+  "uW7wX2": {
+    "defaultMessage": "Готовые наборы отступов"
+  },
   "utVR6E": {
     "defaultMessage": "3. Способ оплаты"
   },
@@ -1336,6 +1432,9 @@
   },
   "uwf0ai": {
     "defaultMessage": "Команда"
+  },
+  "v2Ziqk": {
+    "defaultMessage": "сверху и снизу"
   },
   "v5DznE": {
     "defaultMessage": "Сначала заполните реквизиты"
@@ -1361,11 +1460,17 @@
   "w1YqQ4": {
     "defaultMessage": "Новых уведомлений нет"
   },
+  "w3En2C": {
+    "defaultMessage": "Заказ №1042 будет удалён без возможности восстановления."
+  },
   "wB4igM": {
     "defaultMessage": "Запомнить меня"
   },
   "wNZHSH": {
     "defaultMessage": "Перевозка дивана, Москва → Тверь"
+  },
+  "x+bb/o": {
+    "defaultMessage": "Настройки темы"
   },
   "x1MUPc": {
     "defaultMessage": "Адрес"
@@ -1459,5 +1564,8 @@
   },
   "zouUZN": {
     "defaultMessage": "H2. Раздел"
+  },
+  "zpqOid": {
+    "defaultMessage": "Плотно"
   }
 }

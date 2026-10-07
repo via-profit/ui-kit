@@ -2,6 +2,8 @@ import * as React from 'react';
 import styled from '@emotion/styled';
 import { css } from '@emotion/react';
 
+import { CONTROL_LINE_HEIGHT, FIELD_TEXT_SCALE } from '../ThemeProvider/tokens';
+
 export type TextFieldInputWrapperProps = React.HTMLAttributes<HTMLDivElement> & {
   readonly error?: boolean;
   readonly fullWidth?: boolean;
@@ -27,7 +29,9 @@ const Wrapper = styled.div<{
       ? theme.color.textPrimary.darken(100).toString()
       : theme.color.textPrimary.lighten(150).toString()};
   width: ${({ $fullWidth }) => ($fullWidth ? '100%' : 'auto')};
-  font-size: 0.9em;
+  font-size: ${FIELD_TEXT_SCALE}em;
+  /* The line of the control: the field has the height of the button */
+  line-height: calc(${CONTROL_LINE_HEIGHT} / ${FIELD_TEXT_SCALE});
   background-color: ${({ theme }) => theme.color.surface.toString()};
   color: ${({ theme }) => theme.color.textPrimary.toString()};
   transition: all 180ms ease-out 0s;

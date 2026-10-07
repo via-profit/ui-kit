@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from '@emotion/styled';
+import { themePadding } from '../ThemeProvider/tokens';
 
 export type SurfaceFooterProps = React.HTMLAttributes<HTMLDivElement> & {
   readonly noPadding?: boolean;
@@ -14,7 +15,11 @@ const StyledFooter = styled.div<StyleProps>`
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  padding: ${({ $noPadding }) => ($noPadding ? '0' : '1rem')};
+  padding: ${({ $noPadding, theme }) => {
+    const { y, x } = themePadding(theme, 'container');
+
+    return $noPadding ? '0' : `${y} ${x}`;
+  }};
   border-bottom-left-radius: inherit;
   border-bottom-right-radius: inherit;
 `;

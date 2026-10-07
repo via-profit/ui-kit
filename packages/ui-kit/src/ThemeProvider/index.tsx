@@ -17,6 +17,7 @@ export type UITheme = Required<
     | 'shape'
     | 'color'
     | 'spacing'
+    | 'padding'
     | 'typography'
     | 'focusRing'
     | 'elevation'
@@ -31,6 +32,7 @@ export type UITheme = Required<
   readonly color: Record<keyof UIThemeOverrideColor, Color>;
   readonly shape: Required<UIThemeOverrideShape>;
   readonly spacing: Required<UIThemeOverrideSpacing>;
+  readonly padding: Record<ThemePadding, Required<UIThemeOverridePaddingValue>>;
 };
 
 export interface UIThemeOverrideColor {
@@ -117,6 +119,46 @@ export interface UIThemeOverrideSpacing {
 
 export type ThemeSpacing = keyof UIThemeOverrideSpacing;
 
+/**
+ * The inner padding of one class of the elements. Any CSS length, `em` is recommended:
+ * the padding grows together with the font size
+ */
+export interface UIThemeOverridePaddingValue {
+  /**
+   * The top and the bottom padding
+   */
+  readonly y?: string;
+
+  /**
+   * The left and the right padding
+   */
+  readonly x?: string;
+}
+
+/**
+ * The inner paddings of the components, by the class of the elements.
+ * Smaller paddings make a denser interface without changing the font size
+ */
+export interface UIThemeOverridePadding {
+  /**
+   * The controls: Button, TextField, TextArea, Selectbox, DatePicker, Autocomplete.
+   * `y` sets the height of the controls, all of them have the same height
+   */
+  readonly control?: UIThemeOverridePaddingValue;
+
+  /**
+   * The rows of the lists: the menu items, the table cells, the tabs, the accordion headers
+   */
+  readonly item?: UIThemeOverridePaddingValue;
+
+  /**
+   * The content of the panels: Surface, Accordion, the modal windows, Drawer, Toast
+   */
+  readonly container?: UIThemeOverridePaddingValue;
+}
+
+export type ThemePadding = keyof UIThemeOverridePadding;
+
 export interface UIThemeOverrideFontSize {
   readonly small?: number;
   readonly normal?: number;
@@ -137,6 +179,7 @@ export interface UIThemeOverrides {
   readonly zIndex?: UIThemeOverrideZIndex;
   readonly shape?: UIThemeOverrideShape;
   readonly spacing?: UIThemeOverrideSpacing;
+  readonly padding?: UIThemeOverridePadding;
   readonly color?: UIThemeOverrideColor;
 }
 

@@ -40,6 +40,7 @@ const Breadcrumbs: React.FC = () => {
   const staticPages: Record<string, string> = {
     '/docs/changelog': intl.formatMessage({ defaultMessage: 'Список изменений' }),
     '/docs/showcase': intl.formatMessage({ defaultMessage: 'Примеры использования' }),
+    '/docs/playground': intl.formatMessage({ defaultMessage: 'Песочница отступов' }),
   };
   const current = staticPages[pathname]
     ? { label: staticPages[pathname] }

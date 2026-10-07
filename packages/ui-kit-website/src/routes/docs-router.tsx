@@ -9,6 +9,7 @@ const TemplateDocs = loadable(() => import('~/templates/TemplateDocs/index'));
 const NotFound = loadable(() => import('~/pages/NotFound/index'));
 const Introduction = loadable(() => import('~/pages/Docs/Introduction'));
 const Showcase = loadable(() => import('~/pages/Docs/Showcase'));
+const Playground = loadable(() => import('~/pages/Docs/Playground'));
 const ButtonOverview = loadable(() => import('~/pages/Docs/Button/ButtonOverview'));
 const ButtonGroupOverview = loadable(() => import('~/pages/Docs/ButtonGroup/ButtonGroupOverview'));
 const SwitchOverview = loadable(() => import('~/pages/Docs/Switch/SwitchOverview'));
@@ -71,6 +72,15 @@ const docsRouter: RouteObject = {
       element: (
         <React.Suspense fallback={<LoadingOverlay />}>
           <Showcase />
+        </React.Suspense>
+      ),
+    },
+    {
+      path: 'playground',
+      caseSensitive: true,
+      element: (
+        <React.Suspense fallback={<LoadingOverlay />}>
+          <Playground />
         </React.Suspense>
       ),
     },

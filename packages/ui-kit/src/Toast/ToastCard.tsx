@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import { css, keyframes } from '@emotion/react';
 
 import type { ToastPosition, ToastType } from './store';
-import { themeFocusRing, elevation } from '../ThemeProvider/tokens';
+import { themeFocusRing, elevation, themePadding } from '../ThemeProvider/tokens';
 
 export type ToastCardProps = React.HTMLAttributes<HTMLDivElement> & {
   readonly type: ToastType;
@@ -40,7 +40,11 @@ const StyledCard = styled.div<{ $position: ToastPosition; $isClosing: boolean }>
   width: max-content;
   max-width: 100%;
   min-width: 14em;
-  padding: 0.75em 1em;
+  padding: ${({ theme }) => {
+    const { y, x } = themePadding(theme, 'container');
+
+    return `calc(${y} * 0.75) ${x}`;
+  }};
   border-radius: ${({ theme }) => theme.shape.radiusFactor * 1.5}em;
   border: 1px solid ${({ theme }) => theme.color.textPrimary.alpha(0.08).toString()};
   background-color: ${({ theme }) => theme.color.surface.toString()};

@@ -1,6 +1,8 @@
 import * as React from 'react';
 import styled from '@emotion/styled';
 
+import { FIELD_TEXT_SCALE } from '../ThemeProvider/tokens';
+
 export type SelectboxButtonWrapperProps = React.HTMLAttributes<HTMLDivElement> & {
   readonly fullWidth?: boolean;
   readonly error?: boolean;
@@ -12,7 +14,7 @@ const Wrapper = styled.div<{
   $error?: boolean;
 }>`
   min-width: 16em;
-  font-size: 0.9em;
+  font-size: ${FIELD_TEXT_SCALE}em;
   text-align: left;
   max-width: ${({ $fullWidth }) => ($fullWidth ? '100%' : '16em')};
   display: flex;
@@ -23,8 +25,6 @@ const Wrapper = styled.div<{
   background-color: ${({ theme }) => theme.color.surface.toString()};
   color: ${({ theme }) => theme.color.textPrimary.toString()};
   transition: all 180ms ease-out 0s;
-
-
 `;
 
 const SelectboxButtonWrapper: React.ForwardRefRenderFunction<

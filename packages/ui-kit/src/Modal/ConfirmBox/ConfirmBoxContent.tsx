@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from '@emotion/styled';
+import { themePadding } from '../../ThemeProvider/tokens';
 
 export type ConfirmBoxContentProps = React.HTMLAttributes<HTMLDivElement> & {
   /**
@@ -10,7 +11,11 @@ export type ConfirmBoxContentProps = React.HTMLAttributes<HTMLDivElement> & {
 
 const StyledConfirmBoxContent = styled.div`
   flex: 1;
-  padding: 1em 1em;
+  padding: ${({ theme }) => {
+    const { y, x } = themePadding(theme, 'container');
+
+    return `${y} ${x}`;
+  }};
 `;
 
 const ConfirmBoxContent: React.ForwardRefRenderFunction<HTMLDivElement, ConfirmBoxContentProps> = (

@@ -4,7 +4,7 @@ import { css } from '@emotion/react';
 
 import Color from '../Color';
 import { TabsOrientation, useTabsContext } from './context';
-import { themeFocusRing } from '../ThemeProvider/tokens';
+import { themeFocusRing, themePadding } from '../ThemeProvider/tokens';
 
 export type TabProps = Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'value'> & {
   /**
@@ -29,7 +29,11 @@ const StyledTab = styled.button<StyledProps>`
   flex-shrink: 0;
   box-sizing: border-box;
   margin: 0;
-  padding: 0.75em 1.1em;
+  padding: ${({ theme }) => {
+    const { y, x } = themePadding(theme, 'item');
+
+    return `${y} ${x}`;
+  }};
   border: 0;
   background: none;
   font: inherit;

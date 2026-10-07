@@ -5,6 +5,7 @@ import Button, { ButtonProps } from '../Button';
 import ButtonTextWrapper from '../Button/ButtonTextWrapper';
 import { css } from '@emotion/react';
 import { AnchorPos } from '../Menu';
+import { fieldPadding, CONTROL_LINE_HEIGHT, FIELD_TEXT_SCALE } from '../ThemeProvider/tokens';
 
 export type SelectboxButtonProps = Omit<ButtonProps, 'type'> & {
   readonly fullWidth?: boolean;
@@ -21,8 +22,14 @@ type StyleProps = {
 
 const StyledSelectboxButton = styled(Button)<StyleProps>`
   flex: 1;
-  padding: 1em 1.2em;
+  padding: ${({ theme }) => {
+    const { y, x } = fieldPadding(theme, FIELD_TEXT_SCALE);
+
+    return `${y} ${x}`;
+  }};
   font-size: 1em;
+  /* The line of the control: the selectbox has the height of the button */
+  line-height: calc(${CONTROL_LINE_HEIGHT} / ${FIELD_TEXT_SCALE});
   background: none;
   width: 100%;
   border-width: 1px;
@@ -45,7 +52,6 @@ const StyledSelectboxButton = styled(Button)<StyleProps>`
       }
     `}
   transition: none;
-  
 `;
 
 // The value has the size of the text in the fields, so the selectbox has the height of the TextField

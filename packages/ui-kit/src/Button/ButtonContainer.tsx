@@ -1,7 +1,12 @@
 import React from 'react';
 import styled from '@emotion/styled';
-import { css } from '@emotion/react';
-import { themeFocusRing } from '../ThemeProvider/tokens';
+import { css, Theme } from '@emotion/react';
+import {
+  themeFocusRing,
+  controlHeight,
+  CONTROL_BORDER,
+  CONTROL_LINE_HEIGHT,
+} from '../ThemeProvider/tokens';
 import { buttonVariantStyles, ButtonVariant } from './buttonVariants';
 import type { ButtonGroupOrientation } from '../ButtonGroup/ButtonGroupContext';
 
@@ -41,9 +46,21 @@ type StyledProps = {
   readonly $group?: ButtonGroupOrientation;
 };
 
+/**
+ * The outlined buttons and all the buttons of the ButtonGroup have a border.
+ * The other ones get its width in the padding, so all the buttons have the same height
+ */
+const buttonPadding = ({ theme, $variant, $group }: StyledProps & { readonly theme: Theme }) => {
+  const { y, x } = theme.padding.control;
+  const hasBorder = $variant === 'outlined' || Boolean($group) || !$variant;
+
+  return hasBorder ? `${y} ${x}` : `calc(${y} + ${CONTROL_BORDER}) calc(${x} + ${CONTROL_BORDER})`;
+};
+
 const StyledButton = styled.button<StyledProps>`
   border-radius: ${({ theme }) => theme.shape.radiusFactor * 2}em;
-  padding: 0.8em 1em;
+  padding: ${buttonPadding};
+  line-height: ${CONTROL_LINE_HEIGHT};
   cursor: ${({ disabled }) => (disabled ? 'default' : 'pointer')};
   font-size: 1em;
   /* Buttons do not inherit the font by default */
@@ -68,10 +85,11 @@ const StyledButton = styled.button<StyledProps>`
   ${({ iconOnly, theme }) =>
     iconOnly &&
     css`
-      padding: 1em;
+      padding: 0;
       justify-content: center;
-      width: 2.6em;
-      height: 2.6em;
+      box-sizing: border-box;
+      width: ${controlHeight(theme)};
+      height: ${controlHeight(theme)};
       border-radius: ${theme.shape.radiusFactor * 3}em;
     `}
   ${({ $variant, $group, color, disabled, theme }) =>
