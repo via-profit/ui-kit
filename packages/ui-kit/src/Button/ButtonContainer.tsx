@@ -69,7 +69,13 @@ const StyledButton = styled.button<StyledProps>`
   outline-style: solid;
   outline-color: transparent;
   outline-width: 0.14em;
-  transition: all 180ms ease-out 0s;
+  /*
+   * The colors only: the variants have different border and padding, a transition of the sizes
+   * makes the button grow for a moment when the variant changes (the border width changes by whole pixels)
+   */
+  transition-property: color, background-color, border-color, box-shadow, outline-color;
+  transition-duration: 180ms;
+  transition-timing-function: ease-out;
   background: none;
   display: inline-flex;
   align-items: center;
