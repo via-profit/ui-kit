@@ -29,6 +29,36 @@ export type ModalWrapperProps = {
  */
 let bodyLocksCount = 0;
 
+const SCROLL_WIDTH_PROPERTY = '--modal-scroll-width';
+
+/**
+ * The first modal hides the scrollbar of the page and puts the margin of the same width instead,
+ * so the page does not move. The width is measured before the scrollbar is hidden:
+ * the scrollbar of the window, not of the body (`0` for the overlay scrollbars)
+ */
+const lockPageScroll = () => {
+  if (bodyLocksCount === 0) {
+    const scrollWidth = Math.max(
+      window.innerWidth - window.document.documentElement.clientWidth,
+      0,
+    );
+    window.document.documentElement.style.setProperty(SCROLL_WIDTH_PROPERTY, `${scrollWidth}px`);
+    window.document.body?.classList.add('-modal-over');
+  }
+  bodyLocksCount += 1;
+};
+
+/**
+ * The last modal returns the scrollbar of the page
+ */
+const unlockPageScroll = () => {
+  bodyLocksCount = Math.max(0, bodyLocksCount - 1);
+  if (bodyLocksCount === 0) {
+    window.document.body?.classList.remove('-modal-over');
+    window.document.documentElement.style.removeProperty(SCROLL_WIDTH_PROPERTY);
+  }
+};
+
 const ModalWrapper: React.FC<ModalWrapperProps> = props => {
   const { children, isOpen: isOpenProp, autofocus = true } = props;
   const { state, dispatch } = useContext();
@@ -55,56 +85,17 @@ const ModalWrapper: React.FC<ModalWrapperProps> = props => {
     };
   }, [isOpen, autofocus]);
 
-  const getScrollWidth = React.useCallback(() => {
-    const outer = window.document.createElement('div');
-    const inner = window.document.createElement('div');
-
-    const isVerticalScrollbar =
-      window.document.body.scrollHeight > window.document.body.clientHeight;
-    if (!isVerticalScrollbar) {
-      return 0;
-    }
-
-    let widthNoScroll = 0;
-    let widthWithScroll = 0;
-
-    outer.style.visibility = 'hidden';
-    outer.style.width = '100px';
-    window.document.body.appendChild(outer);
-
-    widthNoScroll = outer.offsetWidth;
-
-    // force scrollbars
-    outer.style.overflow = 'scroll';
-
-    // add innerdiv
-    inner.style.width = '100%';
-    outer.appendChild(inner);
-
-    widthWithScroll = inner.offsetWidth;
-
-    // remove div
-    outer.parentNode?.removeChild(outer);
-
-    return widthNoScroll - widthWithScroll;
-  }, []);
-
   const lockBody = React.useCallback(() => {
     if (!bodyLockedRef.current) {
       bodyLockedRef.current = true;
-      bodyLocksCount += 1;
-      window.document.body?.classList.add('-modal-over');
+      lockPageScroll();
     }
   }, []);
 
   const unlockBody = React.useCallback(() => {
     if (bodyLockedRef.current) {
       bodyLockedRef.current = false;
-      bodyLocksCount = Math.max(0, bodyLocksCount - 1);
-
-      if (bodyLocksCount === 0) {
-        window.document.body?.classList.remove('-modal-over');
-      }
+      unlockPageScroll();
     }
   }, []);
 
@@ -220,18 +211,15 @@ const ModalWrapper: React.FC<ModalWrapperProps> = props => {
 
           <Global
             styles={css`
-              :root {
-                --modal-scroll-width: ${getScrollWidth()}px;
-              }
               body.-modal-over {
                 overflow: hidden;
-                margin-right: var(--modal-scroll-width);
+                margin-right: var(${SCROLL_WIDTH_PROPERTY}, 0px);
               }
             `}
           />
         </div>
       ) : null,
-    [children, getScrollWidth, isMounted, id],
+    [children, isMounted, id],
   );
 };
 
