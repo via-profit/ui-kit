@@ -60,7 +60,7 @@ const GroupTitle = styled.div`
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: ${({ theme }) => theme.color.textSecondary.toString()};
+  color: ${({ theme }) => theme.color.mainSidebarContrast.alpha(0.55).toString()};
 `;
 
 type ItemStyle = {
@@ -124,7 +124,7 @@ const Draft = styled.span`
 const Empty = styled.div`
   padding: 0 0.75rem;
   font-size: 0.85rem;
-  color: ${({ theme }) => theme.color.textSecondary.toString()};
+  color: ${({ theme }) => theme.color.mainSidebarContrast.alpha(0.55).toString()};
 `;
 
 const Sidebar: React.ForwardRefRenderFunction<HTMLElement, React.HTMLAttributes<HTMLElement>> = (

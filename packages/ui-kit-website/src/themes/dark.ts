@@ -1,12 +1,10 @@
-import { UIThemeOverrides } from '@via-profit/ui-kit/src/ThemeProvider';
-
-import light from './light';
+import light, { AppTheme } from './light';
 
 /**
  * Dark theme (default): graphite background with cyan and blue accents.
  * The sizes, the paddings and the font are the same as in the light theme: only the colors differ
  */
-const dark: UIThemeOverrides = {
+const dark: AppTheme = {
   ...light,
   isDark: true,
   color: {
