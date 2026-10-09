@@ -16,6 +16,11 @@ export type SwiperSlidesRendererProps = {
   readonly realSlidesCount: number;
   readonly getSlideRealIndex: (index: number) => number;
   readonly slideLabel: (index: number, total: number) => string;
+
+  /**
+   * The index of the slide in the DOM shown by the fade effect, `null` for the slide effect
+   */
+  readonly activeDomIndex?: number | null;
 };
 
 // React 19 supports the boolean `inert`, React 18 passes only the string value to the DOM
@@ -30,7 +35,8 @@ const SwiperSlidesRenderer: React.FC<SwiperSlidesRendererProps> = props => {
     getSlideRealIndex,
     slideLabel,
     firstVisibleIndex = realIndex,
-    visibleCount = slidesPerView,
+    visibleCount = Math.ceil(slidesPerView),
+    activeDomIndex = null,
   } = props;
 
   const visibilityMap = React.useMemo(() => {
@@ -86,6 +92,7 @@ const SwiperSlidesRenderer: React.FC<SwiperSlidesRendererProps> = props => {
           'aria-hidden': isClone || !isVisible ? true : undefined,
           inert: isVisible && !isClone ? undefined : INERT_VALUE,
           'data-index': i,
+          'data-active': activeDomIndex === null ? undefined : activeDomIndex === i,
           'data-real-index': slideRealIndex,
         } as any);
       })}

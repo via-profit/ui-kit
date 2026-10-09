@@ -28,6 +28,9 @@ export interface SwiperOverrides {
   readonly Track?: React.ComponentType<SwiperTrackProps & React.RefAttributes<HTMLDivElement>>;
 }
 
+export type SwiperDirection = 'horizontal' | 'vertical';
+export type SwiperEffect = 'slide' | 'fade';
+
 export type SwiperProps = Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> & {
   readonly dragThreshold?: number;
   readonly snap?: boolean;
@@ -40,7 +43,46 @@ export type SwiperProps = Omit<React.HTMLAttributes<HTMLDivElement>, 'children'>
   readonly pauseOnHover?: boolean;
   readonly threshold?: number;
   readonly resistance?: boolean;
+
+  /**
+   * How many slides are visible at once. A fractional value shows a part of the next slide,
+   * for example `1.2`\
+   * **Default:** `1`
+   */
   readonly slidesPerView?: number;
+
+  /**
+   * The current slide is in the middle of the view, the neighbours are partially visible on both sides.
+   * Makes sense with a fractional `slidesPerView`\
+   * **Default:** `false`
+   */
+  readonly centered?: boolean;
+
+  /**
+   * The direction of the scroll. The vertical swiper needs a height: set it on the swiper\
+   * **Default:** `'horizontal'`
+   */
+  readonly direction?: SwiperDirection;
+
+  /**
+   * `slide` moves the track, `fade` cross-fades the slides lying on top of each other.
+   * With `fade` the slides are always one per view\
+   * **Default:** `'slide'`
+   */
+  readonly effect?: SwiperEffect;
+
+  /**
+   * The duration of the slide change in milliseconds\
+   * **Default:** `300`
+   */
+  readonly speed?: number;
+
+  /**
+   * Continuous scroll (ticker) in pixels per second, for example the logos of the clients.
+   * The track moves without stops in the infinite loop, the drag and the keyboard are off.
+   * The scroll pauses with `pauseOnHover`, by the API and when the user asked the system to reduce motion
+   */
+  readonly autoScroll?: number;
 
   /**
    * Arrow keys switch the slides when the swiper is focused\
@@ -63,12 +105,17 @@ export type SwiperProps = Omit<React.HTMLAttributes<HTMLDivElement>, 'children'>
 
 const defaultSlideLabel = (index: number, total: number) => `${index + 1} / ${total}`;
 
+const prefersReducedMotion = () =>
+  typeof window !== 'undefined' &&
+  typeof window.matchMedia === 'function' &&
+  window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
 export const Swiper = React.forwardRef((props: SwiperProps, ref: React.ForwardedRef<SwiperRef>) => {
   const {
     children,
     dragThreshold = 240,
     snap = true,
-    draggable = true,
+    draggable: draggableProp = true,
     overrides,
     initialIndex = 0,
     infinite = false,
@@ -78,67 +125,93 @@ export const Swiper = React.forwardRef((props: SwiperProps, ref: React.Forwarded
     pauseOnHover = true,
     threshold = 20,
     resistance = true,
-    slidesPerView = 1,
-    keyboardControl = true,
+    slidesPerView: slidesPerViewProp = 1,
+    centered = false,
+    direction = 'horizontal',
+    effect = 'slide',
+    speed = 300,
+    autoScroll,
+    keyboardControl: keyboardControlProp = true,
     slideLabel = defaultSlideLabel,
     ...restProps
   } = props;
 
+  const isFade = effect === 'fade';
+  const isTicker = typeof autoScroll === 'number' && autoScroll > 0 && !isFade;
+  const isVertical = direction === 'vertical';
+  const slidesPerView = isFade ? 1 : Math.max(slidesPerViewProp, 0.1);
+  const draggable = draggableProp && !isTicker;
+  const keyboardControl = keyboardControlProp && !isTicker;
+
+  // The current slide is moved to the middle of the view by this number of slides
+  const centerShift = centered && !isFade ? (slidesPerView - 1) / 2 : 0;
+
   // #region Slides
-  const slides = React.useMemo(() => {
+  const { slides, clones } = React.useMemo(() => {
     // toArray skips null/false and keeps the user keys (prefixed), so the slides are not remounted
     // when a slide is added to the start
     const childrenSlides = React.Children.toArray(children).filter(
       React.isValidElement,
     ) as SwiperSlideElement[];
 
-    if (infinite) {
-      if (childrenSlides.length < 2) {
-        console.error('To infinite loop counts of the slides must be greater than 2');
-
-        return childrenSlides;
-      }
-
-      if (childrenSlides.length < slidesPerView + 1) {
-        console.error(
-          `For infinite loop with slidesPerView=${slidesPerView}, need at least ${slidesPerView + 1} slides`,
-        );
-
-        return childrenSlides;
-      }
-
-      // Используем стабильные ключи без Date.now()
-      const headClones = childrenSlides.slice(-slidesPerView).map((slide, i) =>
-        React.cloneElement(slide as any, {
-          key: `clone-head-${i}`,
-          'data-clone': 'head',
-        }),
-      );
-
-      const tailClones = childrenSlides.slice(0, slidesPerView).map((slide, i) =>
-        React.cloneElement(slide as any, {
-          key: `clone-tail-${i}`,
-          'data-clone': 'tail',
-        }),
-      );
-
-      return [...headClones, ...childrenSlides, ...tailClones];
+    // The fade effect does not move the track, the loop does not need the copies
+    if (!(infinite || isTicker) || isFade) {
+      return { slides: childrenSlides, clones: 0 };
     }
 
-    return childrenSlides;
-  }, [children, infinite, slidesPerView]);
+    // The copies on each side cover the whole view (also its partially visible slides)
+    // and the part of the view in front of the centered slide
+    const count = Math.ceil(slidesPerView) + Math.ceil(centerShift);
+
+    if (childrenSlides.length < Math.max(2, count)) {
+      console.error(
+        `For infinite loop with slidesPerView=${slidesPerView}${centered ? ' and centered' : ''}, need at least ${Math.max(2, count)} slides`,
+      );
+
+      return { slides: childrenSlides, clones: 0 };
+    }
+
+    const headClones = childrenSlides.slice(-count).map((slide, i) =>
+      React.cloneElement(slide as any, {
+        key: `clone-head-${i}`,
+        'data-clone': 'head',
+      }),
+    );
+
+    const tailClones = childrenSlides.slice(0, count).map((slide, i) =>
+      React.cloneElement(slide as any, {
+        key: `clone-tail-${i}`,
+        'data-clone': 'tail',
+      }),
+    );
+
+    return { slides: [...headClones, ...childrenSlides, ...tailClones], clones: count };
+  }, [children, infinite, isTicker, isFade, slidesPerView, centerShift, centered]);
+
+  // The infinite loop by the copies of the slides (slide effect and ticker)
+  const isLoop = clones > 0;
+  // The fade effect loops by the index alone
+  const isFadeLoop = isFade && infinite && slides.length > 1;
 
   const total = slides.length;
-  const realSlidesCount = infinite ? total - 2 * slidesPerView : total;
-  const maxIndex = Math.max(0, total - slidesPerView);
+  const realSlidesCount = total - 2 * clones;
+
+  // Without the loop the last position shows the last slide at the end of the view
+  // (in the middle of the view when centered). With a fractional slidesPerView it is not a whole
+  // slide: the index goes up to the next whole number and the track stops at the last position
+  const lastPosition =
+    isFade || centerShift > 0 ? Math.max(0, total - 1) : Math.max(0, total - slidesPerView);
+  const maxIndex = Math.ceil(lastPosition - 0.001);
+  // The index while the track is between the slides (drag, free mode) without the loop
+  const maxFreeIndex = Math.floor(lastPosition + 0.001);
 
   // #region States
   const [index, setIndex] = React.useState(() => {
-    if (!infinite) {
+    if (!isLoop) {
       return Math.max(0, Math.min(initialIndex, maxIndex));
     }
 
-    return initialIndex + slidesPerView;
+    return initialIndex + clones;
   });
 
   const [offset, setOffset] = React.useState(0);
@@ -155,8 +228,8 @@ export const Swiper = React.forwardRef((props: SwiperProps, ref: React.Forwarded
 
   // #region Refs
   const dragging = React.useRef(false);
-  const startX = React.useRef(0);
-  const lastX = React.useRef(0);
+  const startCoord = React.useRef(0);
+  const lastCoord = React.useRef(0);
   const lastTime = React.useRef(0);
   const velocity = React.useRef(0);
   const wrapperRef = React.useRef<HTMLDivElement | null>(null);
@@ -165,13 +238,18 @@ export const Swiper = React.forwardRef((props: SwiperProps, ref: React.Forwarded
   const mounted = React.useRef(true);
   const suppressClick = React.useRef(false);
 
+  const getCoord = React.useCallback(
+    (e: React.PointerEvent) => (isVertical ? e.clientY : e.clientX),
+    [isVertical],
+  );
+
   // #region Real Index
   const realIndex = React.useMemo(() => {
-    if (!infinite) {
+    if (!isLoop) {
       return index;
     }
 
-    const realIndex = index - slidesPerView;
+    const realIndex = index - clones;
 
     if (realIndex < 0) {
       return realSlidesCount + realIndex;
@@ -182,7 +260,7 @@ export const Swiper = React.forwardRef((props: SwiperProps, ref: React.Forwarded
 
     // In the infinite mode any slide can be the first visible one, so there is no clamp
     return realIndex;
-  }, [index, infinite, slidesPerView, realSlidesCount]);
+  }, [index, isLoop, clones, realSlidesCount]);
 
   const prevRealIndex = React.useRef(realIndex);
 
@@ -198,19 +276,19 @@ export const Swiper = React.forwardRef((props: SwiperProps, ref: React.Forwarded
     if (!mounted.current) return;
 
     // The slides were removed: keep the index inside the allowed range
-    const lastIndex = infinite ? total - slidesPerView : maxIndex;
+    const lastIndex = isLoop ? total - clones : maxIndex;
     if (index > lastIndex) {
-      setIndex(infinite ? slidesPerView : maxIndex);
+      setIndex(isLoop ? clones : maxIndex);
       setOffset(0);
     }
-  }, [index, infinite, total, slidesPerView, maxIndex]);
+  }, [index, isLoop, total, clones, maxIndex]);
 
   // #region Normalization
   const normalizeIndex = React.useCallback(() => {
-    if (!infinite || !mounted.current) return;
+    if (!isLoop || !mounted.current) return;
 
-    const firstRealIndex = slidesPerView;
-    const lastRealIndex = total - slidesPerView - 1;
+    const firstRealIndex = clones;
+    const lastRealIndex = total - clones - 1;
 
     if (index < firstRealIndex || index > lastRealIndex) {
       // A clone position shows the same slides as the real position shifted by the slides count.
@@ -233,7 +311,7 @@ export const Swiper = React.forwardRef((props: SwiperProps, ref: React.Forwarded
         });
       });
     }
-  }, [index, infinite, slidesPerView, total, realSlidesCount]);
+  }, [index, isLoop, clones, total, realSlidesCount]);
 
   // #region Navigation API
 
@@ -246,14 +324,14 @@ export const Swiper = React.forwardRef((props: SwiperProps, ref: React.Forwarded
     (i: number) => {
       // In the infinite mode the index is normalized after the transition, so wait for it.
       // In the regular mode the transition is simply retargeted
-      if (infinite && isAnimating.current) return;
+      if (isLoop && isAnimating.current) return;
 
       let targetIndex = i;
 
-      if (infinite) {
-        targetIndex = i + slidesPerView;
-        const minIndex = slidesPerView;
-        const maxIndex = slidesPerView + realSlidesCount - 1;
+      if (isLoop) {
+        targetIndex = i + clones;
+        const minIndex = clones;
+        const maxIndex = clones + realSlidesCount - 1;
         targetIndex = Math.max(minIndex, Math.min(maxIndex, targetIndex));
       } else {
         targetIndex = Math.max(0, Math.min(maxIndex, i));
@@ -269,7 +347,7 @@ export const Swiper = React.forwardRef((props: SwiperProps, ref: React.Forwarded
       setIndex(targetIndex);
       isAnimating.current = true;
     },
-    [infinite, slidesPerView, realSlidesCount, maxIndex],
+    [isLoop, clones, realSlidesCount, maxIndex],
   );
 
   const next = React.useCallback(() => {
@@ -280,10 +358,12 @@ export const Swiper = React.forwardRef((props: SwiperProps, ref: React.Forwarded
     setIndex(prev => {
       let nextIndex: number;
 
-      if (infinite) {
+      if (isLoop) {
         // The last position is the first tail clone: it mirrors the first real slide.
         // Further positions would show the empty space when slidesPerView > 1
-        nextIndex = Math.min(prev + 1, total - slidesPerView);
+        nextIndex = Math.min(prev + 1, total - clones);
+      } else if (isFadeLoop) {
+        nextIndex = (prev + 1) % total;
       } else {
         nextIndex = Math.min(prev + 1, maxIndex);
       }
@@ -297,7 +377,7 @@ export const Swiper = React.forwardRef((props: SwiperProps, ref: React.Forwarded
 
       return nextIndex;
     });
-  }, [infinite, maxIndex, total, slidesPerView]);
+  }, [isLoop, isFadeLoop, maxIndex, total, clones]);
 
   const prev = React.useCallback(() => {
     setDisableAnimation(false);
@@ -305,7 +385,7 @@ export const Swiper = React.forwardRef((props: SwiperProps, ref: React.Forwarded
     setOffset(0);
 
     setIndex(prev => {
-      const nextIndex = Math.max(prev - 1, 0);
+      const nextIndex = isFadeLoop ? (prev - 1 + total) % total : Math.max(prev - 1, 0);
 
       if (nextIndex === prev) {
         return prev;
@@ -315,48 +395,63 @@ export const Swiper = React.forwardRef((props: SwiperProps, ref: React.Forwarded
 
       return nextIndex;
     });
-  }, []);
+  }, [isFadeLoop, total]);
 
   // #region Position
-  // The position is the distance in pixels from the start of the track to the left edge of the view.
-  // The state keeps it as index (whole slides) + offset (pixels), the track is translated by both
-  const getSlideWidth = React.useCallback(
-    () => (wrapperRef.current?.clientWidth || 0) / slidesPerView,
-    [slidesPerView],
-  );
+  // The position is the distance in pixels from the start of the track to the start of the view
+  // without the centering shift. The state keeps it as index (whole slides) + offset (pixels)
+  const getSlideSize = React.useCallback(() => {
+    const wrapper = wrapperRef.current;
+    const size = (isVertical ? wrapper?.clientHeight : wrapper?.clientWidth) || 0;
+
+    return size / slidesPerView;
+  }, [isVertical, slidesPerView]);
 
   // The last allowed position. In the infinite mode it is the first tail clone
   const maxPosition = React.useCallback(
-    () => (infinite ? total - slidesPerView : maxIndex) * getSlideWidth(),
-    [infinite, total, slidesPerView, maxIndex, getSlideWidth],
+    () => (isLoop ? total - clones : lastPosition) * getSlideSize(),
+    [isLoop, total, clones, lastPosition, getSlideSize],
   );
+
+  // The index of the track: without the loop the track stops at the last position
+  // even if the index is the next whole number
+  const trackIndex = (isLoop ? index : Math.min(index, lastPosition)) - centerShift;
 
   // The position on the screen right now, also in the middle of a transition
   const readPosition = React.useCallback(() => {
     const track = trackRef.current;
+    const size = getSlideSize();
     if (track && typeof DOMMatrixReadOnly !== 'undefined') {
       const { transform } = getComputedStyle(track);
       if (transform && transform !== 'none') {
-        return -new DOMMatrixReadOnly(transform).m41;
+        const matrix = new DOMMatrixReadOnly(transform);
+
+        return -(isVertical ? matrix.m42 : matrix.m41) + centerShift * size;
       }
     }
 
-    return index * getSlideWidth() - offset;
-  }, [index, offset, getSlideWidth]);
+    return (trackIndex + centerShift) * size - offset;
+  }, [trackIndex, centerShift, offset, getSlideSize, isVertical]);
 
   // Infinite mode: the same view is shown by the real slides and by the clones,
   // so the position is moved by the whole slides count when it comes close to the edge of the track
   const wrapPosition = React.useCallback(
     (position: number) => {
-      const width = getSlideWidth();
-      const span = realSlidesCount * width;
-      if (!infinite || width === 0) return 0;
-      if (position < width * 0.5) return span;
-      if (position > maxPosition() - width * 0.5) return -span;
+      const size = getSlideSize();
+      const span = realSlidesCount * size;
+      if (!isLoop || size === 0) return 0;
+      if (position < size * 0.5) return span;
+      if (position > maxPosition() - size * 0.5) return -span;
 
       return 0;
     },
-    [infinite, realSlidesCount, getSlideWidth, maxPosition],
+    [isLoop, realSlidesCount, getSlideSize, maxPosition],
+  );
+
+  // Without the loop the index between the slides does not go past the last position
+  const clampFreeIndex = React.useCallback(
+    (i: number) => (isLoop ? i : Math.max(0, Math.min(maxFreeIndex, i))),
+    [isLoop, maxFreeIndex],
   );
 
   const dragBasePosition = React.useRef(0);
@@ -371,62 +466,73 @@ export const Swiper = React.forwardRef((props: SwiperProps, ref: React.Forwarded
       // Only the main mouse button, the touch or the pen
       if (e.pointerType === 'mouse' && e.button !== 0) return;
 
-      const width = getSlideWidth();
+      suppressClick.current = false;
+      dragging.current = true;
+      startCoord.current = getCoord(e);
+      lastCoord.current = getCoord(e);
+      lastTime.current = performance.now();
+      velocity.current = 0;
+
+      // The capture fails for a pointer that is already gone: the drag still works without it
+      try {
+        (e.target as HTMLElement).setPointerCapture(e.pointerId);
+      } catch {
+        // nothing
+      }
+
+      // The fade does not move the track: the slide changes after the release
+      if (isFade) return;
+
+      const size = getSlideSize();
       // Grab the track where it is now: a running transition stops under the finger instead of jumping
       let position = readPosition();
       position += wrapPosition(position);
 
-      const anchor = width > 0 ? Math.round(position / width) : index;
+      const anchor = clampFreeIndex(size > 0 ? Math.round(position / size) : index);
       dragBasePosition.current = position;
       dragPosition.current = position;
       dragAnchorIndex.current = anchor;
 
-      suppressClick.current = false;
-      dragging.current = true;
       isAnimating.current = false;
       setDisableAnimation(true);
       setIsMomentum(false);
       setIsDragging(true);
       setIndex(anchor);
-      setOffset(anchor * width - position);
-
-      startX.current = e.clientX;
-      lastX.current = e.clientX;
-      lastTime.current = performance.now();
-      velocity.current = 0;
-
-      (e.target as HTMLElement).setPointerCapture(e.pointerId);
+      setOffset(anchor * size - position);
     },
-    [draggable, getSlideWidth, readPosition, wrapPosition, index],
+    [draggable, isFade, getCoord, getSlideSize, readPosition, wrapPosition, clampFreeIndex, index],
   );
 
   const onPointerMove = React.useCallback(
     (e: React.PointerEvent) => {
       if (!dragging.current) return;
 
+      const coord = getCoord(e);
       const now = performance.now();
-      const dx = e.clientX - lastX.current;
+      const delta = coord - lastCoord.current;
       const dt = now - lastTime.current;
 
       if (dt > 0) {
-        velocity.current = dx / dt;
+        velocity.current = delta / dt;
       }
 
-      lastX.current = e.clientX;
+      lastCoord.current = coord;
       lastTime.current = now;
 
-      const width = getSlideWidth();
-      let position = dragBasePosition.current - (e.clientX - startX.current);
+      if (isFade) return;
+
+      const size = getSlideSize();
+      let position = dragBasePosition.current - (coord - startCoord.current);
 
       // Endless drag in the infinite mode: move the base together with the position
       const shift = wrapPosition(position);
       if (shift !== 0) {
         dragBasePosition.current += shift;
-        dragAnchorIndex.current += Math.round(shift / width);
+        dragAnchorIndex.current += Math.round(shift / size);
         position += shift;
       }
 
-      if (!infinite) {
+      if (!isLoop) {
         const max = maxPosition();
         if (position < 0) {
           position = resistance ? position * 0.3 : 0;
@@ -439,34 +545,64 @@ export const Swiper = React.forwardRef((props: SwiperProps, ref: React.Forwarded
 
       // snap: the index stays the same during the drag, the slide changes after the release.
       // free: the index follows the position, so onSlideChange reports the slide under the view
-      const nextIndex = snap ? dragAnchorIndex.current : Math.round(position / width);
+      const nextIndex = snap
+        ? dragAnchorIndex.current
+        : clampFreeIndex(Math.round(position / size));
       setIndex(nextIndex);
-      setOffset(nextIndex * width - position);
+      setOffset(nextIndex * size - position);
     },
-    [getSlideWidth, wrapPosition, infinite, maxPosition, resistance, snap],
+    [
+      getCoord,
+      isFade,
+      getSlideSize,
+      wrapPosition,
+      isLoop,
+      maxPosition,
+      resistance,
+      snap,
+      clampFreeIndex,
+    ],
   );
 
   const onPointerUp = React.useCallback(
     (e: React.PointerEvent) => {
       if (!dragging.current) return;
 
-      const width = getSlideWidth();
-      const position = dragPosition.current;
-      const delta = lastX.current - startX.current;
-      // The pointer stopped before the release: no inertia
-      const v = performance.now() - lastTime.current > 100 ? 0 : velocity.current;
-      const lastIndex = infinite ? total - slidesPerView : maxIndex;
+      const delta = lastCoord.current - startCoord.current;
 
       // It was a drag, not a click: the click on a link or a button inside the slide must not fire
       if (Math.abs(delta) > threshold) {
         suppressClick.current = true;
       }
 
+      dragging.current = false;
+      try {
+        (e.target as HTMLElement).releasePointerCapture(e.pointerId);
+      } catch {
+        // nothing
+      }
+
+      if (isFade) {
+        if (delta < -threshold) {
+          next();
+        } else if (delta > threshold) {
+          prev();
+        }
+
+        return;
+      }
+
+      const size = getSlideSize();
+      const position = dragPosition.current;
+      // The pointer stopped before the release: no inertia
+      const v = performance.now() - lastTime.current > 100 ? 0 : velocity.current;
+      const lastIndex = isLoop ? total - clones : maxIndex;
+
       setDisableAnimation(false);
 
       if (snap) {
         const anchor = dragAnchorIndex.current;
-        const displacement = position - anchor * width;
+        const displacement = position - anchor * size;
         const velocityFactor = Math.min(Math.abs(v) * 250, 0.65);
         const dynamicThreshold = Math.max(
           threshold,
@@ -478,8 +614,8 @@ export const Swiper = React.forwardRef((props: SwiperProps, ref: React.Forwarded
           // At least one slide, more if the slide was dragged further
           nextIndex =
             displacement > 0
-              ? Math.max(anchor + 1, Math.round(position / width))
-              : Math.min(anchor - 1, Math.round(position / width));
+              ? Math.max(anchor + 1, Math.round(position / size))
+              : Math.min(anchor - 1, Math.round(position / size));
         }
 
         nextIndex = Math.max(0, Math.min(lastIndex, nextIndex));
@@ -487,32 +623,36 @@ export const Swiper = React.forwardRef((props: SwiperProps, ref: React.Forwarded
         setOffset(0);
         // A click without movement does not start a transition, so transitionend never comes
         // and the flag would block autoplay and goToIndex forever
-        isAnimating.current = Math.abs(nextIndex * width - position) > 0.5;
+        const target = (isLoop ? nextIndex : Math.min(nextIndex, lastPosition)) * size;
+        isAnimating.current = Math.abs(target - position) > 0.5;
       } else {
         // Free mode: the track keeps moving by inertia and stops where it stops
-        const projected = Math.max(0, Math.min(lastIndex * width, position - v * 300));
-        const nextIndex = width > 0 ? Math.round(projected / width) : index;
+        const maxProjected = (isLoop ? lastIndex : lastPosition) * size;
+        const projected = Math.max(0, Math.min(maxProjected, position - v * 300));
+        const nextIndex = clampFreeIndex(size > 0 ? Math.round(projected / size) : index);
 
         setIsMomentum(true);
         setIndex(nextIndex);
-        setOffset(nextIndex * width - projected);
+        setOffset(nextIndex * size - projected);
         isAnimating.current = Math.abs(projected - position) > 0.5;
       }
 
-      dragging.current = false;
       setIsDragging(false);
-
-      (e.target as HTMLElement).releasePointerCapture(e.pointerId);
     },
     [
-      getSlideWidth,
-      infinite,
+      isFade,
+      next,
+      prev,
+      getSlideSize,
+      isLoop,
       total,
-      slidesPerView,
+      clones,
       maxIndex,
+      lastPosition,
       threshold,
       snap,
       dragThreshold,
+      clampFreeIndex,
       index,
     ],
   );
@@ -530,7 +670,7 @@ export const Swiper = React.forwardRef((props: SwiperProps, ref: React.Forwarded
   const autoplayStep = React.useRef<() => void>(() => undefined);
   autoplayStep.current = () => {
     // Without the infinite loop the autoplay returns to the first slide instead of stopping at the end
-    if (!infinite && indexRef.current >= maxIndex) {
+    if (!isLoop && !isFadeLoop && indexRef.current >= maxIndex) {
       goToIndex(0);
     } else {
       next();
@@ -541,7 +681,7 @@ export const Swiper = React.forwardRef((props: SwiperProps, ref: React.Forwarded
   const resume = React.useCallback(() => setIsPausedByApi(false), []);
 
   React.useEffect(() => {
-    if (!autoplay || isPaused) return undefined;
+    if (!autoplay || isTicker || isPaused) return undefined;
 
     const timer = setInterval(() => {
       if (!dragging.current && !isAnimating.current && mounted.current) {
@@ -550,14 +690,64 @@ export const Swiper = React.forwardRef((props: SwiperProps, ref: React.Forwarded
     }, autoplayInterval);
 
     return () => clearInterval(timer);
-  }, [autoplay, autoplayInterval, isPaused]);
+  }, [autoplay, isTicker, autoplayInterval, isPaused]);
+
+  // #region Ticker
+  // The continuous scroll writes the transform directly: 60 renders per second are not needed for it.
+  // The position is kept in slides, so it stays in place when the size of the swiper changes
+  const tickerPosition = React.useRef<number | null>(null);
+
+  React.useEffect(() => {
+    const track = trackRef.current;
+    if (!isTicker || !isLoop || !track) return undefined;
+    if (isPaused || prefersReducedMotion()) return undefined;
+
+    let frame = 0;
+    let last = performance.now();
+
+    const step = (now: number) => {
+      const size = getSlideSize();
+
+      if (size > 0) {
+        let position = tickerPosition.current ?? clones;
+        position += ((autoScroll || 0) * (now - last)) / 1000 / size;
+        if (position >= clones + realSlidesCount) {
+          position -= realSlidesCount;
+        }
+
+        tickerPosition.current = position;
+        const translate = -(position - centerShift) * size;
+        track.style.transition = 'none';
+        track.style.transform = isVertical
+          ? `translateY(${translate}px)`
+          : `translateX(${translate}px)`;
+      }
+
+      last = now;
+      frame = requestAnimationFrame(step);
+    };
+
+    frame = requestAnimationFrame(step);
+
+    return () => cancelAnimationFrame(frame);
+  }, [
+    isTicker,
+    isLoop,
+    isPaused,
+    autoScroll,
+    getSlideSize,
+    realSlidesCount,
+    clones,
+    centerShift,
+    isVertical,
+  ]);
 
   // #region Hover and focus
   // The autoplay pauses while the pointer is over the swiper (pauseOnHover)
   // and always while the focus is inside it, so the keyboard user is not interrupted
   React.useEffect(() => {
     const wrapper = wrapperRef.current;
-    if (!autoplay || !wrapper) return undefined;
+    if (!(autoplay || isTicker) || !wrapper) return undefined;
 
     const handleMouseEnter = () => pauseOnHover && setIsHovered(true);
     const handleMouseLeave = () => setIsHovered(false);
@@ -579,7 +769,7 @@ export const Swiper = React.forwardRef((props: SwiperProps, ref: React.Forwarded
       wrapper.removeEventListener('focusin', handleFocusIn);
       wrapper.removeEventListener('focusout', handleFocusOut);
     };
-  }, [autoplay, pauseOnHover]);
+  }, [autoplay, isTicker, pauseOnHover]);
 
   // #region Keyboard
   const onKeyDown = React.useCallback(
@@ -590,16 +780,16 @@ export const Swiper = React.forwardRef((props: SwiperProps, ref: React.Forwarded
       const target = event.target as HTMLElement;
       if (target.closest('input, textarea, select, [contenteditable="true"]')) return;
 
-      if (event.key === 'ArrowLeft') {
+      if (event.key === (isVertical ? 'ArrowUp' : 'ArrowLeft')) {
         event.preventDefault();
         prev();
       }
-      if (event.key === 'ArrowRight') {
+      if (event.key === (isVertical ? 'ArrowDown' : 'ArrowRight')) {
         event.preventDefault();
         next();
       }
     },
-    [keyboardControl, prev, next],
+    [keyboardControl, isVertical, prev, next],
   );
 
   const onClickCapture = React.useCallback((event: React.MouseEvent) => {
@@ -625,14 +815,17 @@ export const Swiper = React.forwardRef((props: SwiperProps, ref: React.Forwarded
     const track = trackRef.current;
     if (!track) return;
 
+    // The fade changes the opacity of the slides, the event bubbles up to the track
+    const property = isFade ? 'opacity' : 'transform';
+
     const handleTransitionEnd = (e: TransitionEvent) => {
-      if (e.propertyName !== 'transform') return;
+      if (e.propertyName !== property) return;
       isAnimating.current = false;
-      normalizeIndex(); // <-- вот здесь
+      normalizeIndex();
     };
 
     const handleTransitionCancel = (e: TransitionEvent) => {
-      if (e.propertyName !== 'transform') return;
+      if (e.propertyName !== property) return;
       isAnimating.current = false;
     };
 
@@ -643,7 +836,7 @@ export const Swiper = React.forwardRef((props: SwiperProps, ref: React.Forwarded
       track.removeEventListener('transitionend', handleTransitionEnd);
       track.removeEventListener('transitioncancel', handleTransitionCancel);
     };
-  }, [normalizeIndex]);
+  }, [normalizeIndex, isFade]);
 
   // #region Mount
   React.useEffect(() => {
@@ -681,38 +874,44 @@ export const Swiper = React.forwardRef((props: SwiperProps, ref: React.Forwarded
 
   const getSlideRealIndex = React.useCallback(
     (domIndex: number): number => {
-      if (!infinite) {
+      if (!isLoop) {
         return domIndex;
       }
 
-      const totalSlides = realSlidesCount;
-
-      if (domIndex < slidesPerView) {
-        return totalSlides - slidesPerView + domIndex;
+      if (domIndex < clones) {
+        return realSlidesCount - clones + domIndex;
       }
 
-      if (domIndex >= total - slidesPerView) {
-        return domIndex - (total - slidesPerView);
+      if (domIndex >= total - clones) {
+        return domIndex - (total - clones);
       }
 
-      return domIndex - slidesPerView;
+      return domIndex - clones;
     },
-    [infinite, realSlidesCount, slidesPerView, total],
+    [isLoop, realSlidesCount, clones, total],
   );
 
   // The slides at least partially in the view: they are not inert, so a partially visible slide
-  // can be clicked. Between the slides (drag, free mode) one more slide is partially visible
-  const slideWidth = wrapperRef.current ? wrapperRef.current.clientWidth / slidesPerView : 0;
-  let firstVisibleDomIndex = index;
-  let visibleCount = slidesPerView;
-  if (slideWidth > 0 && Math.abs(offset) > 0.5) {
-    const position = index * slideWidth - offset;
-    firstVisibleDomIndex = Math.floor(position / slideWidth + 0.001);
-    const lastVisibleDomIndex =
-      Math.ceil((position + slidesPerView * slideWidth) / slideWidth - 0.001) - 1;
-    visibleCount = lastVisibleDomIndex - firstVisibleDomIndex + 1;
+  // can be clicked. Between the slides (drag, free mode), with a fractional slidesPerView
+  // and with the centering one more slide is partially visible
+  const wrapper = wrapperRef.current;
+  const slideSize = wrapper
+    ? (isVertical ? wrapper.clientHeight : wrapper.clientWidth) / slidesPerView
+    : 0;
+  const viewPosition = slideSize > 0 ? trackIndex - offset / slideSize : trackIndex;
+  let firstVisibleDomIndex = Math.floor(viewPosition + 0.001);
+  let visibleCount = Math.ceil(viewPosition + slidesPerView - 0.001) - firstVisibleDomIndex;
+  if (isFade) {
+    firstVisibleDomIndex = index;
+    visibleCount = 1;
   }
   firstVisibleDomIndex = Math.max(0, Math.min(total - 1, firstVisibleDomIndex));
+
+  // The ticker moves without the state: all the slides are rendered
+  if (isTicker) {
+    firstVisibleDomIndex = clones;
+    visibleCount = realSlidesCount;
+  }
 
   return (
     <overridesMap.Container role="region" aria-roledescription="carousel" {...restProps}>
@@ -720,8 +919,9 @@ export const Swiper = React.forwardRef((props: SwiperProps, ref: React.Forwarded
         ref={wrapperRef}
         draggable={draggable}
         slidesPerView={slidesPerView}
+        vertical={isVertical}
         tabIndex={keyboardControl ? 0 : undefined}
-        aria-live={autoplay && !isPaused ? 'off' : 'polite'}
+        aria-live={(autoplay || isTicker) && !isPaused ? 'off' : 'polite'}
         onKeyDown={onKeyDown}
         onClickCapture={onClickCapture}
         onDragStart={onDragStart}
@@ -733,11 +933,14 @@ export const Swiper = React.forwardRef((props: SwiperProps, ref: React.Forwarded
         <overridesMap.Track
           ref={trackRef}
           dragging={isDragging}
-          index={index}
-          offset={offset}
+          index={isFade ? 0 : trackIndex}
+          offset={isFade ? 0 : offset}
           disableAnimation={disableAnimation}
           momentum={isMomentum}
           slidesPerView={slidesPerView}
+          vertical={isVertical}
+          effect={effect}
+          speed={speed}
         >
           <SwiperSlidesRenderer
             slides={slides as readonly SwiperSlideElement[]}
@@ -748,6 +951,7 @@ export const Swiper = React.forwardRef((props: SwiperProps, ref: React.Forwarded
             realSlidesCount={realSlidesCount}
             getSlideRealIndex={getSlideRealIndex}
             slideLabel={slideLabel}
+            activeDomIndex={isFade ? index : null}
           />
         </overridesMap.Track>
       </overridesMap.Wrapper>

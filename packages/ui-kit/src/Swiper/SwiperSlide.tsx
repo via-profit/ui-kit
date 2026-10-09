@@ -9,6 +9,9 @@ const StyledSlide = styled.div<StyleProps>`
   flex-grow: 0;
   flex-shrink: 0;
   flex-basis: calc(100% / ${({ $slidesPerView }) => $slidesPerView});
+  /* The size of the slide is set by slidesPerView, not by its content: the track positions rely on it */
+  min-width: 0;
+  min-height: 0;
   height: 100%;
   display: flex;
   align-items: center;

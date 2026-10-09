@@ -101,6 +101,12 @@
   "1YJ48R": {
     "defaultMessage": "Открыть подтверждение"
   },
+  "1ZBzYA": {
+    "defaultMessage": "Наши клиенты"
+  },
+  "1df10Y": {
+    "defaultMessage": "Новый сорт кофе из Эфиопии"
+  },
   "1kIBlz": {
     "defaultMessage": "Найдено: {count}. Это тени, которые не совпадают с тенями уровней: свои тени компонентов, ореолы и рамки фокуса."
   },
@@ -230,6 +236,9 @@
   "73HUzt": {
     "defaultMessage": "Наличными"
   },
+  "75AdQ+": {
+    "defaultMessage": "Оплата при получении"
+  },
   "76c+aZ": {
     "defaultMessage": "Оформить заказ на {total}"
   },
@@ -314,6 +323,9 @@
   "AIyaKV": {
     "defaultMessage": "Кнопки, поля ввода, календари, меню и модальные окна с темами оформления и переопределяемыми частями."
   },
+  "AMjvqj": {
+    "defaultMessage": "Базовый"
+  },
   "AVmknp": {
     "defaultMessage": "Заказ №1042 оплачен"
   },
@@ -380,6 +392,9 @@
   "Dkktdz": {
     "defaultMessage": "Новая заявка"
   },
+  "DzNxrN": {
+    "defaultMessage": "21 сентября"
+  },
   "E1j2xY": {
     "defaultMessage": "Сохранение…"
   },
@@ -388,6 +403,9 @@
   },
   "ELrvsD": {
     "defaultMessage": "Открыть меню"
+  },
+  "EVkrMu": {
+    "defaultMessage": "Открыли пункт выдачи на Ленина, 12"
   },
   "EXBb5Y": {
     "defaultMessage": "Подарки"
@@ -451,6 +469,9 @@
   },
   "Gizjoc": {
     "defaultMessage": "Турка"
+  },
+  "Gp0DYh": {
+    "defaultMessage": "Упаковка для чая"
   },
   "GqjTV9": {
     "defaultMessage": "Контролы и остальные компоненты"
@@ -581,6 +602,9 @@
   "Kr9Ly8": {
     "defaultMessage": "Тема оформления"
   },
+  "L7bKQg": {
+    "defaultMessage": "Работы"
+  },
   "LHBvxW": {
     "defaultMessage": "Дата в формате ISO"
   },
@@ -598,6 +622,9 @@
   },
   "Lj9QtT": {
     "defaultMessage": "Показать код"
+  },
+  "LqoKy3": {
+    "defaultMessage": "Тарифы"
   },
   "Lv9l4a": {
     "defaultMessage": "Настройки теней"
@@ -752,6 +779,9 @@
   "SMzCPW": {
     "defaultMessage": "Сохранить"
   },
+  "ST0LS6": {
+    "defaultMessage": "14 сентября"
+  },
   "SWd3Sf": {
     "defaultMessage": "Ничего не найдено"
   },
@@ -892,6 +922,9 @@
   },
   "WtODCh": {
     "defaultMessage": "Добавьте его в корзину"
+  },
+  "Wuihvb": {
+    "defaultMessage": "Сайт обжарщика"
   },
   "X3Snsx": {
     "defaultMessage": "Сделки"
@@ -1073,6 +1106,9 @@
   "cckKWH": {
     "defaultMessage": "Оплатите заказ"
   },
+  "ce4/B/": {
+    "defaultMessage": "28 сентября"
+  },
   "cgAw8y": {
     "defaultMessage": "Введите номер полностью"
   },
@@ -1253,11 +1289,17 @@
   "irrmL5": {
     "defaultMessage": "Добавьте товары в корзину"
   },
+  "is5ADJ": {
+    "defaultMessage": "в месяц"
+  },
   "j+OmTL": {
     "defaultMessage": "Запись на приём"
   },
   "jC3N8X": {
     "defaultMessage": "Укажите адрес доставки"
+  },
+  "jCUDWb": {
+    "defaultMessage": "Доставка по выходным"
   },
   "jJ7voZ": {
     "defaultMessage": "Ссылка скопирована"
@@ -1457,6 +1499,9 @@
   "pqT57f": {
     "defaultMessage": "исходный"
   },
+  "qVDZd3": {
+    "defaultMessage": "2 октября"
+  },
   "qXh0mH": {
     "defaultMessage": "Имя"
   },
@@ -1549,6 +1594,9 @@
   },
   "uGm/IV": {
     "defaultMessage": "Три открытые сделки."
+  },
+  "uW/lN2": {
+    "defaultMessage": "Интерьер кофейни"
   },
   "uW7wX2": {
     "defaultMessage": "Готовые наборы отступов"
@@ -1672,6 +1720,9 @@
   },
   "yvhyJs": {
     "defaultMessage": "Основные cookie (обязательно)"
+  },
+  "yxJ+qp": {
+    "defaultMessage": "Бизнес"
   },
   "z2dT/I": {
     "defaultMessage": "Диалог закрывается кнопкой, клавишей Esc или кликом по затемнённому фону."

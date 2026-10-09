@@ -9,6 +9,10 @@ import ExampleSwiperInfinite from '~/examples/swiper/ExampleSwiperInfinite';
 import ExampleSwiperApi from '~/examples/swiper/ExampleSwiperApi';
 import ExampleSwiperSlidesPerView from '~/examples/swiper/ExampleSwiperSlidesPerView';
 import ExampleSwiperFree from '~/examples/swiper/ExampleSwiperFree';
+import ExampleSwiperCentered from '~/examples/swiper/ExampleSwiperCentered';
+import ExampleSwiperVertical from '~/examples/swiper/ExampleSwiperVertical';
+import ExampleSwiperFade from '~/examples/swiper/ExampleSwiperFade';
+import ExampleSwiperTicker from '~/examples/swiper/ExampleSwiperTicker';
 
 const SwiperOverview: React.FC = () => (
   <>
@@ -20,6 +24,10 @@ const SwiperOverview: React.FC = () => (
           ExampleSwiperApi,
           ExampleSwiperSlidesPerView,
           ExampleSwiperFree,
+          ExampleSwiperCentered,
+          ExampleSwiperVertical,
+          ExampleSwiperFade,
+          ExampleSwiperTicker,
         }}
       >
         {content}
