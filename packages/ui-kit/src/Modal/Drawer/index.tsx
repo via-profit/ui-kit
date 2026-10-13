@@ -53,6 +53,15 @@ export interface DrawerProps extends Omit<BaseModalProps, 'overrides'> {
   readonly closeButtonLabel?: string;
 
   /**
+   * Close the drawer by a swipe towards its edge: down for `bottom`, left for `left` and so on.
+   * A short swipe returns the drawer back. The content scrolls first, the drawer follows
+   * the finger when the content is at its edge. A mouse drags the drawer by the handle\
+   * \
+   * **Default:** `false`
+   */
+  readonly swipeToClose?: boolean;
+
+  /**
    * Overridable components map
    */
   readonly overrides?: DrawerOverrides;
@@ -97,6 +106,7 @@ const Drawer: React.FC<DrawerProps> = props => {
     toolbar,
     footer,
     overrides,
+    swipeToClose,
     ...otherProps
   } = props;
   const hasFooter = React.useMemo(() => typeof footer !== 'undefined' && footer !== null, [footer]);
@@ -120,13 +130,14 @@ const Drawer: React.FC<DrawerProps> = props => {
           <DrawerInner
             anchor={anchor}
             dialogID={dialogID}
+            swipeToClose={swipeToClose}
             aria-labelledby={hasTitle ? `${dialogID}-title` : undefined}
             ref={ref}
             {...innerProps}
           />
         );
       }),
-    [anchor, dialogID, hasTitle],
+    [anchor, dialogID, hasTitle, swipeToClose],
   );
 
   const overridesMap = React.useMemo(

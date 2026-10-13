@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 import { css } from '@emotion/react';
 
 import ModalInner, { ModalInnerProps } from '../BaseModal/ModalInner';
+import useSwipeToClose from './useSwipeToClose';
 
 export type AnchorVariant = 'bottom' | 'right' | 'left' | 'top';
 
@@ -20,7 +21,92 @@ export type DrawerInnerProps = ModalInnerProps &
      * **Default:** `bottom`
      */
     readonly anchor: AnchorVariant;
+
+    /**
+     * Close the drawer by a swipe towards its edge\
+     * \
+     * **Default:** `false`
+     */
+    readonly swipeToClose?: boolean;
   };
+
+/**
+ * The grip on the side facing the page: shows that the drawer can be swiped
+ * and lets a mouse drag it (elsewhere the mouse selects the text)
+ */
+const DrawerHandle = styled.div<{ $anchor: AnchorVariant }>`
+  position: absolute;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: grab;
+  touch-action: none;
+
+  &:active {
+    cursor: grabbing;
+  }
+
+  &::before {
+    content: '';
+    border-radius: 1em;
+    background-color: ${({ theme }) => theme.color.textPrimary.alpha(0.24).toString()};
+  }
+
+  ${({ $anchor }) => {
+    switch ($anchor) {
+      case 'top':
+        return css`
+          bottom: 0;
+          left: 50%;
+          transform: translateX(-50%);
+          width: 4em;
+          height: 1.25em;
+          &::before {
+            width: 2.5em;
+            height: 0.25em;
+          }
+        `;
+      case 'left':
+        return css`
+          right: 0;
+          top: 50%;
+          transform: translateY(-50%);
+          width: 1.25em;
+          height: 4em;
+          &::before {
+            width: 0.25em;
+            height: 2.5em;
+          }
+        `;
+      case 'right':
+        return css`
+          left: 0;
+          top: 50%;
+          transform: translateY(-50%);
+          width: 1.25em;
+          height: 4em;
+          &::before {
+            width: 0.25em;
+            height: 2.5em;
+          }
+        `;
+      case 'bottom':
+      default:
+        return css`
+          top: 0;
+          left: 50%;
+          transform: translateX(-50%);
+          width: 4em;
+          height: 1.25em;
+          &::before {
+            width: 2.5em;
+            height: 0.25em;
+          }
+        `;
+    }
+  }}
+`;
 
 const StyledDrawerBottomInner = styled(ModalInner)`
   position: fixed;
@@ -146,7 +232,18 @@ const DrawerInner: React.ForwardRefRenderFunction<HTMLDivElement, DrawerInnerPro
   props,
   ref,
 ) => {
-  const { children, isOpen, anchor, onRequestClose, dialogID, ...nativeProps } = props;
+  const { children, isOpen, anchor, onRequestClose, dialogID, swipeToClose, ...nativeProps } =
+    props;
+  const elementRef = React.useRef<HTMLDivElement | null>(null);
+  React.useImperativeHandle(ref, () => elementRef.current as HTMLDivElement);
+
+  const swipeHandlers = useSwipeToClose({
+    elementRef,
+    enabled: Boolean(swipeToClose),
+    isOpen,
+    anchor,
+    onClose: onRequestClose,
+  });
 
   const Element = React.useMemo(() => {
     switch (anchor) {
@@ -170,8 +267,10 @@ const DrawerInner: React.ForwardRefRenderFunction<HTMLDivElement, DrawerInnerPro
       id={`${dialogID}-description`}
       onRequestClose={onRequestClose}
       {...nativeProps}
-      ref={ref}
+      {...swipeHandlers}
+      ref={elementRef}
     >
+      {swipeToClose && <DrawerHandle $anchor={anchor} data-drawer-handle aria-hidden="true" />}
       {children}
     </Element>
   );

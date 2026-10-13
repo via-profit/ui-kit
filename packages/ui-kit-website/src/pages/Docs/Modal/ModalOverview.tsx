@@ -8,6 +8,7 @@ import ExampleModalForm from '~/examples/modal/ExampleModalForm';
 import ExampleConfirmBox from '~/examples/modal/ExampleConfirmBox';
 import ExampleMessageBox from '~/examples/modal/ExampleMessageBox';
 import ExampleModalDrawerOverview from '~/examples/modal/ExampleModalDrawerOverview';
+import ExampleModalDrawerSwipe from '~/examples/modal/ExampleModalDrawerSwipe';
 import ExampleModalOverrides from '~/examples/modal/ExampleModalOverrides';
 import content from '@via-profit/ui-kit/docs/modal/README.md';
 
@@ -21,6 +22,7 @@ const ModalOverview: React.FC = () => (
           ExampleConfirmBox,
           ExampleMessageBox,
           ExampleModalDrawerOverview,
+          ExampleModalDrawerSwipe,
           ExampleModalOverrides,
         }}
       >

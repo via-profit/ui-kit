@@ -1097,6 +1097,9 @@
   "cMDovB": {
     "defaultMessage": "Договор"
   },
+  "cTzmQC": {
+    "defaultMessage": "Privacy policy"
+  },
   "cWOerR": {
     "defaultMessage": "Сверху"
   },
@@ -1309,6 +1312,9 @@
   },
   "jRCu+B": {
     "defaultMessage": "Справка"
+  },
+  "jUNY7u": {
+    "defaultMessage": "Swipe the drawer towards its edge to close it. Until the text is scrolled to the start, the swipe scrolls it. A short swipe returns the drawer back. With a mouse, drag the drawer by the handle."
   },
   "jX2Rp6": {
     "defaultMessage": "Новый"
