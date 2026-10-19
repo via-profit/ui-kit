@@ -9,6 +9,7 @@ import ExampleAutocompleteCreatable from '~/examples/autocomplete/ExampleAutocom
 import ExampleAutocompleteFetch from '~/examples/autocomplete/ExampleAutocompleteFetch';
 import ExampleAutocompleteMultiple from '~/examples/autocomplete/ExampleAutocompleteMultiple';
 import ExampleAutocompleteOverrides from '~/examples/autocomplete/ExampleAutocompleteOverrides';
+import ExampleAutocompleteFreeText from '~/examples/autocomplete/ExampleAutocompleteFreeText';
 
 const AutocompleteOverview: React.FC = () => (
   <>
@@ -20,6 +21,7 @@ const AutocompleteOverview: React.FC = () => (
           ExampleAutocompleteFetch,
           ExampleAutocompleteMultiple,
           ExampleAutocompleteOverrides,
+          ExampleAutocompleteFreeText,
         }}
       >
         {content}

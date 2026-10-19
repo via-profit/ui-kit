@@ -7,6 +7,7 @@
 - [Поведение поля](#поведение-поля)
 - [Загрузка с сервера](#загрузка-с-сервера)
 - [Создание нового значения](#создание-нового-значения)
+- [Свободный текст с подсказками](#свободный-текст-с-подсказками)
 - [Мультивыбор](#мультивыбор)
 - [Переопределение](#переопределение)
 - [API](#api)
@@ -188,6 +189,68 @@ _Пример использования:_
 Введите название страны, которой нет в списке:
 
 <ExampleAutocompleteCreatable />
+
+## Свободный текст с подсказками
+
+Бывает, что значение поля — сам текст, а список только подсказывает: ИНН или название организации, адрес, имя. Пользователь может ничего не выбирать и ввести текст сам, а выбор подсказки заполняет и это поле, и соседние.
+
+Для этого управляйте текстом поля сами:
+
+- `inputValue` — текст поля. С ним поле показывает этот текст, а не текст выбранного элемента, и не стирает и не восстанавливает его, когда фокус уходит;
+- `onInputValueChange(text)` — новый текст: при вводе и при очистке кнопкой;
+- `value={null}` — выбранного элемента нет, значение хранится в тексте;
+- `onChange(item)` — выбрана подсказка: заполните по ней форму, в том числе `inputValue`, если нужно.
+
+_Пример использования:_ поле «Страна» — свободный текст, выбор подсказки заполняет ещё и код страны.
+
+```tsx
+const Example: React.FC = () => {
+  const [name, setName] = React.useState('');
+  const [code, setCode] = React.useState('');
+  const [items, setItems] = React.useState<Country[]>([]);
+  const [isOpen, setIsOpen] = React.useState(false);
+
+  return (
+    <>
+      <Autocomplete
+        label="Страна"
+        value={null}
+        inputValue={name}
+        onInputValueChange={text => {
+          setName(text);
+          const found = findCountries(text);
+          setItems(found);
+          setIsOpen(found.length > 0);
+        }}
+        items={items}
+        isOpen={isOpen}
+        onRequestOpen={() => setIsOpen(items.length > 0)}
+        onRequestClose={() => setIsOpen(false)}
+        onChange={item => {
+          if (item) {
+            setName(item.name);
+            setCode(item.code);
+          }
+          setIsOpen(false);
+        }}
+        selectedItemToString={item => item.name}
+        filterItems={items => items}
+      >
+        {({ item }, itemProps) => (
+          <AutocompleteItem {...itemProps} key={item.code}>
+            {item.name}
+          </AutocompleteItem>
+        )}
+      </Autocomplete>
+      <TextField label="Код страны" value={code} onChange={event => setCode(event.currentTarget.value)} />
+    </>
+  );
+};
+```
+
+<ExampleAutocompleteFreeText />
+
+Подсказки с сервера загружаются так же, как в разделе [Загрузка с сервера](#загрузка-с-сервера), только запрос отправляйте из `onInputValueChange`.
 
 ## Мультивыбор
 
@@ -394,6 +457,18 @@ autocompleteRef.current?.clear();
 ### `onInputChange`
 Вызывается при каждом изменении текста в поле.
 - Тип: `React.ChangeEventHandler<HTMLInputElement>`
+- По умолчанию: `undefined`
+- Обязательное: нет
+
+### `inputValue`
+Текст поля, которым вы управляете сами. Подробнее в разделе [Свободный текст с подсказками](#свободный-текст-с-подсказками).
+- Тип: `string`
+- По умолчанию: `undefined` — текстом управляет компонент
+- Обязательное: нет
+
+### `onInputValueChange`
+Вызывается с новым текстом поля: при вводе и при очистке кнопкой.
+- Тип: `(inputValue: string) => void`
 - По умолчанию: `undefined`
 - Обязательное: нет
 

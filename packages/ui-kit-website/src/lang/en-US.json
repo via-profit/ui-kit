@@ -494,6 +494,9 @@
   "GqjTV9": {
     "defaultMessage": "Контролы и остальные компоненты"
   },
+  "GwC0+Z": {
+    "defaultMessage": "Код страны"
+  },
   "H1Y3Sf": {
     "defaultMessage": "Распродажа"
   },
@@ -1897,9 +1900,6 @@
   },
   "PLEqqz": {
     "defaultMessage": "Остальные компоненты"
-  },
-  "GwC0+Z": {
-    "defaultMessage": "Код страны"
   },
   "Qrj27f": {
     "defaultMessage": "Поиск по коду или названию"

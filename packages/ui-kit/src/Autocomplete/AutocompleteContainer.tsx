@@ -168,6 +168,21 @@ export interface AutocompleteProps<T, Multiple extends boolean | undefined = und
   readonly onInputChange?: React.ChangeEventHandler<HTMLInputElement>;
 
   /**
+   * The text of the field controlled by you: the free text which is the value itself
+   * (INN, the name, the address), the items are the suggestions only.\
+   * With it the field shows this text, not the text of the selected item, and does not
+   * clear or restore it on blur. The choice of an item calls `onChange(item)`: put the text
+   * of the item into `inputValue` yourself, if needed.\
+   * Pass it together with `onInputValueChange`
+   */
+  readonly inputValue?: string;
+
+  /**
+   * Called with the new text of the field: on typing and on the clear button
+   */
+  readonly onInputValueChange?: (inputValue: string) => void;
+
+  /**
    * The function that will be called at the moment when you want to open the selectbox
    */
   readonly onRequestOpen?: (
@@ -271,6 +286,8 @@ const Autocomplete = React.forwardRef(
       selectedItemToString,
       clearable = true,
       onInputChange,
+      inputValue: controlledInputValue,
+      onInputValueChange,
       getOptionSelected,
       onRequestOpen = () => undefined,
       onRequestClose = () => undefined,
@@ -290,11 +307,13 @@ const Autocomplete = React.forwardRef(
       }),
       [overrides],
     );
+    const isInputControlled = typeof controlledInputValue === 'string';
 
     const clear = React.useCallback(() => {
       if (onChange) {
         onChange((multiple ? [] : null) as Value<T, Multiple>);
       }
+      onInputValueChange?.('');
       dispatch(
         actionSetPartial({
           filteredItems: items,
@@ -305,7 +324,7 @@ const Autocomplete = React.forwardRef(
       setTimeout(() => {
         fieldInputRef.current?.focus();
       }, 15);
-    }, [dispatch, onChange, items, multiple]);
+    }, [dispatch, onChange, onInputValueChange, items, multiple]);
     /**
      * API
      */
@@ -334,8 +353,12 @@ const Autocomplete = React.forwardRef(
      */
     const restoreInputValue = React.useCallback(() => {
       // With multiple the field holds only the search text, the selected items are tags
-      const newInputValue =
-        multiple || currentValue === null ? '' : selectedItemToString(currentValue as T);
+      // The controlled text is the value itself: it stays as it is
+      const newInputValue = isInputControlled
+        ? (controlledInputValue as string)
+        : multiple || currentValue === null
+          ? ''
+          : selectedItemToString(currentValue as T);
 
       const newFilteredItems = applyFilterForItems(newInputValue, items);
 
@@ -345,7 +368,16 @@ const Autocomplete = React.forwardRef(
           inputValue: newInputValue,
         }),
       );
-    }, [currentValue, selectedItemToString, multiple, applyFilterForItems, items, dispatch]);
+    }, [
+      currentValue,
+      selectedItemToString,
+      multiple,
+      applyFilterForItems,
+      items,
+      dispatch,
+      isInputControlled,
+      controlledInputValue,
+    ]);
 
     const inputKeydownEvent = React.useCallback(
       (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -464,10 +496,11 @@ const Autocomplete = React.forwardRef(
         return;
       }
 
-      // With multiple the selected items are shown as tags and the search text is kept
+      // With multiple the selected items are shown as tags and the search text is kept,
+      // the controlled text is not replaced by the text of the item
       dispatch(
         actionSetPartial(
-          multiple
+          multiple || isInputControlled
             ? { currentValue: value }
             : {
                 currentValue: value,
@@ -475,7 +508,31 @@ const Autocomplete = React.forwardRef(
               },
         ),
       );
-    }, [value, multiple, currentValue, inputValue, dispatch, selectedItemToString]);
+    }, [
+      value,
+      multiple,
+      currentValue,
+      inputValue,
+      dispatch,
+      selectedItemToString,
+      isInputControlled,
+    ]);
+
+    /**
+     * The controlled text: the field follows `inputValue`
+     */
+    React.useEffect(() => {
+      if (!isInputControlled || controlledInputValue === inputValue) {
+        return;
+      }
+
+      dispatch(
+        actionSetPartial({
+          inputValue: controlledInputValue as string,
+          filteredItems: applyFilterForItems(controlledInputValue as string, items),
+        }),
+      );
+    }, [isInputControlled, controlledInputValue, inputValue, dispatch, applyFilterForItems, items]);
 
     React.useEffect(() => {
       if (currentOpen && menuRef.current) {
@@ -601,6 +658,7 @@ const Autocomplete = React.forwardRef(
         if (typeof onInputChange === 'function') {
           onInputChange(event);
         }
+        onInputValueChange?.(event.currentTarget.value);
 
         // If openOnFocus is false, but value is not empty
         // we should open menu list if is not opened
@@ -631,6 +689,7 @@ const Autocomplete = React.forwardRef(
         filteredItems.length,
         items,
         onInputChange,
+        onInputValueChange,
         onRequestClose,
         onRequestOpen,
         openOnFocus,
