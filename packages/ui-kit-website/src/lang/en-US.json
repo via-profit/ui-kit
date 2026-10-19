@@ -638,6 +638,9 @@
   "LZbAEP": {
     "defaultMessage": "Не отменять"
   },
+  "Lj6qSg": {
+    "defaultMessage": "Корзина пуста"
+  },
   "Lj9QtT": {
     "defaultMessage": "Показать код"
   },
@@ -721,6 +724,9 @@
   },
   "P+mcbm": {
     "defaultMessage": "Запрос к серверу: от {from} до {to}"
+  },
+  "P4I6QM": {
+    "defaultMessage": "По выбранным фильтрам заявок нет. Измените период или сбросьте фильтры."
   },
   "PH2JcS": {
     "defaultMessage": "Аккаунт удалён"
@@ -844,6 +850,9 @@
   },
   "THaf0F": {
     "defaultMessage": "Настройки"
+  },
+  "TKmwhh": {
+    "defaultMessage": "Пусто"
   },
   "TUq/gR": {
     "defaultMessage": "Обычно"
@@ -1030,6 +1039,9 @@
   },
   "Z7GO3i": {
     "defaultMessage": "По счёту"
+  },
+  "ZGq68t": {
+    "defaultMessage": "Комментариев пока нет."
   },
   "ZM18U4": {
     "defaultMessage": "Дата доставки"
@@ -1249,6 +1261,9 @@
   },
   "ftHGHa": {
     "defaultMessage": "Номер карты"
+  },
+  "g6pxc8": {
+    "defaultMessage": "Сбросить фильтры"
   },
   "gBa6To": {
     "defaultMessage": "Заказы за неделю"
