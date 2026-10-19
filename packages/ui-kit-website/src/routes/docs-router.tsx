@@ -28,6 +28,9 @@ const ThemingOverview = loadable(() => import('~/pages/Docs/Theming/ThemingOverv
 const ThemingColor = loadable(() => import('~/pages/Docs/Theming/ThemingColor'));
 const SurfaceOverview = loadable(() => import('~/pages/Docs/Surface/SurfaceOverview'));
 const StackOverview = loadable(() => import('~/pages/Docs/Stack/StackOverview'));
+const FileDropzoneOverview = loadable(
+  () => import('~/pages/Docs/FileDropzone/FileDropzoneOverview'),
+);
 const SkeletonOverview = loadable(() => import('~/pages/Docs/Skeleton/SkeletonOverview'));
 const EmptyStateOverview = loadable(() => import('~/pages/Docs/EmptyState/EmptyStateOverview'));
 const InfoNoteOverview = loadable(() => import('~/pages/Docs/InfoNote/InfoNoteOverview'));
@@ -231,6 +234,15 @@ const docsRouter: RouteObject = {
       element: (
         <React.Suspense fallback={<LoadingOverlay />}>
           <ThemingColor />
+        </React.Suspense>
+      ),
+    },
+    {
+      path: 'file-dropzone',
+      caseSensitive: true,
+      element: (
+        <React.Suspense fallback={<LoadingOverlay />}>
+          <FileDropzoneOverview />
         </React.Suspense>
       ),
     },

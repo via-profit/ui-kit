@@ -1040,6 +1040,9 @@
   "Z7GO3i": {
     "defaultMessage": "По счёту"
   },
+  "ZCFvZz": {
+    "defaultMessage": "Можно только JPG, PNG или PDF"
+  },
   "ZGq68t": {
     "defaultMessage": "Комментариев пока нет."
   },
@@ -1090,6 +1093,9 @@
   },
   "b686fK": {
     "defaultMessage": "1 пользователь, 5 ГБ — бесплатно"
+  },
+  "b9VbG1": {
+    "defaultMessage": "Прикрепить чек"
   },
   "bDgWYf": {
     "defaultMessage": "Без теней"
@@ -1391,6 +1397,9 @@
   "jZ61+N": {
     "defaultMessage": "Отступы окна берутся из padding.container."
   },
+  "jvNi+a": {
+    "defaultMessage": "Файл больше 1 МБ"
+  },
   "kGBNI6": {
     "defaultMessage": "Вкладка"
   },
@@ -1586,6 +1595,9 @@
   "pqT57f": {
     "defaultMessage": "исходный"
   },
+  "qOGmI7": {
+    "defaultMessage": "JPG, PNG, PDF до 10 МБ"
+  },
   "qVDZd3": {
     "defaultMessage": "2 октября"
   },
@@ -1615,6 +1627,9 @@
   },
   "rOQV2n": {
     "defaultMessage": "Страницы каталога"
+  },
+  "rUE0NS": {
+    "defaultMessage": "Заменить"
   },
   "rkB8ra": {
     "defaultMessage": "Сообщение"
@@ -1681,6 +1696,9 @@
   },
   "uE1mMh": {
     "defaultMessage": "text: «{text}», isValid: {isValid}"
+  },
+  "uFBLiL": {
+    "defaultMessage": "JPG, PNG, PDF до 1 МБ"
   },
   "uGm/IV": {
     "defaultMessage": "Три открытые сделки."
