@@ -59,6 +59,9 @@
   "00zAyg": {
     "defaultMessage": "Слева"
   },
+  "03KYhc": {
+    "defaultMessage": "выполненные"
+  },
   "08AUbP": {
     "defaultMessage": "Бесплатная доставка от 3 000 ₽"
   },
@@ -97,6 +100,9 @@
   },
   "1V+YWA": {
     "defaultMessage": "Чай"
+  },
+  "1Wc8Mb": {
+    "defaultMessage": "Зарплатный лист за октябрь"
   },
   "1YJ48R": {
     "defaultMessage": "Открыть подтверждение"
@@ -263,6 +269,9 @@
   "7boO9u": {
     "defaultMessage": "Недоступна"
   },
+  "7jTGk5": {
+    "defaultMessage": "Сколько дней после заявки у компании есть на вывоз по договору."
+  },
   "7k7RP7": {
     "defaultMessage": "Сумма"
   },
@@ -350,6 +359,9 @@
   "B1n5mE": {
     "defaultMessage": "Уведомления в браузере"
   },
+  "BeNFbI": {
+    "defaultMessage": "Оплата поступит в течение дня."
+  },
   "BjL5gA": {
     "defaultMessage": "Должность"
   },
@@ -397,6 +409,9 @@
   },
   "E1j2xY": {
     "defaultMessage": "Сохранение…"
+  },
+  "E4lpq0": {
+    "defaultMessage": "Что делает «Обновить список»"
   },
   "E9GNMP": {
     "defaultMessage": "Услуга «{service}» удалена"
@@ -559,6 +574,9 @@
   },
   "JdlT2r": {
     "defaultMessage": "Отменён"
+  },
+  "Jo7tW6": {
+    "defaultMessage": "Договор истёк: заявку по нему выполнить нельзя."
   },
   "K+NMak": {
     "defaultMessage": "Даты поездки"
@@ -779,6 +797,9 @@
   "SMzCPW": {
     "defaultMessage": "Сохранить"
   },
+  "SPFRO2": {
+    "defaultMessage": "В это время техника уже занята в заявке №128. Сохранить заявку можно, проверьте расписание."
+  },
   "ST0LS6": {
     "defaultMessage": "14 сентября"
   },
@@ -844,6 +865,9 @@
   },
   "UKJ1fz": {
     "defaultMessage": "Песочница отступов"
+  },
+  "UKZE47": {
+    "defaultMessage": "Реквизиты проверены: организация действует."
   },
   "URJ2aL": {
     "defaultMessage": "Содержимое Popper"
@@ -1049,6 +1073,9 @@
   "akZOYj": {
     "defaultMessage": "Сумма указана с учётом {nds}."
   },
+  "avRxXn": {
+    "defaultMessage": "Лист закрыт: новые начисления невозможны."
+  },
   "b686fK": {
     "defaultMessage": "1 пользователь, 5 ГБ — бесплатно"
   },
@@ -1067,6 +1094,12 @@
   "bWz1f/": {
     "defaultMessage": "моск"
   },
+  "bbpthM": {
+    "defaultMessage": "Обновить список"
+  },
+  "bcPPXg": {
+    "defaultMessage": "Цена в регионе — базовая стоимость, умноженная на коэффициент региона, с округлением до 10 ₽."
+  },
   "bi8PJO": {
     "defaultMessage": "Выберите значение"
   },
@@ -1078,6 +1111,9 @@
   },
   "bmFctS": {
     "defaultMessage": "Как вы о нас узнали?"
+  },
+  "bqKpld": {
+    "defaultMessage": "Несохранённые правки сумм в списке при этом сбросятся."
   },
   "bt+D2E": {
     "defaultMessage": "Текущая дата по шаблону {template} — {result}"
@@ -1096,6 +1132,9 @@
   },
   "cMDovB": {
     "defaultMessage": "Договор"
+  },
+  "cTWWpL": {
+    "defaultMessage": "Что такое срок вывоза"
   },
   "cTzmQC": {
     "defaultMessage": "Политика конфиденциальности"
@@ -1120,6 +1159,9 @@
   },
   "cnYtq/": {
     "defaultMessage": "Заказ пришёл на следующий день, всё аккуратно упаковано. Буду заказывать ещё."
+  },
+  "d3XGnX": {
+    "defaultMessage": "Срок вывоза, дней"
   },
   "d4UsAr": {
     "defaultMessage": "Страны"
@@ -1180,6 +1222,9 @@
   },
   "f3uQMj": {
     "defaultMessage": "Мария Иванова"
+  },
+  "f9iTWF": {
+    "defaultMessage": "Как устроен зарплатный лист"
   },
   "fDv2t3": {
     "defaultMessage": "Посуда"
@@ -1250,6 +1295,9 @@
   "h52LFb": {
     "defaultMessage": "Включить тёмную тему"
   },
+  "hE+G0e": {
+    "defaultMessage": "Собирает список заново: все выполненные заявки клиента за выбранный период."
+  },
   "hORJmZ": {
     "defaultMessage": "Абзац с noMargin — без нижнего отступа."
   },
@@ -1277,6 +1325,9 @@
   "i8KTyz": {
     "defaultMessage": "Комментарий"
   },
+  "iKHhZZ": {
+    "defaultMessage": "Пересечение"
+  },
   "iKy3DW": {
     "defaultMessage": "Комфорт"
   },
@@ -1288,6 +1339,9 @@
   },
   "iVYmNL": {
     "defaultMessage": "Фильтры"
+  },
+  "iaRXrK": {
+    "defaultMessage": "Без иконки."
   },
   "irrmL5": {
     "defaultMessage": "Добавьте товары в корзину"
@@ -1388,6 +1442,9 @@
   "m0+ocO": {
     "defaultMessage": "Страна (загрузка с сервера)"
   },
+  "m4yNoy": {
+    "defaultMessage": "В сверку попадают только {completed} заявки клиента за выбранный период."
+  },
   "m9eTWf": {
     "defaultMessage": "Самовывоз — бесплатно"
   },
@@ -1445,6 +1502,9 @@
   "o+7yVD": {
     "defaultMessage": "Поиск по товарам"
   },
+  "o1pP9R": {
+    "defaultMessage": "Как считается цена"
+  },
   "oAO9Hr": {
     "defaultMessage": "Компоненты"
   },
@@ -1472,6 +1532,9 @@
   "oeKhPk": {
     "defaultMessage": "Игры"
   },
+  "oh69if": {
+    "defaultMessage": "Начисления за месяц минус штрафы и выплаты — то, что осталось выдать."
+  },
   "oqiCOV": {
     "defaultMessage": "Обязательное поле"
   },
@@ -1495,6 +1558,9 @@
   },
   "peF0Pd": {
     "defaultMessage": "Подсказка закроется по клику в любом месте страницы"
+  },
+  "pglmhq": {
+    "defaultMessage": "Цена в регионе"
   },
   "phpCXn": {
     "defaultMessage": "Интересы"
@@ -1570,6 +1636,9 @@
   },
   "szQs8o": {
     "defaultMessage": "Бесплатно"
+  },
+  "t7U6bd": {
+    "defaultMessage": "Изменения вступят в силу со следующего месяца."
   },
   "tCDAWi": {
     "defaultMessage": "Контролы"

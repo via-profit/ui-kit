@@ -28,6 +28,8 @@ const ThemingOverview = loadable(() => import('~/pages/Docs/Theming/ThemingOverv
 const ThemingColor = loadable(() => import('~/pages/Docs/Theming/ThemingColor'));
 const SurfaceOverview = loadable(() => import('~/pages/Docs/Surface/SurfaceOverview'));
 const StackOverview = loadable(() => import('~/pages/Docs/Stack/StackOverview'));
+const InfoNoteOverview = loadable(() => import('~/pages/Docs/InfoNote/InfoNoteOverview'));
+const HintPopoverOverview = loadable(() => import('~/pages/Docs/HintPopover/HintPopoverOverview'));
 const GridOverview = loadable(() => import('~/pages/Docs/Grid/GridOverview'));
 const MaskedFieldOverview = loadable(() => import('~/pages/Docs/MaskedField/MaskedFieldOverview'));
 const TypographyOverview = loadable(() => import('~/pages/Docs/Typography/TypographyOverview'));
@@ -227,6 +229,24 @@ const docsRouter: RouteObject = {
       element: (
         <React.Suspense fallback={<LoadingOverlay />}>
           <ThemingColor />
+        </React.Suspense>
+      ),
+    },
+    {
+      path: 'info-note',
+      caseSensitive: true,
+      element: (
+        <React.Suspense fallback={<LoadingOverlay />}>
+          <InfoNoteOverview />
+        </React.Suspense>
+      ),
+    },
+    {
+      path: 'hint-popover',
+      caseSensitive: true,
+      element: (
+        <React.Suspense fallback={<LoadingOverlay />}>
+          <HintPopoverOverview />
         </React.Suspense>
       ),
     },
