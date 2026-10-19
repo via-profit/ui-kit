@@ -10,6 +10,7 @@ import ExampleBadgeColors from '~/examples/badge/ExampleBadgeColors';
 import ExampleBadgeIcons from '~/examples/badge/ExampleBadgeIcons';
 import ExampleBadgeClickable from '~/examples/badge/ExampleBadgeClickable';
 import ExampleBadgeOverrides from '~/examples/badge/ExampleBadgeOverrides';
+import ExampleBadgeStatus from '~/examples/badge/ExampleBadgeStatus';
 
 const BadgeOverview: React.FC = () => (
   <>
@@ -22,6 +23,7 @@ const BadgeOverview: React.FC = () => (
           ExampleBadgeIcons,
           ExampleBadgeClickable,
           ExampleBadgeOverrides,
+          ExampleBadgeStatus,
         }}
       >
         {content}

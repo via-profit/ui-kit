@@ -7,11 +7,11 @@ import type { BadgeOutlinedProps } from './BadgeOutlined';
 export type BadgeProps = (BadgeStandardProps | BadgeOutlinedProps) & {
   /**
    * Badge style variant\
-   * Allowed variants: `standard` or `outlined`\
+   * Allowed variants: `standard`, `outlined` or `soft` (the pale background of the color)\
    * \
    * **Default**: `standard`
    */
-  readonly variant?: 'standard' | 'outlined';
+  readonly variant?: 'standard' | 'outlined' | 'soft';
 };
 
 // One component for both variants, so changing the variant does not remount the badge

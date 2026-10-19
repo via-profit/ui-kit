@@ -83,6 +83,9 @@
   "14rZNT": {
     "defaultMessage": "Вы подписаны"
   },
+  "15WBez": {
+    "defaultMessage": "Оплачен"
+  },
   "1802ig": {
     "defaultMessage": "Неделя"
   },
@@ -818,6 +821,9 @@
   "SZGWYB": {
     "defaultMessage": "Подставить номер"
   },
+  "ScewCp": {
+    "defaultMessage": "Частично оплачен"
+  },
   "Snmbcp": {
     "defaultMessage": "Самовывоз из пункта выдачи"
   },
@@ -1355,6 +1361,9 @@
   "iMGGKG": {
     "defaultMessage": "Имя: {name}"
   },
+  "iNK5vC": {
+    "defaultMessage": "В работе"
+  },
   "iOLa9a": {
     "defaultMessage": "Забронировать"
   },
@@ -1855,6 +1864,9 @@
   },
   "zSOBRR": {
     "defaultMessage": "Количество гостей"
+  },
+  "zVijrH": {
+    "defaultMessage": "Не оплачен"
   },
   "zXkVd5": {
     "defaultMessage": "Добавить"

@@ -74,6 +74,26 @@ const getOutlinedColors = (color: BadgeBaseProps['color'], theme: Theme) => {
 };
 
 /**
+ * The pale background of the color and the text of the same hue: dark on the light theme,
+ * light on the dark one. `$background` is the color itself
+ */
+const getSoftColors = (color: BadgeBaseProps['color'], theme: Theme) => {
+  const base =
+    color === 'primary'
+      ? theme.color.accentPrimary
+      : color === 'secondary'
+        ? theme.color.accentSecondary
+        : typeof color === 'undefined' || color === 'default'
+          ? theme.color.textPrimary
+          : parseColor(String(color), theme.color.textPrimary);
+
+  return {
+    $background: base,
+    $color: theme.isDark ? base.lighten(60) : base.darken(60),
+  };
+};
+
+/**
  * Both variants are one styled component: switching the variant (e.g. a toggling filter badge)
  * must not remount the element, otherwise the focused badge loses the focus
  */
@@ -81,29 +101,47 @@ const StyledBadge = styled(BadgeBase)<StyledProps>`
   border-style: solid;
   border-width: ${BORDER_WIDTH};
   border-color: ${({ $background }) => $background.toString()};
+  --badge-dot-color: ${({ $variant, $background, $color }) =>
+    ($variant === 'standard' ? $color : $background).toString()};
+
+  ${({ $variant, $color, $background }) =>
+    $variant === 'soft' &&
+    css`
+      color: ${$color.toString()};
+      background-color: ${$background.alpha(0.18).toString()};
+      border-color: transparent;
+
+      &:focus-visible {
+        outline-style: solid;
+        outline-width: 0.14em;
+        outline-color: ${$background.alpha(0.6).toString()};
+      }
+    `}
 
   ${({ $variant, $color, $background, theme }) =>
-    $variant === 'outlined'
-      ? css`
-          color: ${$color.darken(30).toString()};
-          background-color: transparent;
+    $variant === 'soft'
+      ? ''
+      : $variant === 'outlined'
+        ? css`
+            color: ${$color.darken(30).toString()};
+            background-color: transparent;
 
-          &:focus-visible {
-            outline-style: solid;
-            outline-width: 0.14em;
-            outline-color: ${$background.rgbString()};
-          }
-        `
-      : css`
-          color: ${$color.toString()};
-          background-color: ${$background.toString()};
+            &:focus-visible {
+              outline-style: solid;
+              outline-width: 0.14em;
+              outline-color: ${$background.rgbString()};
+            }
+          `
+        : css`
+            color: ${$color.toString()};
+            background-color: ${$background.toString()};
 
-          &:focus-visible {
-            outline-color: ${$background.rgbString() === theme.color.accentPrimary.rgbString()
-              ? theme.color.textPrimary.toString()
-              : theme.color.accentPrimary.toString()};
-          }
-        `}
+            &:focus-visible {
+              outline-color: ${$background.rgbString() === theme.color.accentPrimary.rgbString()
+                ? theme.color.textPrimary.toString()
+                : theme.color.accentPrimary.toString()};
+            }
+          `}
 
   ${({ $clickable, $variant, $background }) =>
     $clickable &&
@@ -111,14 +149,18 @@ const StyledBadge = styled(BadgeBase)<StyledProps>`
       cursor: pointer;
 
       &:hover {
-        ${$variant === 'outlined'
+        ${$variant === 'soft'
           ? css`
-              background-color: ${$background.darken(20).alpha(0.1).toString()};
+              background-color: ${$background.alpha(0.3).toString()};
             `
-          : css`
-              background-color: ${$background.darken(30).toString()};
-              border-color: ${$background.darken(30).toString()};
-            `}
+          : $variant === 'outlined'
+            ? css`
+                background-color: ${$background.darken(20).alpha(0.1).toString()};
+              `
+            : css`
+                background-color: ${$background.darken(30).toString()};
+                border-color: ${$background.darken(30).toString()};
+              `}
       }
     `}
   ${({ theme }) => themeFocusRing(theme)}
@@ -132,7 +174,11 @@ const BadgeStyled: React.ForwardRefRenderFunction<HTMLSpanElement, BadgeStyledPr
   const theme = useTheme();
   const { $background, $color } = React.useMemo(
     () =>
-      variant === 'outlined' ? getOutlinedColors(color, theme) : getStandardColors(color, theme),
+      variant === 'soft'
+        ? getSoftColors(color, theme)
+        : variant === 'outlined'
+          ? getOutlinedColors(color, theme)
+          : getStandardColors(color, theme),
     [color, variant, theme],
   );
 

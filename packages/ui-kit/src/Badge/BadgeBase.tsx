@@ -4,6 +4,7 @@ import IconWrapper, { BadgeIconWrapperProps } from './BadgeIconWrapper';
 import TextWrapper, { BadgeTextWrapperProps } from './BadgeTextWrapper';
 import Container, { BadgeContainerProps } from './BadgeContainer';
 import ButtonDelete, { BadgeDeleteButtonProps } from './BadgeDeleteButton';
+import Dot, { BadgeDotProps } from './BadgeDot';
 
 type BadgeNativeProps = React.HTMLAttributes<HTMLSpanElement>;
 
@@ -20,12 +21,17 @@ export interface BadgeBaseProps extends Omit<BadgeNativeProps, 'color'> {
   readonly startIcon?: React.JSX.Element;
 
   /**
+   * The colored dot before the text: the status (active, overdue, paid)
+   */
+  readonly dot?: boolean;
+
+  /**
    * Badge style variant\
    * Allowed variants: `standard` or `outlined`\
    * \
    * **Default**: `standard`
    */
-  readonly variant?: 'standard' | 'outlined';
+  readonly variant?: 'standard' | 'outlined' | 'soft';
 
   /**
    * You can pass the primary, default, secondary name of the colors or your specified color value
@@ -77,12 +83,18 @@ export interface BadgeBaseOverrides {
   readonly ButtonDelete?: React.ComponentType<
     BadgeDeleteButtonProps & React.RefAttributes<HTMLButtonElement>
   >;
+
+  /**
+   * The dot. Rendered only with `dot`
+   */
+  readonly Dot?: React.ComponentType<BadgeDotProps & React.RefAttributes<HTMLSpanElement>>;
 }
 
 const BadgeBase: React.ForwardRefRenderFunction<HTMLSpanElement, BadgeBaseProps> = (props, ref) => {
   const {
     children,
     startIcon,
+    dot = false,
     color,
     variant,
     overrides,
@@ -99,6 +111,7 @@ const BadgeBase: React.ForwardRefRenderFunction<HTMLSpanElement, BadgeBaseProps>
       IconWrapper: overrides?.IconWrapper || IconWrapper,
       Container: overrides?.Container || Container,
       ButtonDelete: overrides?.ButtonDelete || ButtonDelete,
+      Dot: overrides?.Dot || Dot,
     }),
     [overrides],
   );
@@ -141,6 +154,8 @@ const BadgeBase: React.ForwardRefRenderFunction<HTMLSpanElement, BadgeBaseProps>
       color={color}
       ref={ref}
     >
+      {dot && <overridesMap.Dot />}
+
       {typeof startIcon !== 'undefined' && startIcon !== null && (
         <overridesMap.IconWrapper>{startIcon}</overridesMap.IconWrapper>
       )}
@@ -149,7 +164,8 @@ const BadgeBase: React.ForwardRefRenderFunction<HTMLSpanElement, BadgeBaseProps>
 
       {typeof onDelete === 'function' && (
         <overridesMap.ButtonDelete
-          variant={variant}
+          // the pale soft badge has the colored icon, as the outlined one
+          variant={variant === 'soft' ? 'outlined' : variant}
           onClick={handleDelete}
           color={color}
           aria-label={deleteButtonLabel}

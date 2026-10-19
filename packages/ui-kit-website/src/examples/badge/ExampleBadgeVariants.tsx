@@ -12,6 +12,9 @@ const ExampleBadgeVariants: React.FC = () => (
   <Group>
     <Badge variant="standard">standard</Badge>
     <Badge variant="outlined">outlined</Badge>
+    <Badge variant="soft" color="primary">
+      soft
+    </Badge>
   </Group>
 );
 
