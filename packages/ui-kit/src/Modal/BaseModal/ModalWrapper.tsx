@@ -73,7 +73,9 @@ const ModalWrapper: React.FC<ModalWrapperProps> = props => {
     const container = containerRef.current;
     if (isOpen && container) {
       TabManager.registerContainer(container);
-      if (autofocus) {
+      // the content may focus its field itself (the effects of the children run first):
+      // the modal must not move the focus away from it to the next element
+      if (autofocus && !container.contains(document.activeElement)) {
         TabManager.focusNext();
       }
     }
