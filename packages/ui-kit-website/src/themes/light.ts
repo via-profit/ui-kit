@@ -70,8 +70,10 @@ const light: AppTheme = {
   elevation: {
     // macOS: the hairline instead of the border and the short soft shadow
     surface: '0 0 0 0.5px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.08)',
-    // The menus, the calendar, the toasts, the tooltips and the modal windows
+    // The menus, the calendar, the toasts and the tooltips
     popup: '0 8px 32px -10px rgba(16, 24, 40, 0.35)',
+    // The modal windows: deeper than the popups
+    modal: '0 16px 48px -12px rgba(16, 24, 40, 0.45)',
     // The knob of the switch
     control: '0 0 0 0.5px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.2)',
   },

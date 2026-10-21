@@ -2,30 +2,50 @@ import React from 'react';
 import styled from '@emotion/styled';
 import { css } from '@emotion/react';
 
-import { TabsOrientation, useTabsContext } from './context';
+import { TabsOrientation, TabsVariant, useTabsContext } from './context';
 
 export type TabListProps = React.HTMLAttributes<HTMLDivElement>;
 
-const StyledList = styled.div<{ $orientation: TabsOrientation }>`
+const StyledList = styled.div<{ $orientation: TabsOrientation; $variant: TabsVariant }>`
   display: flex;
   box-sizing: border-box;
-  ${({ theme, $orientation }) =>
+  gap: 0.25em;
+  ${({ $orientation }) =>
     $orientation === 'vertical'
       ? css`
           flex-direction: column;
           flex-shrink: 0;
-          border-right: 1px solid ${theme.color.textPrimary.alpha(0.12).toString()};
         `
       : css`
           flex-direction: row;
           /* Many tabs on the narrow screen scroll instead of breaking the layout */
           overflow-x: auto;
           scrollbar-width: none;
-          border-bottom: 1px solid ${theme.color.textPrimary.alpha(0.12).toString()};
           &::-webkit-scrollbar {
             display: none;
           }
         `}
+  ${({ theme, $orientation, $variant }) =>
+    $variant === 'segmented'
+      ? css`
+          /* The tray: the tabs lie in the pale rounded plate */
+          ${$orientation === 'horizontal' &&
+          css`
+            align-self: flex-start;
+            display: inline-flex;
+            max-width: 100%;
+          `}
+          padding: 0.25em;
+          border-radius: ${theme.shape.radiusFactor * 2.5}em;
+          background-color: ${theme.color.textPrimary.alpha(0.05).toString()};
+        `
+      : $orientation === 'vertical'
+        ? css`
+            border-right: 1px solid ${theme.color.textPrimary.alpha(0.1).toString()};
+          `
+        : css`
+            border-bottom: 1px solid ${theme.color.textPrimary.alpha(0.1).toString()};
+          `}
 `;
 
 const getEnabledTabs = (list: HTMLElement) =>
@@ -35,7 +55,7 @@ const getEnabledTabs = (list: HTMLElement) =>
 
 const TabList: React.ForwardRefRenderFunction<HTMLDivElement, TabListProps> = (props, ref) => {
   const { children, onKeyDown, ...nativeProps } = props;
-  const { orientation, activation, value, isUncontrolledEmpty, selectInitial } =
+  const { orientation, variant, activation, value, isUncontrolledEmpty, selectInitial } =
     useTabsContext('TabList');
   const listRef = React.useRef<HTMLDivElement | null>(null);
 
@@ -114,6 +134,7 @@ const TabList: React.ForwardRefRenderFunction<HTMLDivElement, TabListProps> = (p
       {...nativeProps}
       onKeyDown={handleKeyDown}
       $orientation={orientation}
+      $variant={variant}
       ref={listRef}
     >
       {children}

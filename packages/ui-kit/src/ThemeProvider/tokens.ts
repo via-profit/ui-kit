@@ -38,6 +38,7 @@ export const themeFocusRing = (theme: Theme, selector = '&:focus-visible') => {
  */
 export const defaultElevation = (theme: Theme): Record<ThemeElevation, string> => ({
   popup: `0 8px 24px ${theme.color.surface.darken(50).alpha(0.6).toString()}`,
+  modal: `0 16px 48px -12px ${theme.color.surface.darken(100).alpha(0.5).toString()}`,
   surface: `0 8px 32px -13px ${theme.color.surface.darken(100).alpha(0.4).toString()}`,
   control: `0 1px 3px ${theme.color.surface.darken(100).alpha(0.35).toString()}`,
 });

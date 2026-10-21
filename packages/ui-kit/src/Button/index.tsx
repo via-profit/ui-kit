@@ -8,11 +8,11 @@ import type { ButtonPlainProps } from './ButtonPlain';
 export type ButtonProps = (ButtonStandardProps | ButtonOutlinedProps | ButtonPlainProps) & {
   /**
    * Button style variant\
-   * Allowed variants: `standard`, `outlined` or `plain`\
+   * Allowed variants: `standard`, `outlined`, `plain` or `soft` (the pale background of the color)\
    * \
    * **Default**: `standard`
    */
-  readonly variant?: 'standard' | 'outlined' | 'plain';
+  readonly variant?: 'standard' | 'outlined' | 'plain' | 'soft';
 };
 
 // One component for all the variants, so changing the variant does not remount the button

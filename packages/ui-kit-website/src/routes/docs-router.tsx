@@ -19,6 +19,7 @@ const RadioOverview = loadable(() => import('~/pages/Docs/Radio/RadioOverview'))
 const SliderOverview = loadable(() => import('~/pages/Docs/Slider/SliderOverview'));
 const ToastOverview = loadable(() => import('~/pages/Docs/Toast/ToastOverview'));
 const TabsOverview = loadable(() => import('~/pages/Docs/Tabs/TabsOverview'));
+const StepperOverview = loadable(() => import('~/pages/Docs/Stepper/StepperOverview'));
 const PaginationOverview = loadable(() => import('~/pages/Docs/Pagination/PaginationOverview'));
 const TooltipOverview = loadable(() => import('~/pages/Docs/Tooltip/TooltipOverview'));
 const Tables = loadable(() => import('~/pages/Docs/Table'));
@@ -153,6 +154,15 @@ const docsRouter: RouteObject = {
       element: (
         <React.Suspense fallback={<LoadingOverlay />}>
           <PaginationOverview />
+        </React.Suspense>
+      ),
+    },
+    {
+      path: 'stepper',
+      caseSensitive: true,
+      element: (
+        <React.Suspense fallback={<LoadingOverlay />}>
+          <StepperOverview />
         </React.Suspense>
       ),
     },

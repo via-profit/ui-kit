@@ -87,9 +87,15 @@ export interface UIThemeOverrideFocusRing {
  */
 export interface UIThemeOverrideElevation {
   /**
-   * The elements over the page: Menu, Calendar, Toast, Tooltip, the modal windows
+   * The elements over the page: Menu, Calendar, Toast, Tooltip
    */
   readonly popup?: string;
+
+  /**
+   * The modal windows over the page: Dialog, Drawer, MessageBox, ConfirmBox.
+   * Without a value the windows get the `popup` shadow of the theme, then the default shadow of the level
+   */
+  readonly modal?: string;
 
   /**
    * The cards and the panels on the page: Surface, Accordion, Table

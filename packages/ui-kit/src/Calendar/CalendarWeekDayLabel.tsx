@@ -5,7 +5,7 @@ const CalendarWeekDayLabel = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 200;
+  font-weight: 300;
   font-size: 0.8em;
   user-select: none;
   width: 3em;

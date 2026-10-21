@@ -4,7 +4,7 @@ import Color from '../Color';
 import type { ButtonGroupOrientation } from '../ButtonGroup/ButtonGroupContext';
 import { CONTROL_BORDER } from '../ThemeProvider/tokens';
 
-export type ButtonVariant = 'standard' | 'outlined' | 'plain';
+export type ButtonVariant = 'standard' | 'outlined' | 'plain' | 'soft';
 
 type ButtonColor = 'default' | 'primary' | 'secondary' | string | undefined;
 
@@ -55,7 +55,7 @@ const getStandardColors = (color: ButtonColor, theme: Theme) => {
 };
 
 /**
- * The main color of the outlined and plain variants (text and border)
+ * The main color of the outlined, plain and soft variants (text and border)
  */
 const getAccentColor = (color: ButtonColor, theme: Theme) => {
   switch (true) {
@@ -144,6 +144,33 @@ const plainStyles = ({ $color, disabled, theme }: StyledProps & ThemeProps) => c
   `}
 `;
 
+/**
+ * The tonal button: the pale background of its color and the text of the same hue,
+ * as the plain button under the cursor. Quieter than the standard button, more visible than the plain one
+ */
+const softStyles = ({ $color, disabled, theme }: StyledProps & ThemeProps) => css`
+  box-shadow: none;
+  color: ${disabled ? $color.alpha(0.4).toString() : $color.darken(30).toString()};
+  background-color: ${disabled ? $color.alpha(0.05).toString() : $color.alpha(0.1).toString()};
+
+  ${!disabled &&
+  css`
+    &:hover {
+      color: ${$color.darken(50).toString()};
+      background-color: ${$color.alpha(0.18).toString()};
+    }
+    &:active {
+      color: ${$color.darken(80).toString()};
+      background-color: ${$color.alpha(0.3).toString()};
+    }
+    &:focus-visible {
+      outline-style: solid;
+      outline-width: 0.14em;
+      outline-color: ${focusOutlineColor($color, theme)};
+    }
+  `}
+`;
+
 type ThemeProps = { readonly theme: Theme; readonly disabled?: boolean };
 
 /**
@@ -192,7 +219,9 @@ export const buttonVariantStyles = (params: {
       ? outlinedStyles(props)
       : variant === 'plain'
         ? plainStyles(props)
-        : standardStyles(props)}
+        : variant === 'soft'
+          ? softStyles(props)
+          : standardStyles(props)}
     ${groupStyles(props)}
   `;
 };

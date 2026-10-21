@@ -1,4 +1,10 @@
 {
+  "++wb1V": {
+    "defaultMessage": "0 из 2"
+  },
+  "+3fga8": {
+    "defaultMessage": "1 из 2"
+  },
   "+6Rn68": {
     "defaultMessage": "Выберите даты и номер, чтобы рассчитать стоимость."
   },
@@ -91,6 +97,9 @@
   },
   "1CQvhk": {
     "defaultMessage": "H4. Группа"
+  },
+  "1FfYCp": {
+    "defaultMessage": "Оплачена"
   },
   "1JtZq+": {
     "defaultMessage": "Месяц отчёта"
@@ -319,6 +328,9 @@
   },
   "9d1UNt": {
     "defaultMessage": "Дейтпикер"
+  },
+  "9nt9y+": {
+    "defaultMessage": "Требуют решения"
   },
   "9q5KsU": {
     "defaultMessage": "Оформлен 30 сентября"
@@ -560,6 +572,9 @@
   "J36SDn": {
     "defaultMessage": "Акции"
   },
+  "J4Mxi4": {
+    "defaultMessage": "Модальные окна"
+  },
   "J8j5Bd": {
     "defaultMessage": "Шаг 1. Выберите товар"
   },
@@ -628,6 +643,9 @@
   },
   "L7bKQg": {
     "defaultMessage": "Работы"
+  },
+  "L9aBTx": {
+    "defaultMessage": "Принял"
   },
   "LHBvxW": {
     "defaultMessage": "Дата в формате ISO"
@@ -811,6 +829,9 @@
   },
   "SPFRO2": {
     "defaultMessage": "В это время техника уже занята в заявке №128. Сохранить заявку можно, проверьте расписание."
+  },
+  "SSdkby": {
+    "defaultMessage": "заранее"
   },
   "ST0LS6": {
     "defaultMessage": "14 сентября"
@@ -1196,8 +1217,14 @@
   "d7YsoT": {
     "defaultMessage": "Екатеринбург"
   },
+  "d7bNVz": {
+    "defaultMessage": "Архив"
+  },
   "dHfTls": {
     "defaultMessage": "{price} за ночь"
+  },
+  "dLhsfh": {
+    "defaultMessage": "Создана"
   },
   "dNtpfd": {
     "defaultMessage": "Номер"
@@ -1213,6 +1240,9 @@
   },
   "dgssxb": {
     "defaultMessage": "Готово"
+  },
+  "dz2bUY": {
+    "defaultMessage": "Водитель назначен"
   },
   "e1FUEz": {
     "defaultMessage": "Сладости"
@@ -1345,6 +1375,9 @@
   },
   "hh1CJF": {
     "defaultMessage": "Удалить файл?"
+  },
+  "hhUHH2": {
+    "defaultMessage": "Выполнена"
   },
   "hsrVpg": {
     "defaultMessage": "Панели: карточки, окна, уведомления"
@@ -1604,8 +1637,14 @@
   "pnF3BZ": {
     "defaultMessage": "Заказ №1042"
   },
+  "ppl4XM": {
+    "defaultMessage": "Назначен"
+  },
   "pqT57f": {
     "defaultMessage": "исходный"
+  },
+  "pxwXj+": {
+    "defaultMessage": "Все"
   },
   "qOGmI7": {
     "defaultMessage": "JPG, PNG, PDF до 10 МБ"
@@ -1624,6 +1663,9 @@
   },
   "qqqeuG": {
     "defaultMessage": "Восстановить"
+  },
+  "r5VVDS": {
+    "defaultMessage": "Новые"
   },
   "r7Q3uT": {
     "defaultMessage": "Выберите заезд и выезд"
@@ -1654,6 +1696,9 @@
   },
   "sNP24O": {
     "defaultMessage": "Нажато: {count}"
+  },
+  "sSfAky": {
+    "defaultMessage": "Водитель принял"
   },
   "sVZZJU": {
     "defaultMessage": "От друзей"

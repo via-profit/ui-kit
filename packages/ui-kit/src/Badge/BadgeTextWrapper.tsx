@@ -5,7 +5,9 @@ export type BadgeTextWrapperProps = React.HTMLAttributes<HTMLSpanElement>;
 
 const TextWrapper = styled.span`
   font-size: 0.86em;
-  padding: 0.3em 0.5em;
+  /* the badge is about the height of the line of the text around it, not taller */
+  line-height: 1.35;
+  padding: 0.15em 0.5em;
   display: flex;
   align-items: center;
   user-select: none;

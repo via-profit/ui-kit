@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from '@emotion/styled';
 
-import { TabsContext, TabsContextValue, TabsOrientation } from './context';
+import { TabsContext, TabsContextValue, TabsOrientation, TabsSize, TabsVariant } from './context';
 import useTabsColor from './useTabsColor';
 
 export type TabsProps = Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange' | 'defaultValue'> & {
@@ -43,6 +43,20 @@ export type TabsProps = Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange' | 
   readonly fullWidth?: boolean;
 
   /**
+   * `underline`: the line under the text of the selected tab — the tabs of the page, the list, the window.\
+   * `segmented`: the tabs in the pale tray, the selected one is the plate — the short switches
+   * («Day / Week / Month»)
+   * Default: `underline`
+   */
+  readonly variant?: TabsVariant;
+
+  /**
+   * The height of the tab at the text of 14px: `s` — 32px, `m` — 40px, `l` — 48px
+   * Default: `m`
+   */
+  readonly size?: TabsSize;
+
+  /**
    * The color of the selected tab: the primary, default, secondary name of the colors or your specified color value
    * Default: `default`
    */
@@ -68,6 +82,8 @@ const Tabs: React.ForwardRefRenderFunction<HTMLDivElement, TabsProps> = (props, 
     orientation = 'horizontal',
     activation = 'auto',
     fullWidth = false,
+    variant = 'underline',
+    size = 'm',
     color,
     children,
     ...nativeProps
@@ -116,6 +132,8 @@ const Tabs: React.ForwardRefRenderFunction<HTMLDivElement, TabsProps> = (props, 
       orientation,
       activation,
       fullWidth,
+      variant,
+      size,
       color: $color,
       getTabId: tabValue => `${baseId}-tab-${escapeId(tabValue)}`,
       getPanelId: tabValue => `${baseId}-panel-${escapeId(tabValue)}`,
@@ -128,6 +146,8 @@ const Tabs: React.ForwardRefRenderFunction<HTMLDivElement, TabsProps> = (props, 
       orientation,
       activation,
       fullWidth,
+      variant,
+      size,
       $color,
       baseId,
     ],

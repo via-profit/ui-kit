@@ -26,7 +26,8 @@ const StyledModalInner = styled.div<StyledProps>`
   pointer-events: all;
   position: relative;
   background-color: ${({ theme }) => theme.color.surface.toString()};
-  box-shadow: ${({ theme }) => elevation(theme, 'popup')};
+  /* the themes made before the modal level keep the popup shadow for the windows */
+  box-shadow: ${({ theme }) => elevation(theme, 'modal', theme.elevation.popup)};
   border-radius: ${({ theme }) => theme.shape.radiusFactor * 2}em;
   margin-top: 2em;
   transition:

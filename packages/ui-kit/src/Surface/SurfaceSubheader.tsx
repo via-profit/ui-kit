@@ -13,12 +13,13 @@ type StyleProps = {
 
 const StyledHeader = styled.div<StyleProps>`
   padding: ${({ $noPadding, theme }) => {
-    const { y, x } = themePadding(theme, 'container', 0.9);
+    const { y, x } = themePadding(theme, 'container');
 
     return $noPadding ? '0' : `calc(${y} / 2) ${x} 0 ${x}`;
   }};
-  font-size: 0.9em;
-  font-weight: 200;
+  /* the size of the text, the secondary color and Light: quieter than the text, but not small */
+  font-size: 1em;
+  font-weight: 300;
   color: ${({ theme }) => theme.color.textSecondary.toString()};
 `;
 

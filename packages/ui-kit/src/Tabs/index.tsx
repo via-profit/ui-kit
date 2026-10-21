@@ -7,6 +7,6 @@ export type { TabsProps } from './Tabs';
 export type { TabProps } from './Tab';
 export type { TabListProps } from './TabList';
 export type { TabPanelProps } from './TabPanel';
-export type { TabsOrientation } from './context';
+export type { TabsOrientation, TabsVariant, TabsSize } from './context';
 
 export default Tabs;

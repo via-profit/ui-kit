@@ -177,6 +177,12 @@ const ElevationPreview: React.FC = () => {
             <FormattedMessage defaultMessage="Уведомление" />
           </Button>
         </Stack>
+      </Section>
+
+      <Section>
+        <SectionTitle>
+          <FormattedMessage defaultMessage="Модальные окна" /> <code>elevation.modal</code>
+        </SectionTitle>
         <Stack direction="row" wrap gap="sm">
           <Button onClick={() => setModal('dialog')}>
             <FormattedMessage defaultMessage="Диалог" />

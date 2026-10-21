@@ -13,7 +13,7 @@ type StyledProps = {
 };
 
 const StyledBadge = styled.span<StyledProps>`
-  border-radius: ${({ theme }) => theme.shape.radiusFactor * 2.5}em;
+  border-radius: ${({ theme }) => theme.shape.radiusFactor * 2}em;
   font-size: 1em;
   border-width: 0;
   outline-style: solid;

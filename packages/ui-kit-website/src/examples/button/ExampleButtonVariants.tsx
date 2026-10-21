@@ -13,6 +13,7 @@ const ExampleButtonVariants: React.FC = () => (
     <Button variant="standard">standard</Button>
     <Button variant="outlined">outlined</Button>
     <Button variant="plain">plain</Button>
+    <Button variant="soft">soft</Button>
   </Row>
 );
 

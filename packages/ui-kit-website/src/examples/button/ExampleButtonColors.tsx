@@ -10,7 +10,7 @@ const Grid = styled.div`
 `;
 
 const colors = ['default', 'primary', 'secondary', '#e0435f', 'lightpink'];
-const variants = ['standard', 'outlined', 'plain'] as const;
+const variants = ['standard', 'outlined', 'plain', 'soft'] as const;
 
 const ExampleButtonColors: React.FC = () => (
   <Grid>

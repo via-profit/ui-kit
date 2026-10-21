@@ -8,6 +8,7 @@ import ExampleTabsControlled from '~/examples/tabs/ExampleTabsControlled';
 import ExampleTabsVertical from '~/examples/tabs/ExampleTabsVertical';
 import ExampleTabsScroll from '~/examples/tabs/ExampleTabsScroll';
 import ExampleTabsStyled from '~/examples/tabs/ExampleTabsStyled';
+import ExampleTabsVariants from '~/examples/tabs/ExampleTabsVariants';
 import content from '@via-profit/ui-kit/docs/tabs/README.md';
 
 const TabsOverview: React.FC = () => (
@@ -20,6 +21,7 @@ const TabsOverview: React.FC = () => (
           ExampleTabsVertical,
           ExampleTabsScroll,
           ExampleTabsStyled,
+          ExampleTabsVariants,
         }}
       >
         {content}

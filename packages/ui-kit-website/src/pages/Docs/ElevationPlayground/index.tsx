@@ -16,11 +16,12 @@ import content from './README.md';
 
 type Elevation = {
   readonly popup: string;
+  readonly modal: string;
   readonly surface: string;
   readonly control: string;
 };
 
-const LEVELS = ['popup', 'surface', 'control'] as const;
+const LEVELS = ['popup', 'modal', 'surface', 'control'] as const;
 
 type PresetName = 'own' | 'test' | 'none';
 
@@ -31,13 +32,14 @@ type Finding = {
 
 // Bright and unusual: any other shadow on the screen is not from the theme
 const PRESETS: Record<PresetName, Elevation> = {
-  own: { popup: '', surface: '', control: '' },
+  own: { popup: '', modal: '', surface: '', control: '' },
   test: {
     popup: '0 0 0 3px rgb(255, 0, 170), 0 12px 32px rgba(255, 0, 170, 0.45)',
+    modal: '0 0 0 3px rgb(0, 140, 255), 0 16px 48px rgba(0, 140, 255, 0.45)',
     surface: '0 0 0 3px rgb(0, 200, 120), 0 8px 20px rgba(0, 200, 120, 0.4)',
     control: '0 0 0 3px rgb(255, 170, 0)',
   },
-  none: { popup: 'none', surface: 'none', control: 'none' },
+  none: { popup: 'none', modal: 'none', surface: 'none', control: 'none' },
 };
 
 const FOREIGN_ATTRIBUTE = 'data-foreign-shadow';
@@ -160,6 +162,7 @@ const ElevationPlayground: React.FC = () => {
       ...theme,
       elevation: {
         popup: elevation.popup || undefined,
+        modal: elevation.modal || undefined,
         surface: elevation.surface || undefined,
         control: elevation.control || undefined,
       },
