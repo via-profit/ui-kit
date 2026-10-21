@@ -13,6 +13,10 @@ type StyledProps = {
   readonly $color: Color;
   readonly $background: Color;
   readonly $group?: ButtonGroupOrientation;
+  /**
+   * The neutral button (`color="default"`): the outlined variant has the light border
+   */
+  readonly $neutral?: boolean;
 };
 
 const parseColor = (color: string, fallback: Color) => {
@@ -98,11 +102,24 @@ const standardStyles = ({ $color, $background, disabled, theme }: StyledProps & 
   `}
 `;
 
-const outlinedStyles = ({ $color, disabled, theme }: StyledProps & ThemeProps) => css`
-  color: ${disabled ? theme.color.textPrimary.alpha(0.4).toString() : $color.darken(30).toString()};
+/**
+ * The border of the neutral outlined button: light, as the lines of the tables. The dark border
+ * of the text color makes «Отмена», «Сбросить» and the groups of the filters heavy;
+ * the colored outlined buttons keep the border of their color
+ */
+const neutralBorder = (theme: Theme) => theme.color.textPrimary.alpha(0.18).toString();
+
+const outlinedStyles = ({ $color, $neutral, disabled, theme }: StyledProps & ThemeProps) => css`
+  color: ${disabled
+    ? theme.color.textPrimary.alpha(0.4).toString()
+    : $neutral
+      ? $color.toString()
+      : $color.darken(30).toString()};
   border-color: ${disabled
     ? theme.color.surface.darken(80).alpha(0.4).toString()
-    : $color.toString()};
+    : $neutral
+      ? neutralBorder(theme)
+      : $color.toString()};
   background-color: transparent;
   border-style: solid;
   border-width: ${CONTROL_BORDER};
@@ -110,10 +127,18 @@ const outlinedStyles = ({ $color, disabled, theme }: StyledProps & ThemeProps) =
   ${!disabled &&
   css`
     &:hover {
-      background-color: ${$color.darken(20).alpha(0.1).toString()};
+      background-color: ${$neutral
+        ? $color.alpha(0.05).toString()
+        : $color.darken(20).alpha(0.1).toString()};
+      ${$neutral &&
+      css`
+        border-color: ${theme.color.textPrimary.alpha(0.35).toString()};
+      `}
     }
     &:active {
-      background-color: ${$color.darken(50).alpha(0.3).toString()};
+      background-color: ${$neutral
+        ? $color.alpha(0.12).toString()
+        : $color.darken(50).alpha(0.3).toString()};
     }
     &:focus-visible {
       outline-color: ${focusOutlineColor($color, theme)};
@@ -212,7 +237,14 @@ export const buttonVariantStyles = (params: {
     variant === 'standard'
       ? getStandardColors(color, theme)
       : { $color: getAccentColor(color, theme), $background: getAccentColor(color, theme) };
-  const props = { ...colors, $variant: variant, $group: group, disabled, theme };
+  const props = {
+    ...colors,
+    $variant: variant,
+    $group: group,
+    $neutral: typeof color === 'undefined' || color === 'default',
+    disabled,
+    theme,
+  };
 
   return css`
     ${variant === 'outlined'
