@@ -8,6 +8,7 @@ export type AnchorPos = PopperAnchorPos;
 export * from './MenuContainer';
 export * from './MenuItem';
 export * from './MenuList';
+export * from './MenuSeparator';
 
 const Menu = React.forwardRef(
   <T, Multiple extends boolean | undefined = undefined>(

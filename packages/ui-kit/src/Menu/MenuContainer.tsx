@@ -2,6 +2,7 @@ import React from 'react';
 
 import useContext, { actionSetmenuState } from './context';
 import List, { MenuListProps } from './MenuList';
+import Separator, { MenuSeparatorProps } from './MenuSeparator';
 import Popper, { AnchorPos, PopperProps, PositionStrategy } from '../Popper';
 import type { MenuItemProps } from './MenuItem';
 import ClickOutside from '../ClickOutside';
@@ -227,6 +228,20 @@ export interface MenuProps<T, Multiple extends boolean | undefined = undefined> 
    * ```
    */
   readonly maxWidth?: number | string;
+
+  /**
+   * Marks the items which are the separators between the groups of the items.
+   * The menu renders them itself (the `Separator` part): the keyboard skips them,
+   * they are not selected and `children` is not called for them\
+   * Example:
+   * ```tsx
+   * <Menu
+   *   items={[{ id: 'open' }, { id: 'separator' }, { id: 'delete' }]}
+   *   isSeparator={item => item.id === 'separator'}
+   * >
+   * ```
+   */
+  readonly isSeparator?: (item: T) => boolean;
 }
 
 export interface MenuOverrides {
@@ -239,6 +254,13 @@ export interface MenuOverrides {
    * Popper wrapper
    */
   readonly Popper?: React.ComponentType<PopperProps & React.RefAttributes<HTMLDivElement>>;
+
+  /**
+   * The separator between the groups of the items (see `isSeparator`)
+   */
+  readonly Separator?: React.ComponentType<
+    MenuSeparatorProps & React.RefAttributes<HTMLDivElement>
+  >;
 }
 
 export type MenuRef = {
@@ -362,14 +384,41 @@ const MenuContainer = React.forwardRef(
       onSelectItem,
       getOptionSelected,
       maxWidth,
+      isSeparator,
     } = props;
 
     const overridesMap = React.useMemo(
       () => ({
         List: overrides?.List || List,
         Popper: overrides?.Popper || Popper,
+        Separator: overrides?.Separator || Separator,
       }),
-      [overrides?.List, overrides?.Popper],
+      [overrides?.List, overrides?.Popper, overrides?.Separator],
+    );
+
+    // The separators are not the options: the keyboard skips them, they are not selected
+    const isOption = React.useCallback(
+      (index: number) =>
+        index >= 0 &&
+        index < items.length &&
+        !(typeof isSeparator === 'function' && isSeparator(items[index])),
+      [items, isSeparator],
+    );
+
+    /**
+     * The nearest option from the index in the direction (1 — down, -1 — up), -1 when there is none
+     */
+    const findOption = React.useCallback(
+      (from: number, direction: 1 | -1) => {
+        for (let index = from; index >= 0 && index < items.length; index += direction) {
+          if (isOption(index)) {
+            return index;
+          }
+        }
+
+        return -1;
+      },
+      [items.length, isOption],
     );
 
     const menuListRef = React.useRef<HTMLDivElement | null>(null);
@@ -464,7 +513,7 @@ const MenuContainer = React.forwardRef(
 
         const item = items[index];
         // Falsy items such as 0 or an empty string are valid options
-        if (item === undefined) return;
+        if (item === undefined || !isOption(index)) return;
 
         if (typeof onSelectItem === 'function') {
           if (multiple) {
@@ -487,7 +536,7 @@ const MenuContainer = React.forwardRef(
           }
         }
       },
-      [onSelectItem, onRequestClose, compareFunc, closeOnSelect, items, value, multiple],
+      [onSelectItem, onRequestClose, compareFunc, closeOnSelect, items, value, multiple, isOption],
     );
 
     const highlightIndex = React.useCallback(
@@ -503,23 +552,24 @@ const MenuContainer = React.forwardRef(
       [dispatch, items.length, scrollToIndex],
     );
 
+    // Without the previous (next) option the highlight stays where it is
     const highlightPrevItem = React.useCallback(() => {
-      const newIndex = markedIndex - 1;
-      highlightIndex(newIndex >= 0 ? newIndex : 0);
-    }, [markedIndex, highlightIndex]);
+      const newIndex = findOption(markedIndex - 1, -1);
+      highlightIndex(newIndex >= 0 ? newIndex : findOption(0, 1));
+    }, [markedIndex, highlightIndex, findOption]);
 
     const highlightNextItem = React.useCallback(() => {
-      const newIndex = markedIndex + 1;
-      highlightIndex(newIndex < items.length ? newIndex : items.length - 1);
-    }, [markedIndex, items.length, highlightIndex]);
+      const newIndex = findOption(markedIndex + 1, 1);
+      highlightIndex(newIndex >= 0 ? newIndex : findOption(items.length - 1, -1));
+    }, [markedIndex, items.length, highlightIndex, findOption]);
 
     const highlightFirstItem = React.useCallback(() => {
-      highlightIndex(0);
-    }, [highlightIndex]);
+      highlightIndex(findOption(0, 1));
+    }, [highlightIndex, findOption]);
 
     const highlightLastItem = React.useCallback(() => {
-      highlightIndex(items.length - 1);
-    }, [highlightIndex, items.length]);
+      highlightIndex(findOption(items.length - 1, -1));
+    }, [highlightIndex, items.length, findOption]);
 
     const selectHighlightedItem = React.useCallback(() => {
       if (markedIndex > -1 && markedIndex < items.length) {
@@ -763,26 +813,34 @@ const MenuContainer = React.forwardRef(
       [onAnchorPosChanged],
     );
 
+    const SeparatorComponent = overridesMap.Separator;
     const renderedChildren = React.useMemo(
       () =>
         items.map((item, index) =>
-          children(
-            { item, index },
-            {
-              key: index,
-              onMouseEnter: itemMouseEnterHandler(index),
-              // mouseenter is skipped during the keyboard navigation, so the item under a moving
-              // pointer is highlighted by mousemove
-              onMouseMove: itemMouseEnterHandler(index),
-              onMouseLeave: itemMouseLeaveHandler(index),
-              onClick: itemClickHandler(index),
-              selected: selectedIndexes.includes(index),
-              hovered: markedIndex === index,
-            },
+          // the separator stays among the children: the index of the child is the index of the item
+          !isOption(index) ? (
+            <SeparatorComponent key={index} />
+          ) : (
+            children(
+              { item, index },
+              {
+                key: index,
+                onMouseEnter: itemMouseEnterHandler(index),
+                // mouseenter is skipped during the keyboard navigation, so the item under a moving
+                // pointer is highlighted by mousemove
+                onMouseMove: itemMouseEnterHandler(index),
+                onMouseLeave: itemMouseLeaveHandler(index),
+                onClick: itemClickHandler(index),
+                selected: selectedIndexes.includes(index),
+                hovered: markedIndex === index,
+              },
+            )
           ),
         ),
       [
         items,
+        isOption,
+        SeparatorComponent,
         children,
         selectedIndexes,
         markedIndex,

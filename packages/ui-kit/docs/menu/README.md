@@ -4,6 +4,7 @@
 
 - [Описание](#описание)
 - [Меню действий](#меню-действий)
+- [Группы и разделители](#группы-и-разделители)
 - [Мультивыбор](#мультивыбор)
 - [Управление с клавиатуры](#управление-с-клавиатуры)
 - [Закрытие](#закрытие)
@@ -121,6 +122,34 @@ export default Example;
 ```
 
 <ExampleMenuActions />
+
+## Группы и разделители
+
+Длинное меню действий читается легче, когда пункты собраны в группы по смыслу: открыть, изменить, удалить. Между группами ставится разделитель — линия с отступами сверху и снизу.
+
+Разделитель — это элемент `items`, который вы отмечаете функцией `isSeparator`. Меню рисует его само (часть `Separator`), `children` для него не вызывается. Стрелки, Home и End его пропускают, выбрать его нельзя, программы чтения с экрана его не объявляют.
+
+```tsx
+const actions = [
+  { id: 'open', label: 'Открыть' },
+  { id: 'edit', label: 'Редактировать' },
+  { id: 'separator-1' },
+  { id: 'delete', label: 'Удалить' },
+];
+
+<Menu
+  items={actions}
+  isSeparator={item => item.id.startsWith('separator')}
+  value={null}
+  {...menuProps}
+>
+  {({ item }, itemProps) => (
+    <MenuItem {...itemProps} key={item.id}>
+      {item.label}
+    </MenuItem>
+  )}
+</Menu>;
+```
 
 ## Мультивыбор
 
@@ -263,6 +292,7 @@ const Example: React.FC = () => {
 
 - `<Popper>` — позиционирует меню относительно анкора
 - `<List>` — контейнер списка. Получает `ref`, обработчики клавиатуры и фокуса и атрибуты `role`, `aria-multiselectable`, которые нужно передать корневому элементу
+- `<Separator>` — разделитель групп (`MenuSeparator`), см. [Группы и разделители](#группы-и-разделители)
 
 Используйте свойство `overrides`, чтобы переопределить один или несколько компонентов. Проще всего расширить стандартный компонент:
 
@@ -414,9 +444,15 @@ const List = React.forwardRef<HTMLDivElement, MenuListProps>(function List(props
 - По умолчанию: `theme.zIndex.modal`
 - Обязательное: нет
 
+### `isSeparator`
+Отмечает элементы `items`, которые являются разделителями групп. Подробнее в разделе [Группы и разделители](#группы-и-разделители).
+- Тип: `(item: T) => boolean`
+- По умолчанию: `undefined`
+- Обязательное: нет
+
 ### `overrides`
 Объект для переопределения составных компонентов меню. Подробнее в разделе [Переопределение](#переопределение).
-- Тип: `{ List?: React.ComponentType<MenuListProps>; Popper?: React.ComponentType<PopperProps> }`
+- Тип: `{ List?: React.ComponentType<MenuListProps>; Popper?: React.ComponentType<PopperProps>; Separator?: React.ComponentType<MenuSeparatorProps> }`
 - По умолчанию: `undefined`
 - Обязательное: нет
 
