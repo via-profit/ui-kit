@@ -230,6 +230,15 @@ export interface MenuProps<T, Multiple extends boolean | undefined = undefined> 
   readonly maxWidth?: number | string;
 
   /**
+   * List menu maximum height (px, em, etc.): the longer list scrolls.
+   * The menu of the actions should not scroll — give it the height of the window,
+   * e.g. `maxHeight="80vh"`\
+   * \
+   * **Default**: `18em`
+   */
+  readonly maxHeight?: number | string;
+
+  /**
    * Marks the items which are the separators between the groups of the items.
    * The menu renders them itself (the `Separator` part): the keyboard skips them,
    * they are not selected and `children` is not called for them\
@@ -384,6 +393,7 @@ const MenuContainer = React.forwardRef(
       onSelectItem,
       getOptionSelected,
       maxWidth,
+      maxHeight,
       isSeparator,
     } = props;
 
@@ -888,6 +898,7 @@ const MenuContainer = React.forwardRef(
             isOpen={Boolean(isOpen)}
             ref={menuListRef}
             maxWidth={maxWidth}
+            maxHeight={maxHeight}
             onKeyDown={listKeydownEvent}
             onMouseMoveCapture={listMouseMoveHandler}
             onFocus={listFocusHandler}

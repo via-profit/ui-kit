@@ -438,6 +438,12 @@ const List = React.forwardRef<HTMLDivElement, MenuListProps>(function List(props
 - По умолчанию: `undefined`
 - Обязательное: нет
 
+### `maxHeight`
+Максимальная высота списка: более длинный список прокручивается. Число — в пикселях, строка — в любых единицах CSS. Меню действий не должно прокручиваться — задайте ему высоту окна, например `maxHeight="80vh"`.
+- Тип: `number | string`
+- По умолчанию: `18em`
+- Обязательное: нет
+
 ### `zIndex`
 Значение `z-index` меню.
 - Тип: `number`

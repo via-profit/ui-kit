@@ -9,12 +9,17 @@ export interface MenuListProps extends React.HTMLAttributes<HTMLDivElement> {
   readonly isOpen: boolean;
   readonly anchorPos: AnchorPos;
   readonly maxWidth?: number | string;
+  /**
+   * The maximum height of the list: the longer list scrolls. Default: `18em`
+   */
+  readonly maxHeight?: number | string;
 }
 
 const StyledMenuList = styled.div<{
   $isOpen: boolean;
   $anchorPos?: AnchorPos;
   $maxWidth?: number | string;
+  $maxHeight?: number | string;
 }>`
   display: flex;
   flex-direction: column;
@@ -77,18 +82,20 @@ const StyledMenuList = styled.div<{
   box-sizing: border-box;
   overflow-y: auto;
   padding: 0.4em;
-  max-height: 18em;
+  max-height: ${({ $maxHeight = '18em' }) =>
+    typeof $maxHeight === 'number' ? `${$maxHeight}px` : $maxHeight};
 `;
 
 export const MenuList = React.forwardRef(
   (props: MenuListProps, ref: React.ForwardedRef<HTMLDivElement>) => {
-    const { isOpen, anchorPos, maxWidth, children, ...nativeProps } = props;
+    const { isOpen, anchorPos, maxWidth, maxHeight, children, ...nativeProps } = props;
 
     return (
       <StyledMenuList
         tabIndex={-1}
         $isOpen={isOpen}
         $maxWidth={maxWidth}
+        $maxHeight={maxHeight}
         $anchorPos={anchorPos}
         {...nativeProps}
         ref={ref}
