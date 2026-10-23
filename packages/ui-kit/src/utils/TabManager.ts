@@ -73,7 +73,7 @@ class TabManager {
     this.#stack = this.#stack.filter(stackElem => {
       const founded = stackElem.container === container;
       if (founded && revertBackFocus && stackElem.lastFocused instanceof HTMLElement) {
-        stackElem.lastFocused.focus();
+        stackElem.lastFocused.focus({ preventScroll: true });
       }
 
       return !founded;

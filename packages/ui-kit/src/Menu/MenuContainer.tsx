@@ -687,10 +687,11 @@ const MenuContainer = React.forwardRef(
         // The menu is already closed by the parent, so onRequestClose must not be called again
         dispatch(actionSetmenuState({ markedIndex: -1, hoveredIndex: -1 }));
 
-        // Otherwise the focus is lost together with the unmounted list
+        // Otherwise the focus is lost together with the unmounted list.
+        // Without the scroll: an anchor in a sticky header is scrolled to its place in the document
         if (hasFocusRef.current) {
           hasFocusRef.current = false;
-          lastAnchorRef.current?.focus();
+          lastAnchorRef.current?.focus({ preventScroll: true });
         }
 
         return;
@@ -709,7 +710,8 @@ const MenuContainer = React.forwardRef(
         scrollToFirstSelected();
 
         if (autofocus) {
-          menuListRef.current?.focus();
+          // The list is already placed by the popper: focusing must not scroll the page
+          menuListRef.current?.focus({ preventScroll: true });
         }
       }, 15);
     }, [isOpen, autofocus, dispatch, scrollToFirstSelected]);

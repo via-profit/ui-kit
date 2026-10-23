@@ -130,7 +130,7 @@ const HintPopover: React.FC<HintPopoverProps> = props => {
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         setOpen(false);
-        button?.focus();
+        button?.focus({ preventScroll: true });
       }
     };
     document.addEventListener('keydown', onKeyDown);

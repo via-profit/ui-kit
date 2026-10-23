@@ -309,7 +309,9 @@ const DatePicker: React.FC<DatePickerProps> = props => {
   const close = React.useCallback(() => {
     setOpenSate(false);
     // Back to the field, so the keyboard user continues from the same place
-    (readOnly ? inputRef.current : (buttonRef.current ?? inputRef.current))?.focus();
+    (readOnly ? inputRef.current : (buttonRef.current ?? inputRef.current))?.focus({
+      preventScroll: true,
+    });
   }, [readOnly]);
 
   const handlePopperKeyDown = React.useCallback(

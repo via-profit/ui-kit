@@ -39,7 +39,7 @@ const SelectboxMenu = React.forwardRef(
           if (onRequestClose) {
             onRequestClose(evt);
           }
-          anchorElement?.focus();
+          anchorElement?.focus({ preventScroll: true });
         }
       },
       [onRequestClose, anchorElement],
