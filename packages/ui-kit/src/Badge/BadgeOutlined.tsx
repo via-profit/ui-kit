@@ -1,6 +1,6 @@
 import React from 'react';
 
-import BadgeStyled from './BadgeStyled';
+import Badge from './index';
 import type { BadgeBaseProps } from './BadgeBase';
 
 export type BadgeOutlinedProps = BadgeBaseProps;
@@ -11,6 +11,6 @@ export type BadgeOutlinedProps = BadgeBaseProps;
 const BadgeOutlined: React.ForwardRefRenderFunction<HTMLSpanElement, BadgeOutlinedProps> = (
   props,
   ref,
-) => <BadgeStyled {...props} variant="outlined" ref={ref} />;
+) => <Badge {...props} variant="outlined" ref={ref} />;
 
 export default React.forwardRef(BadgeOutlined);

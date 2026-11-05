@@ -164,13 +164,20 @@ export default Example;
 
 Компонент `<Badge>` является составным и реализован при помощи следующих компонентов:
 
-- `<Container>` — корневой элемент `<span>`
+- `<Container>` — корневой элемент `<span>`, все стили вариантов, расчёт цветов, состояния наведения и фокуса
 - `<IconWrapper>` — обёртка `startIcon`
 - `<TextWrapper>` — обёртка текста
 - `<ButtonDelete>` — кнопка удаления
+- `<DeleteIcon>` — SVG-иконка внутри кнопки удаления
 - `<Dot>` — точка; выводится только с `dot`
 
 Используйте свойство `overrides`, чтобы переопределить один или несколько компонентов. Проще всего расширить стандартный компонент с помощью `styled`. Создавайте переопределения один раз — вне компонента, а не при рендере.
+
+Стили не накладываются на составные части снаружи: `styled(BadgeContainer)` может изменить фон, рамку, цвет и состояния любого `variant` без повышения специфичности селекторов. `Container` получает `color`, `variant`, обработчики и остальные атрибуты корневого элемента, а также `ref`. При полной замене контейнера передавайте `children`, `className`, обработчики, атрибуты доступности и `ref` своему элементу; `color` и `variant` не передавайте в DOM.
+
+`ButtonDelete` получает исходные `color` и `variant` бейджа (включая `soft`), `onClick`, `aria-label` и `children` с иконкой. Если заменяете кнопку целиком, сохраняйте эти свойства: переданный `onClick` останавливает всплытие и вызывает `onDelete`. Для замены только иконки используйте `DeleteIcon` — поведение кнопки при этом сохраняется. Стандартная кнопка также принимает свою иконку через `children`; без `children` она рисует `BadgeDeleteIcon`.
+
+`Dot` использует CSS-переменную `--badge-dot-color`, которую задаёт стандартный контейнер. Её можно переопределить в своём контейнере; без переменной точка наследует цвет текста.
 
 _Пример использования:_
 
@@ -178,7 +185,19 @@ _Пример использования:_
 import React from 'react';
 import styled from '@emotion/styled';
 import Badge from '@via-profit/ui-kit/Badge';
+import BadgeContainer from '@via-profit/ui-kit/Badge/BadgeContainer';
 import BadgeTextWrapper from '@via-profit/ui-kit/Badge/BadgeTextWrapper';
+
+const Container = styled(BadgeContainer)`
+  border-radius: 0.25em;
+  border-style: dashed;
+  color: ${({ theme }) => theme.color.textPrimary.toString()};
+  background-color: ${({ theme }) => theme.color.surface.toString()};
+
+  &:hover {
+    background-color: ${({ theme }) => theme.color.surface.darken(5).toString()};
+  }
+`;
 
 const TextWrapper = styled(BadgeTextWrapper)`
   font-weight: 600;
@@ -187,10 +206,10 @@ const TextWrapper = styled(BadgeTextWrapper)`
 `;
 
 // Created once, outside of the component
-const overrides = { TextWrapper };
+const overrides = { Container, TextWrapper };
 
 const Example: React.FC = () => (
-  <Badge color="primary" overrides={overrides}>
+  <Badge variant="soft" dot color="primary" overrides={overrides}>
     Скидка 20%
   </Badge>
 );
@@ -199,6 +218,10 @@ export default Example;
 ```
 
 <ExampleBadgeOverrides />
+
+Пути стандартных компонентов: `Badge/BadgeContainer`, `Badge/BadgeIconWrapper`, `Badge/BadgeTextWrapper`, `Badge/BadgeDeleteButton`, `Badge/BadgeDeleteIcon` и `Badge/BadgeDot` (с префиксом `@via-profit/ui-kit/`).
+
+При использовании низкоуровневого `BadgeBase` без `variant` контейнер остаётся без оформления варианта. У `Badge` по умолчанию, как и раньше, используется `standard`.
 
 ## Свойства
 

@@ -5,6 +5,8 @@ export type {
   ToastId,
   ToastType,
   ToastPosition,
+  ToastAutoClose,
+  ToastAutoCloseByType,
   ToastOptions,
   ToastUpdateOptions,
   ToastContent,

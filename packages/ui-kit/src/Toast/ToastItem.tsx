@@ -5,7 +5,15 @@ import { ToastCardProps, TOAST_ANIMATION_MS } from './ToastCard';
 import { ToastIconProps } from './ToastIcon';
 import { ToastCloseButtonProps } from './ToastCloseButton';
 import { ToastActionProps } from './ToastAction';
-import { toast as toastApi, toastStore, ToastPosition, ToastState } from './store';
+import {
+  toast as toastApi,
+  toastStore,
+  TOAST_DEFAULT_AUTO_CLOSE,
+  ToastAutoClose,
+  ToastPosition,
+  ToastState,
+  ToastType,
+} from './store';
 
 export interface ToastItemComponents {
   readonly Toast: React.ComponentType<ToastCardProps & React.RefAttributes<HTMLDivElement>>;
@@ -17,7 +25,7 @@ export interface ToastItemComponents {
 }
 
 export interface ToastDefaults {
-  readonly autoClose: number | false;
+  readonly autoClose: ToastAutoClose;
   readonly closeButton: boolean;
   readonly closeOnClick: boolean;
   readonly pauseOnHover: boolean;
@@ -59,6 +67,17 @@ const Actions = styled.div`
 const INTERACTIVE =
   'a, button, input, select, textarea, label, summary, [role="button"], [contenteditable="true"]';
 
+/**
+ * The `autoClose` of the toast type: the own value of the type, then `default`, then 5000
+ */
+const getAutoClose = (autoClose: ToastAutoClose, type: ToastType): number | false => {
+  if (typeof autoClose === 'number' || autoClose === false) {
+    return autoClose;
+  }
+
+  return autoClose[type] ?? autoClose.default ?? TOAST_DEFAULT_AUTO_CLOSE;
+};
+
 const ToastItem: React.FC<ToastItemProps> = props => {
   const { toast, position, defaults, components, isWindowFocused } = props;
   const {
@@ -76,7 +95,7 @@ const ToastItem: React.FC<ToastItemProps> = props => {
   } = toast;
 
   // The loading toast waits for `toast.update`: it can not be closed by the timer or by the click
-  const autoClose = isLoading ? false : (toast.autoClose ?? defaults.autoClose);
+  const autoClose = isLoading ? false : (toast.autoClose ?? getAutoClose(defaults.autoClose, type));
   const closeButton = isLoading ? false : (toast.closeButton ?? defaults.closeButton);
   const closeOnClick = isLoading ? false : (toast.closeOnClick ?? defaults.closeOnClick);
   const pauseOnHover = toast.pauseOnHover ?? defaults.pauseOnHover;

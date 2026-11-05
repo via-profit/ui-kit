@@ -1,6 +1,6 @@
 import React from 'react';
 
-import BadgeStyled from './BadgeStyled';
+import Badge from './index';
 import type { BadgeBaseProps } from './BadgeBase';
 
 export type BadgeStandardProps = BadgeBaseProps;
@@ -11,6 +11,6 @@ export type BadgeStandardProps = BadgeBaseProps;
 const BadgeStandard: React.ForwardRefRenderFunction<HTMLSpanElement, BadgeStandardProps> = (
   props,
   ref,
-) => <BadgeStyled {...props} variant="standard" ref={ref} />;
+) => <Badge {...props} variant="standard" ref={ref} />;
 
 export default React.forwardRef(BadgeStandard);

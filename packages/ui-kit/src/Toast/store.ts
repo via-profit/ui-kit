@@ -12,6 +12,24 @@ export type ToastPosition =
   | 'bottom-center'
   | 'bottom-right';
 
+/**
+ * The time to close the toasts for each type. A type not listed uses `default`
+ */
+export type ToastAutoCloseByType = {
+  readonly [type in ToastType]?: number | false;
+};
+
+/**
+ * The time in ms before the toast closes, `false` to keep it until the user closes it,
+ * or the time for each type of the toast
+ */
+export type ToastAutoClose = number | false | ToastAutoCloseByType;
+
+/**
+ * The time to close the toast when `autoClose` does not set one
+ */
+export const TOAST_DEFAULT_AUTO_CLOSE = 5000;
+
 export interface ToastContentProps {
   /**
    * Closes this toast

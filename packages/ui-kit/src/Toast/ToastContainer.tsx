@@ -8,7 +8,13 @@ import Icon, { ToastIconProps } from './ToastIcon';
 import CloseButton, { ToastCloseButtonProps } from './ToastCloseButton';
 import Action, { ToastActionProps } from './ToastAction';
 import ToastItem, { ToastDefaults } from './ToastItem';
-import { toastStore, ToastPosition, ToastState } from './store';
+import {
+  toastStore,
+  TOAST_DEFAULT_AUTO_CLOSE,
+  ToastAutoClose,
+  ToastPosition,
+  ToastState,
+} from './store';
 
 export interface ToastContainerProps {
   /**
@@ -25,10 +31,12 @@ export interface ToastContainerProps {
   readonly position?: ToastPosition;
 
   /**
-   * The time in ms before the toast closes, or `false` to keep the toasts until the user closes them
+   * The time in ms before the toast closes, or `false` to keep the toasts until the user closes them.
+   * The object sets the time for each type, e.g. `{ success: 2000, error: false }`;
+   * a type not listed uses `default` — then 5000
    * Default: 5000
    */
-  readonly autoClose?: number | false;
+  readonly autoClose?: ToastAutoClose;
 
   /**
    * The maximum number of the toasts on the screen. The rest wait in the queue
@@ -199,7 +207,7 @@ const ToastContainer: React.FC<ToastContainerProps> = props => {
   const {
     containerId,
     position = 'top-right',
-    autoClose = 5000,
+    autoClose = TOAST_DEFAULT_AUTO_CLOSE,
     limit,
     closeButton = true,
     closeButtonLabel = 'Close',
