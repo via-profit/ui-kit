@@ -138,7 +138,7 @@ const [styles, setStyles] = React.useState<string[]>(['bold']);
 
 ### `variant`
 Вид кнопок. В режиме выбора — вид невыбранных кнопок.
-- Тип: `'standard' | 'outlined' | 'plain'`
+- Тип: `'standard' | 'outlined' | 'plain' | 'soft'`
 - По умолчанию: `'outlined'`
 - Обязательное: нет
 

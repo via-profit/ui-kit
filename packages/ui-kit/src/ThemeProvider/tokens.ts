@@ -63,7 +63,7 @@ export const CONTROL_LINE_HEIGHT = '1.2em';
 export const BORDER_WIDTH = '0.0625em';
 
 /**
- * The border of the buttons. The standard and the plain buttons have no border:
+ * The border of the buttons. The standard, plain and soft buttons have no border:
  * their padding is larger by this width, so all the variants have the same size
  */
 export const CONTROL_BORDER = BORDER_WIDTH;

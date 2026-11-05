@@ -76,7 +76,7 @@ export default Example;
 
 ## Оформление
 
-- `variant` — вид кнопок невыбранных страниц: `standard`, `outlined` или `plain`. По умолчанию `standard`: на поверхности такие кнопки получают мягкую заливку и остаются видны;
+- `variant` — вид кнопок невыбранных страниц: `standard`, `outlined`, `plain` или `soft`. По умолчанию `standard`: на поверхности такие кнопки получают мягкую заливку и остаются видны;
 - `color` — цвет кнопки текущей страницы: `default`, `primary`, `secondary` или любой цвет CSS. По умолчанию `primary`;
 - `navigationVariant` — вид кнопок навигации. По умолчанию `outlined`;
 - `navigationColor` — цвет кнопок навигации. По умолчанию `color` для вида `standard`, иначе `default`.
@@ -300,7 +300,7 @@ const { page, count, items, setPage } = usePagination({
 
 ### `variant`
 Вид кнопок невыбранных страниц.
-- Тип: `'standard' | 'outlined' | 'plain'`
+- Тип: `'standard' | 'outlined' | 'plain' | 'soft'`
 - По умолчанию: `'standard'`
 - Обязательное: нет
 
@@ -312,7 +312,7 @@ const { page, count, items, setPage } = usePagination({
 
 ### `navigationVariant`
 Вид кнопок навигации.
-- Тип: `'standard' | 'outlined' | 'plain'`
+- Тип: `'standard' | 'outlined' | 'plain' | 'soft'`
 - По умолчанию: `'outlined'`
 - Обязательное: нет
 

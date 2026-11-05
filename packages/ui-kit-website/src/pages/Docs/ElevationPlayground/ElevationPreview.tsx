@@ -208,6 +208,7 @@ const ElevationPreview: React.FC = () => {
           <Button color="primary">standard</Button>
           <Button variant="outlined">outlined</Button>
           <Button variant="plain">plain</Button>
+          <Button variant="soft">soft</Button>
           <Switch defaultChecked>
             <FormattedMessage defaultMessage="Включено" />
           </Switch>

@@ -4,7 +4,7 @@ import Button from '@via-profit/ui-kit/src/Button';
 
 const Grid = styled.div`
   display: grid;
-  grid-template-columns: repeat(3, max-content);
+  grid-template-columns: repeat(4, max-content);
   gap: 0.5em 1em;
   align-items: center;
 `;

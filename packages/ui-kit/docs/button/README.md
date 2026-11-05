@@ -40,11 +40,13 @@ export default Example;
 - **`standard`** — с заливкой (по умолчанию)
 - **`outlined`** — с рамкой, без заливки
 - **`plain`** — без заливки и рамки; фон появляется только при наведении
+- **`soft`** — с бледной заливкой цвета кнопки; текст того же оттенка, как у `plain` под курсором. Тише `standard`, заметнее `plain`: подходит для второстепенных действий рядом с главной кнопкой. Под курсором заливка темнеет
 
 ```tsx
 <Button variant="standard">standard</Button>
 <Button variant="outlined">outlined</Button>
 <Button variant="plain">plain</Button>
+<Button variant="soft">soft</Button>
 ```
 
 <ExampleButtonVariants />
@@ -57,12 +59,15 @@ export default Example;
 - **`primary`** — основной цвет акцента темы
 - **`secondary`** — второстепенный цвет акцента темы
 
-У варианта `standard` цвет — это заливка, а текст подбирается автоматически: для `primary` и `secondary` берётся контрастный цвет из темы. У вариантов `outlined` и `plain` цвет — это текст и рамка. Исключение — нейтральная `outlined` (`default`): рамка у неё светлая, а текст цвета темы, чтобы второстепенная кнопка рядом с главной не спорила с ней.
+У варианта `standard` цвет — это заливка, а текст подбирается автоматически: для `primary` и `secondary` берётся контрастный цвет из темы. У вариантов `outlined` и `plain` цвет — это текст и рамка, у `soft` — текст и бледная заливка. Исключение — нейтральная `outlined` (`default`): рамка у неё светлая, а текст цвета темы, чтобы второстепенная кнопка рядом с главной не спорила с ней.
 
 ```tsx
 <Button color="primary">primary</Button>
 <Button variant="outlined" color="#e0435f">
   #e0435f
+</Button>
+<Button variant="soft" color="primary">
+  primary
 </Button>
 ```
 
@@ -158,7 +163,7 @@ export default Example;
 
 ### `variant`
 Вид кнопки. Подробнее в разделе [Варианты](#варианты).
-- Тип: `'standard' | 'outlined' | 'plain'`
+- Тип: `'standard' | 'outlined' | 'plain' | 'soft'`
 - По умолчанию: `'standard'`
 - Обязательное: нет
 
