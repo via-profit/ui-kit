@@ -63,6 +63,13 @@ export type TooltipProps = {
   readonly describeChild?: boolean;
 
   /**
+   * Lets the pointer move onto the tooltip, e.g. to select its text or click a link inside.
+   * When `false`, the tooltip does not receive pointer events and cannot block the elements under it
+   * Default: false
+   */
+  readonly interactive?: boolean;
+
+  /**
    * Default: 8
    */
   readonly offset?: number;
@@ -150,6 +157,7 @@ const Tooltip: React.FC<TooltipProps> = props => {
     isOpen,
     onOpenChange,
     describeChild = false,
+    interactive = false,
     offset = 8,
     zIndex,
     id,
@@ -334,13 +342,19 @@ const Tooltip: React.FC<TooltipProps> = props => {
         onAnchorPosChanged={setActualPlacement}
         id={tooltipId}
         role="tooltip"
-        // The pointer can move from the element onto the tooltip without hiding it
-        onPointerEnter={clearTimer}
-        onPointerLeave={event => {
-          if (isHoverPointer(event)) {
-            hide(leaveDelay);
-          }
-        }}
+        // Without `interactive` the tooltip must not intercept the pointer: otherwise it
+        // blocks the elements under it and sticks under the cursor that moves across it
+        style={interactive ? undefined : { pointerEvents: 'none' }}
+        onPointerEnter={interactive ? clearTimer : undefined}
+        onPointerLeave={
+          interactive
+            ? event => {
+                if (isHoverPointer(event)) {
+                  hide(leaveDelay);
+                }
+              }
+            : undefined
+        }
       >
         <overridesMap.Container>
           {title}

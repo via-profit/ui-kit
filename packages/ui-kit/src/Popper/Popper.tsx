@@ -265,7 +265,8 @@ const Popper: React.ForwardRefRenderFunction<HTMLDivElement, PopperProps> = (pro
           ...style,
           ...nativeProps.style,
           opacity: isVisible ? 1 : 0,
-          pointerEvents: isVisible ? 'auto' : 'none',
+          // A hidden popper never intercepts the pointer; a visible one lets the caller opt out
+          pointerEvents: !isVisible ? 'none' : (nativeProps.style?.pointerEvents ?? 'auto'),
           // zIndex: zIndex,
           ...(positionStrategy === 'fixed' && {
             position: 'fixed',
