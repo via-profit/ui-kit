@@ -3,6 +3,8 @@ import ReactDOM from 'react-dom';
 import Container, { PopperContainerProps, PositionStrategy } from './PopperContainer';
 import { AnchorPos, usePopper } from './usePopper';
 
+const getServerAnchorConnected = () => false;
+
 export * from './usePopper';
 // export type AnchorPos = Di | `${Di}-${Mod}` | Au | `${Au}-${Di}`;
 
@@ -21,7 +23,7 @@ export interface PopperProps extends React.HTMLAttributes<HTMLDivElement> {
 
   /**
    * The HTML element to which the popper will be attached and positioned relative to.
-   * While it is `null`, the popper stays hidden even if `isOpen` is `true`.
+   * The popper closes if the element is removed from the DOM or becomes `null`.
    *
    * @required
    * @example
@@ -203,6 +205,37 @@ const Popper: React.ForwardRefRenderFunction<HTMLDivElement, PopperProps> = (pro
 
   const [domLoaded, setDomLoaded] = React.useState(false);
 
+  const subscribeToAnchor = React.useCallback(
+    (onChange: () => void) => {
+      if (!isOpen || !anchorElement) {
+        return () => {};
+      }
+
+      const observer = new MutationObserver(onChange);
+      const options = { childList: true, subtree: true };
+      observer.observe(anchorElement.ownerDocument, options);
+
+      // Mutations inside a shadow root are not reported by the document observer.
+      let root = anchorElement.getRootNode();
+      while (root instanceof ShadowRoot) {
+        observer.observe(root, options);
+        root = root.host.getRootNode();
+      }
+
+      return () => observer.disconnect();
+    },
+    [isOpen, anchorElement],
+  );
+  const getAnchorConnected = React.useCallback(
+    () => isOpen && Boolean(anchorElement?.isConnected),
+    [isOpen, anchorElement],
+  );
+  const canOpen = React.useSyncExternalStore(
+    subscribeToAnchor,
+    getAnchorConnected,
+    getServerAnchorConnected,
+  );
+
   const { actualPlacement, style, popperRef, isVisible } = usePopper({
     anchorElement,
     anchorPos,
@@ -211,7 +244,7 @@ const Popper: React.ForwardRefRenderFunction<HTMLDivElement, PopperProps> = (pro
     offset,
     viewportMargin,
     alternativePlacements,
-    isOpen,
+    isOpen: canOpen,
   });
 
   const overridesMap = React.useMemo(
@@ -307,7 +340,7 @@ const Popper: React.ForwardRefRenderFunction<HTMLDivElement, PopperProps> = (pro
     ],
   );
 
-  if (!isOpen) {
+  if (!canOpen) {
     return null;
   }
 

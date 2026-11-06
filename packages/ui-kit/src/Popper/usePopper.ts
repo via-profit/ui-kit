@@ -571,7 +571,7 @@ export const usePopper = (props: UsePopperProps): UsePopperResult => {
 
   // #region Calculate Position
   const calculatePosition = React.useCallback(() => {
-    if (!anchorElement || !popperRef.current) {
+    if (!anchorElement?.isConnected || !popperRef.current) {
       return;
     }
     const anchorRect = anchorElement.getBoundingClientRect();
