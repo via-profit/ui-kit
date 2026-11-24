@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import BaseModal, { BaseModalProps } from '../BaseModal';
-import DrawerInner, { AnchorVariant } from './DrawerInner';
+import DrawerInner, { AnchorVariant, DrawerInnerProps } from './DrawerInner';
 import Container, { DrawerContainerProps } from './DrawerContainer';
 import Header, { DrawerHeaderProps } from './DrawerHeader';
 import Content, { DrawerContentProps } from './DrawerContent';
@@ -10,7 +10,7 @@ import Overlay, { ModalOverlayProps } from '../BaseModal/ModalOverlay';
 import type { ModalInnerProps } from '../BaseModal/ModalInner';
 import useDialogID from '../BaseModal/useDialogID';
 
-export type { AnchorVariant } from './DrawerInner';
+export type { AnchorVariant, DrawerInnerProps } from './DrawerInner';
 
 export interface DrawerProps extends Omit<BaseModalProps, 'overrides'> {
   /**
@@ -69,6 +69,11 @@ export interface DrawerProps extends Omit<BaseModalProps, 'overrides'> {
 
 export interface DrawerOverrides {
   /**
+   * Inner drawer element
+   */
+  readonly Inner?: React.ComponentType<DrawerInnerProps & React.RefAttributes<HTMLDivElement>>;
+
+  /**
    * Element container
    */
   readonly Container?: React.ComponentType<
@@ -120,6 +125,7 @@ const Drawer: React.FC<DrawerProps> = props => {
 
   const dialogID = useDialogID('drawer');
   const hasTitle = typeof header !== 'undefined' && header !== null;
+  const InnerComponent = overrides?.Inner || DrawerInner;
 
   // Created once: a component created during the render is a new type on every render,
   // so React would remount the whole drawer content (inputs lose the focus and the state)
@@ -127,7 +133,7 @@ const Drawer: React.FC<DrawerProps> = props => {
     () =>
       React.forwardRef<HTMLDivElement, ModalInnerProps>(function Inner(innerProps, ref) {
         return (
-          <DrawerInner
+          <InnerComponent
             anchor={anchor}
             dialogID={dialogID}
             swipeToClose={swipeToClose}
@@ -137,7 +143,7 @@ const Drawer: React.FC<DrawerProps> = props => {
           />
         );
       }),
-    [anchor, dialogID, hasTitle, swipeToClose],
+    [InnerComponent, anchor, dialogID, hasTitle, swipeToClose],
   );
 
   const overridesMap = React.useMemo(

@@ -262,8 +262,11 @@ _Пример использования:_
   - `<Header>` — заголовок;
   - `<Content>` — содержимое;
   - `<Footer>` — кнопки или подвал.
+- У `drawer` также доступен `<Inner>` — внешняя обёртка панели.
 
 Используйте свойство `overrides`, чтобы переопределить один или несколько компонентов. Проще всего расширить стандартный компонент с помощью `styled`. Создавайте переопределения один раз — вне компонента, а не при рендере.
+
+Чтобы заменить внешнюю обёртку панели, передайте `overrides={{ Inner: CustomInner }}`. Тип пропсов `DrawerInnerProps` экспортируется из `@via-profit/ui-kit/Modal`. Передайте полученный `ref` на корневой `div` панели.
 
 Окно диалога удобнее оформлять через `InnerContainer`: замена `Inner` убирает разметку диалога для программ чтения с экрана (`role="dialog"`, `aria-modal`, связь с заголовком).
 
@@ -432,4 +435,5 @@ export default Example;
 Части окна, которые заменяют стандартные. Подробнее в разделе [Переопределение](#переопределение).
 
 - `dialog`: `Overlay`, `InnerContainer`, `Inner`;
-- `confirm-box`, `message-box`, `drawer`: `Overlay`, `Container`, `Header`, `Content`, `Footer`.
+- `confirm-box`, `message-box`: `Overlay`, `Container`, `Header`, `Content`, `Footer`;
+- `drawer`: `Overlay`, `Inner`, `Container`, `Header`, `Content`, `Footer`.
