@@ -1,4 +1,8 @@
 /node_modules/
 /dist
 /build
+/website/node_modules/
+/website/dist/
+/website/build/
+/website/.env.deploy
 .vscode/launch.json

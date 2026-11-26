@@ -1,42 +1,54 @@
 {
-  "name": "@via-profit/ui-kit-monorepo",
-  "version": "1.0.3",
-  "description": "",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "npm run start --workspace packages/ui-kit-website",
-    "build:website": "npm run build --workspace packages/ui-kit-website",
-    "build": "npm run build --workspace packages/ui-kit",
-    "lint": "npm run lint:check --workspaces",
-    "typecheck": "npm run typecheck --workspaces",
-    "i18n": "npm run i18n --workspace packages/ui-kit-website",
-    "postinstall": "node ./scripts/postinstall.js"
+  "name": "@via-profit/ui-kit",
+  "version": "0.13.0",
+  "description": "UI Kit",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/via-profit/ui-kit.git"
   },
-  "author": "",
+  "engines": {
+    "node": ">=16.x"
+  },
+  "author": "Via Profit",
   "license": "MIT",
-  "workspaces": [
-    "packages/ui-kit",
-    "packages/ui-kit-website"
-  ],
+  "scripts": {
+    "lint": "eslint --fix .",
+    "lint:check": "eslint .",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "build": "node ./scripts/build.js",
+    "website": "npm --prefix website start",
+    "website:build": "npm --prefix website run build",
+    "website:prod": "npm --prefix website run start:prod",
+    "deploy": "npm --prefix website run deploy"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "peerDependencies": {
+    "@emotion/react": ">=11.10.6",
+    "@emotion/styled": ">=11.10.6",
+    "react": ">=18.2.0",
+    "react-dom": ">=18.2.0"
+  },
   "devDependencies": {
-    "concurrently": "^8.2.1",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "@types/node": "^20.10.5",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
     "fs-extra": "^11.1.1",
     "eslint": "^8.56.0",
     "eslint-config-prettier": "^9.1.0",
-    "eslint-import-resolver-alias": "^1.1.2",
-    "eslint-import-resolver-node": "^0.3.9",
-    "eslint-import-resolver-webpack": "^0.13.8",
-    "eslint-plugin-file-progress": "^1.3.0",
-    "eslint-plugin-formatjs": "^4.11.3",
     "eslint-plugin-import": "^2.29.1",
-    "eslint-plugin-jsx-a11y": "^6.8.0",
-    "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prettier": "^5.1.2",
     "eslint-plugin-promise": "^6.1.1",
     "eslint-plugin-react": "^7.33.2",
     "eslint-plugin-react-hooks": "^4.6.0",
     "@typescript-eslint/eslint-plugin": "^6.16.0",
     "@typescript-eslint/parser": "^6.16.0",
-    "prettier": "^3.1.1"
+    "prettier": "^3.1.1",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "typescript": "^5.9.3"
   }
 }

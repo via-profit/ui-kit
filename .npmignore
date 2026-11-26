@@ -1,0 +1,15 @@
+.*
+/assets
+/build
+/src
+/webpack
+/website
+/docs
+/scripts
+/packages
+/node_modules/
+/@types
+
+jest.config.*
+babel.config.*
+tsconfig.*

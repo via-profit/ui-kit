@@ -1,0 +1,31 @@
+# Generated during deployment using website/.env.deploy.
+# Uploaded unit: DEPLOY_DESTINATION_DIR/DEPLOY_SERVICE_NAME.service
+#
+# Manual installation on the server:
+# sudo ln -sfn DEPLOY_DESTINATION_DIR/DEPLOY_SERVICE_NAME.service /etc/systemd/system/DEPLOY_SERVICE_NAME.service
+# sudo systemctl daemon-reload
+# sudo systemctl enable --now DEPLOY_SERVICE_NAME
+#
+# Status and logs:
+# sudo systemctl status DEPLOY_SERVICE_NAME
+# sudo journalctl -u DEPLOY_SERVICE_NAME -f
+#
+# After updating the unit:
+# sudo systemctl daemon-reload
+# sudo systemctl restart DEPLOY_SERVICE_NAME
+
+[Unit]
+Description=Via Profit UI Kit documentation
+After=network.target
+
+[Service]
+Type=simple
+User=web
+WorkingDirectory=DEPLOY_DESTINATION_DIR
+Environment=NODE_ENV=production
+ExecStart=/bin/bash DEPLOY_DESTINATION_DIR/start.sh DEPLOY_NODE_BIN
+Restart=on-failure
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target

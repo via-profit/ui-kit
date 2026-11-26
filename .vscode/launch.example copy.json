@@ -10,7 +10,7 @@
       "sourceMaps": true,
       "url": "http://localhost:8080",
       "sourceMapPathOverrides": {
-        "webpack://@via-profit/ui-kit-website/*": "${webRoot}/packages/ui-kit-website/*"
+        "webpack://@via-profit/ui-kit-website/*": "${webRoot}/website/*"
       }
     }
   ]

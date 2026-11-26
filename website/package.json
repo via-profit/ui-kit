@@ -1,0 +1,47 @@
+{
+  "name": "@via-profit/ui-kit-website",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Documentation website of @via-profit/ui-kit",
+  "license": "MIT",
+  "scripts": {
+    "start": "cross-env NODE_ENV=development node ./scripts/dev.js",
+    "build": "cross-env NODE_ENV=production webpack --config ./webpack/webpack.config.js",
+    "lint": "tsc --noEmit",
+    "test:ssr": "node ./scripts/test-ssr.js",
+    "serve": "node ./dist/server.cjs",
+    "start:prod": "npm run build && npm run serve",
+    "deploy": "bash ./deploy.sh"
+  },
+  "dependencies": {
+    "@emotion/cache": "^11.14.0",
+    "@emotion/react": "^11.14.0",
+    "@emotion/server": "^11.11.0",
+    "@emotion/styled": "^11.14.1",
+    "markdown-to-jsx": "^9.10.3",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-intl": "^12.1.3",
+    "react-router-dom": "^7.18.4",
+    "react-syntax-highlighter": "^16.1.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.29.7",
+    "@babel/preset-env": "^7.29.7",
+    "@babel/preset-react": "^7.29.7",
+    "@babel/preset-typescript": "^7.29.7",
+    "@emotion/babel-plugin": "^11.13.5",
+    "@types/node": "^26.6.2",
+    "@types/react": "^18.3.31",
+    "@types/react-dom": "^18.3.7",
+    "@types/react-syntax-highlighter": "^15.5.13",
+    "babel-loader": "^9.2.1",
+    "cross-env": "^10.1.0",
+    "typescript": "^7.0.2",
+    "webpack": "^5.111.1",
+    "webpack-cli": "^7.2.3"
+  },
+  "engines": {
+    "node": ">=24"
+  }
+}

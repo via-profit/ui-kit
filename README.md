@@ -1,24 +1,22 @@
 # @via-profit/ui-kit
 
 [![npm](https://img.shields.io/npm/v/@via-profit/ui-kit)](https://www.npmjs.com/package/@via-profit/ui-kit)
-[![Документация](https://github.com/via-profit/ui-kit/actions/workflows/deploy-website.yml/badge.svg)](https://via-profit.github.io/ui-kit/)
-[![Лицензия: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](./packages/ui-kit/LICENSE)
+[![Лицензия: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
 
-Набор React-компонентов для интерфейсов: поля ввода, кнопки, календарь, меню, модальные окна и другие. Компоненты оформлены по теме, которую вы задаёте один раз для всего приложения. Каждый компонент можно расширить с помощью `styled` или заменить его части через `overrides`.
-
-**[Документация и живые примеры →](https://via-profit.github.io/ui-kit/)**
+Набор React-компонентов для интерфейсов: поля ввода, кнопки, календарь, меню,
+модальные окна и другие. Компоненты оформлены по теме, которую вы задаёте один
+раз для всего приложения. Компоненты можно расширять через `styled` и заменять
+их части через `overrides`.
 
 ## Установка
 
-```bash
+```sh
 npm install @via-profit/ui-kit @emotion/react @emotion/styled react react-dom
 ```
 
-Пакету нужны `react` и `react-dom` версии 18.2 и новее, `@emotion/react` и `@emotion/styled` версии 11.10.6 и новее.
+Нужны React и React DOM 18.2+, Emotion 11.10.6+.
 
 ## Быстрый старт
-
-Оберните приложение в `ThemeProvider` — без него компоненты не отобразятся. Каждый компонент импортируется по своему пути, поэтому в сборку попадают только используемые.
 
 ```tsx
 import React from 'react';
@@ -35,42 +33,37 @@ createRoot(document.getElementById('app')!).render(
 );
 ```
 
-Параметры темы, тёмная тема и типизация темы для TypeScript описаны в разделе [Темы оформления](https://via-profit.github.io/ui-kit/docs/theming).
+Каждый компонент импортируется по своему пути: в сборку попадает только используемое.
+Без `ThemeProvider` компоненты не отобразятся.
 
-## Компоненты
+## Документация
 
-| Группа               | Компоненты                                                                                                                                                                                                                                                                                                                         |
-| -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Основы               | [ThemeProvider](https://via-profit.github.io/ui-kit/docs/theming), [Typography](https://via-profit.github.io/ui-kit/docs/typography), [Color](https://via-profit.github.io/ui-kit/docs/color)                                                                                                                                      |
-| Кнопки               | [Button](https://via-profit.github.io/ui-kit/docs/button), [ButtonGroup](https://via-profit.github.io/ui-kit/docs/button-group)                                                                                                                                                                                                     |
-| Поля ввода           | [TextField](https://via-profit.github.io/ui-kit/docs/text-field), [TextArea](https://via-profit.github.io/ui-kit/docs/text-area), [MaskedField](https://via-profit.github.io/ui-kit/docs/masked-field), [PhoneField](https://via-profit.github.io/ui-kit/docs/phone-field), [DatePicker](https://via-profit.github.io/ui-kit/docs/date-picker) |
-| Выбор                | [Autocomplete](https://via-profit.github.io/ui-kit/docs/autocomplete), [Selectbox](https://via-profit.github.io/ui-kit/docs/selectbox), [Calendar](https://via-profit.github.io/ui-kit/docs/calendar), [Checkbox](https://via-profit.github.io/ui-kit/docs/checkbox), [Radio](https://via-profit.github.io/ui-kit/docs/radio), [Switch](https://via-profit.github.io/ui-kit/docs/switch) |
-| Отображение данных   | [Avatar](https://via-profit.github.io/ui-kit/docs/avatar), [Badge](https://via-profit.github.io/ui-kit/docs/badge), [LoadingIndicator](https://via-profit.github.io/ui-kit/docs/loading-indicator), [Table](https://via-profit.github.io/ui-kit/docs/table) |
-| Компоновка           | [Stack](https://via-profit.github.io/ui-kit/docs/stack), [Grid](https://via-profit.github.io/ui-kit/docs/grid), [Surface](https://via-profit.github.io/ui-kit/docs/surface), [Accordion](https://via-profit.github.io/ui-kit/docs/accordion), [Swiper](https://via-profit.github.io/ui-kit/docs/swiper)                            |
-| Всплывающие элементы | [Menu](https://via-profit.github.io/ui-kit/docs/menu), [Modal](https://via-profit.github.io/ui-kit/docs/modal), [Popper](https://via-profit.github.io/ui-kit/docs/popper)                                                                                                                                                          |
-| Утилиты              | [ClickOutside](https://via-profit.github.io/ui-kit/docs/click-outside), [Highlighted](https://via-profit.github.io/ui-kit/docs/highlighted)                                                                                                                                                                                         |
+- [Введение и перечень компонентов](./docs/README.md)
+- [Темы оформления](./docs/theming/README.md)
+- [Список изменений](./CHANGELOG.md)
+- [Сайт документации: запуск и деплой](./website/README.md)
 
-## Репозиторий
+Для нового SSR-сайта предусмотрен адрес `https://ui-kit.via-profit.ru`.
+Это пример конфигурации будущего размещения, а не подтверждение работающего домена.
 
-Монорепозиторий на npm workspaces:
+## Разработка
 
-- [`packages/ui-kit`](./packages/ui-kit) — библиотека `@via-profit/ui-kit`, которая публикуется в npm. Исходные файлы документации — в [`packages/ui-kit/docs`](./packages/ui-kit/docs/README.md);
-- [`packages/ui-kit-website`](./packages/ui-kit-website) — сайт документации, публикуется на GitHub Pages при каждом пуше в `master`.
+Библиотека находится в `src/`, документация — в `docs/`, сайт — в `website/`.
+Монорепозитория и npm workspaces нет. Зависимости библиотеки и сайта устанавливаются отдельно.
+Для сайта нужен Node.js 24+.
 
-```bash
-npm install   # зависимости обоих пакетов
-npm start     # сайт документации в режиме разработки
-npm run build # сборка библиотеки
+```sh
+npm ci
+npm ci --prefix website
+npm run website       # SSR-сайт: localhost:8080
+npm run build         # библиотека: dist/ (CommonJS) и dist/esm
+npm run website:build # production-сборка сайта
+npm run website:prod  # сборка и запуск production-сайта
 ```
 
-Как вести список изменений и выпускать версии — в [CONTRIBUTING.md](./CONTRIBUTING.md).
-
-## Ссылки
-
-- [Документация](https://via-profit.github.io/ui-kit/)
-- [Список изменений](./packages/ui-kit/CHANGELOG.md)
-- [Пакет в npm](https://www.npmjs.com/package/@via-profit/ui-kit)
+Публикуется библиотека из `dist/`; сайт в npm-пакет не входит.
+Правила разработки и выпуска — [CONTRIBUTING.md](./CONTRIBUTING.md).
 
 ## Лицензия
 
-[MIT](./packages/ui-kit/LICENSE)
+[MIT](./LICENSE)

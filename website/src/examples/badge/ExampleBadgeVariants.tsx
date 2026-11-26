@@ -1,0 +1,21 @@
+import React from 'react';
+import styled from '@emotion/styled';
+import Badge from '@via-profit/ui-kit/Badge';
+
+const Group = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5em;
+`;
+
+const ExampleBadgeVariants: React.FC = () => (
+  <Group>
+    <Badge variant="standard">standard</Badge>
+    <Badge variant="outlined">outlined</Badge>
+    <Badge variant="soft" color="primary">
+      soft
+    </Badge>
+  </Group>
+);
+
+export default ExampleBadgeVariants;
